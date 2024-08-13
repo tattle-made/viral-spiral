@@ -1,5 +1,11 @@
 defmodule ViralSpiral.MixProject do
   use Mix.Project
+  alias ViralSpiral.Game.Turn
+  alias ViralSpiral.Game.Round
+  alias ViralSpiral.Game.Room
+  alias ViralSpiral.Game.Player
+  alias ViralSpiral.Game
+  alias ViralSpiral.Canon
 
   def project do
     [
@@ -22,7 +28,19 @@ defmodule ViralSpiral.MixProject do
           "docs/architecture.md",
           "docs/community.md",
           "docs/nomenclature.md",
-          "docs/daily-notes.md"
+          "docs/daily-notes.md",
+          "docs/guides/how-to-manage-cards.md",
+          "docs/guides/how-to-play.md"
+        ],
+        groups_for_extras: [
+          Introduction: Path.wildcard("docs/*.md"),
+          Guides: Path.wildcard("docs/guides/*.md")
+        ],
+        groups_for_modules: [
+          "Game Text": [~r"ViralSpiral.Canon"],
+          "Data Model": [~r"ViralSpiral.Game"],
+          "User Interface": [~r"ViralSpiralWeb"],
+          Context: [~r"ViralSpiral"]
         ]
       ]
     ]

@@ -5,7 +5,9 @@ defmodule ViralSpiral.Game do
             scores: nil
 
   @moduledoc """
-  # Rounds and Turns
+  Context for the game.
+
+  Rounds and Turns
   round = Round.new(players)
   round_order = Round.order(round)
   During a Round every player gets to draw a card and then take some actions.
