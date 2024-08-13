@@ -6,8 +6,8 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :viral_spiral, ViralSpiral.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "tattle",
+  password: "weak_password",
   hostname: "localhost",
   database: "viral_spiral_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,

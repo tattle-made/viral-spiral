@@ -9,7 +9,22 @@ defmodule ViralSpiral.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+
+      # Docs
+      name: "Viral Spiral",
+      source_url: "https://github.com/tattle-made/viral-spiral",
+      homepage_url: "https://viralspiral.net",
+      docs: [
+        main: "ViralSpiral",
+        extras: [
+          "README.md",
+          "docs/architecture.md",
+          "docs/community.md",
+          "docs/nomenclature.md",
+          "docs/daily-notes.md"
+        ]
+      ]
     ]
   end
 
@@ -50,7 +65,9 @@ defmodule ViralSpiral.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:uxid, "~> 0.2"},
+      {:ex_doc, "~> 0.31", only: :dev, runtime: false}
     ]
   end
 
