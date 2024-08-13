@@ -18,9 +18,12 @@ jobs:
 
       - name: Deploy to Netlify
         uses: actions/setup-node@v4
+        with:
+            node-version: 20
       - run: |
           npm install netlify-cli@17.10.1 -g
           netlify deploy \
             --dir doc \
             --site ${{ secrets.NETLIFY_SITE_ID }} \
             --auth ${{ secrets.NETLIFY_API_TOKEN }}
+            --prod
