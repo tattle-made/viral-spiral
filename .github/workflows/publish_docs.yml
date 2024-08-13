@@ -9,15 +9,6 @@ jobs:
       - name: Repository Checkout
         uses: actions/checkout@v4
 
-      - name: Setup NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "npm"
-
-      - name: Install Netlify
-        run: npm install netlify-cli@17.10.1 -g
-
       - uses: erlef/setup-beam@v1
         with:
             otp-version: "26.0"
@@ -27,8 +18,9 @@ jobs:
       - run: HEX_API_KEY=${{secrets.HEX_API_KEY}} mix hex.publish --yes 
 
       - name: Deploy to Netlify
-        id: netlify_deploy
-        run: |
+        uses: actions/setup-node@v4
+      - run: |
+          npm install netlify-cli@17.10.1 -g
           netlify deploy \
             --dir dist \
             --site ${{ secrets.NETLIFY_SITE_ID }} \
