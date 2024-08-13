@@ -14,14 +14,13 @@ jobs:
             otp-version: "26.0"
             elixir-version: "1.15.7"
       - run: mix deps.get
-      - run: mix test
-      - run: HEX_API_KEY=${{secrets.HEX_API_KEY}} mix hex.publish --yes 
+      - run: mix docs
 
       - name: Deploy to Netlify
         uses: actions/setup-node@v4
       - run: |
           npm install netlify-cli@17.10.1 -g
           netlify deploy \
-            --dir dist \
+            --dir doc \
             --site ${{ secrets.NETLIFY_SITE_ID }} \
             --auth ${{ secrets.NETLIFY_API_TOKEN }}
