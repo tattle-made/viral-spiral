@@ -1,7 +1,17 @@
 defmodule ViralSpiral.Game.Room do
+  alias ViralSpiral.Game.Room
+
   defstruct id: "",
             name: "",
             state: :uninitialized
+
+  @type states :: :uninitialized | :waiting_for_players | :running | :paused
+
+  @type t() :: %__MODULE__{
+          id: String.t(),
+          name: String.t(),
+          state: states()
+        }
 
   def new() do
     %__MODULE__{

@@ -1,16 +1,30 @@
 defmodule ViralSpiral.Game do
-  defstruct room: nil,
-            player_list: nil,
-            player_map: nil,
-            scores: nil
+  alias ViralSpiral.Game.Room
+  alias ViralSpiral.Game.State
 
-  @moduledoc """
-  Context for the game.
+  @spec create_room(String.t()) :: Room.t()
+  def create_room(name) do
+  end
 
-  Rounds and Turns
-  round = Round.new(players)
-  round_order = Round.order(round)
-  During a Round every player gets to draw a card and then take some actions.
-  When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
-  """
+  @spec join_room(String.t(), String.t()) :: Room.t()
+  def join_room(name, password) do
+  end
+
+  def pass_card(state, player, to) do
+  end
+
+  def keep_card(player) do
+  end
+
+  def discard_card(player) do
+  end
+
+  def turn_to_fake(player, card) do
+  end
+
+  def cancel_player(player, target) do
+  end
+
+  def viral_spiral(player, targets) do
+  end
 end

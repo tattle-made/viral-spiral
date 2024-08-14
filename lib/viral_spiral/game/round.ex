@@ -32,6 +32,13 @@ defmodule ViralSpiral.Game.Round do
             current: 0,
             skip: nil
 
+  @type t :: %__MODULE__{
+          order: list(String.t()),
+          count: integer(),
+          current: integer(),
+          skip: boolean()
+        }
+
   @doc """
   todo : this doesn't really need the players, merely a count of players, maybe?
   """
@@ -100,8 +107,5 @@ defmodule ViralSpiral.Game.Round do
       end
 
     Map.merge(round, changes)
-  end
-
-  def current_id() do
   end
 end

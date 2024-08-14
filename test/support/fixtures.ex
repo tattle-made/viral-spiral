@@ -1,7 +1,7 @@
 defmodule Fixtures do
   alias ViralSpiral.Game.Player
   alias ViralSpiral.Game.Room
-  alias ViralSpiral.Game
+  alias ViralSpiral.Game.State
 
   def initialized_game() do
     player_list = [
@@ -13,7 +13,7 @@ defmodule Fixtures do
 
     players = Enum.reduce(player_list, %{}, fn player, acc -> Map.put(acc, player.id, player) end)
 
-    %Game{
+    %State{
       room: Room.new(),
       player_map: players,
       player_list: player_list
