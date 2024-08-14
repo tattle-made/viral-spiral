@@ -1,8 +1,10 @@
 defmodule ViralSpiral.Game.State do
-  defstruct room: nil,
+  defstruct room_config: nil,
+            room: nil,
             player_list: nil,
             player_map: nil,
-            scores: nil,
+            room_score: nil,
+            player_scores: nil,
             round: nil,
             turn: nil
 
