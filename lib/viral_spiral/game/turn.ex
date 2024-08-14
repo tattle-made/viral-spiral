@@ -13,6 +13,17 @@ defmodule ViralSpiral.Game.Turn do
   defstruct current: nil,
             pass_to: []
 
+  @type t :: %__MODULE__{
+          current: String.t(),
+          pass_to: list(String.t())
+        }
+
+  @spec new() :: Turn.t()
+  def new() do
+    %Turn{}
+  end
+
+  @spec new(Round.t()) :: Turn.t()
   def new(%Round{} = round) do
     current = Enum.at(round.order, round.current)
 
@@ -25,18 +36,29 @@ defmodule ViralSpiral.Game.Turn do
   def new(%Round{} = _round, %Turn{} = _turn) do
   end
 
-  def set_current(%Turn{} = round, current), do: %{round | current: current}
+  def set_current(%Turn{} = turn, current), do: %{turn | current: current}
 
-  def set_pass_to(%Turn{} = round, pass_to), do: %{round | pass_to: pass_to}
+  def set_pass_to(%Turn{} = turn, pass_to), do: %{turn | pass_to: pass_to}
 
   @doc """
   todo :  add check to ensure that it only runs next if
   to is in the the current pass_to
   """
-  def next(%Turn{} = from, to) do
+  @spec next(Turn.t(), String.t()) :: Turn.t()
+  def next(%Turn{} = from, to) when is_bitstring(to) do
     from
     |> set_current(to)
     |> set_pass_to(List.delete(from.pass_to, to))
+  end
+
+  @spec next(Turn.t(), list(String.t())) :: list(Turn.t())
+  def next(%Turn{} = from, to) when is_list(to) do
+    new_pass_to = from.pass_to -- to
+
+    Enum.map(
+      to,
+      &%Turn{current: &1, pass_to: new_pass_to}
+    )
   end
 
   def change(%Turn{} = _turn) do
