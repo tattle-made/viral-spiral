@@ -1,13 +1,16 @@
 defmodule ViralSpiral.Game.RoomConfig do
-  defstruct affinities: [:cat, :sock],
-            communities: [:red, :yellow, :blue],
-            chaos_counter: 10,
-            volatility: :medium
+  alias ViralSpiral.Game.RoomConfig
+
+  defstruct affinities: Application.compile_env(:viral_spiral, RoomConfig)[:affinities],
+            communities: Application.compile_env(:viral_spiral, RoomConfig)[:communities],
+            chaos_counter: Application.compile_env(:viral_spiral, RoomConfig)[:chaos_counter],
+            volatility: Application.compile_env(:viral_spiral, RoomConfig)[:volatility]
 end
 
 defmodule ViralSpiral.Game.RoomConfig.Guards do
-  @affinities [:cat, :sock, :highfive, :houseboat, :skub]
-  @communities [:red, :yellow, :blue]
+  alias ViralSpiral.Game.RoomConfig
+  @affinities Application.compile_env(:viral_spiral, RoomConfig)[:affinities]
+  @communities Application.compile_env(:viral_spiral, RoomConfig)[:communities]
 
   defguard is_affinity(value) when value in @affinities
 

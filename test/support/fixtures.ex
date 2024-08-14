@@ -10,7 +10,7 @@ defmodule Fixtures do
   alias ViralSpiral.Game.State
 
   def initialized_game() do
-    room_config = %RoomConfig{}
+    room_config = %RoomConfig{} |> IO.inspect()
 
     player_list = [
       Player.new(room_config) |> Player.set_name("adhiraj"),

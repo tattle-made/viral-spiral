@@ -6,6 +6,7 @@
 
 # General application configuration
 import Config
+alias ViralSpiral.Game.RoomConfig
 
 config :viral_spiral,
   ecto_repos: [ViralSpiral.Repo],
@@ -60,6 +61,12 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :viral_spiral, RoomConfig,
+  affinities: [:cat, :sock, :skub, :houseboat, :highfive],
+  communities: [:red, :yellow, :blue],
+  chaos_counter: 10,
+  volatility: :medium
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
