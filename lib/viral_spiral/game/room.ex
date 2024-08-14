@@ -1,6 +1,4 @@
 defmodule ViralSpiral.Game.Room do
-  alias ViralSpiral.Game.Room
-
   defstruct id: "",
             name: "",
             state: :uninitialized

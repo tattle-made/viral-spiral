@@ -31,7 +31,7 @@ defmodule ViralSpiral.TurnTest do
       turn = Turn.new(round)
       assert length(turn.pass_to) == 3
 
-      current_player = Enum.at(round.order, 0)
+      _current_player = Enum.at(round.order, 0)
       to_pass_players = Enum.slice(round.order, 1..2)
       turn = Turn.next(turn, to_pass_players)
 

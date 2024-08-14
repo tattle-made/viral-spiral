@@ -1,11 +1,5 @@
 defmodule ViralSpiral.MixProject do
   use Mix.Project
-  alias ViralSpiral.Game.Turn
-  alias ViralSpiral.Game.Round
-  alias ViralSpiral.Game.Room
-  alias ViralSpiral.Game.Player
-  alias ViralSpiral.Game
-  alias ViralSpiral.Canon
 
   def project do
     [
@@ -20,7 +14,7 @@ defmodule ViralSpiral.MixProject do
       # Docs
       name: "Viral Spiral",
       source_url: "https://github.com/tattle-made/viral-spiral",
-      homepage_url: "https://viralspiral.net",
+      homepage_url: "https://viralspiral.netlify.app/",
       docs: [
         main: "ViralSpiral",
         extras: [
