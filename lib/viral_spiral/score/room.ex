@@ -11,17 +11,26 @@ defmodule ViralSpiral.Score.Room do
           chaos_countdown: integer()
         }
 
+  @doc """
+  Create a new Room with default values.
+  """
   @spec new() :: ViralSpiral.Score.Room.t()
   def new() do
     %Room{}
   end
 
+  @doc """
+  Reduce the chaos countdown by 1.
+  """
   @spec countdown(ViralSpiral.Score.Room.t()) :: ViralSpiral.Score.Room.t()
   def countdown(%Room{} = room) do
     %{room | chaos_countdown: room.chaos_countdown - 1}
   end
 
   defimpl Change do
+    @doc """
+    Change state of a Room.
+    """
     @spec apply_change(ViralSpiral.Score.Room.t(), keyword()) :: ViralSpiral.Score.Room.t()
     def apply_change(%Room{} = score, opts) do
       opts = Keyword.validate!(opts, offset: 0)

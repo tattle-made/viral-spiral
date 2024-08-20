@@ -24,6 +24,10 @@ defmodule ViralSpiral.Score.Player do
           clout: integer()
         }
 
+  @spec new(ViralSpiral.Game.Player.t(), %ViralSpiral.Game.RoomConfig{
+          :affinities => list(),
+          :communities => list()
+        }) :: ViralSpiral.Score.Player.t()
   def new(%PlayerData{} = player, %RoomConfig{} = room_config) do
     bias_list = Enum.filter(room_config.communities, &(&1 != player.identity))
     bias_map = Enum.reduce(bias_list, %{}, fn x, acc -> Map.put(acc, x, 0) end)
@@ -50,18 +54,42 @@ defmodule ViralSpiral.Score.Player do
       end
     end
 
+    @doc """
+    Change a Player's Bias.
+    """
+    @spec change(
+            ViralSpiral.Score.Player.t(),
+            :bias,
+            :blue | :red | :yellow,
+            integer()
+          ) :: ViralSpiral.Score.Player.t()
     def change(%Player{} = player, :bias, target_bias, count)
         when is_community(target_bias) and is_integer(count) do
       new_biases = Map.put(player.biases, target_bias, player.biases[target_bias] + count)
       %{player | biases: new_biases}
     end
 
-    def change(%Player{} = player, :affinity, target, count)
-        when is_affinity(target) and is_integer(count) do
-      new_affinities = Map.put(player.affinities, target, player.affinities[target] + count)
+    @doc """
+    Change a Player's Affinity.
+    """
+    @spec change(
+            ViralSpiral.Score.Player.t(),
+            :affinity,
+            :cat | :highfive | :houseboat | :skub | :sock,
+            integer()
+          ) :: ViralSpiral.Score.Player.t()
+    def change(%Player{} = player, :affinity, target_affinity, count)
+        when is_affinity(target_affinity) and is_integer(count) do
+      new_affinities =
+        Map.put(player.affinities, target_affinity, player.affinities[target_affinity] + count)
+
       %{player | affinities: new_affinities}
     end
 
+    @doc """
+    Change a Player's Clout.
+    """
+    @spec change(ViralSpiral.Score.Player.t(), :clout, integer()) :: ViralSpiral.Score.Player.t()
     def change(%Player{} = player, :clout, count) when is_integer(count) do
       new_clout = player.clout + count
       %{player | clout: new_clout}
