@@ -14,7 +14,7 @@ defmodule ViralSpiral.Game.Turn do
             pass_to: []
 
   @type t :: %__MODULE__{
-          current: String.t(),
+          current: String.t() | nil,
           pass_to: list(String.t())
         }
 

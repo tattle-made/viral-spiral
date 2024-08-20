@@ -1,4 +1,5 @@
 defmodule ViralSpiral.Game.Player do
+  alias ViralSpiral.Deck.Card
   alias ViralSpiral.Game.Player
   alias ViralSpiral.Game.RoomConfig
 
@@ -6,6 +7,13 @@ defmodule ViralSpiral.Game.Player do
             name: "",
             identity: nil,
             hand: []
+
+  @type t :: %__MODULE__{
+          id: String.t(),
+          name: String.t(),
+          identity: atom(),
+          hand: list(Card.t())
+        }
 
   def new() do
     %Player{

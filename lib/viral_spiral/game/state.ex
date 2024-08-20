@@ -18,6 +18,7 @@ defmodule ViralSpiral.Game.State do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
   alias ViralSpiral.Game.State
+  alias ViralSpiral.Game.Change
 
   def set_round(%State{} = game, round) do
     %State{game | round: round}
@@ -26,4 +27,28 @@ defmodule ViralSpiral.Game.State do
   def set_turn(%State{} = game, turn) do
     %State{game | turn: turn}
   end
+
+  # @spec apply_changes(list(Change.t())) ::
+  #         list({:ok, message :: String.t()} | {:error, reason :: String.t()})
+  def apply_changes(state, changes) do
+    # Enum.reduce(changes, [], &(&2 ++ [apply_change(elem(&1, 0), elem(&1, 1))]))
+    _results = Enum.map(changes, &apply(elem(&1, 0), elem(&1, 1)))
+    # new_state = Enum.reduce(results, state, &)
+
+    # results = Enum.reduce...
+    # state = Enum.reduce(results, state, &Map.put(&1.id, &1.value))
+  end
+
+  defdelegate apply_change(change, opts), to: Change
+
+  # @doc """
+  # Change various components of state.
+
+  # round, turn, room, card, player_score
+  # """
+  # def apply(state, change) do
+  #   case change do
+  #     %{id: id, value: value}
+  #   end
+  # end
 end

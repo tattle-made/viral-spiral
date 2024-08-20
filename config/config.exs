@@ -68,6 +68,8 @@ config :viral_spiral, RoomConfig,
   chaos_counter: 10,
   volatility: :medium
 
+config :viral_spiral, CardConfig, card_types: [:affinity, :bias, :topical, :conflated]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

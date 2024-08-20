@@ -1,4 +1,5 @@
 defmodule Fixtures do
+  alias ViralSpiral.Deck.Card
   alias ViralSpiral.Game.Score.Player
   alias ViralSpiral.Game.Turn
   alias ViralSpiral.Game.Round
@@ -10,7 +11,7 @@ defmodule Fixtures do
   alias ViralSpiral.Game.State
 
   def initialized_game() do
-    room_config = %RoomConfig{} |> IO.inspect()
+    room_config = %RoomConfig{}
 
     player_list = [
       Player.new(room_config) |> Player.set_name("adhiraj"),
@@ -24,6 +25,17 @@ defmodule Fixtures do
     round = Round.new(player_list)
     turn = Turn.new(round)
 
+    player_score_list =
+      Enum.map(
+        player_list,
+        &(Map.new() |> Map.put(:id, &1.id) |> Map.put(:score, PlayerScore.new(&1, room_config)))
+      )
+
+    player_score_map =
+      Enum.reduce(player_score_list, %{}, fn player, acc ->
+        Map.put(acc, player.id, player.score)
+      end)
+
     %State{
       room_config: room_config,
       room: Room.new(),
@@ -32,7 +44,11 @@ defmodule Fixtures do
       round: round,
       turn: turn,
       # room_score: RoomScore.new(),
-      player_scores: Enum.map(player_list, &PlayerScore.new(&1, room_config))
+      player_scores: player_score_map
     }
+  end
+
+  def card_affinity() do
+    Card.new(:affinity)
   end
 end
