@@ -33,7 +33,7 @@ defmodule ViralSpiral.MixProject do
         groups_for_modules: [
           "Game Text": [~r"ViralSpiral.Canon"],
           "Data Model": [~r"ViralSpiral.Game"],
-          Score: [~r"ViralSpiral.State"],
+          Score: [~r"ViralSpiral.Score"],
           "User Interface": [~r"ViralSpiralWeb"],
           Context: [~r"ViralSpiral"]
         ]
