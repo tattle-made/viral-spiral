@@ -1,23 +1,25 @@
-defmodule ViralSpiral.RoundTest do
-  alias ViralSpiral.Game.Round
+defmodule ViralSpiral.Room.State.RoundTest do
+  alias ViralSpiral.Room.State.Round
   use ExUnit.Case
 
-  test "round progress" do
-    %{player_list: player_list} = Fixtures.initialized_game()
-    round = Round.new(player_list)
-    assert round.current == 0
+  describe "round progression" do
+    test "round progress" do
+      %{player_list: player_list} = Fixtures.initialized_game()
+      round = Round.new(player_list)
+      assert round.current == 0
 
-    round = Round.next(round)
-    assert round.current == 1
+      round = Round.next(round)
+      assert round.current == 1
 
-    round = Round.next(round)
-    assert round.current == 2
+      round = Round.next(round)
+      assert round.current == 2
 
-    round = Round.next(round)
-    assert round.current == 3
+      round = Round.next(round)
+      assert round.current == 3
 
-    round = Round.next(round)
-    assert round.current == 0
+      round = Round.next(round)
+      assert round.current == 0
+    end
   end
 
   describe "skip player in a round" do
@@ -49,7 +51,6 @@ defmodule ViralSpiral.RoundTest do
 
       to_skip = Enum.at(player_order, 1)
       round = Round.add_skip(round, to_skip)
-      # assert round.skip.round == :next
       round = Round.next(round)
       assert round.current == 3
 
@@ -68,5 +69,8 @@ defmodule ViralSpiral.RoundTest do
       round = Round.next(round)
       assert round.current == 1
     end
+  end
+
+  describe "changes" do
   end
 end

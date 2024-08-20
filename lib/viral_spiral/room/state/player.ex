@@ -1,4 +1,4 @@
-defmodule ViralSpiral.Score.Player do
+defmodule ViralSpiral.Room.State.Player do
   @moduledoc """
   Create and update Player Score.
 
@@ -9,11 +9,11 @@ defmodule ViralSpiral.Score.Player do
       clout: 0
     }
   """
-  alias ViralSpiral.Score.Player
+  alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Game.RoomConfig
   alias ViralSpiral.Game.Player, as: PlayerData
   import ViralSpiral.Game.RoomConfig.Guards
-  alias ViralSpiral.Score.Change
+  alias ViralSpiral.Room.State.Change
 
   defstruct biases: %{}, affinities: %{}, clout: 0
 
@@ -24,10 +24,10 @@ defmodule ViralSpiral.Score.Player do
           clout: integer()
         }
 
-  @spec new(ViralSpiral.Game.Player.t(), %ViralSpiral.Game.RoomConfig{
+  @spec new(t(), %ViralSpiral.Game.RoomConfig{
           :affinities => list(),
           :communities => list()
-        }) :: ViralSpiral.Score.Player.t()
+        }) :: t()
   def new(%PlayerData{} = player, %RoomConfig{} = room_config) do
     bias_list = Enum.filter(room_config.communities, &(&1 != player.identity))
     bias_map = Enum.reduce(bias_list, %{}, fn x, acc -> Map.put(acc, x, 0) end)
@@ -42,6 +42,8 @@ defmodule ViralSpiral.Score.Player do
   end
 
   defimpl Change do
+    alias ViralSpiral.Room.State.Player
+
     @doc """
     Implement change protocol for a Player's Score.
     """
@@ -55,29 +57,43 @@ defmodule ViralSpiral.Score.Player do
     end
 
     @doc """
-    Change a Player's Bias.
+    Change a Player's Score.
+
+    Change function pattern matches depending on the function's parameter.
+    The second parameter can be :clout, :affinity: :bias. These determine which score to change.
+    Corresponding score is changed based on the values passed in the opts keyword list.
+
+    The various possible values that can be passed in opts are defined later.
+
+    ## Options to change Bias
+    - target : can be :red, :blue or :yellow
+    - offset : The value to increment/decrement current score by. Must be an integer.
+
+    ## Options to change affinity
+    - target : can be :sock, :houseboat, :highfive, :cat or :skub
+    - offset : The value to increment/decrement current score by. Must be an integer
+
+    ## Options to change clout
+    - offset : The value to increment/decrement current score by. Must be an integer
     """
     @spec change(
-            ViralSpiral.Score.Player.t(),
+            Player.t(),
             :bias,
             :blue | :red | :yellow,
             integer()
-          ) :: ViralSpiral.Score.Player.t()
+          ) :: Player.t()
     def change(%Player{} = player, :bias, target_bias, count)
         when is_community(target_bias) and is_integer(count) do
       new_biases = Map.put(player.biases, target_bias, player.biases[target_bias] + count)
       %{player | biases: new_biases}
     end
 
-    @doc """
-    Change a Player's Affinity.
-    """
     @spec change(
-            ViralSpiral.Score.Player.t(),
+            Player.t(),
             :affinity,
             :cat | :highfive | :houseboat | :skub | :sock,
             integer()
-          ) :: ViralSpiral.Score.Player.t()
+          ) :: Player.t()
     def change(%Player{} = player, :affinity, target_affinity, count)
         when is_affinity(target_affinity) and is_integer(count) do
       new_affinities =
@@ -86,10 +102,7 @@ defmodule ViralSpiral.Score.Player do
       %{player | affinities: new_affinities}
     end
 
-    @doc """
-    Change a Player's Clout.
-    """
-    @spec change(ViralSpiral.Score.Player.t(), :clout, integer()) :: ViralSpiral.Score.Player.t()
+    @spec change(Player.t(), :clout, integer()) :: Player.t()
     def change(%Player{} = player, :clout, count) when is_integer(count) do
       new_clout = player.clout + count
       %{player | clout: new_clout}

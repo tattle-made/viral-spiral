@@ -1,4 +1,4 @@
-defmodule ViralSpiral.Game.Turn do
+defmodule ViralSpiral.Room.State.Turn do
   @moduledoc """
   Orchestrates whose turn it is in the game.
 
@@ -7,8 +7,8 @@ defmodule ViralSpiral.Game.Turn do
 
   todo : could the field be actions and not tied to every concrete thing like pass, discard etc.
   """
-  alias ViralSpiral.Game.Turn
-  alias ViralSpiral.Game.Round
+  alias ViralSpiral.Room.State.Turn
+  alias ViralSpiral.Room.State.Round
 
   defstruct current: nil,
             pass_to: []

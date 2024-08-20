@@ -1,9 +1,9 @@
-defmodule ViralSpiral.TurnTest do
-  alias ViralSpiral.Game.Turn
-  alias ViralSpiral.Game.Round
+defmodule ViralSpiral.Room.State.TurnTest do
+  alias ViralSpiral.Room.State.Turn
+  alias ViralSpiral.Room.State.Round
   use ExUnit.Case
 
-  describe "Turn Management" do
+  describe "turn progression" do
     test "pass card" do
       game = Fixtures.initialized_game()
       player_list = game.player_list
@@ -38,5 +38,8 @@ defmodule ViralSpiral.TurnTest do
       assert length(turn) == 2
       assert length(Enum.at(turn, 0).pass_to) == 1
     end
+  end
+
+  describe "changes" do
   end
 end

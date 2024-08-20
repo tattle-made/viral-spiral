@@ -1,11 +1,11 @@
 defmodule Fixtures do
   alias ViralSpiral.Deck.Card
   alias ViralSpiral.Game.Score.Player
-  alias ViralSpiral.Game.Turn
-  alias ViralSpiral.Game.Round
-  alias ViralSpiral.Game.Room
+  alias ViralSpiral.Room.State.Turn
+  alias ViralSpiral.Room.State.Round
+  alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Game.RoomConfig
-  alias ViralSpiral.Game.Score.Player, as: PlayerScore
+  alias ViralSpiral.Room.State.Player, as: PlayerScore
   # alias ViralSpiral.Game.Score.Room, as: RoomScore
   alias ViralSpiral.Game.Player
   alias ViralSpiral.Game.State

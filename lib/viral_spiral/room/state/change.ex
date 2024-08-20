@@ -1,4 +1,4 @@
-defprotocol ViralSpiral.Score.Change do
+defprotocol ViralSpiral.Room.State.Change do
   @moduledoc """
   Protocol to change scores used in Viral Spiral.
 

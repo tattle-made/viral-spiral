@@ -1,4 +1,4 @@
-defmodule ViralSpiral.Game.Round do
+defmodule ViralSpiral.Room.State.Round do
   @moduledoc """
   Orchestrates the sequence in which players draw cards.
 

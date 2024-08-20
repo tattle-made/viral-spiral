@@ -18,7 +18,7 @@ defmodule ViralSpiral.Game.State do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
   alias ViralSpiral.Game.State
-  alias ViralSpiral.Game.Change
+  alias ViralSpiral.Score.Change
 
   def set_round(%State{} = game, round) do
     %State{game | round: round}
