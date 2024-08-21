@@ -1,4 +1,5 @@
 defmodule ViralSpiral.Room.State.TurnTest do
+  alias ViralSpiral.Room.State.Change
   alias ViralSpiral.Room.State.Turn
   alias ViralSpiral.Room.State.Round
   use ExUnit.Case
@@ -41,5 +42,19 @@ defmodule ViralSpiral.Room.State.TurnTest do
   end
 
   describe "changes" do
+    setup do
+      players = Fixtures.player_list()
+      round = Round.new(players)
+      turn = Turn.new(round)
+
+      current_player = Enum.at(round.order, 0)
+      to_pass_player = Enum.at(round.order, 2)
+      %{turn: turn, target: to_pass_player}
+    end
+
+    test "move to next turn", %{turn: turn, target: target} do
+      new_turn = Change.apply_change(turn, type: :next, target: target)
+      assert new_turn.current == target
+    end
   end
 end

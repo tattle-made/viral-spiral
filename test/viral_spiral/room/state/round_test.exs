@@ -1,4 +1,5 @@
 defmodule ViralSpiral.Room.State.RoundTest do
+  alias ViralSpiral.Room.State.Change
   alias ViralSpiral.Room.State.Round
   use ExUnit.Case
 
@@ -72,5 +73,15 @@ defmodule ViralSpiral.Room.State.RoundTest do
   end
 
   describe "changes" do
+    setup do
+      player_list = Fixtures.player_list()
+      round = Round.new(player_list)
+      %{round: round}
+    end
+
+    test "move to next round", %{round: round} do
+      new_round = Change.apply_change(round, type: :next)
+      assert new_round.current == 1
+    end
   end
 end

@@ -18,11 +18,11 @@ defmodule ViralSpiral.GameTest do
       card = Fixtures.card_affinity()
 
       current_player = players[turn.current]
-      target_player = players[2]
+      target_player = players[Enum.at(turn.pass_to, 2)]
 
       Game.pass_card(game_state, card, current_player, target_player)
 
-      IO.inspect(game_state)
+      # IO.inspect(game_state)
       # IO.inspect(card)
     end
   end

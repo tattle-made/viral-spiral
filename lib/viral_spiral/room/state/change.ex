@@ -7,5 +7,5 @@ defprotocol ViralSpiral.Room.State.Change do
   - change_description: a Keyword List with parameters defining the change
   """
   @spec apply_change(t(), keyword()) :: t()
-  def apply_change(score, change_description)
+  def apply_change(state, change_description)
 end

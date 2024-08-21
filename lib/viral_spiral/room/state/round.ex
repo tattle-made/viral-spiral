@@ -24,6 +24,8 @@ defmodule ViralSpiral.Room.State.Round do
   # Doubt
   should it use game to initialize or players?
   """
+  alias ViralSpiral.Room.State.Change
+  alias ViralSpiral.Game.Player
 
   # alias ViralSpiral.Game.Player
 
@@ -31,6 +33,8 @@ defmodule ViralSpiral.Room.State.Round do
             count: 0,
             current: 0,
             skip: nil
+
+  @type change_opts :: [type: :next]
 
   @type t :: %__MODULE__{
           order: list(String.t()),
@@ -42,7 +46,8 @@ defmodule ViralSpiral.Room.State.Round do
   @doc """
   todo : this doesn't really need the players, merely a count of players, maybe?
   """
-  def new(player_list) do
+  @spec new(list(Player.t())) :: ViralSpiral.Room.State.Round.t()
+  def new(player_list) when is_list(player_list) do
     order =
       Enum.shuffle(player_list)
       |> Enum.map(& &1.id)
@@ -107,5 +112,16 @@ defmodule ViralSpiral.Room.State.Round do
       end
 
     Map.merge(round, changes)
+  end
+
+  defimpl Change do
+    alias ViralSpiral.Room.State.Round
+
+    @spec apply_change(Round.t(), Round.change_opts()) :: Round.t()
+    def apply_change(state, opts) do
+      case opts[:type] do
+        :next -> Round.next(state)
+      end
+    end
   end
 end

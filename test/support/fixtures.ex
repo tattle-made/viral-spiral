@@ -51,4 +51,15 @@ defmodule Fixtures do
   def card_affinity() do
     Card.new(:affinity)
   end
+
+  def player_list() do
+    room_config = %RoomConfig{}
+
+    [
+      Player.new(room_config) |> Player.set_name("adhiraj"),
+      Player.new(room_config) |> Player.set_name("aman"),
+      Player.new(room_config) |> Player.set_name("krys"),
+      Player.new(room_config) |> Player.set_name("farah")
+    ]
+  end
 end

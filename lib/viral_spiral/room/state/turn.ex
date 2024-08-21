@@ -7,6 +7,7 @@ defmodule ViralSpiral.Room.State.Turn do
 
   todo : could the field be actions and not tied to every concrete thing like pass, discard etc.
   """
+  alias ViralSpiral.Room.State.Change
   alias ViralSpiral.Room.State.Turn
   alias ViralSpiral.Room.State.Round
 
@@ -61,6 +62,11 @@ defmodule ViralSpiral.Room.State.Turn do
     )
   end
 
-  def change(%Turn{} = _turn) do
+  defimpl Change do
+    def apply_change(turn, opts) do
+      case opts[:type] do
+        :next -> Turn.next(turn, opts[:target])
+      end
+    end
   end
 end
