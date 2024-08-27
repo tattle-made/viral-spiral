@@ -1,6 +1,6 @@
 defprotocol ViralSpiral.Room.State.Change do
   @moduledoc """
-  Protocol to change scores used in Viral Spiral.
+  Protocol to change scores used in Viral Spiral. Change game's state.
 
   ## Fields
   - score: struct which implements the `Change` protocol

@@ -36,7 +36,17 @@ defmodule ViralSpiral.MixProject do
           Score: [~r"ViralSpiral.Score"],
           "User Interface": [~r"ViralSpiralWeb"],
           Context: [~r"ViralSpiral"]
-        ]
+        ],
+        before_closing_body_tag: fn
+          :html ->
+            """
+            <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+            <script>mermaid.initialize({startOnLoad: true})</script>
+            """
+
+          _ ->
+            ""
+        end
       ]
     ]
   end
@@ -80,7 +90,8 @@ defmodule ViralSpiral.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:plug_cowboy, "~> 2.5"},
       {:uxid, "~> 0.2"},
-      {:ex_doc, "~> 0.31", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.31", only: :dev, runtime: false},
+      {:csv, "~> 3.2"}
     ]
   end
 

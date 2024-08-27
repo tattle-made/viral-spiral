@@ -1,13 +1,4 @@
 defmodule ViralSpiral.Game.State do
-  defstruct room_config: nil,
-            room: nil,
-            player_list: nil,
-            player_map: nil,
-            room_score: nil,
-            player_scores: nil,
-            round: nil,
-            turn: nil
-
   @moduledoc """
   Context for the game.
 
@@ -17,8 +8,37 @@ defmodule ViralSpiral.Game.State do
   During a Round every player gets to draw a card and then take some actions.
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
+
+  alias ViralSpiral.Room.State.Round
+  alias ViralSpiral.Room.State.Room
+  alias ViralSpiral.Game.Player
+  alias ViralSpiral.Room.State.Player
+  alias ViralSpiral.Game.Room
+  alias ViralSpiral.Game.RoomConfig
   alias ViralSpiral.Game.State
   alias ViralSpiral.Score.Change
+
+  defstruct room_config: nil,
+            room: nil,
+            player_list: nil,
+            player_map: nil,
+            room_score: nil,
+            player_scores: nil,
+            round: nil,
+            turn: nil,
+            deck: nil
+
+  # @type t :: %__MODULE__{
+  #         room_config: RoomConfig.t(),
+  #         room: Room.t(),
+  #         player_list: list(Player.t()),
+  #         player_map: map(String.t(), Player.t()),
+  #         room_score: Room.t(),
+  #         player_scores: map(String.t(), Room.t()),
+  #         round: Round.t(),
+  #         turn: Turn.t(),
+  #         deck: Deck.t()
+  #       }
 
   def set_round(%State{} = game, round) do
     %State{game | round: round}
