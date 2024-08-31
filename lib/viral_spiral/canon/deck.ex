@@ -2,7 +2,7 @@ defmodule ViralSpiral.Canon.Deck do
   @moduledoc """
   Loads data from .csv files.
 
-  Viral Spiral writers use Google Sheet to organize the text content for the game.
+  Viral Spiral writers use Google Sheet to organize the text content for the game. The current sheet is [here](https://docs.google.com/spreadsheets/d/1070fP6LOjCTfLl7SoQuGA4FxNJ3XLWbzZj35eABizgk/edit?usp=sharing)
   Each sheet within the sheet is exported as .csv files and stored in the `priv/canon/` directory. This module encodes the conventions used by the writers in the file to generate structured data structures from the csv file. It also converts the structured data into datastructures optimized for the game's requirements.
 
   <div class="mermaid">
@@ -15,15 +15,27 @@ defmodule ViralSpiral.Canon.Deck do
 
   Store is a Map of all cards. Keys in this Map are unique ids for every card and the values are cards (`ViralSpiral.Canon.Card.Affinity`, `ViralSpiral.Canon.Card.Bias`, `ViralSpiral.Canon.Card.Topical` and `ViralSpiral.Canon.Card.Conflated`).
 
-  Sets is a Map of cards. Keys of this Map are a tuple of the form `{type, veracity, target}`. Value of this Map is `MapSet` of cards.
-
+  Sets is a Map of cards. Keys of this Map are a tuple of the form `{type, veracity, target}`. Value of this Map is `MapSet` of cards. For instance, for a room where the active affinities are :cat and :sock; and the active communities are :red and :yellow; the Sets would have the following keys :
+  [
+    {:conflated, false},
+    {:topical, false},
+    {:topical, true},
+    {:affinity, false, :cat},
+    {:affinity, false, :sock},
+    {:affinity, true, :cat},
+    {:affinity, true, :sock},
+    {:bias, false, :red},
+    {:bias, false, :yellow},
+    {:bias, true, :red},
+    {:bias, true, :yellow}
+  ]
 
 
   ## Example Usage
   ```elixir
   cards = Deck.load_cards()
   store = Deck.create_store(cards)
-  sets = Deck.create_sets(store)
+  sets = Deck.create_sets(cards)
 
   card_id = Deck.draw_card(deck, type: :affinity, veracity: true, tgb: 0, target: :skub)
   card_id = Deck.draw_card(deck, type: :bias, veracity: true, tgb: 0, target: :red)
@@ -83,6 +95,7 @@ defmodule ViralSpiral.Canon.Deck do
     conflated_image: 41
   }
   @set_opts_default [affinities: [:cat, :sock], biases: [:red, :yellow]]
+  @card_master_sheet "all_cards.csv"
 
   def load_cards() do
     parse_file()
@@ -129,7 +142,7 @@ defmodule ViralSpiral.Canon.Deck do
   end
 
   defp parse_file() do
-    File.stream!(Path.join([File.cwd!(), "priv", "canon", "all_cards.csv"]))
+    File.stream!(Path.join([File.cwd!(), "priv", "canon", @card_master_sheet]))
     |> CSV.decode()
   end
 
@@ -495,5 +508,36 @@ defmodule ViralSpiral.Canon.Deck do
     else
       key
     end
+  end
+
+  @doc """
+  Determines what type of card to draw.
+
+  Returns a tuple that should be a valid key of a Store.
+
+  [
+    {:conflated, false},
+    {:topical, false},
+    {:topical, true},
+    {:affinity, false, :cat},
+    {:affinity, false, :sock},
+    {:affinity, true, :cat},
+    {:affinity, true, :sock},
+    {:bias, false, :red},
+    {:bias, false, :yellow},
+    {:bias, true, :red},
+    {:bias, true, :yellow}
+  ]
+
+  """
+  def draw_type(opts \\ []) do
+    tgb = 4
+
+    bias_p = :rand.uniform()
+    fake_p = :rand.uniform()
+    draw_affinity = :rand.uniform() < 0.5
+    draw_topical = not draw_affinity
+    draw_true = :rand.uniform() < 1 - 1 / 10
+    {bias_p, fake_p, draw_affinity, draw_topical, draw_true}
   end
 end
