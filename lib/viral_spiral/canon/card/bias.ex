@@ -6,5 +6,6 @@ defmodule ViralSpiral.Canon.Card.Bias do
             veracity: nil,
             polarity: :neutral,
             headline: nil,
-            image: nil
+            image: nil,
+            article_id: nil
 end

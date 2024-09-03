@@ -1,7 +1,8 @@
 defmodule ViralSpiral.Game.Player do
+  alias ViralSpiral.Bias
   alias ViralSpiral.Deck.Card
   alias ViralSpiral.Game.Player
-  alias ViralSpiral.Game.RoomConfig
+  alias ViralSpiral.Game.EngineConfig
 
   defstruct id: "",
             name: "",
@@ -11,7 +12,7 @@ defmodule ViralSpiral.Game.Player do
   @type t :: %__MODULE__{
           id: String.t(),
           name: String.t(),
-          identity: atom(),
+          identity: Bias.targets(),
           hand: list(Card.t())
         }
 
@@ -21,7 +22,7 @@ defmodule ViralSpiral.Game.Player do
     }
   end
 
-  def new(%RoomConfig{} = room_config) do
+  def new(%EngineConfig{} = room_config) do
     %Player{
       id: UXID.generate!(prefix: "player", size: :small),
       identity: Enum.shuffle(room_config.communities) |> Enum.at(0)
@@ -34,5 +35,10 @@ defmodule ViralSpiral.Game.Player do
 
   def set_identity(%Player{} = player, identity) do
     %{player | identity: identity}
+  end
+
+  @spec identity(Player.t()) :: Bias.target() | nil
+  def identity(%Player{} = player) do
+    player.identity
   end
 end

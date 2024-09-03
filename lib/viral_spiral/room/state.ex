@@ -10,11 +10,11 @@ defmodule ViralSpiral.Game.State do
   """
 
   alias ViralSpiral.Room.State.Round
-  alias ViralSpiral.Room.State.Room
+  alias ViralSpiral.Room.State.Room, as: RoomState
   alias ViralSpiral.Game.Player
   alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Game.Room
-  alias ViralSpiral.Game.RoomConfig
+  alias ViralSpiral.Game.EngineConfig
   alias ViralSpiral.Game.State
   alias ViralSpiral.Score.Change
 
@@ -28,17 +28,17 @@ defmodule ViralSpiral.Game.State do
             turn: nil,
             deck: nil
 
-  # @type t :: %__MODULE__{
-  #         room_config: RoomConfig.t(),
-  #         room: Room.t(),
-  #         player_list: list(Player.t()),
-  #         player_map: map(String.t(), Player.t()),
-  #         room_score: Room.t(),
-  #         player_scores: map(String.t(), Room.t()),
-  #         round: Round.t(),
-  #         turn: Turn.t(),
-  #         deck: Deck.t()
-  #       }
+  @type t :: %__MODULE__{
+          room_config: EngineConfig.t(),
+          room: RoomState.t(),
+          player_list: list(Player.t()),
+          player_map: map(),
+          room_score: Room.t(),
+          player_scores: map(),
+          round: Round.t()
+          # turn: Turn.t(),
+          # deck: Deck.t()
+        }
 
   def set_round(%State{} = game, round) do
     %State{game | round: round}

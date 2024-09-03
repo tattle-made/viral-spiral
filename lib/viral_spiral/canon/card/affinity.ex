@@ -6,7 +6,8 @@ defmodule ViralSpiral.Canon.Card.Affinity do
             veracity: nil,
             polarity: nil,
             headline: nil,
-            image: nil
+            image: nil,
+            article_id: nil
 end
 
 # defmodule ViralSpiral.Canon.Card.Affinity.Cat do

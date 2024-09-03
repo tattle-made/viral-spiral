@@ -10,9 +10,9 @@ defmodule ViralSpiral.Room.State.Player do
     }
   """
   alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Game.RoomConfig
+  alias ViralSpiral.Game.EngineConfig
   alias ViralSpiral.Game.Player, as: PlayerData
-  import ViralSpiral.Game.RoomConfig.Guards
+  import ViralSpiral.Game.EngineConfig.Guards
   alias ViralSpiral.Room.State.Change
 
   defstruct biases: %{}, affinities: %{}, clout: 0
@@ -24,11 +24,11 @@ defmodule ViralSpiral.Room.State.Player do
           clout: integer()
         }
 
-  @spec new(t(), %ViralSpiral.Game.RoomConfig{
+  @spec new(t(), %ViralSpiral.Game.EngineConfig{
           :affinities => list(),
           :communities => list()
         }) :: t()
-  def new(%PlayerData{} = player, %RoomConfig{} = room_config) do
+  def new(%PlayerData{} = player, %EngineConfig{} = room_config) do
     bias_list = Enum.filter(room_config.communities, &(&1 != player.identity))
     bias_map = Enum.reduce(bias_list, %{}, fn x, acc -> Map.put(acc, x, 0) end)
 

@@ -31,6 +31,7 @@ defmodule ViralSpiral.MixProject do
           Guides: Path.wildcard("docs/guides/*.md")
         ],
         groups_for_modules: [
+          Structures: [~r"ViralSpiral.Canon.Card"],
           "Game Text": [~r"ViralSpiral.Canon"],
           "Data Model": [~r"ViralSpiral.Game"],
           Score: [~r"ViralSpiral.Score"],

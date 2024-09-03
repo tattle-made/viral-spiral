@@ -16,6 +16,7 @@ defmodule ViralSpiral.Canon.Deck do
   Store is a Map of all cards. Keys in this Map are unique ids for every card and the values are cards (`ViralSpiral.Canon.Card.Affinity`, `ViralSpiral.Canon.Card.Bias`, `ViralSpiral.Canon.Card.Topical` and `ViralSpiral.Canon.Card.Conflated`).
 
   Sets is a Map of cards. Keys of this Map are a tuple of the form `{type, veracity, target}`. Value of this Map is `MapSet` of cards. For instance, for a room where the active affinities are :cat and :sock; and the active communities are :red and :yellow; the Sets would have the following keys :
+  ```elixir
   [
     {:conflated, false},
     {:topical, false},
@@ -29,6 +30,7 @@ defmodule ViralSpiral.Canon.Deck do
     {:bias, true, :red},
     {:bias, true, :yellow}
   ]
+  ```
 
 
   ## Example Usage
@@ -37,15 +39,33 @@ defmodule ViralSpiral.Canon.Deck do
   store = Deck.create_store(cards)
   sets = Deck.create_sets(cards)
 
-  card_id = Deck.draw_card(deck, type: :affinity, veracity: true, tgb: 0, target: :skub)
-  card_id = Deck.draw_card(deck, type: :bias, veracity: true, tgb: 0, target: :red)
-  card_id = Deck.draw_card(deck, type: :topical, veracity: true, tgb: 0)
+  requirements = %{
+    tgb: 4,
+    total_tgb: 10,
+    biases: [:red, :blue],
+    affinities: [:cat, :sock],
+    current_player: %{
+      identity: :blue
+    }
+  }
+  # or
+  requirements = CardDrawSpec.new(game_state)
 
-  card_data = store[card]
+  card_opts = Deck.draw_type(requirements)
+
+  card_id = Deck.draw_card(sets, card_opts)
+
+  # Some detailed example of drawing cards with specific characteristics
+  card_id = Deck.draw_card(sets, type: :affinity, veracity: true, tgb: 0, target: :skub)
+  card_id = Deck.draw_card(sets, type: :bias, veracity: true, tgb: 0, target: :red)
+  card_id = Deck.draw_card(sets, type: :topical, veracity: true, tgb: 0)
+
+  card_data = store[card_id]
   ```
   Read documentation of `draw_card` to see more examples of the responses.
 
   """
+  alias ViralSpiral.Canon.Card.Conflated
   alias ViralSpiral.Canon.Card.Affinity
   alias ViralSpiral.Canon.Card.Bias
   alias ViralSpiral.Canon.Card.Topical
@@ -165,23 +185,39 @@ defmodule ViralSpiral.Canon.Deck do
   defp split_row_into_cards(row) do
     tgb = String.to_integer(Enum.at(row, 0))
 
+    topical_card_id = card_id(Enum.at(row, @columns.topical))
+    anti_red_card_id = card_id(Enum.at(row, @columns.anti_red))
+    anti_blue_card_id = card_id(Enum.at(row, @columns.anti_blue))
+    anti_yellow_card_id = card_id(Enum.at(row, @columns.anti_yellow))
+    pro_cat_card_id = card_id(Enum.at(row, @columns.pro_cat))
+    anti_cat_card_id = card_id(Enum.at(row, @columns.anti_cat))
+    pro_sock_card_id = card_id(Enum.at(row, @columns.pro_sock))
+    anti_sock_card_id = card_id(Enum.at(row, @columns.anti_sock))
+    pro_skub_card_id = card_id(Enum.at(row, @columns.pro_skub))
+    anti_skub_card_id = card_id(Enum.at(row, @columns.anti_skub))
+    pro_high_five_card_id = card_id(Enum.at(row, @columns.pro_high_five))
+    anti_high_five_card_id = card_id(Enum.at(row, @columns.anti_highfive))
+    pro_houseboat_card_id = card_id(Enum.at(row, @columns.pro_houseboat))
+    anti_houseboat_card_id = card_id(Enum.at(row, @columns.anti_houseboat))
+    conflated_card_id = card_id(Enum.at(row, @columns.conflated))
+
     [
       %Topical{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: topical_card_id,
         tgb: tgb,
         veracity: true,
         headline: Enum.at(row, @columns.topical),
         image: Enum.at(row, @columns.topical_image)
       },
       %Topical{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: topical_card_id,
         tgb: tgb,
         veracity: false,
         headline: Enum.at(row, @columns.topical_fake),
         image: Enum.at(row, @columns.topical_image)
       },
       %Bias{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_red_card_id,
         tgb: tgb,
         target: :red,
         veracity: true,
@@ -189,7 +225,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_red_image)
       },
       %Bias{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_red_card_id,
         tgb: tgb,
         target: :red,
         veracity: false,
@@ -197,7 +233,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_red_image)
       },
       %Bias{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_blue_card_id,
         tgb: tgb,
         target: :blue,
         veracity: true,
@@ -205,7 +241,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_blue_image)
       },
       %Bias{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_blue_card_id,
         tgb: tgb,
         target: :blue,
         veracity: false,
@@ -213,7 +249,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_blue_image)
       },
       %Bias{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_yellow_card_id,
         tgb: tgb,
         target: :yellow,
         veracity: true,
@@ -221,7 +257,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_yellow_image)
       },
       %Bias{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_yellow_card_id,
         tgb: tgb,
         target: :yellow,
         veracity: false,
@@ -229,7 +265,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_yellow_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: pro_cat_card_id,
         tgb: tgb,
         target: :cat,
         veracity: true,
@@ -238,7 +274,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.pro_cat_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: pro_cat_card_id,
         tgb: tgb,
         target: :cat,
         veracity: false,
@@ -247,7 +283,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.pro_cat_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_cat_card_id,
         tgb: tgb,
         target: :cat,
         veracity: true,
@@ -256,7 +292,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_cat_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_cat_card_id,
         tgb: tgb,
         target: :cat,
         veracity: false,
@@ -265,7 +301,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_cat_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: pro_sock_card_id,
         tgb: tgb,
         target: :sock,
         veracity: true,
@@ -274,7 +310,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.pro_sock_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: pro_sock_card_id,
         tgb: tgb,
         target: :sock,
         veracity: false,
@@ -283,7 +319,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.pro_sock_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_sock_card_id,
         tgb: tgb,
         target: :sock,
         veracity: true,
@@ -292,7 +328,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_sock_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_sock_card_id,
         tgb: tgb,
         target: :sock,
         veracity: false,
@@ -301,7 +337,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_sock_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: pro_skub_card_id,
         tgb: tgb,
         target: :skub,
         veracity: true,
@@ -310,7 +346,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.pro_skub_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: pro_skub_card_id,
         tgb: tgb,
         target: :skub,
         veracity: false,
@@ -319,7 +355,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.pro_skub_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_skub_card_id,
         tgb: tgb,
         target: :skub,
         veracity: true,
@@ -328,7 +364,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_skub_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_skub_card_id,
         tgb: tgb,
         target: :skub,
         veracity: false,
@@ -337,7 +373,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_skub_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: pro_high_five_card_id,
         tgb: tgb,
         target: :high_five,
         veracity: true,
@@ -346,7 +382,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.pro_high_five_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: pro_high_five_card_id,
         tgb: tgb,
         target: :highfive,
         veracity: false,
@@ -355,7 +391,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.pro_high_five_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_high_five_card_id,
         tgb: tgb,
         target: :highfive,
         veracity: true,
@@ -364,7 +400,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_highfive_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_high_five_card_id,
         tgb: tgb,
         target: :highfive,
         veracity: false,
@@ -373,7 +409,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_highfive_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: pro_houseboat_card_id,
         tgb: tgb,
         target: :houseboat,
         veracity: true,
@@ -382,7 +418,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.pro_houseboat_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: pro_houseboat_card_id,
         tgb: tgb,
         target: :houseboat,
         veracity: false,
@@ -391,7 +427,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.pro_houseboat_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_houseboat_card_id,
         tgb: tgb,
         target: :houseboat,
         veracity: true,
@@ -400,7 +436,7 @@ defmodule ViralSpiral.Canon.Deck do
         image: Enum.at(row, @columns.anti_houseboat_image)
       },
       %Affinity{
-        id: UXID.generate!(prefix: "card", size: :small),
+        id: anti_houseboat_card_id,
         tgb: tgb,
         target: :houseboat,
         veracity: false,
@@ -408,25 +444,20 @@ defmodule ViralSpiral.Canon.Deck do
         headline: Enum.at(row, @columns.anti_houseboat),
         image: Enum.at(row, @columns.anti_houseboat_image)
       },
-      %{
-        id: UXID.generate!(prefix: "card", size: :small),
+      %Conflated{
+        id: conflated_card_id,
         tgb: tgb,
         type: :conflated,
         veracity: false,
         polarity: :neutral,
         headline: Enum.at(row, @columns.conflated),
         image: Enum.at(row, @columns.conflated_image)
-      },
-      %{
-        id: UXID.generate!(prefix: "card", size: :small),
-        tgb: tgb,
-        type: :conflated,
-        veracity: false,
-        polarity: :negative,
-        headline: Enum.at(row, @columns.conflated),
-        image: Enum.at(row, @columns.conflated_image)
       }
     ]
+  end
+
+  defp card_id(headline) do
+    "card_" <> Integer.to_string(:erlang.phash2(headline))
   end
 
   @doc """
@@ -529,15 +560,67 @@ defmodule ViralSpiral.Canon.Deck do
     {:bias, true, :yellow}
   ]
 
+  requirements = %{
+    tgb: 4,
+    total_tgb: 10,
+    biases: [:red, :blue],
+    affinities: [:cat, :sock],
+    current_player: %{
+      identity: :blue
+    }
+  }
   """
-  def draw_type(opts \\ []) do
-    tgb = 4
+  def draw_type(requirements) do
+    type =
+      case :rand.uniform() do
+        a when a < 0.2 -> :bias
+        a when a >= 0.2 and a < 0.6 -> :topical
+        a when a >= 0.6 and a <= 1 -> :affinity
+      end
 
-    bias_p = :rand.uniform()
-    fake_p = :rand.uniform()
-    draw_affinity = :rand.uniform() < 0.5
-    draw_topical = not draw_affinity
-    draw_true = :rand.uniform() < 1 - 1 / 10
-    {bias_p, fake_p, draw_affinity, draw_topical, draw_true}
+    veracity =
+      case :rand.uniform() do
+        a when a < requirements.tgb / requirements.total_tgb -> true
+        _ -> false
+      end
+
+    target =
+      case type do
+        :bias -> pick_one(requirements.biases, exclude: requirements.current_player.identity)
+        :affinity -> pick_one(requirements.affinities)
+        :topical -> nil
+      end
+
+    [type: type, veracity: veracity]
+    |> then(fn type ->
+      case target do
+        nil -> type
+        _ -> type |> Keyword.put(:target, target)
+      end
+    end)
+  end
+
+  def pick_one(list, opts \\ []) do
+    exclude = opts[:exclude]
+    list = list |> Enum.filter(&(&1 != exclude))
+
+    ix = :rand.uniform(length(list)) - 1
+    Enum.at(list, ix)
+  end
+
+  def link(cards, articles) do
+    cards
+    |> Enum.map(fn card ->
+      try do
+        if card.type == :conflated do
+          IO.inspect(card)
+        end
+
+        article_id = articles[{card.id, card.veracity}]
+        %{card | article_id: article_id}
+      rescue
+        KeyError -> card
+      end
+    end)
   end
 end

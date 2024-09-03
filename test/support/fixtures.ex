@@ -4,14 +4,14 @@ defmodule Fixtures do
   alias ViralSpiral.Room.State.Turn
   alias ViralSpiral.Room.State.Round
   alias ViralSpiral.Room.State.Room
-  alias ViralSpiral.Game.RoomConfig
+  alias ViralSpiral.Game.EngineConfig
   alias ViralSpiral.Room.State.Player, as: PlayerScore
   # alias ViralSpiral.Game.Score.Room, as: RoomScore
   alias ViralSpiral.Game.Player
   alias ViralSpiral.Game.State
 
   def initialized_game() do
-    room_config = %RoomConfig{}
+    room_config = %EngineConfig{}
 
     player_list = [
       Player.new(room_config) |> Player.set_name("adhiraj"),
@@ -53,7 +53,7 @@ defmodule Fixtures do
   end
 
   def player_list() do
-    room_config = %RoomConfig{}
+    room_config = %EngineConfig{}
 
     [
       Player.new(room_config) |> Player.set_name("adhiraj"),

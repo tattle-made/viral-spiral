@@ -1,11 +1,11 @@
 defmodule ViralSpiral.Game.ScoreTest do
   alias ViralSpiral.Game.Score.Player, as: PlayerScore
-  alias ViralSpiral.Game.RoomConfig
+  alias ViralSpiral.Game.EngineConfig
   alias ViralSpiral.Game.Player
   use ExUnit.Case
 
   setup_all do
-    room_config = %RoomConfig{}
+    room_config = %EngineConfig{}
     player = Player.new(room_config) |> Player.set_identity("yellow")
     player_score = PlayerScore.new(player, room_config)
 

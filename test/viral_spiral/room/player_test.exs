@@ -1,10 +1,10 @@
 defmodule ViralSpiral.Game.PlayerTest do
   alias ViralSpiral.Game.Player
-  alias ViralSpiral.Game.RoomConfig
+  alias ViralSpiral.Game.EngineConfig
   use ExUnit.Case
 
   test "create player from room config" do
-    room_config = %RoomConfig{}
+    room_config = %EngineConfig{}
 
     player =
       Player.new(room_config)
