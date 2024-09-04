@@ -15,7 +15,7 @@ end
 
 defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Topical do
   def pass(card, state, from, to) do
-    IO.inspect("returning changes for Bias card")
+    # IO.inspect("returning changes for Bias card")
   end
 
   def keep(card, state, from) do
@@ -73,7 +73,7 @@ end
 
 defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Conflated do
   def pass(card, state, from, to) do
-    IO.inspect("returning changes for Bias card")
+    # IO.inspect("returning changes for Bias card")
   end
 
   def keep(card, state, from) do

@@ -59,6 +59,10 @@ defmodule ViralSpiral.Canon.Encyclopedia do
   """
   def create_store(articles) do
     articles
-    |> Enum.reduce(%{}, fn el, acc -> Map.put(acc, {el.card_id, el.veracity}, el.id) end)
+    |> Enum.reduce(%{}, fn el, acc -> Map.put(acc, {el.card_id, el.veracity}, el) end)
+  end
+
+  def get_article_by_card(article_store, card) do
+    article_store[{card.id, card.veracity}]
   end
 end

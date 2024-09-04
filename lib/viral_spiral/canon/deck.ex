@@ -136,7 +136,7 @@ defmodule ViralSpiral.Canon.Deck do
     Enum.reduce(
       cards,
       %{},
-      &Map.put(&2, &1.id, &1)
+      &Map.put(&2, {&1.id, &1.veracity}, &1)
     )
   end
 
@@ -315,7 +315,7 @@ defmodule ViralSpiral.Canon.Deck do
         target: :sock,
         veracity: false,
         polarity: :positive,
-        headline: Enum.at(row, @columns.pro_sock),
+        headline: Enum.at(row, @columns.pro_sock_fake),
         image: Enum.at(row, @columns.pro_sock_image)
       },
       %Affinity{
@@ -333,7 +333,7 @@ defmodule ViralSpiral.Canon.Deck do
         target: :sock,
         veracity: false,
         polarity: :negative,
-        headline: Enum.at(row, @columns.anti_sock),
+        headline: Enum.at(row, @columns.anti_sock_fake),
         image: Enum.at(row, @columns.anti_sock_image)
       },
       %Affinity{
@@ -351,7 +351,7 @@ defmodule ViralSpiral.Canon.Deck do
         target: :skub,
         veracity: false,
         polarity: :positive,
-        headline: Enum.at(row, @columns.pro_skub),
+        headline: Enum.at(row, @columns.pro_skub_fake),
         image: Enum.at(row, @columns.pro_skub_image)
       },
       %Affinity{
@@ -369,7 +369,7 @@ defmodule ViralSpiral.Canon.Deck do
         target: :skub,
         veracity: false,
         polarity: :negative,
-        headline: Enum.at(row, @columns.anti_skub),
+        headline: Enum.at(row, @columns.anti_skub_fake),
         image: Enum.at(row, @columns.anti_skub_image)
       },
       %Affinity{
@@ -387,7 +387,7 @@ defmodule ViralSpiral.Canon.Deck do
         target: :highfive,
         veracity: false,
         polarity: :positive,
-        headline: Enum.at(row, @columns.pro_high_five),
+        headline: Enum.at(row, @columns.pro_high_five_fake),
         image: Enum.at(row, @columns.pro_high_five_image)
       },
       %Affinity{
@@ -405,7 +405,7 @@ defmodule ViralSpiral.Canon.Deck do
         target: :highfive,
         veracity: false,
         polarity: :negative,
-        headline: Enum.at(row, @columns.anti_highfive),
+        headline: Enum.at(row, @columns.anti_highfive_fake),
         image: Enum.at(row, @columns.anti_highfive_image)
       },
       %Affinity{
@@ -456,7 +456,12 @@ defmodule ViralSpiral.Canon.Deck do
     ]
   end
 
-  defp card_id(headline) do
+  @doc """
+  Generate a hash of the card headline.
+
+  Throughout the csv files, viral spiral writers use the card headline as a link between various sheets and rows.
+  """
+  def card_id(headline) do
     "card_" <> Integer.to_string(:erlang.phash2(headline))
   end
 
@@ -523,7 +528,9 @@ defmodule ViralSpiral.Canon.Deck do
   end
 
   defp choose_one(list) do
-    list |> Enum.shuffle() |> Enum.take(1) |> hd |> Map.get(:id)
+    ix = :rand.uniform(list |> Enum.to_list() |> length)
+
+    list |> Enum.at(ix) |> Map.get(:id)
   end
 
   def key(card) do
@@ -613,14 +620,26 @@ defmodule ViralSpiral.Canon.Deck do
     |> Enum.map(fn card ->
       try do
         if card.type == :conflated do
-          IO.inspect(card)
+          # IO.inspect(card)
         end
 
-        article_id = articles[{card.id, card.veracity}]
-        %{card | article_id: article_id}
+        article = articles[{card.id, card.veracity}]
+        %{card | article_id: article.id}
       rescue
         KeyError -> card
       end
     end)
+  end
+
+  def get_fake_card(store, card_id) when is_bitstring(card_id) do
+    store[{card_id, false}]
+  end
+
+  def get_fake_card(store, card) do
+    store[{card.id, false}]
+  end
+
+  def substitute_text(state, card) do
+    card
   end
 end

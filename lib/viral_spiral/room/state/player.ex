@@ -9,6 +9,8 @@ defmodule ViralSpiral.Room.State.Player do
       clout: 0
     }
   """
+  alias ViralSpiral.Bias
+  alias ViralSpiral.Affinity
   alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Game.EngineConfig
   alias ViralSpiral.Game.Player, as: PlayerData
@@ -25,8 +27,8 @@ defmodule ViralSpiral.Room.State.Player do
         }
 
   @spec new(t(), %ViralSpiral.Game.EngineConfig{
-          :affinities => list(),
-          :communities => list()
+          :affinities => list(Affinity.t()),
+          :communities => list(Bias.t())
         }) :: t()
   def new(%PlayerData{} = player, %EngineConfig{} = room_config) do
     bias_list = Enum.filter(room_config.communities, &(&1 != player.identity))
