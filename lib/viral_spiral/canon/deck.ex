@@ -507,22 +507,6 @@ defmodule ViralSpiral.Canon.Deck do
     |> MapSet.new()
   end
 
-  defp filter_affinity(deck, affinity) do
-    deck
-    |> Enum.filter(&(&1.target == affinity))
-    |> MapSet.new()
-  end
-
-  defp filter_bias(deck, bias) do
-    deck
-    |> Enum.filter(&(&1.target == bias))
-    |> MapSet.new()
-  end
-
-  defp set(list) do
-    list |> MapSet.new()
-  end
-
   defp id_tgb(card) do
     %{id: card.id, tgb: card.tgb}
   end
@@ -637,9 +621,5 @@ defmodule ViralSpiral.Canon.Deck do
 
   def get_fake_card(store, card) do
     store[{card.id, false}]
-  end
-
-  def substitute_text(state, card) do
-    card
   end
 end

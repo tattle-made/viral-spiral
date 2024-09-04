@@ -6,7 +6,6 @@ defmodule ViralSpiral.Game do
   alias ViralSpiral.Game.State
   alias ViralSpiral.Game.Score.Player
   alias ViralSpiral.Game.Player
-  alias ViralSpiral.Deck.Card
   alias ViralSpiral.Game.Room
 
   @spec create_room(String.t()) :: Room.t()
@@ -22,8 +21,8 @@ defmodule ViralSpiral.Game do
   """
   # @spec pass_card(Player.t(), Card.t()) :: list(Change.t())
   def pass_card(state, card, %Player{} = from, %Player{} = to) do
-    changes = Share.pass(card, state, from, to)
-    State.apply_changes(state, changes)
+    # _changes = Share.pass(card, state, from, to)
+    # State.apply_changes(state, changes)
     # changes =
     #   case card.type do
     #     :affinity -> [{state.player_scores[from.id], [type: :inc, target: :affinity, count: 1]}]

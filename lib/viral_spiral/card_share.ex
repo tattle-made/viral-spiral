@@ -14,14 +14,14 @@ defprotocol ViralSpiral.CardShare do
 end
 
 defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Topical do
-  def pass(card, state, from, to) do
+  def pass(_card, _state, _from, _to) do
     # IO.inspect("returning changes for Bias card")
   end
 
-  def keep(card, state, from) do
+  def keep(_card, _state, _from) do
   end
 
-  def discard(card, state, from) do
+  def discard(_card, _state, _from) do
   end
 end
 
@@ -56,43 +56,43 @@ defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Topical do
 
   # Increase passing player's clout
   # Update the turn
-  def pass(card, %State{} = state, from, to) do
+  def pass(_card, %State{} = state, from, _to) do
     [
       {state.player_map[from], [type: :clout, offset: 1]},
       {state.turn, [type: :end]}
     ]
   end
 
-  def keep(card, state, from) do
+  def keep(_card, _state, _from) do
     {}
   end
 
-  def discard(card, state, from) do
+  def discard(_card, _state, _from) do
   end
 end
 
 defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Conflated do
-  def pass(card, state, from, to) do
+  def pass(_card, _state, _from, _to) do
     # IO.inspect("returning changes for Bias card")
   end
 
-  def keep(card, state, from) do
+  def keep(_card, _state, _from) do
   end
 
-  def discard(card, state, from) do
+  def discard(_card, _state, _from) do
   end
 end
 
 defimpl ViralSpiral.CardShare, for: Any do
-  def pass(_card, state, from, to) do
+  def pass(_card, state, _from, _to) do
     state
   end
 
-  def keep(_card, state, from) do
+  def keep(_card, state, _from) do
     state
   end
 
-  def discard(_card, state, from) do
+  def discard(_card, state, _from) do
     state
   end
 end

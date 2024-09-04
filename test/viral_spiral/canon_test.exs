@@ -67,23 +67,5 @@ defmodule ViralSpiral.CanonTest do
 
       %{cards: cards, store: store, sets: sets, game: game}
     end
-
-    test "card text replacement for card with dominant community", state do
-      # todo game needs helper functions for
-      # oppressed community, dominant community etc
-      game_state = state[:game]
-      player_scores = game_state.player_scores
-      card_store = state[:store]
-
-      headline = "(dominant capes) hold march through City, police joins in"
-      card_id = Deck.card_id(headline)
-      card = card_store[{card_id, true}]
-
-      card = Deck.substitute_text(game_state, card) |> IO.inspect()
-      assert String.contains?(card.headline, "(dominant capes)") == false
-
-      # players = Fixtures.player_list() |> IO.inspect()
-      # player_score_list = Fixtures.player_score_list(players)
-    end
   end
 end
