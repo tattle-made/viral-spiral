@@ -9,12 +9,14 @@ defmodule ViralSpiral.Canon.DynamicCard do
   Supported placeholders are : (other community), (dominant community), (oppressed community), (unpopular affinity), (popular affinity).
 
   ## Example Usage
+  ```elixir
   headline = "People who like (unpopular affinity) are usually (dominant community)"
   matches = DynamicCard.find_placeholders(headline)
   replacements = %{
     unpopular_affinity: :skub,
     dominant_community: :red
   }
+  ```
 
   new_headline = DynamicCard.replace_text(headline, matches, replacements)
 
@@ -37,6 +39,24 @@ defmodule ViralSpiral.Canon.DynamicCard do
                         Map.put(acc, elem(x, 1), elem(x, 0))
                       end)
 
+  @type match ::
+          :other_community
+          | :dominant_community
+          | :oppressed_community
+          | :unpopular_affinity
+          | :popular_community
+  @type replacements :: %{
+          optional(:other_community) => Bias.target(),
+          optional(:dominant_community) => Bias.target(),
+          optional(:oppressed_community) => Bias.target(),
+          optional(:unpopular_affinity) => Affinity.target(),
+          optional(:popular_community) => Affinity.target()
+        }
+
+  @doc """
+  Find types of placeholders present in a card headline
+  """
+  @spec find_placeholders(String.t()) :: list(match())
   def find_placeholders(headline) do
     results =
       Regex.scan(
@@ -49,6 +69,10 @@ defmodule ViralSpiral.Canon.DynamicCard do
     |> Enum.map(&@string_to_atom_map[&1])
   end
 
+  @doc """
+  Replace placeholders in a card headline.
+  """
+  @spec replace_text(String.t(), list(match), replacements()) :: String.t()
   def replace_text(headline, matches, replacements) do
     Enum.reduce(
       matches,
