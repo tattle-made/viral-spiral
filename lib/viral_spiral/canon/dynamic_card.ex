@@ -16,9 +16,11 @@ defmodule ViralSpiral.Canon.DynamicCard do
     unpopular_affinity: :skub,
     dominant_community: :red
   }
+  new_headline = DynamicCard.replace_text(headline, matches, replacements)
+  assert new_headline == "People who like Skub are usually Red"
   ```
 
-  new_headline = DynamicCard.replace_text(headline, matches, replacements)
+
 
   In practice you'd require visibility into the game state to create the replacements map show above. This falls under the responsibility of `ViralSpiral.Room.State.Analytics`
   """
