@@ -17,10 +17,10 @@ defmodule ViralSpiral.Canon.CardDrawSpec do
     }
   }
   """
+  alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Game.State.Root
   alias ViralSpiral.Affinity
   alias ViralSpiral.Bias
-  alias ViralSpiral.Game.Player
   alias ViralSpiral.Canon.CardDrawSpec
 
   defstruct tgb: 0,
