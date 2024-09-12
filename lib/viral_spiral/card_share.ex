@@ -62,7 +62,7 @@ defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Affinity do
 end
 
 defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Topical do
-  alias ViralSpiral.Game.State.Root
+  alias ViralSpiral.Room.State.Root
 
   # Increase passing player's clout
   # Update the turn

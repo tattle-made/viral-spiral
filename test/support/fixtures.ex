@@ -8,7 +8,7 @@ defmodule Fixtures do
   alias ViralSpiral.Room.State.Player, as: PlayerScore
   # alias ViralSpiral.Game.Score.Room, as: RoomScore
   alias ViralSpiral.Game.Player
-  alias ViralSpiral.Game.State.Root
+  alias ViralSpiral.Room.State.Root
 
   def initialized_game() do
     room_config = %EngineConfig{}

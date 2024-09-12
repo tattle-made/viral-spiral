@@ -31,12 +31,9 @@ defmodule ViralSpiral.MixProject do
           Guides: Path.wildcard("docs/guides/*.md")
         ],
         groups_for_modules: [
-          Structures: [~r"ViralSpiral.Canon.Card"],
+          "Room State Management": [~r"ViralSpiral.Room.State."],
           "Game Text": [~r"ViralSpiral.Canon"],
-          "Data Model": [~r"ViralSpiral.Game"],
-          Score: [~r"ViralSpiral.Score"],
-          "User Interface": [~r"ViralSpiralWeb"],
-          Context: [~r"ViralSpiral"]
+          "User Interface": [~r"ViralSpiralWeb"]
         ],
         before_closing_body_tag: fn
           :html ->

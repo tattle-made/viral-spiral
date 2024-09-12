@@ -1,4 +1,4 @@
-defmodule ViralSpiral.Game.State.Root do
+defmodule ViralSpiral.Room.State.Root do
   @moduledoc """
   Context for the game.
 
@@ -16,7 +16,7 @@ defmodule ViralSpiral.Game.State.Root do
   alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Game.Room
   alias ViralSpiral.Game.EngineConfig
-  alias ViralSpiral.Game.State.Root
+  alias ViralSpiral.Room.State.Root
   alias ViralSpiral.Room.State.Change
 
   defstruct engine_config: nil,

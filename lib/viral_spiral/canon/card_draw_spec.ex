@@ -18,7 +18,7 @@ defmodule ViralSpiral.Canon.CardDrawSpec do
   }
   """
   alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Game.State.Root
+  alias ViralSpiral.Room.State.Root
   alias ViralSpiral.Affinity
   alias ViralSpiral.Bias
   alias ViralSpiral.Canon.CardDrawSpec
