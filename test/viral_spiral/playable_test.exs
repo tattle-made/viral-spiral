@@ -1,6 +1,6 @@
-defmodule ViralSpiral.CardShareTest do
+defmodule ViralSpiral.PlayableTest do
   alias ViralSpiral.Room.State.Root
-  alias ViralSpiral.CardShare
+  alias ViralSpiral.Playable
   alias ViralSpiral.Affinity
   alias ViralSpiral.Canon.Deck
   use ExUnit.Case
@@ -18,14 +18,14 @@ defmodule ViralSpiral.CardShareTest do
       next_player_id = turn.pass_to |> Enum.at(1)
 
       affinity_card = CardFixtures.affinity_card_true_anti_cat()
-      changes = CardShare.pass(affinity_card, game_state, current_player_id, next_player_id)
+      changes = Playable.pass(affinity_card, game_state, current_player_id, next_player_id)
       new_state = Root.apply_changes(game_state, changes)
 
       assert new_state.players[current_player_id].affinities.cat == -1
       assert new_state.players[current_player_id].clout == 1
 
       affinity_card = CardFixtures.affinity_card_true_pro_cat()
-      changes = CardShare.pass(affinity_card, game_state, current_player_id, next_player_id)
+      changes = Playable.pass(affinity_card, game_state, current_player_id, next_player_id)
       new_state = Root.apply_changes(game_state, changes)
 
       assert new_state.players[current_player_id].affinities.cat == 1
@@ -41,7 +41,7 @@ defmodule ViralSpiral.CardShareTest do
 
       affinity_card = CardFixtures.affinity_card_true_anti_cat()
 
-      changes = CardShare.keep(affinity_card, game_state, current_player_id)
+      changes = Playable.keep(affinity_card, game_state, current_player_id)
       new_state = Root.apply_changes(game_state, changes)
       assert new_state.turn.current == next_turn_player_id
       assert new_state.round.current == 1
@@ -56,7 +56,7 @@ defmodule ViralSpiral.CardShareTest do
 
       affinity_card = CardFixtures.affinity_card_true_anti_cat()
 
-      changes = CardShare.keep(affinity_card, game_state, current_player_id)
+      changes = Playable.keep(affinity_card, game_state, current_player_id)
       new_state = Root.apply_changes(game_state, changes)
 
       assert new_state.turn.current == next_turn_player_id

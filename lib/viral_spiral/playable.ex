@@ -1,6 +1,8 @@
-defprotocol ViralSpiral.CardShare do
+defprotocol ViralSpiral.Playable do
   @moduledoc """
   Returns Changes to be made when a card action takes place.
+
+  A protocol for cards to implement.
   """
 
   @fallback_to_any true
@@ -13,7 +15,7 @@ defprotocol ViralSpiral.CardShare do
   def discard(card, state, from)
 end
 
-defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Bias do
+defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Bias do
   def pass(_card, _state, _from, _to) do
     IO.inspect("returning changes for Bias card")
   end
@@ -25,7 +27,7 @@ defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Bias do
   end
 end
 
-defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Affinity do
+defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Affinity do
   # Increase the player's affinity by 1
   # Increase player's clout by 1
   def pass(card, state, from, to) do
@@ -60,7 +62,7 @@ defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Affinity do
   end
 end
 
-defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Topical do
+defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Topical do
   alias ViralSpiral.Room.State.Root
 
   # Increase passing player's clout
@@ -80,7 +82,7 @@ defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Topical do
   end
 end
 
-defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Conflated do
+defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Conflated do
   def pass(_card, _state, _from, _to) do
     # IO.inspect("returning changes for Bias card")
   end
@@ -92,7 +94,7 @@ defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Conflated do
   end
 end
 
-defimpl ViralSpiral.CardShare, for: Any do
+defimpl ViralSpiral.Playable, for: Any do
   def pass(_card, state, _from, _to) do
     state
   end
