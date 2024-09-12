@@ -9,9 +9,10 @@ defmodule ViralSpiral.Room.State.Player do
       clout: 0
     }
   """
+  alias ViralSpiral.Room.State.Player.ActiveCardDoesNotExist
+  alias ViralSpiral.Room.State.Player.DuplicateActiveCardException
   alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Bias
-  alias ViralSpiral.Deck.Card
   alias ViralSpiral.Game.EngineConfig
   import ViralSpiral.Game.EngineConfig.Guards
 
@@ -32,7 +33,7 @@ defmodule ViralSpiral.Room.State.Player do
           clout: integer(),
           name: String.t(),
           identity: Bias.target(),
-          hand: list(Card.t()),
+          hand: list(),
           active_cards: list(String.t())
         }
 
@@ -50,7 +51,8 @@ defmodule ViralSpiral.Room.State.Player do
       id: UXID.generate!(prefix: "player", size: :small),
       identity: identity,
       biases: bias_map,
-      affinities: affinity_map
+      affinities: affinity_map,
+      clout: 0
     }
   end
 
@@ -158,10 +160,10 @@ defimpl ViralSpiral.Room.State.Change, for: ViralSpiral.Room.State.Player do
   end
 end
 
-defmodule ViralSpiral.Room.Player.DuplicateActiveCardException do
+defmodule ViralSpiral.Room.State.Player.DuplicateActiveCardException do
   defexception message: "This card is already held by the player"
 end
 
-defmodule ViralSpiral.Room.Player.ActiveCardDoesNotExist do
+defmodule ViralSpiral.Room.State.Player.ActiveCardDoesNotExist do
   defexception message: "This card is not an active card for this player "
 end

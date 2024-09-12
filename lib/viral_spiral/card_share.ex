@@ -36,19 +36,18 @@ defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Affinity do
       end
 
     [
-      {state.player_scores[from],
-       [type: :affinity, offset: affinity_offset, target: card.target]},
-      {state.player_scores[from], [type: :clout, offset: 1]},
+      {state.players[from], [type: :affinity, offset: affinity_offset, target: card.target]},
+      {state.players[from], [type: :clout, offset: 1]},
       {state.turn, [type: :next, target: to]}
     ]
   end
 
   # End the turn
-  def keep(_card, state, _from) do
+  def keep(_card, state, from) do
     [
       {state.round, [type: :next]},
       {state.turn, [type: :new, round: state.round]},
-      {state.player_map, [type: :add_to_hand]}
+      {state.players[from], [type: :add_to_hand]}
     ]
   end
 
@@ -68,7 +67,7 @@ defimpl ViralSpiral.CardShare, for: ViralSpiral.Canon.Card.Topical do
   # Update the turn
   def pass(_card, %Root{} = state, from, _to) do
     [
-      {state.player_map[from], [type: :clout, offset: 1]},
+      {state.players[from], [type: :clout, offset: 1]},
       {state.turn, [type: :end]}
     ]
   end

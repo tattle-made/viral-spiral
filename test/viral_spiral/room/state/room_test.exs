@@ -21,7 +21,7 @@ defmodule ViralSpiral.Room.State.RoomTest do
 
     test "pass opts without required fields", %{room: room} do
       assert_raise ArgumentError, fn ->
-        Change.apply_change(room, invalid: "random")
+        Change.apply_change(room, nil, invalid: "random")
       end
     end
   end

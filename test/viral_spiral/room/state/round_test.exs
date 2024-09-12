@@ -5,8 +5,8 @@ defmodule ViralSpiral.Room.State.RoundTest do
 
   describe "round progression" do
     test "round progress" do
-      %{player_list: player_list} = Fixtures.initialized_game()
-      round = Round.new(player_list)
+      %{players: players} = Fixtures.initialized_game()
+      round = Round.new(players)
       assert round.current == 0
 
       round = Round.next(round)
@@ -25,8 +25,8 @@ defmodule ViralSpiral.Room.State.RoundTest do
 
   describe "skip player in a round" do
     test "if the player hasn't had their turn in this round, skip them in the current round itself" do
-      %{player_list: player_list} = Fixtures.initialized_game()
-      round = Round.new(player_list)
+      %{players: players} = Fixtures.initialized_game()
+      round = Round.new(players)
       player_order = round.order
       to_skip = Enum.at(player_order, 2)
 
@@ -40,8 +40,8 @@ defmodule ViralSpiral.Room.State.RoundTest do
     end
 
     test "if the player has had their turn in the active round, skip their turn in the next round" do
-      %{player_list: player_list} = Fixtures.initialized_game()
-      round = Round.new(player_list)
+      %{players: players} = Fixtures.initialized_game()
+      round = Round.new(players)
       player_order = round.order
 
       assert round.current == 0
@@ -74,8 +74,8 @@ defmodule ViralSpiral.Room.State.RoundTest do
 
   describe "changes" do
     setup do
-      player_list = Fixtures.player_list()
-      round = Round.new(player_list)
+      players = Fixtures.players()
+      round = Round.new(players)
       %{round: round}
     end
 

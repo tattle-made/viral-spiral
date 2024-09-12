@@ -14,17 +14,13 @@ defmodule ViralSpiral.Room.State.Root do
   alias ViralSpiral.Room.State.Round
   alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Game.Room
   alias ViralSpiral.Game.EngineConfig
   alias ViralSpiral.Room.State.Root
   alias ViralSpiral.Room.State.Change
 
   defstruct engine_config: nil,
             room: nil,
-            player_list: nil,
-            player_map: nil,
-            room_score: nil,
-            player_scores: nil,
+            players: [],
             round: nil,
             turn: nil,
             deck: nil
@@ -32,10 +28,7 @@ defmodule ViralSpiral.Room.State.Root do
   @type t :: %__MODULE__{
           engine_config: EngineConfig.t(),
           room: Room.t(),
-          player_list: list(Player.t()),
-          player_map: map(),
-          room_score: Room.t(),
-          player_scores: map(),
+          players: list(Player.t()),
           round: Round.t()
           # turn: Turn.t(),
           # deck: Deck.t()
@@ -65,7 +58,7 @@ defmodule ViralSpiral.Room.State.Root do
   defdelegate apply_change(change, state, opts), to: Change
 
   def get_target(%Root{} = state, %Player{id: id}) do
-    state.player_scores[id]
+    state.players[id]
   end
 
   def get_target(%Root{} = state, %Turn{} = turn) do
@@ -81,8 +74,8 @@ defmodule ViralSpiral.Room.State.Root do
   end
 
   def put_target(%Root{} = state, %Player{id: id} = player) do
-    updated_player_map = Map.put(state.player_scores, id, player)
-    Map.put(state, :player_scores, updated_player_map)
+    updated_player_map = Map.put(state.players, id, player)
+    Map.put(state, :players, updated_player_map)
   end
 
   def put_target(%Root{} = state, %Round{} = round) do

@@ -1,8 +1,8 @@
 defmodule ViralSpiral.Game.PlayerTest do
+  alias ViralSpiral.Room.State.Player.ActiveCardDoesNotExist
+  alias ViralSpiral.Room.State.Player.DuplicateActiveCardException
+  alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Room.State.Change
-  alias ViralSpiral.Room.Player.ActiveCardDoesNotExist
-  alias ViralSpiral.Room.Player.DuplicateActiveCardException
-  alias ViralSpiral.Game.Player
   alias ViralSpiral.Game.EngineConfig
   use ExUnit.Case
 

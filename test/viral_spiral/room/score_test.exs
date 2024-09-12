@@ -1,50 +1,48 @@
 defmodule ViralSpiral.Game.ScoreTest do
-  alias ViralSpiral.Game.Score.Player, as: PlayerScore
+  alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Game.EngineConfig
-  alias ViralSpiral.Game.Player
   use ExUnit.Case
 
   setup_all do
-    room_config = %EngineConfig{}
-    player = Player.new(room_config) |> Player.set_identity("yellow")
-    player_score = PlayerScore.new(player, room_config)
+    engine_config = %EngineConfig{}
+    player = Player.new(engine_config) |> Player.set_identity("yellow")
 
-    %{player: player, player_score: player_score}
+    %{player: player}
   end
 
   test "player should not have a bias against their own identity", state do
-    player_score = state.player_score
+    player = state.player
 
-    assert Enum.find(player_score.biases, &(&1 == "yellow")) == nil
+    assert Enum.find(player.biases, &(&1 == "yellow")) == nil
   end
 
   test "change player bias", state do
-    player_score = state.player_score
+    player = state.player
 
-    player_score = PlayerScore.change(player_score, :bias, :yellow, 3)
-    assert player_score.biases.yellow == 3
+    player = Player.change(player, :bias, :yellow, 3)
+    assert player.biases.yellow == 3
 
-    player_score = PlayerScore.change(player_score, :bias, :yellow, -2)
-    assert player_score.biases.yellow == 1
+    player = Player.change(player, :bias, :yellow, -2)
+    assert player.biases.yellow == 1
   end
 
   test "change player affinity", state do
-    player_score = state.player_score
+    player = state.player
 
-    player_score = PlayerScore.change(player_score, :affinity, :cat, 5)
-    assert player_score.affinities.cat == 5
+    player = Player.change(player, :affinity, :cat, 5)
+    assert player.affinities.cat == 5
 
-    player_score = PlayerScore.change(player_score, :affinity, :cat, -2)
-    assert player_score.affinities.cat == 3
+    player = Player.change(player, :affinity, :cat, -2)
+    assert player.affinities.cat == 3
   end
 
   test "change player clout", state do
-    player_score = state.player_score
+    player = state.player
 
-    player_score = PlayerScore.change(player_score, :clout, 3)
-    assert player_score.clout == 3
+    player = Player.change(player, :clout, 3)
+    assert player.clout == 3
 
-    player_score = PlayerScore.change(player_score, :clout, -2)
-    assert player_score.clout == 1
+    player = Player.change(player, :clout, -2)
+    assert player.clout == 1
   end
 end

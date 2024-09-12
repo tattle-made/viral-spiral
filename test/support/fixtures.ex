@@ -1,23 +1,22 @@
 defmodule Fixtures do
+  alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Deck.Card
-  alias ViralSpiral.Game.Score.Player
   alias ViralSpiral.Room.State.Turn
   alias ViralSpiral.Room.State.Round
   alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Game.EngineConfig
-  alias ViralSpiral.Room.State.Player, as: PlayerScore
   # alias ViralSpiral.Game.Score.Room, as: RoomScore
-  alias ViralSpiral.Game.Player
+
   alias ViralSpiral.Room.State.Root
 
   def initialized_game() do
-    room_config = %EngineConfig{}
+    engine_config = %EngineConfig{}
 
     player_list = [
-      Player.new(room_config) |> Player.set_name("adhiraj"),
-      Player.new(room_config) |> Player.set_name("aman"),
-      Player.new(room_config) |> Player.set_name("krys"),
-      Player.new(room_config) |> Player.set_name("farah")
+      Player.new(engine_config) |> Player.set_name("adhiraj"),
+      Player.new(engine_config) |> Player.set_name("aman"),
+      Player.new(engine_config) |> Player.set_name("krys"),
+      Player.new(engine_config) |> Player.set_name("farah")
     ]
 
     players = Enum.reduce(player_list, %{}, fn player, acc -> Map.put(acc, player.id, player) end)
@@ -25,41 +24,25 @@ defmodule Fixtures do
     round = Round.new(player_list)
     turn = Turn.new(round)
 
-    player_score_list =
-      Enum.map(
-        player_list,
-        &(Map.new() |> Map.put(:id, &1.id) |> Map.put(:score, PlayerScore.new(&1, room_config)))
-      )
-
-    player_score_map =
-      Enum.reduce(player_score_list, %{}, fn player, acc ->
-        Map.put(acc, player.id, player.score)
-      end)
-
     %Root{
-      room_config: room_config,
+      engine_config: engine_config,
       room: Room.new(),
-      player_map: players,
-      player_list: player_list,
+      players: players,
       round: round,
-      turn: turn,
-      # room_score: RoomScore.new(),
-      player_scores: player_score_map
+      turn: turn
     }
   end
 
-  def card_affinity() do
-    Card.new(:affinity)
-  end
+  def players() do
+    engine_config = %EngineConfig{}
 
-  def player_list() do
-    room_config = %EngineConfig{}
-
-    [
-      Player.new(room_config) |> Player.set_name("adhiraj"),
-      Player.new(room_config) |> Player.set_name("aman"),
-      Player.new(room_config) |> Player.set_name("krys"),
-      Player.new(room_config) |> Player.set_name("farah")
+    player_list = [
+      Player.new(engine_config) |> Player.set_name("adhiraj"),
+      Player.new(engine_config) |> Player.set_name("aman"),
+      Player.new(engine_config) |> Player.set_name("krys"),
+      Player.new(engine_config) |> Player.set_name("farah")
     ]
+
+    Enum.reduce(player_list, %{}, fn player, acc -> Map.put(acc, player.id, player) end)
   end
 end

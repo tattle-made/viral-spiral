@@ -24,10 +24,8 @@ defmodule ViralSpiral.Room.State.Round do
   # Doubt
   should it use game to initialize or players?
   """
+  alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Room.State.Change
-  alias ViralSpiral.Game.Player
-
-  # alias ViralSpiral.Game.Player
 
   defstruct order: [],
             count: 0,
@@ -57,6 +55,11 @@ defmodule ViralSpiral.Room.State.Round do
       order: order,
       current: 0
     }
+  end
+
+  def new(players) when is_map(players) do
+    player_list = Map.keys(players) |> Enum.map(&players[&1])
+    new(player_list)
   end
 
   @doc """

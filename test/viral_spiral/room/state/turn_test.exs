@@ -5,30 +5,32 @@ defmodule ViralSpiral.Room.State.TurnTest do
   use ExUnit.Case
 
   describe "turn progression" do
+    @tag timeout: :infinity
     test "pass card" do
       game = Fixtures.initialized_game()
-      player_list = game.player_list
-      round = Round.new(player_list)
+      players = game.players
+      round = Round.new(players)
       turn = Turn.new(round)
       assert length(turn.pass_to) == 3
 
       current_player = Enum.at(round.order, round.current)
 
       pass_to =
-        Enum.filter(player_list, &(&1.id != current_player))
+        Map.keys(players)
+        |> Enum.filter(&(&1 != current_player))
         |> Enum.shuffle()
         |> Enum.take(1)
         |> Enum.at(0)
 
-      turn = Turn.next(turn, pass_to.id)
+      turn = Turn.next(turn, pass_to)
       assert length(turn.pass_to) == 2
     end
 
     @tag timeout: :infinity
     test "pass card to multiple people during viral spiral special power" do
       game = Fixtures.initialized_game()
-      player_list = game.player_list
-      round = Round.new(player_list)
+      players = game.players
+      round = Round.new(players)
       turn = Turn.new(round)
       assert length(turn.pass_to) == 3
 
@@ -43,7 +45,7 @@ defmodule ViralSpiral.Room.State.TurnTest do
 
   describe "changes" do
     setup do
-      players = Fixtures.player_list()
+      players = Fixtures.players()
       round = Round.new(players)
       turn = Turn.new(round)
 

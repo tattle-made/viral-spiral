@@ -1,5 +1,5 @@
 defmodule ViralSpiral.CardShareTest do
-  alias ViralSpiral.Game.State
+  alias ViralSpiral.Room.State.Root
   alias ViralSpiral.CardShare
   alias ViralSpiral.Affinity
   alias ViralSpiral.Canon.Deck
@@ -19,20 +19,19 @@ defmodule ViralSpiral.CardShareTest do
 
       affinity_card = CardFixtures.affinity_card_true_anti_cat()
       changes = CardShare.pass(affinity_card, game_state, current_player_id, next_player_id)
-      new_state = State.apply_changes(game_state, changes)
+      new_state = Root.apply_changes(game_state, changes)
 
-      assert new_state.player_scores[current_player_id].affinities.cat == -1
-      assert new_state.player_scores[current_player_id].clout == 1
+      assert new_state.players[current_player_id].affinities.cat == -1
+      assert new_state.players[current_player_id].clout == 1
 
       affinity_card = CardFixtures.affinity_card_true_pro_cat()
       changes = CardShare.pass(affinity_card, game_state, current_player_id, next_player_id)
-      new_state = State.apply_changes(game_state, changes)
+      new_state = Root.apply_changes(game_state, changes)
 
-      assert new_state.player_scores[current_player_id].affinities.cat == 1
-      assert new_state.player_scores[current_player_id].clout == 1
+      assert new_state.players[current_player_id].affinities.cat == 1
+      assert new_state.players[current_player_id].clout == 1
     end
 
-    @tag timeout: :infinity
     test "keeping an affinity card does not change player's score", state do
       game_state = state.game
       round = game_state.round
@@ -43,7 +42,7 @@ defmodule ViralSpiral.CardShareTest do
       affinity_card = CardFixtures.affinity_card_true_anti_cat()
 
       changes = CardShare.keep(affinity_card, game_state, current_player_id)
-      new_state = State.apply_changes(game_state, changes)
+      new_state = Root.apply_changes(game_state, changes)
       assert new_state.turn.current == next_turn_player_id
       assert new_state.round.current == 1
     end
@@ -58,7 +57,7 @@ defmodule ViralSpiral.CardShareTest do
       affinity_card = CardFixtures.affinity_card_true_anti_cat()
 
       changes = CardShare.keep(affinity_card, game_state, current_player_id)
-      new_state = State.apply_changes(game_state, changes)
+      new_state = Root.apply_changes(game_state, changes)
 
       assert new_state.turn.current == next_turn_player_id
       assert new_state.round.current == 1
