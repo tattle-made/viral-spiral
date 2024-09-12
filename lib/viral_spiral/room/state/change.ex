@@ -6,6 +6,7 @@ defprotocol ViralSpiral.Room.State.Change do
   - score: struct which implements the `Change` protocol
   - change_description: a Keyword List with parameters defining the change
   """
-  @spec apply_change(t(), keyword()) :: t()
-  def apply_change(state, change_description)
+  alias ViralSpiral.Game.State
+  @spec apply_change(t(), State.t(), keyword()) :: t()
+  def apply_change(state, global_state, change_description)
 end

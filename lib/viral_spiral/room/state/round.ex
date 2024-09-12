@@ -117,8 +117,8 @@ defmodule ViralSpiral.Room.State.Round do
   defimpl Change do
     alias ViralSpiral.Room.State.Round
 
-    @spec apply_change(Round.t(), Round.change_opts()) :: Round.t()
-    def apply_change(state, opts) do
+    # @spec apply_change(Round.t(), Round.cphange_opts()) :: Round.t()
+    def apply_change(state, global_state, opts) do
       case opts[:type] do
         :next -> Round.next(state)
       end

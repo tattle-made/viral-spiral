@@ -63,11 +63,10 @@ defmodule ViralSpiral.Room.State.Turn do
   end
 
   defimpl Change do
-    def apply_change(turn, opts) do
+    def apply_change(turn, global_state, opts) do
       case opts[:type] do
         :next -> Turn.next(turn, opts[:target])
-        # todo add later
-        :end -> nil
+        :new -> Turn.new(global_state.round)
       end
     end
   end

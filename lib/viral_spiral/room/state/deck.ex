@@ -29,8 +29,8 @@ defmodule ViralSpiral.Room.State.Deck do
     - Make card unavailable for drawing. Implemted by change type :remove
     - Shuffle card. Implemented by change type :shuffle
     """
-    @spec apply_change(Deck.t(), Deck.change_opts()) :: Deck.t()
-    def apply_change(%Deck{} = deck, opts) do
+    # @spec apply_change(Deck.t(), Deck.change_opts()) :: Deck.t()
+    def apply_change(%Deck{} = deck, global_state, opts) do
       case opts[:type] do
         :remove ->
           Map.put(deck, :available_cards, MapSet.difference(deck.available_cards, opts[:target]))

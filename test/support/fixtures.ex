@@ -8,7 +8,7 @@ defmodule Fixtures do
   alias ViralSpiral.Room.State.Player, as: PlayerScore
   # alias ViralSpiral.Game.Score.Room, as: RoomScore
   alias ViralSpiral.Game.Player
-  alias ViralSpiral.Game.State
+  alias ViralSpiral.Game.State.Root
 
   def initialized_game() do
     room_config = %EngineConfig{}
@@ -36,7 +36,7 @@ defmodule Fixtures do
         Map.put(acc, player.id, player.score)
       end)
 
-    %State{
+    %Root{
       room_config: room_config,
       room: Room.new(),
       player_map: players,
