@@ -16,14 +16,39 @@ defprotocol ViralSpiral.Playable do
 end
 
 defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Bias do
-  def pass(_card, _state, _from, _to) do
-    IO.inspect("returning changes for Bias card")
+  require IEx
+
+  @doc """
+  If a player passes a Bias Card the following changes take place:
+  1. their clout increases by 1
+  2. their bias against the corresponding community increases by 1
+  3. every player of that community loses a clout of 1
+  """
+  def pass(card, state, from, to) do
+    [
+      {state.turn, [type: :next, target: to]},
+      {state.players[from], [type: :clout, offset: 1]},
+      {state.players[from], [type: :bias, target: card.target, offset: 1]}
+    ] ++
+      (Map.keys(state.players)
+       |> Enum.filter(&(state.players[&1].identity == card.target))
+       |> Enum.map(&{state.players[&1], [type: :clout, offset: -1]}))
   end
 
-  def keep(_card, _state, _from) do
+  def keep(card, state, from) do
+    [
+      {state.round, [type: :next]},
+      {state.turn, [type: :new, round: state.round]},
+      {state.players[from], [type: :add_to_hand, card_id: card.id]}
+    ]
   end
 
-  def discard(_card, _state, _from) do
+  # @spec discard(%ViralSpiral.Canon.Card.Bias{}, any(), any()) :: nil
+  def discard(_card, state, _from) do
+    [
+      {state.round, [type: :next]},
+      {state.turn, [type: :new, round: state.round]}
+    ]
   end
 end
 
@@ -67,30 +92,41 @@ defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Topical do
 
   # Increase passing player's clout
   # Update the turn
-  def pass(_card, %Root{} = state, from, _to) do
+  def pass(_card, %Root{} = state, from, to) do
     [
       {state.players[from], [type: :clout, offset: 1]},
-      {state.turn, [type: :end]}
+      {state.turn, [type: :next, target: to]}
     ]
   end
 
-  def keep(_card, _state, _from) do
-    {}
+  def keep(_card, state, from) do
+    [
+      {state.round, [type: :next]},
+      {state.turn, [type: :new, round: state.round]},
+      {state.players[from], [type: :add_to_hand]}
+    ]
   end
 
-  def discard(_card, _state, _from) do
+  # End the turn
+  def discard(_card, state, _from) do
+    [
+      {state.turn, [type: :end]},
+      {state.turn, [type: :new, round: state.round]}
+    ]
   end
 end
 
 defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Conflated do
-  def pass(_card, _state, _from, _to) do
-    # IO.inspect("returning changes for Bias card")
+  def pass(_card, state, _from, _to) do
+    state
   end
 
-  def keep(_card, _state, _from) do
+  def keep(_card, state, _from) do
+    state
   end
 
-  def discard(_card, _state, _from) do
+  def discard(_card, state, _from) do
+    state
   end
 end
 

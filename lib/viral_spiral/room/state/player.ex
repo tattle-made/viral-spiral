@@ -9,6 +9,8 @@ defmodule ViralSpiral.Room.State.Player do
       clout: 0
     }
   """
+  alias ViralSpiral.Room
+  alias ViralSpiral.Room.RoomConfig
   alias ViralSpiral.Room.State.Player.ActiveCardDoesNotExist
   alias ViralSpiral.Room.State.Player.DuplicateActiveCardException
   alias ViralSpiral.Room.State.Player
@@ -37,8 +39,8 @@ defmodule ViralSpiral.Room.State.Player do
           active_cards: list(String.t())
         }
 
-  @spec new(EngineConfig.t()) :: t()
-  def new(%EngineConfig{} = room_config) do
+  @spec new(RoomConfig.t()) :: t()
+  def new(%RoomConfig{} = room_config) do
     identity = Enum.shuffle(room_config.communities) |> Enum.at(0)
 
     bias_list = Enum.filter(room_config.communities, &(&1 != identity))
@@ -72,7 +74,7 @@ defmodule ViralSpiral.Room.State.Player do
   end
 
   def add_to_hand(%Player{} = player, card_id) do
-    Map.put(player, :hand, player.hand ++ card_id)
+    Map.put(player, :hand, player.hand ++ [card_id])
   end
 
   @spec add_active_card(Player.t(), String.t()) :: Player.t()
@@ -90,6 +92,8 @@ defmodule ViralSpiral.Room.State.Player do
       _ -> Map.put(player, :active_cards, List.delete(player.active_cards, card_id))
     end
   end
+
+  def clout(%Player{} = player), do: player.clout
 
   @doc """
   Change a Player's Score.
@@ -152,7 +156,7 @@ defimpl ViralSpiral.Room.State.Change, for: ViralSpiral.Room.State.Player do
       :clout -> Player.change(player, :clout, change_desc[:offset])
       :affinity -> Player.change(player, :affinity, change_desc[:target], change_desc[:offset])
       :bias -> Player.change(player, :bias, change_desc[:target], change_desc[:offset])
-      :add_to_hand -> player
+      :add_to_hand -> Player.add_to_hand(player, change_desc[:card_id])
       :remove_from_hand -> player
       :add_active_card -> Player.add_active_card(player, change_desc[:card_id])
       :remove_active_card -> Player.remove_active_card(player, change_desc[:card_id])
@@ -166,4 +170,47 @@ end
 
 defmodule ViralSpiral.Room.State.Player.ActiveCardDoesNotExist do
   defexception message: "This card is not an active card for this player "
+end
+
+defmodule ViralSpiral.Room.State.Players do
+  @moduledoc """
+  Functions for handling a collection of `ViralSpiral.Room.State.Player`
+  """
+  alias ViralSpiral.Room.State.Player
+  import ViralSpiral.Game.EngineConfig.Guards
+
+  @doc """
+  Return all players of an identity
+  """
+  def of_identity(players, identity) when is_community(identity) and is_map(players) do
+    Map.keys(players)
+    |> Enum.filter(&(players[&1].identity == identity))
+    |> to_full_map(players)
+  end
+
+  @doc """
+  Return all players not of an identity
+  """
+  def not_of_identity(players, identity) when is_community(identity) and is_map(players) do
+    Map.keys(players)
+    |> Enum.filter(&(players[&1].identity != identity))
+  end
+
+  @doc """
+  Return all players other than me
+  """
+  # @spec(map(String.t(), Player.t()), String.t() :: list(Player.t()))
+  def others(players, me) when is_map(players) and is_bitstring(me) do
+    Map.keys(players)
+    |> Enum.filter(&(&1 != me))
+    |> Enum.reduce(%{}, &Map.put(&2, &1, players[&1]))
+  end
+
+  def to_map(players) when is_list(players) do
+    Enum.reduce(players, %{}, &Map.put(&2, &1.id, &1))
+  end
+
+  def to_full_map(ids, players) when is_list(ids) do
+    Enum.reduce(ids, %{}, &Map.put(&2, &1, players[&1]))
+  end
 end

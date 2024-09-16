@@ -9,16 +9,16 @@ defmodule ViralSpiral.Room.State.Root do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
 
+  alias ViralSpiral.Room.RoomConfig
   alias ViralSpiral.Room.State.Turn
   alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Room.State.Round
   alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Game.EngineConfig
   alias ViralSpiral.Room.State.Root
   alias ViralSpiral.Room.State.Change
 
-  defstruct engine_config: nil,
+  defstruct room_config: nil,
             room: nil,
             players: [],
             round: nil,
@@ -26,7 +26,7 @@ defmodule ViralSpiral.Room.State.Root do
             deck: nil
 
   @type t :: %__MODULE__{
-          engine_config: EngineConfig.t(),
+          room_config: RoomConfig.t(),
           room: Room.t(),
           players: list(Player.t()),
           round: Round.t()

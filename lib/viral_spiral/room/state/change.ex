@@ -10,3 +10,17 @@ defprotocol ViralSpiral.Room.State.Change do
   @spec apply_change(t(), State.t(), keyword()) :: t()
   def apply_change(state, global_state, change_description)
 end
+
+defmodule ViralSpiral.Room.State.ChangeOptions do
+  defstruct type: nil,
+            target: nil,
+            id: nil,
+            extra: nil
+
+  @type t :: %__MODULE__{
+          type: atom(),
+          target: atom(),
+          id: String.t(),
+          extra: any()
+        }
+end

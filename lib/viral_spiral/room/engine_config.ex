@@ -13,11 +13,12 @@ defmodule ViralSpiral.Game.EngineConfig do
   alias ViralSpiral.Affinity
   alias ViralSpiral.Game.EngineConfig
 
+  @type volatility :: :low | :medium | :high
   @type t :: %__MODULE__{
           affinities: list(Affinity.target()),
           communities: list(Bias.target()),
           chaos_counter: integer(),
-          volatility: :low | :medium | :high
+          volatility: volatility()
         }
 
   defstruct affinities: Application.compile_env(:viral_spiral, EngineConfig)[:affinities],

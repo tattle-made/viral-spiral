@@ -18,11 +18,8 @@ defmodule ViralSpiral.Room.State.Round do
   Round.next(round)
 
   ## Fields
-  - `order` - Player IDs in the order in which they draw a card.
-
-
-  # Doubt
-  should it use game to initialize or players?
+  - order: Player IDs in the order in which they draw a card.
+  - current: index of the player whose round it is
   """
   alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Room.State.Change
