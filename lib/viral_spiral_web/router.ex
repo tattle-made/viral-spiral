@@ -17,7 +17,10 @@ defmodule ViralSpiralWeb.Router do
   scope "/", ViralSpiralWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    # get "/", PageController, :home
+    live "/", Home
+    live "/waiting-room/:room", WaitingRoom
+    live "/room/:room", GameRoom
   end
 
   # Other scopes may use custom stacks.
