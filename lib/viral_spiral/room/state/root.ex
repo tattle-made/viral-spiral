@@ -9,7 +9,7 @@ defmodule ViralSpiral.Room.State.Root do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
 
-  alias ViralSpiral.Room.RoomConfig
+  alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Room.State.Turn
   alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Room.State.Round
@@ -18,21 +18,36 @@ defmodule ViralSpiral.Room.State.Root do
   alias ViralSpiral.Room.State.Root
   alias ViralSpiral.Room.State.Change
 
-  defstruct room_config: nil,
-            room: nil,
+  defstruct room: nil,
             players: [],
             round: nil,
             turn: nil,
             deck: nil
 
   @type t :: %__MODULE__{
-          room_config: RoomConfig.t(),
           room: Room.t(),
           players: list(Player.t()),
-          round: Round.t()
-          # turn: Turn.t(),
+          round: Round.t(),
+          turn: Turn.t()
           # deck: Deck.t()
         }
+
+  def new(%Room{} = room, player_names) when is_list(player_names) do
+    players =
+      player_names
+      |> Enum.map(fn player_name -> Player.new(room) |> Player.set_name(player_name) end)
+      |> Enum.reduce(%{}, fn player, acc -> Map.put(acc, player.id, player) end)
+
+    round = Round.new(players)
+    turn = Turn.new(round)
+
+    %Root{
+      room: room,
+      players: players,
+      round: round,
+      turn: turn
+    }
+  end
 
   def set_round(%Root{} = game, round) do
     %{game | round: round}
@@ -46,8 +61,6 @@ defmodule ViralSpiral.Room.State.Root do
   #         list({:ok, message :: String.t()} | {:error, reason :: String.t()})
   def apply_changes(state, changes) do
     Enum.reduce(changes, state, fn change, state ->
-      # require IEx
-      # IEx.pry()
       data = get_target(state, elem(change, 0))
       change_inst = elem(change, 1)
       new_value = apply_change(data, state, change_inst)

@@ -1,5 +1,5 @@
 defmodule ViralSpiral.Game.PlayerTest do
-  alias ViralSpiral.Room.RoomConfig
+  alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Room.State.Player.ActiveCardDoesNotExist
   alias ViralSpiral.Room.State.Player.DuplicateActiveCardException
   alias ViralSpiral.Room.State.Player
@@ -7,7 +7,7 @@ defmodule ViralSpiral.Game.PlayerTest do
   use ExUnit.Case
 
   test "create player from room config" do
-    room_config = RoomConfig.new(4)
+    room_config = Room.new(4)
 
     player =
       Player.new(room_config)

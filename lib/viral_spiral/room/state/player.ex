@@ -10,7 +10,7 @@ defmodule ViralSpiral.Room.State.Player do
     }
   """
   alias ViralSpiral.Room
-  alias ViralSpiral.Room.RoomConfig
+  alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Room.State.Player.ActiveCardDoesNotExist
   alias ViralSpiral.Room.State.Player.DuplicateActiveCardException
   alias ViralSpiral.Room.State.Player
@@ -39,8 +39,8 @@ defmodule ViralSpiral.Room.State.Player do
           active_cards: list(String.t())
         }
 
-  @spec new(RoomConfig.t()) :: t()
-  def new(%RoomConfig{} = room_config) do
+  @spec new(Room.t()) :: t()
+  def new(%Room{} = room_config) do
     identity = Enum.shuffle(room_config.communities) |> Enum.at(0)
 
     bias_list = Enum.filter(room_config.communities, &(&1 != identity))

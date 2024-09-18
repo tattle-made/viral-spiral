@@ -2,7 +2,7 @@ defmodule ViralSpiral.Game.EngineConfig do
   @moduledoc """
   Global configuration for the game engine.
 
-  Unlike its room specific counterpart `ViralSpiral.Room.RoomConfig`, this configuration is global to every game room created on this server. These configuration are loaded at compile time and don't change throughout the runtime of the engine.
+  Unlike its room specific counterpart `ViralSpiral.Room.State.Room`, this configuration is global to every game room created on this server. These configuration are loaded at compile time and don't change throughout the runtime of the engine.
 
   An imagined usecase of this module is to support spinning up varied instances of viral spiral with different characteristics. For instance,
   - Spinning up a server where only communities from :yellow and :red are available for gameplay.

@@ -31,11 +31,17 @@ defmodule ViralSpiral.Room.State.Round do
 
   @type change_opts :: [type: :next]
 
+  @typedoc "Description of which player to skip and in which round"
+  @type skip :: %{
+          player: String.t(),
+          round: :current | :next
+        }
+
   @type t :: %__MODULE__{
           order: list(String.t()),
           count: integer(),
           current: integer(),
-          skip: boolean()
+          skip: skip() | nil
         }
 
   @doc """
