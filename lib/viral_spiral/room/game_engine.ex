@@ -5,8 +5,8 @@ defmodule ViralSpiral.Room.GameEngine do
 
   @registry ViralSpiral.Room.Registry
 
-  def start_link(path) do
-    GenServer.start_link(__MODULE__, path, name: {:via, Registry, {@registry, path}})
+  def start_link(room_name) do
+    GenServer.start_link(__MODULE__, room_name, name: {:via, Registry, {@registry, room_name}})
   end
 
   @impl true

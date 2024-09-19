@@ -6,9 +6,11 @@ defmodule ViralSpiral.Room do
   Rooms in viral spiral need to manage mutable state of the game, hence they are wrapped in a `GenServer`. These genservers are then supervised by a Dynamic Supervisor, which is managed by this Supervisor. This supervisor is started by the application and is part of its supervision tree.
 
   ## Usage :
+  ```elixir
   Room.new("vanilla-bean-23")
   engine = ViralSpiral.Room.room_gen!("ok-pista-4")
   send(engine, msg)
+  ```
   """
 
   use Supervisor
@@ -18,6 +20,9 @@ defmodule ViralSpiral.Room do
   @registry ViralSpiral.Room.Registry
   @supervisor ViralSpiral.Room.GameEngineSupervisor
 
+  @doc """
+  Used by `Application`
+  """
   def start_link(_opts) do
     Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
   end
@@ -32,15 +37,21 @@ defmodule ViralSpiral.Room do
     Supervisor.init(children, strategy: :one_for_all)
   end
 
-  def new(path) when is_binary(path) do
+  @doc """
+  Registers and creates a new Room.
+
+  This ensures there is only one room registered with a path.
+  """
+  @spec new(String.t()) :: no_return()
+  def new(room_name) when is_binary(room_name) do
     pid =
-      case Registry.lookup(@registry, path) do
+      case Registry.lookup(@registry, room_name) do
         [{pid, _}] ->
           pid
 
         [] ->
           pid =
-            case DynamicSupervisor.start_child(@supervisor, {@room_gen, path}) do
+            case DynamicSupervisor.start_child(@supervisor, {@room_gen, room_name}) do
               {:ok, pid} -> pid
               {:error, {:already_started, pid}} -> pid
             end
@@ -51,8 +62,11 @@ defmodule ViralSpiral.Room do
     send(pid, :new_room)
   end
 
-  def room_gen!(path) do
-    case Registry.lookup(@registry, path) do
+  @doc """
+  Returns the GenServer associated with a room name
+  """
+  def room_gen!(room_name) do
+    case Registry.lookup(@registry, room_name) do
       [{pid, _}] -> pid
       _ -> raise NotFound
     end
