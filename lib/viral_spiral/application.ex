@@ -12,6 +12,7 @@ defmodule ViralSpiral.Application do
       ViralSpiral.Repo,
       {DNSCluster, query: Application.get_env(:viral_spiral, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: ViralSpiral.PubSub},
+      ViralSpiral.Room,
       # Start the Finch HTTP client for sending emails
       {Finch, name: ViralSpiral.Finch},
       # Start a worker by calling: ViralSpiral.Worker.start_link(arg)
