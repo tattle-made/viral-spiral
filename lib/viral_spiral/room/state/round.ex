@@ -21,6 +21,7 @@ defmodule ViralSpiral.Room.State.Round do
   - order: Player IDs in the order in which they draw a card.
   - current: index of the player whose round it is
   """
+  alias ViralSpiral.Room.State.Round
   alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Room.State.Change
 
@@ -118,6 +119,10 @@ defmodule ViralSpiral.Room.State.Round do
       end
 
     Map.merge(round, changes)
+  end
+
+  def current_player_id(%Round{} = round) do
+    Enum.at(round.order, round.current)
   end
 
   defimpl Change do

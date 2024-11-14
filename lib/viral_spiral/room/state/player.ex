@@ -9,6 +9,7 @@ defmodule ViralSpiral.Room.State.Player do
       clout: 0
     }
   """
+  alias ViralSpiral.Affinity
   alias ViralSpiral.Room
   alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Room.State.Player.ActiveCardDoesNotExist
@@ -36,7 +37,7 @@ defmodule ViralSpiral.Room.State.Player do
           name: String.t(),
           identity: Bias.target(),
           hand: list(),
-          active_cards: list(String.t())
+          active_cards: list()
         }
 
   @spec new(Room.t()) :: t()
@@ -118,7 +119,7 @@ defmodule ViralSpiral.Room.State.Player do
   @spec change(
           Player.t(),
           :bias,
-          :blue | :red | :yellow,
+          Bias.target(),
           integer()
         ) :: Player.t()
   def change(%Player{} = player, :bias, target_bias, count)
@@ -130,7 +131,7 @@ defmodule ViralSpiral.Room.State.Player do
   @spec change(
           Player.t(),
           :affinity,
-          :cat | :highfive | :houseboat | :skub | :sock,
+          Affinity.target(),
           integer()
         ) :: Player.t()
   def change(%Player{} = player, :affinity, target_affinity, count)
@@ -160,6 +161,7 @@ defimpl ViralSpiral.Room.State.Change, for: ViralSpiral.Room.State.Player do
       :remove_from_hand -> player
       :add_active_card -> Player.add_active_card(player, change_desc[:card_id])
       :remove_active_card -> Player.remove_active_card(player, change_desc[:card_id])
+      :ignore -> player
     end
   end
 end
@@ -174,7 +176,7 @@ end
 
 defmodule ViralSpiral.Room.State.Players do
   @moduledoc """
-  Functions for handling a collection of `ViralSpiral.Room.State.Player`
+  Functions for handling a collection of `ViralSpiral.Room.State.Player` is a Room
   """
   alias ViralSpiral.Room.State.Player
   import ViralSpiral.Game.EngineConfig.Guards

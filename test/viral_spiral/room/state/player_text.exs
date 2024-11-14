@@ -3,6 +3,9 @@ defmodule ViralSpiral.Room.State.PlayerTest do
   alias ViralSpiral.Room.State.Player
   use ExUnit.Case
 
+  describe "struct" do
+  end
+
   describe "changes" do
     setup do
       player = %Player{

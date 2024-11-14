@@ -65,6 +65,7 @@ defmodule ViralSpiral.Canon.Deck do
   Read documentation of `draw_card` to see more examples of the responses.
 
   """
+  alias ViralSpiral.Canon.Deck.DrawTypeRequirements
   alias ViralSpiral.Canon.Card.Conflated
   alias ViralSpiral.Canon.Card.Affinity
   alias ViralSpiral.Canon.Card.Bias
@@ -117,6 +118,14 @@ defmodule ViralSpiral.Canon.Deck do
   @set_opts_default [affinities: [:cat, :sock], biases: [:red, :yellow]]
   @card_master_sheet "all_cards.csv"
 
+  def new() do
+    cards = load_cards()
+    store = create_store(cards)
+    sets = create_sets(cards)
+
+    {:ok, store, sets}
+  end
+
   def load_cards() do
     parse_file()
     |> Enum.map(&parse_row/1)
@@ -157,7 +166,11 @@ defmodule ViralSpiral.Canon.Deck do
     Enum.reduce(
       Map.keys(grouped_card),
       %{},
-      &Map.put(&2, &1, Enum.map(grouped_card[&1], fn card -> id_tgb(card) end))
+      &Map.put(
+        &2,
+        &1,
+        Enum.map(grouped_card[&1], fn card -> id_tgb(card) end) |> MapSet.new()
+      )
     )
   end
 
@@ -501,6 +514,20 @@ defmodule ViralSpiral.Canon.Deck do
     end
   end
 
+  @doc """
+  Removes a card from set.
+  """
+  def remove_card(sets, card_type, card) do
+    card_type_tuple = draw_type_opts_to_tuple(card_type)
+
+    {_, new_sets} =
+      Map.get_and_update(sets, card_type_tuple, fn set ->
+        {set, MapSet.delete(set, card)}
+      end)
+
+    new_sets
+  end
+
   defp filter_tgb(deck, tgb) do
     deck
     |> Enum.filter(&(&1.tgb <= tgb))
@@ -514,7 +541,8 @@ defmodule ViralSpiral.Canon.Deck do
   defp choose_one(list) do
     ix = :rand.uniform(list |> Enum.to_list() |> length)
 
-    list |> Enum.at(ix) |> Map.get(:id)
+    list |> Enum.at(ix)
+    # |> Map.get(:id)
   end
 
   def key(card) do
@@ -561,7 +589,7 @@ defmodule ViralSpiral.Canon.Deck do
     }
   }
   """
-  def draw_type(requirements) do
+  def draw_type(%DrawTypeRequirements{} = requirements) do
     type =
       case :rand.uniform() do
         a when a < 0.2 -> :bias
@@ -587,6 +615,22 @@ defmodule ViralSpiral.Canon.Deck do
       case target do
         nil -> type
         _ -> type |> Keyword.put(:target, target)
+      end
+    end)
+  end
+
+  def draw_type_opts_to_tuple(opts) do
+    type = Keyword.get(opts, :type)
+    veracity = Keyword.get(opts, :veracity)
+    target = Keyword.get(opts, :target)
+
+    {}
+    |> Tuple.insert_at(0, type)
+    |> Tuple.insert_at(1, veracity)
+    |> then(fn type ->
+      case target do
+        nil -> type
+        _ -> type |> Tuple.insert_at(2, target)
       end
     end)
   end
@@ -621,5 +665,10 @@ defmodule ViralSpiral.Canon.Deck do
 
   def get_fake_card(store, card) do
     store[{card.id, false}]
+  end
+
+  def size(sets, card_type) do
+    card_type_tuple = draw_type_opts_to_tuple(card_type)
+    sets[card_type_tuple] |> MapSet.size()
   end
 end

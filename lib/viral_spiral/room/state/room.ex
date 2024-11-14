@@ -1,6 +1,9 @@
 defmodule ViralSpiral.Room.State.Room do
   @moduledoc """
   Room specific configuration for every game.
+
+  ## Room States
+  - :reserved : When a player has expressed an interest to play the game but their friends haven't joined the room yet or the player hasn't explicitly told us to start the game.
   """
   alias ViralSpiral.Bias
   alias ViralSpiral.Affinity
@@ -13,20 +16,36 @@ defmodule ViralSpiral.Room.State.Room do
             volatality: :medium,
             id: nil,
             name: nil,
-            state: :uninitialized
+            state: :uninitialized,
+            chaos: nil
 
-  @all_states [:uninitialized, :waiting_for_players, :running, :paused]
+  @all_states [:reserved, :uninitialized, :waiting_for_players, :running, :paused]
 
-  @type states :: :uninitialized | :waiting_for_players | :running | :paused
+  @type states :: :reserved | :uninitialized | :waiting_for_players | :running | :paused
   @type t :: %__MODULE__{
+          id: String.t(),
+          name: String.t(),
+          state: states(),
           affinities: list(Affinity.target()),
           communities: list(Bias.target()),
           chaos_counter: integer(),
-          volatality: EngineConfig.volatility(),
-          id: String.t(),
-          name: String.t(),
-          state: states()
+          chaos_counter: integer(),
+          volatality: EngineConfig.volatility()
         }
+
+  @doc """
+  Reserve a room.
+
+  A player can reserve a room, share its URL with their friends and wait for them to join the room.
+  """
+  @spec reserve(String.t()) :: Room.t()
+  def reserve(name) when is_bitstring(name) do
+    %Room{
+      id: UXID.generate!(prefix: "room", size: :small),
+      name: name,
+      state: :reserved
+    }
+  end
 
   def new(player_count) do
     engine_config = %EngineConfig{}
@@ -55,6 +74,7 @@ defmodule ViralSpiral.Room.State.Room do
       affinities: room_affinities,
       communities: room_communities,
       chaos_counter: engine_config.chaos_counter,
+      chaos: engine_config.chaos_counter,
       volatality: engine_config.volatility
     }
   end

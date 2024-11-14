@@ -4,6 +4,32 @@ defmodule ViralSpiral.CanonTest do
   alias ViralSpiral.Canon.Deck
 
   describe "card data integrity" do
+    test "set creation" do
+      :rand.seed(:exsss, {12356, 123_534, 345_345})
+      cards = Deck.load_cards()
+      store = Deck.create_store(cards)
+      sets = Deck.create_sets(cards)
+
+      requirements = %{
+        tgb: 4,
+        total_tgb: 10,
+        biases: [:red, :blue],
+        affinities: [:cat, :sock],
+        current_player: %{
+          identity: :blue
+        }
+      }
+
+      card_opts = Deck.draw_type(requirements)
+      card_opts_tuple = Deck.draw_type_opts_to_tuple(card_opts)
+      current_size = Deck.size(sets, card_opts)
+
+      card = Deck.draw_card(sets, card_opts)
+      sets = Deck.remove_card(sets, card_opts, card)
+      new_size = Deck.size(sets, card_opts)
+
+      assert new_size == current_size - 1
+    end
   end
 
   describe "deck functions" do
@@ -20,7 +46,26 @@ defmodule ViralSpiral.CanonTest do
       %{cards: cards, store: store, sets: sets, articles: articles, article_store: article_store}
     end
 
-    test "drawing a card should reduce available cards by 1" do
+    test "drawing a card should reduce available cards by 1", state do
+      set = state[:sets]
+      store = state[:store]
+
+      requirements = %{
+        tgb: 4,
+        total_tgb: 10,
+        biases: [:red, :blue],
+        affinities: [:cat, :sock],
+        current_player: %{
+          identity: :blue
+        }
+      }
+
+      card_opts = Deck.draw_type(requirements) |> IO.inspect()
+      card_opts_tuple = Deck.draw_type_opts_to_tuple(card_opts) |> IO.inspect()
+      current_size = set[card_opts_tuple] |> IO.inspect()
+      card_id = Deck.draw_card(set, card_opts) |> IO.inspect()
+
+      # IO.inspect(size(set))
     end
 
     test "turn card to fake", state do

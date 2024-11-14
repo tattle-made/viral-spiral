@@ -32,6 +32,11 @@ defmodule Fixtures do
     }
   end
 
+  def new_game() do
+    room = Room.reserve("test-room") |> Room.start(4)
+    Root.new(room, ["adhiraj", "krys", "aman", "farah"])
+  end
+
   def players() do
     room_config = %Room{}
 

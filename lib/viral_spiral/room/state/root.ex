@@ -1,6 +1,6 @@
 defmodule ViralSpiral.Room.State.Root do
   @moduledoc """
-  Context for the game.
+  Entire Game's state.
 
   Rounds and Turns
   round = Round.new(players)
@@ -9,9 +9,9 @@ defmodule ViralSpiral.Room.State.Root do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
 
+  alias ViralSpiral.Room.State.Deck
   alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Room.State.Turn
-  alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Room.State.Round
   alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Room.State.Player
@@ -26,11 +26,15 @@ defmodule ViralSpiral.Room.State.Root do
 
   @type t :: %__MODULE__{
           room: Room.t(),
-          players: list(Player.t()),
+          players: %{String.t() => Player.t()},
           round: Round.t(),
-          turn: Turn.t()
-          # deck: Deck.t()
+          turn: Turn.t(),
+          deck: Deck.t()
         }
+
+  def empty() do
+    %Root{}
+  end
 
   def new(%Room{} = room, player_names) when is_list(player_names) do
     players =
@@ -40,17 +44,23 @@ defmodule ViralSpiral.Room.State.Root do
 
     round = Round.new(players)
     turn = Turn.new(round)
+    deck = Deck.new()
 
     %Root{
       room: room,
       players: players,
       round: round,
-      turn: turn
+      turn: turn,
+      deck: deck
     }
   end
 
   def set_round(%Root{} = game, round) do
     %{game | round: round}
+  end
+
+  def set_room(%Root{} = root, room) do
+    %{root | room: room}
   end
 
   def set_turn(%Root{} = game, turn) do
@@ -70,32 +80,45 @@ defmodule ViralSpiral.Room.State.Root do
 
   defdelegate apply_change(change, state, opts), to: Change
 
-  def get_target(%Root{} = state, %Player{id: id}) do
+  defp get_target(%Root{} = state, %Player{id: id}) do
     state.players[id]
   end
 
-  def get_target(%Root{} = state, %Turn{} = turn) do
+  defp get_target(%Root{} = state, %Turn{} = turn) do
     state.turn
   end
 
-  def get_target(%Root{} = state, %Round{} = round) do
+  defp get_target(%Root{} = state, %Round{} = round) do
     state.round
   end
 
-  def get_target(%Root{} = state, %Root{} = _state_again) do
+  defp get_target(%Root{} = state, %Root{} = _state_again) do
     state
   end
 
-  def put_target(%Root{} = state, %Player{id: id} = player) do
+  @doc """
+  Generalized way to get a nested entity from state.
+
+  The entity needs to implement `Change` protocol for this to be meaningful.
+
+  get(state, "players")
+  get(state, "players[:id].hand")
+  get(state, "players[:id].hand[2]")
+  get(state, "turn.round.current_player")
+  """
+  defp get(%Root{} = _state, _key) do
+  end
+
+  defp put_target(%Root{} = state, %Player{id: id} = player) do
     updated_player_map = Map.put(state.players, id, player)
     Map.put(state, :players, updated_player_map)
   end
 
-  def put_target(%Root{} = state, %Round{} = round) do
+  defp put_target(%Root{} = state, %Round{} = round) do
     Map.put(state, :round, round)
   end
 
-  def put_target(%Root{} = state, %Turn{} = turn) do
+  defp put_target(%Root{} = state, %Turn{} = turn) do
     Map.put(state, :turn, turn)
   end
 end

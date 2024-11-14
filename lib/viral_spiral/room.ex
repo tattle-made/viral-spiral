@@ -7,13 +7,16 @@ defmodule ViralSpiral.Room do
 
   ## Usage :
   ```elixir
-  Room.new("vanilla-bean-23")
-  engine = ViralSpiral.Room.room_gen!("ok-pista-4")
-  send(engine, msg)
+  room_reserved = Room.reserve()
+  room_gen = Room.room_gen!(room_reserved.name)
+  send(room_gen, "ok")
+  :sys.get_state(room_gen)
   ```
   """
 
   use Supervisor
+  alias ViralSpiral.Room.GameEngine.RoomReserved
+  alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Room.NotFound
 
   @room_gen ViralSpiral.Room.GameEngine
@@ -42,24 +45,18 @@ defmodule ViralSpiral.Room do
 
   This ensures there is only one room registered with a path.
   """
-  @spec new(String.t()) :: no_return()
-  def new(room_name) when is_binary(room_name) do
+  @spec reserve() :: RoomReserved.t()
+  def reserve() do
+    room_name = Room.name()
+
     pid =
-      case Registry.lookup(@registry, room_name) do
-        [{pid, _}] ->
-          pid
-
-        [] ->
-          pid =
-            case DynamicSupervisor.start_child(@supervisor, {@room_gen, room_name}) do
-              {:ok, pid} -> pid
-              {:error, {:already_started, pid}} -> pid
-            end
-
-          pid
+      case DynamicSupervisor.start_child(@supervisor, {@room_gen, room_name}) do
+        {:ok, pid} -> pid
+        {:error, {:already_started, pid}} -> pid
       end
 
     send(pid, :new_room)
+    %RoomReserved{name: room_name}
   end
 
   @doc """

@@ -1,4 +1,5 @@
 defmodule ViralSpiral.Room.State.Deck do
+  alias ViralSpiral.Canon.Deck, as: CanonDeck
   alias ViralSpiral.Room.State.Deck
   alias ViralSpiral.Room.State.Change
 
@@ -7,8 +8,8 @@ defmodule ViralSpiral.Room.State.Deck do
 
   @type change_opts :: [type: :remove | :shuffle]
   @type t :: %__MODULE__{
-          available_cards: MapSet.t(),
-          dealt_cards: MapSet.t()
+          available_cards: map(),
+          dealt_cards: map()
         }
 
   @doc """
@@ -17,7 +18,16 @@ defmodule ViralSpiral.Room.State.Deck do
   def new(cards) do
     %Deck{
       available_cards: MapSet.new(cards),
-      dealt_cards: MapSet.new()
+      dealt_cards: %{}
+    }
+  end
+
+  def new() do
+    cards = CanonDeck.load_cards()
+
+    %Deck{
+      available_cards: CanonDeck.create_sets(cards),
+      dealt_cards: %{}
     }
   end
 

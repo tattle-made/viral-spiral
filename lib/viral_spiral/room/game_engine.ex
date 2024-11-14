@@ -10,12 +10,15 @@ defmodule ViralSpiral.Room.GameEngine do
   end
 
   @impl true
-  def init(_init_arg) do
-    # room = Room.new() |> Room.start(4)
-    # # root = Root.new(room, init_arg.players)
-    # root = Root.new(room, ["adhiraj", "krys", "aman", "farah"])
+  def init(name) do
+    room = Room.reserve(name) |> Room.start(4)
+    state = Root.new(room, ["adhiraj", "krys", "aman", "farah"])
 
-    {:ok, [1]}
+    {:ok, state}
+  end
+
+  @impl true
+  def handle_cast({:start}, state) do
   end
 
   @impl true
@@ -51,4 +54,12 @@ defmodule ViralSpiral.Room.GameEngine do
     IO.inspect("msg in genserver #{msg}")
     {:noreply, state}
   end
+end
+
+defmodule ViralSpiral.Room.GameEngine.RoomReserved do
+  defstruct name: nil
+
+  @type t :: %__MODULE__{
+          name: String.t()
+        }
 end
