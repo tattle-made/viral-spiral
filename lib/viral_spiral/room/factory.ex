@@ -1,0 +1,26 @@
+defmodule ViralSpiral.Gameplay.Factory do
+  alias ViralSpiral.Room.State.Player
+  alias ViralSpiral.Room.State.Room
+
+  @doc """
+  Create a new player whose properties conform with the Room settings.
+  """
+  @spec new_player_for_room(Room.t()) :: Player.t()
+  def new_player_for_room(%Room{} = room) do
+    identity = Enum.shuffle(room.communities) |> Enum.at(0)
+
+    bias_list = Enum.filter(room.communities, &(&1 != identity))
+    bias_map = Enum.reduce(bias_list, %{}, fn x, acc -> Map.put(acc, x, 0) end)
+
+    affinity_list = room.affinities
+    affinity_map = Enum.reduce(affinity_list, %{}, fn x, acc -> Map.put(acc, x, 0) end)
+
+    %Player{
+      id: UXID.generate!(prefix: "player", size: :small),
+      identity: identity,
+      biases: bias_map,
+      affinities: affinity_map,
+      clout: 0
+    }
+  end
+end

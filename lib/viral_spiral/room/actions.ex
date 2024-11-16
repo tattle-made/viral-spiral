@@ -1,4 +1,4 @@
-defmodule ViralSpiral.Reducers do
+defmodule ViralSpiral.GamePlay.Actions do
   alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Canon.Deck.DrawTypeRequirements
@@ -40,7 +40,20 @@ defmodule ViralSpiral.Reducers do
     %{state | deck: new_deck, players: new_players}
   end
 
-  def pass_card(card, from, to) do
+  def pass_card(%Root{} = state, card, player, target) do
+    # increment clout
+    # [state.players[player.id], Options.change_clout(1)]
+
+    # increase affinity, if relevant
+    # card = store[card.id]
+    # offset = if card.polarity == :positive, do: +1, else: -1
+    # [state.players[player.id], Options.change_affinity(card.target, offset)]
+
+    # increase bias, if relevant
+
+    # decrease clout of others, if relevant
+    # others(state.players, state.player[player.id].identity)
+    # |> Enum.map
   end
 
   def keep_card(card, from) do

@@ -1,6 +1,6 @@
 defmodule ViralSpiral.PlayableTest do
   alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Room.State.Players
+  alias ViralSpiral.Room.State.PlayerMap
   alias ViralSpiral.Room.State.Root
   alias ViralSpiral.Playable
   alias ViralSpiral.Affinity
@@ -92,8 +92,8 @@ defmodule ViralSpiral.PlayableTest do
       assert current_player.biases.blue == 1
 
       blue_players =
-        Players.others(new_state.players, current_player_id)
-        |> Players.of_identity(:blue)
+        PlayerMap.others(new_state.players, current_player_id)
+        |> PlayerMap.of_identity(:blue)
 
       # players with blue identity should lose a clout
       Enum.map(blue_players, fn {_id, blue_player} ->

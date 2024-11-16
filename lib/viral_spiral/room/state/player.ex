@@ -9,14 +9,10 @@ defmodule ViralSpiral.Room.State.Player do
       clout: 0
     }
   """
-  alias ViralSpiral.Affinity
-  alias ViralSpiral.Room
-  alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Room.State.Player.ActiveCardDoesNotExist
   alias ViralSpiral.Room.State.Player.DuplicateActiveCardException
   alias ViralSpiral.Room.State.Player
   alias ViralSpiral.Bias
-  alias ViralSpiral.Game.EngineConfig
   import ViralSpiral.Game.EngineConfig.Guards
 
   defstruct id: nil,
@@ -40,25 +36,6 @@ defmodule ViralSpiral.Room.State.Player do
           active_cards: list()
         }
 
-  @spec new(Room.t()) :: t()
-  def new(%Room{} = room_config) do
-    identity = Enum.shuffle(room_config.communities) |> Enum.at(0)
-
-    bias_list = Enum.filter(room_config.communities, &(&1 != identity))
-    bias_map = Enum.reduce(bias_list, %{}, fn x, acc -> Map.put(acc, x, 0) end)
-
-    affinity_list = room_config.affinities
-    affinity_map = Enum.reduce(affinity_list, %{}, fn x, acc -> Map.put(acc, x, 0) end)
-
-    %Player{
-      id: UXID.generate!(prefix: "player", size: :small),
-      identity: identity,
-      biases: bias_map,
-      affinities: affinity_map,
-      clout: 0
-    }
-  end
-
   @spec set_name(Player.t(), String.t()) :: Player.t()
   def set_name(%Player{} = player, name) do
     %{player | name: name}
@@ -67,11 +44,6 @@ defmodule ViralSpiral.Room.State.Player do
   @spec set_identity(Player.t(), Bias.target()) :: Player.t()
   def set_identity(%Player{} = player, identity) do
     %{player | identity: identity}
-  end
-
-  @spec identity(Player.t()) :: Bias.target() | nil
-  def identity(%Player{} = player) do
-    player.identity
   end
 
   def add_to_hand(%Player{} = player, card_id) do
@@ -93,8 +65,11 @@ defmodule ViralSpiral.Room.State.Player do
       _ -> Map.put(player, :active_cards, List.delete(player.active_cards, card_id))
     end
   end
+end
 
-  def clout(%Player{} = player), do: player.clout
+defimpl ViralSpiral.Room.State.Change, for: ViralSpiral.Room.State.Player do
+  alias ViralSpiral.Room.State.Player
+  import ViralSpiral.Game.EngineConfig.Guards
 
   @doc """
   Change a Player's Score.
@@ -147,16 +122,12 @@ defmodule ViralSpiral.Room.State.Player do
     new_clout = player.clout + count
     %{player | clout: new_clout}
   end
-end
-
-defimpl ViralSpiral.Room.State.Change, for: ViralSpiral.Room.State.Player do
-  alias ViralSpiral.Room.State.Player
 
   def apply_change(player, _game_state, change_desc) do
     case change_desc[:type] do
-      :clout -> Player.change(player, :clout, change_desc[:offset])
-      :affinity -> Player.change(player, :affinity, change_desc[:target], change_desc[:offset])
-      :bias -> Player.change(player, :bias, change_desc[:target], change_desc[:offset])
+      :clout -> change(player, :clout, change_desc[:offset])
+      :affinity -> change(player, :affinity, change_desc[:target], change_desc[:offset])
+      :bias -> change(player, :bias, change_desc[:target], change_desc[:offset])
       :add_to_hand -> Player.add_to_hand(player, change_desc[:card_id])
       :remove_from_hand -> player
       :add_active_card -> Player.add_active_card(player, change_desc[:card_id])
@@ -174,11 +145,12 @@ defmodule ViralSpiral.Room.State.Player.ActiveCardDoesNotExist do
   defexception message: "This card is not an active card for this player "
 end
 
-defmodule ViralSpiral.Room.State.Players do
+defmodule ViralSpiral.Room.State.PlayerMap do
   @moduledoc """
-  Functions for handling a collection of `ViralSpiral.Room.State.Player` is a Room
+  Functions for handling a Map of `ViralSpiral.Room.State.Player` in a Room.
+
+  Player's id is the key for each player in the provided map
   """
-  alias ViralSpiral.Room.State.Player
   import ViralSpiral.Game.EngineConfig.Guards
 
   @doc """
@@ -199,17 +171,69 @@ defmodule ViralSpiral.Room.State.Players do
   end
 
   @doc """
-  Return all players other than me
+  Return all players whose identity is different from the passed player
   """
   # @spec(map(String.t(), Player.t()), String.t() :: list(Player.t()))
-  def others(players, me) when is_map(players) and is_bitstring(me) do
+  def others(players, player) when is_map(players) and is_bitstring(player) do
     Map.keys(players)
-    |> Enum.filter(&(&1 != me))
+    |> Enum.filter(&(&1 != player))
     |> Enum.reduce(%{}, &Map.put(&2, &1, players[&1]))
   end
 
+  @doc """
+  Convert a list of `Player` into Map suitable for `PlayerMap`.
+
+  ## Examples :
+
+      iex> players = [ %Player{id: "abc", identity: :red}, %Player{id: "def", identity: :yellow} ]
+      [
+        %ViralSpiral.Room.State.Player{
+          id: "abc",
+          biases: %{},
+          affinities: %{},
+          clout: 0,
+          name: "",
+          identity: :red,
+          hand: [],
+          active_cards: []
+        },
+        %ViralSpiral.Room.State.Player{
+          id: "def",
+          biases: %{},
+          affinities: %{},
+          clout: 0,
+          name: "",
+          identity: :yellow,
+          hand: [],
+          active_cards: []
+        }
+      ]
+      iex> PlayerMap.to_map(players)
+      %{
+        def: %ViralSpiral.Room.State.Player{
+          id: "def",
+          biases: %{},
+          affinities: %{},
+          clout: 0,
+          name: "",
+          identity: :yellow,
+          hand: [],
+          active_cards: []
+        },
+        abc: %ViralSpiral.Room.State.Player{
+          id: "abc",
+          biases: %{},
+          affinities: %{},
+          clout: 0,
+          name: "",
+          identity: :red,
+          hand: [],
+          active_cards: []
+        }
+      }
+  """
   def to_map(players) when is_list(players) do
-    Enum.reduce(players, %{}, &Map.put(&2, &1.id, &1))
+    Enum.reduce(players, %{}, &Map.put(&2, String.to_atom(&1.id), &1))
   end
 
   def to_full_map(ids, players) when is_list(ids) do

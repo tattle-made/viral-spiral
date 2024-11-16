@@ -29,7 +29,7 @@ defmodule ViralSpiral.Room.State.Room do
           affinities: list(Affinity.target()),
           communities: list(Bias.target()),
           chaos_counter: integer(),
-          chaos_counter: integer(),
+          chaos: integer(),
           volatality: EngineConfig.volatility()
         }
 
@@ -195,7 +195,7 @@ defimpl ViralSpiral.Room.State.Change, for: ViralSpiral.Room.State.Room do
     opts = Keyword.validate!(opts, type: nil, offset: 0)
 
     case opts[:type] do
-      :chaos_coutdown -> Map.put(score, :chaos_couter, score.chaos_counter + opts[:offset])
+      :chaos_countdown -> Map.put(score, :chaos, score.chaos + opts[:offset])
     end
   end
 end

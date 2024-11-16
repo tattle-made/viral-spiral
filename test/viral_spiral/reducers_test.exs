@@ -1,4 +1,6 @@
 defmodule ViralSpiral.ReducersTest do
+  alias ViralSpiral.GamePlay.Change.Options
+  alias ViralSpiral.Room.State.Change
   alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Reducers
   alias ViralSpiral.Room.State.Root
@@ -63,5 +65,24 @@ defmodule ViralSpiral.ReducersTest do
 
       IO.inspect(card_id)
     end
+  end
+
+  @tag timeout: :infinity
+  test "temp" do
+    :rand.seed(:exsss, {12356, 123_534, 345_345})
+    store = StoreFixtures.new_store()
+    store = StoreFixtures.set_chaos(store, 4)
+
+    %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} =
+      StoreFixtures.player_by_names(store)
+
+    # draw card of a certain type(?)
+
+    Change.apply_change(store.players[aman.id], Options.change_clout(2))
+
+    # IO.inspect(store.round)
+    # IO.inspect(store.turn)
+    # IO.inspect(store.players)
+    # IO.inspect(store.room)
   end
 end

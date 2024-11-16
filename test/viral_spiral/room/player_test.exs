@@ -1,4 +1,6 @@
 defmodule ViralSpiral.Game.PlayerTest do
+  alias ViralSpiral.Gameplay.Factory
+  alias ViralSpiral.GamePlay.Change.Options
   alias ViralSpiral.Room.State.Room
   alias ViralSpiral.Room.State.Player.ActiveCardDoesNotExist
   alias ViralSpiral.Room.State.Player.DuplicateActiveCardException
@@ -7,10 +9,10 @@ defmodule ViralSpiral.Game.PlayerTest do
   use ExUnit.Case
 
   test "create player from room config" do
-    room_config = Room.new(4)
+    room = Room.new(4)
 
     player =
-      Player.new(room_config)
+      Factory.new_player_for_room(room)
       |> Player.set_name("adhiraj")
 
     assert player.name == "adhiraj"
@@ -57,29 +59,60 @@ defmodule ViralSpiral.Game.PlayerTest do
     end
   end
 
-  describe "Change implementation" do
+  describe "changes" do
     setup do
-      player = %Player{}
+      player = %Player{
+        affinities: %{
+          skub: 0,
+          cat: 0
+        },
+        biases: %{
+          red: 0,
+          yellow: 2
+        }
+      }
 
       %{player: player}
     end
 
+    test "change clout", %{player: player} do
+      player = Change.apply_change(player, nil, Options.change_clout(4))
+      assert player.clout == 4
+    end
+
+    test "change affinity", %{player: player} do
+      player = Change.apply_change(player, nil, Options.change_affinity(:cat, 2))
+      assert player.affinities.cat == 2
+    end
+
+    test "change bias", %{player: player} do
+      player = Change.apply_change(player, nil, Options.change_bias(:yellow, -1))
+      assert player.biases.yellow == 1
+    end
+
+    test "add card to hand", %{player: player} do
+      player = Change.apply_change(player, nil, Options.add_to_hand("card_23b2323"))
+      assert length(player.hand) == 1
+      assert hd(player.hand) == "card_23b2323"
+    end
+
     test "add_active_card", %{player: player} do
-      player = Change.apply_change(player, nil, type: :add_active_card, card_id: "card_29323")
+      player = Change.apply_change(player, nil, Options.add_to_active("card_29323"))
       assert player.active_cards == ["card_29323"]
 
-      player = Change.apply_change(player, nil, type: :add_active_card, card_id: "card_84843")
+      player = Change.apply_change(player, nil, Options.add_to_active("card_84843"))
       assert player.active_cards == ["card_29323", "card_84843"]
     end
 
     test "remove_active_card", %{player: player} do
       player =
-        player
-        |> Player.add_active_card("card_29323")
-        |> Player.add_active_card("card_84843")
+        %{player | active_cards: ["card_29323", "card_84843"]}
+        |> Change.apply_change(nil, Options.remove_active("card_29323"))
 
-      player = Change.apply_change(player, nil, type: :remove_active_card, card_id: "card_29323")
-      player = Change.apply_change(player, nil, type: :remove_active_card, card_id: "card_84843")
+      assert player.active_cards == ["card_84843"]
+
+      player = Change.apply_change(player, nil, Options.remove_active("card_84843"))
+
       assert player.active_cards == []
     end
   end
