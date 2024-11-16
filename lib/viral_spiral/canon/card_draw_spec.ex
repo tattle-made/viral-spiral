@@ -17,8 +17,8 @@ defmodule ViralSpiral.Canon.CardDrawSpec do
     }
   }
   """
-  alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Room.State.Root
+  alias ViralSpiral.Entity.Player
+  alias ViralSpiral.Room.State
   alias ViralSpiral.Affinity
   alias ViralSpiral.Bias
   alias ViralSpiral.Canon.CardDrawSpec
@@ -58,7 +58,7 @@ defmodule ViralSpiral.Canon.CardDrawSpec do
     %{identity: Player.identity(player)}
   end
 
-  defp new(%Root{} = state) do
+  defp new(%State{} = state) do
     %CardDrawSpec{
       tgb: state.room.chaos_countdown,
       # todo

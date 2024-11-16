@@ -6,7 +6,7 @@
 
 # General application configuration
 import Config
-alias ViralSpiral.Game.EngineConfig
+alias ViralSpiral.Room.EngineConfig
 
 config :viral_spiral,
   ecto_repos: [ViralSpiral.Repo],

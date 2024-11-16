@@ -1,76 +1,54 @@
-defmodule ViralSpiral.GamePlay.Actions do
-  alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Canon.Deck
-  alias ViralSpiral.Canon.Deck.DrawTypeRequirements
-  alias ViralSpiral.Room.State.Root
+defmodule ViralSpiral.Room.Actions do
+  @moduledoc """
+  Instances of Action triggered by a Player or Game Engine .
+  """
+  alias ViralSpiral.Room.Action
 
-  # [
-  #   {state.turn, [type: :next, target: to]},
-  #   {state.players[from], [type: :clout, offset: 1]},
-  #   {state.players[from], [type: :bias, target: card.target, offset: 1]}
-  # ] ++
-  #   (Map.keys(state.players)
-  #    |> Enum.filter(&(state.players[&1].identity == card.target))
-  #    |> Enum.map(&{state.players[&1], [type: :clout, offset: -1]}))
-
-  def draw_card(%Root{} = state) do
-    requirements = %DrawTypeRequirements{
-      tgb: 4,
-      total_tgb: 10,
-      biases: [:red, :yellow, :blue],
-      affinities: [:skub, :highfive],
-      current_player: %{
-        identity: :blue
-      }
-    }
-
-    sets = state.deck.available_cards
-
-    type = Deck.draw_type(requirements) |> IO.inspect()
-    card = Deck.draw_card(sets, type)
-    new_sets = Deck.remove_card(sets, type, card)
-
-    deck = state.deck
-    new_deck = %{deck | available_cards: new_sets}
-
-    current_player = state.players[state.turn.current]
-    new_current_player = Player.add_active_card(current_player, card.id)
-    new_players = Map.put(state.players, new_current_player.id, new_current_player)
-
-    %{state | deck: new_deck, players: new_players}
+  def draw_card() do
+    %Action{type: :draw_card}
   end
 
-  def pass_card(%Root{} = state, card, player, target) do
-    # increment clout
-    # [state.players[player.id], Options.change_clout(1)]
+  @spec pass_card(String.t(), String.t(), String.t() | list(String.t())) :: Action.t()
+  def pass_card(card, from, to) when is_bitstring(to) or is_list(to) do
+    %Action{
+      type: :pass_card,
+      payload: %{
+        card: card,
+        player: from,
+        target: to
+      }
+    }
+  end
 
-    # increase affinity, if relevant
-    # card = store[card.id]
-    # offset = if card.polarity == :positive, do: +1, else: -1
-    # [state.players[player.id], Options.change_affinity(card.target, offset)]
-
-    # increase bias, if relevant
-
-    # decrease clout of others, if relevant
-    # others(state.players, state.player[player.id].identity)
-    # |> Enum.map
+  def pass_card(%{"card" => card, "from" => from, "to" => to}) do
+    pass_card(card, from, to)
   end
 
   def keep_card(card, from) do
+    %Action{
+      type: :keep_card,
+      payload: %{
+        card: card,
+        player: from
+      }
+    }
+  end
+
+  def keep_card(%{"card" => card, "from" => from}) do
+    keep_card(card, from)
   end
 
   def discard_card(card, from) do
+    %Action{
+      type: :discard_card,
+      payload: %{
+        card: card,
+        player: from
+      }
+    }
   end
 
-  def check_source(card) do
-  end
-
-  def turn_to_fake(card) do
-  end
-
-  def cancel_player(player, from) do
-  end
-
-  def viral_spiral(players, from) do
+  def discard_card(%{"card" => card, "from" => from}) do
+    discard_card(card, from)
   end
 end

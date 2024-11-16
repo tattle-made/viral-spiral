@@ -1,21 +1,21 @@
 defmodule StoreFixtures do
-  alias ViralSpiral.Room.State.Root
-  alias ViralSpiral.Room.State.Room
+  alias ViralSpiral.Room.State
+  alias ViralSpiral.Entity.Room
 
   def new_store() do
     room = Room.reserve("test-room") |> Room.start(4)
-    state = Root.new(room, ["adhiraj", "krys", "aman", "farah"])
+    state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
 
     state
   end
 
-  def set_chaos(%Root{} = root, chaos) do
+  def set_chaos(%State{} = root, chaos) do
     room = root.room
     new_room = %{room | chaos: chaos}
     Map.put(root, :room, new_room)
   end
 
-  def player_by_names(%Root{} = root) do
+  def player_by_names(%State{} = root) do
     players = root.players
 
     Map.keys(root.players)
@@ -24,9 +24,9 @@ defmodule StoreFixtures do
     end)
   end
 
-  def current_round(%Root{} = root) do
+  def current_round(%State{} = root) do
   end
 
-  def current_turn(%Root{} = root) do
+  def current_turn(%State{} = root) do
   end
 end

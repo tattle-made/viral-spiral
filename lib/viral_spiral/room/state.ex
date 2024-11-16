@@ -1,6 +1,8 @@
-defmodule ViralSpiral.Room.State.Root do
+defmodule ViralSpiral.Room.State do
   @moduledoc """
   Entire Game's state.
+
+  Encapsulates all Entities of Viral Spiral.
 
   Rounds and Turns
   round = Round.new(players)
@@ -9,14 +11,15 @@ defmodule ViralSpiral.Room.State.Root do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
 
-  alias ViralSpiral.Room.State.Deck
-  alias ViralSpiral.Room.State.Room
-  alias ViralSpiral.Room.State.Turn
-  alias ViralSpiral.Room.State.Round
-  alias ViralSpiral.Room.State.Room
-  alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Room.State.Root
-  alias ViralSpiral.Room.State.Change
+  alias ViralSpiral.Gameplay.Factory
+  alias ViralSpiral.Entity.Deck
+  alias ViralSpiral.Entity.Room
+  alias ViralSpiral.Entity.Turn
+  alias ViralSpiral.Entity.Round
+  alias ViralSpiral.Entity.Room
+  alias ViralSpiral.Entity.Player
+  alias ViralSpiral.Room.State
+  alias ViralSpiral.Entity.Change
 
   defstruct room: nil,
             players: [],
@@ -33,20 +36,22 @@ defmodule ViralSpiral.Room.State.Root do
         }
 
   def empty() do
-    %Root{}
+    %State{}
   end
 
   def new(%Room{} = room, player_names) when is_list(player_names) do
     players =
       player_names
-      |> Enum.map(fn player_name -> Player.new(room) |> Player.set_name(player_name) end)
+      |> Enum.map(fn player_name ->
+        Factory.new_player_for_room(room) |> Player.set_name(player_name)
+      end)
       |> Enum.reduce(%{}, fn player, acc -> Map.put(acc, player.id, player) end)
 
     round = Round.new(players)
     turn = Turn.new(round)
     deck = Deck.new()
 
-    %Root{
+    %State{
       room: room,
       players: players,
       round: round,
@@ -55,15 +60,15 @@ defmodule ViralSpiral.Room.State.Root do
     }
   end
 
-  def set_round(%Root{} = game, round) do
+  def set_round(%State{} = game, round) do
     %{game | round: round}
   end
 
-  def set_room(%Root{} = root, room) do
-    %{root | room: room}
+  def set_room(%State{} = State, room) do
+    %{State | room: room}
   end
 
-  def set_turn(%Root{} = game, turn) do
+  def set_turn(%State{} = game, turn) do
     %{game | turn: turn}
   end
 
@@ -80,19 +85,23 @@ defmodule ViralSpiral.Room.State.Root do
 
   defdelegate apply_change(change, state, opts), to: Change
 
-  defp get_target(%Root{} = state, %Player{id: id}) do
+  defp get_target(%State{} = state, %Player{id: id}) do
     state.players[id]
   end
 
-  defp get_target(%Root{} = state, %Turn{} = turn) do
+  defp get_target(%State{} = state, %Turn{} = turn) do
     state.turn
   end
 
-  defp get_target(%Root{} = state, %Round{} = round) do
+  defp get_target(%State{} = state, %Round{} = round) do
     state.round
   end
 
-  defp get_target(%Root{} = state, %Root{} = _state_again) do
+  defp get_target(%State{} = state, %Deck{} = round) do
+    state.deck
+  end
+
+  defp get_target(%State{} = state, %State{} = _state_again) do
     state
   end
 
@@ -106,19 +115,24 @@ defmodule ViralSpiral.Room.State.Root do
   get(state, "players[:id].hand[2]")
   get(state, "turn.round.current_player")
   """
-  defp get(%Root{} = _state, _key) do
+  defp get(%State{} = _state, _key) do
   end
 
-  defp put_target(%Root{} = state, %Player{id: id} = player) do
+  defp put_target(%State{} = state, %Player{id: id} = player) do
     updated_player_map = Map.put(state.players, id, player)
     Map.put(state, :players, updated_player_map)
   end
 
-  defp put_target(%Root{} = state, %Round{} = round) do
+  defp put_target(%State{} = state, %Round{} = round) do
     Map.put(state, :round, round)
   end
 
-  defp put_target(%Root{} = state, %Turn{} = turn) do
+  defp put_target(%State{} = state, %Turn{} = turn) do
     Map.put(state, :turn, turn)
   end
+
+  def current_turn_player(%State{} = state), do: state.players[state.turn.current]
+
+  def current_round_player(%State{} = state),
+    do: state.players[Round.current_player_id(state.round)]
 end

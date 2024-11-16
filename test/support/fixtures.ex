@@ -1,13 +1,13 @@
 defmodule Fixtures do
-  alias ViralSpiral.Room.State.Room
-  alias ViralSpiral.Room.State.Player
+  alias ViralSpiral.Entity.Room
+  alias ViralSpiral.Entity.Player
   alias ViralSpiral.Deck.Card
-  alias ViralSpiral.Room.State.Turn
-  alias ViralSpiral.Room.State.Round
-  alias ViralSpiral.Room.State.Room
+  alias ViralSpiral.Entity.Turn
+  alias ViralSpiral.Entity.Round
+  alias ViralSpiral.Entity.Room
   # alias ViralSpiral.Game.Score.Room, as: RoomScore
 
-  alias ViralSpiral.Room.State.Root
+  alias ViralSpiral.Room.State
 
   def initialized_game() do
     room = Room.new(4)
@@ -24,7 +24,7 @@ defmodule Fixtures do
     round = Round.new(player_list)
     turn = Turn.new(round)
 
-    %Root{
+    %State{
       room: room,
       players: players,
       round: round,
@@ -34,7 +34,7 @@ defmodule Fixtures do
 
   def new_game() do
     room = Room.reserve("test-room") |> Room.start(4)
-    Root.new(room, ["adhiraj", "krys", "aman", "farah"])
+    State.new(room, ["adhiraj", "krys", "aman", "farah"])
   end
 
   def players() do

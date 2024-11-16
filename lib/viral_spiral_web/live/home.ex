@@ -1,5 +1,5 @@
 defmodule ViralSpiralWeb.Home do
-  alias ViralSpiral.Room.State.Room
+  alias ViralSpiral.Entity.Room
   use ViralSpiralWeb, :live_view
 
   def mount(params, session, socket) do

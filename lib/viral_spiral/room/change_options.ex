@@ -1,34 +1,6 @@
-defprotocol ViralSpiral.Room.State.Change do
+defmodule ViralSpiral.Room.ChangeOptions do
   @moduledoc """
-  Protocol to change Entity used in Viral Spiral.
-
-  ## Fields
-  - score: struct which implements the `Change` protocol
-  - change_description: a Keyword List with parameters defining the change
-  """
-  alias ViralSpiral.Room.State
-
-  @spec apply_change(t(), State.t(), keyword()) :: t()
-  def apply_change(state, global_state, change_description)
-end
-
-defmodule ViralSpiral.Room.State.ChangeOptions do
-  defstruct type: nil,
-            target: nil,
-            id: nil,
-            extra: nil
-
-  @type t :: %__MODULE__{
-          type: atom(),
-          target: atom(),
-          id: String.t(),
-          extra: any()
-        }
-end
-
-defmodule ViralSpiral.GamePlay.Change.Options do
-  @moduledoc """
-  Commonly used changes put behind user friendly names
+  Commonly used change options put behind user friendly names.
   """
 
   def change_clout(offset), do: [type: :clout, offset: offset]
@@ -48,4 +20,10 @@ defmodule ViralSpiral.GamePlay.Change.Options do
 
   def draw_new_card(), do: []
   def discard_card(), do: []
+
+  @doc """
+
+  """
+  def remove_card(draw_type, card_id),
+    do: [type: :remove_card, draw_type: draw_type, card: card_id]
 end

@@ -1,6 +1,28 @@
 defmodule ViralSpiral.Gameplay.Factory do
-  alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Room.State.Room
+  @moduledoc """
+  Create entities for a Game Room
+  """
+  alias ViralSpiral.Canon.Deck.DrawTypeRequirements
+  alias ViralSpiral.Room.State
+  alias ViralSpiral.Room.EngineConfig
+  alias ViralSpiral.Entity.Player
+  alias ViralSpiral.Entity.Room
+
+  def new_room(player_count) do
+    Room.new(player_count)
+  end
+
+  def new_room() do
+    engine_config = %EngineConfig{}
+
+    %Room{
+      id: UXID.generate!(prefix: "room", size: :small),
+      name: Room.name(),
+      state: :uninitialized,
+      chaos_counter: engine_config.chaos_counter,
+      volatality: engine_config.volatility
+    }
+  end
 
   @doc """
   Create a new player whose properties conform with the Room settings.
@@ -21,6 +43,18 @@ defmodule ViralSpiral.Gameplay.Factory do
       biases: bias_map,
       affinities: affinity_map,
       clout: 0
+    }
+  end
+
+  def draw_type(%State{} = state) do
+    %DrawTypeRequirements{
+      tgb: state.room.chaos,
+      total_tgb: state.room.chaos_counter,
+      biases: state.room.communities,
+      affinities: state.room.affinities,
+      current_player: %{
+        identity: State.current_round_player(state).identity
+      }
     }
   end
 end

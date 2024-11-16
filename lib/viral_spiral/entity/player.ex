@@ -1,4 +1,4 @@
-defmodule ViralSpiral.Room.State.Player do
+defmodule ViralSpiral.Entity.Player do
   @moduledoc """
   Create and update Player Score.
 
@@ -9,11 +9,11 @@ defmodule ViralSpiral.Room.State.Player do
       clout: 0
     }
   """
-  alias ViralSpiral.Room.State.Player.ActiveCardDoesNotExist
-  alias ViralSpiral.Room.State.Player.DuplicateActiveCardException
-  alias ViralSpiral.Room.State.Player
+  alias ViralSpiral.Entity.Player.ActiveCardDoesNotExist
+  alias ViralSpiral.Entity.Player.DuplicateActiveCardException
+  alias ViralSpiral.Entity.Player
   alias ViralSpiral.Bias
-  import ViralSpiral.Game.EngineConfig.Guards
+  import ViralSpiral.Room.EngineConfig.Guards
 
   defstruct id: nil,
             biases: %{},
@@ -67,9 +67,9 @@ defmodule ViralSpiral.Room.State.Player do
   end
 end
 
-defimpl ViralSpiral.Room.State.Change, for: ViralSpiral.Room.State.Player do
-  alias ViralSpiral.Room.State.Player
-  import ViralSpiral.Game.EngineConfig.Guards
+defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
+  alias ViralSpiral.Entity.Player
+  import ViralSpiral.Room.EngineConfig.Guards
 
   @doc """
   Change a Player's Score.
@@ -137,21 +137,21 @@ defimpl ViralSpiral.Room.State.Change, for: ViralSpiral.Room.State.Player do
   end
 end
 
-defmodule ViralSpiral.Room.State.Player.DuplicateActiveCardException do
+defmodule ViralSpiral.Entity.Player.DuplicateActiveCardException do
   defexception message: "This card is already held by the player"
 end
 
-defmodule ViralSpiral.Room.State.Player.ActiveCardDoesNotExist do
+defmodule ViralSpiral.Entity.Player.ActiveCardDoesNotExist do
   defexception message: "This card is not an active card for this player "
 end
 
-defmodule ViralSpiral.Room.State.PlayerMap do
+defmodule ViralSpiral.Entity.PlayerMap do
   @moduledoc """
-  Functions for handling a Map of `ViralSpiral.Room.State.Player` in a Room.
+  Functions for handling a Map of `ViralSpiral.Entity.Player` in a Room.
 
   Player's id is the key for each player in the provided map
   """
-  import ViralSpiral.Game.EngineConfig.Guards
+  import ViralSpiral.Room.EngineConfig.Guards
 
   @doc """
   Return all players of an identity
@@ -187,7 +187,7 @@ defmodule ViralSpiral.Room.State.PlayerMap do
 
       iex> players = [ %Player{id: "abc", identity: :red}, %Player{id: "def", identity: :yellow} ]
       [
-        %ViralSpiral.Room.State.Player{
+        %ViralSpiral.Entity.Player{
           id: "abc",
           biases: %{},
           affinities: %{},
@@ -197,7 +197,7 @@ defmodule ViralSpiral.Room.State.PlayerMap do
           hand: [],
           active_cards: []
         },
-        %ViralSpiral.Room.State.Player{
+        %ViralSpiral.Entity.Player{
           id: "def",
           biases: %{},
           affinities: %{},
@@ -210,7 +210,7 @@ defmodule ViralSpiral.Room.State.PlayerMap do
       ]
       iex> PlayerMap.to_map(players)
       %{
-        def: %ViralSpiral.Room.State.Player{
+        def: %ViralSpiral.Entity.Player{
           id: "def",
           biases: %{},
           affinities: %{},
@@ -220,7 +220,7 @@ defmodule ViralSpiral.Room.State.PlayerMap do
           hand: [],
           active_cards: []
         },
-        abc: %ViralSpiral.Room.State.Player{
+        abc: %ViralSpiral.Entity.Player{
           id: "abc",
           biases: %{},
           affinities: %{},

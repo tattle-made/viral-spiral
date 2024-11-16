@@ -1,11 +1,11 @@
 defmodule ViralSpiral.Game.PlayerTest do
   alias ViralSpiral.Gameplay.Factory
-  alias ViralSpiral.GamePlay.Change.Options
-  alias ViralSpiral.Room.State.Room
-  alias ViralSpiral.Room.State.Player.ActiveCardDoesNotExist
-  alias ViralSpiral.Room.State.Player.DuplicateActiveCardException
-  alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Room.State.Change
+  alias ViralSpiral.Room.ChangeOptions
+  alias ViralSpiral.Entity.Room
+  alias ViralSpiral.Entity.Player.ActiveCardDoesNotExist
+  alias ViralSpiral.Entity.Player.DuplicateActiveCardException
+  alias ViralSpiral.Entity.Player
+  alias ViralSpiral.Entity.Change
   use ExUnit.Case
 
   test "create player from room config" do

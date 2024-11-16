@@ -1,6 +1,6 @@
 defmodule ViralSpiral.Room.RoomTest do
-  alias ViralSpiral.Room.State.Change
-  alias ViralSpiral.Room.State.Room
+  alias ViralSpiral.Entity.Change
+  alias ViralSpiral.Entity.Room
   use ExUnit.Case
 
   describe "deterministic room configs" do

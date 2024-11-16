@@ -1,4 +1,4 @@
-defmodule ViralSpiral.Room.State.Round do
+defmodule ViralSpiral.Entity.Round do
   @moduledoc """
   Orchestrates the sequence in which players draw cards.
 
@@ -21,9 +21,9 @@ defmodule ViralSpiral.Room.State.Round do
   - order: Player IDs in the order in which they draw a card.
   - current: index of the player whose round it is
   """
-  alias ViralSpiral.Room.State.Round
-  alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Room.State.Change
+  alias ViralSpiral.Entity.Round
+  alias ViralSpiral.Entity.Player
+  alias ViralSpiral.Entity.Change
 
   defstruct order: [],
             count: 0,
@@ -48,7 +48,7 @@ defmodule ViralSpiral.Room.State.Round do
   @doc """
   todo : this doesn't really need the players, merely a count of players, maybe?
   """
-  @spec new(list(Player.t())) :: ViralSpiral.Room.State.Round.t()
+  @spec new(list(Player.t())) :: ViralSpiral.Entity.Round.t()
   def new(player_list) when is_list(player_list) do
     order =
       Enum.shuffle(player_list)
@@ -126,7 +126,7 @@ defmodule ViralSpiral.Room.State.Round do
   end
 
   defimpl Change do
-    alias ViralSpiral.Room.State.Round
+    alias ViralSpiral.Entity.Round
 
     # @spec apply_change(Round.t(), Round.cphange_opts()) :: Round.t()
     def apply_change(state, global_state, opts) do

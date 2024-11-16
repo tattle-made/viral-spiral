@@ -1,6 +1,11 @@
 defmodule ViralSpiral.Room.GameEngine do
-  alias ViralSpiral.Room.State.Root
-  alias ViralSpiral.Room.State.Room
+  @moduledoc """
+  A GenServer for every Room.
+
+  All player actions are sent to this genserver, which returns or broadcasts the changes made to the game State.
+  """
+  alias ViralSpiral.Room.State
+  alias ViralSpiral.Entity.Room
   use GenServer
 
   @registry ViralSpiral.Room.Registry
@@ -12,7 +17,7 @@ defmodule ViralSpiral.Room.GameEngine do
   @impl true
   def init(name) do
     room = Room.reserve(name) |> Room.start(4)
-    state = Root.new(room, ["adhiraj", "krys", "aman", "farah"])
+    state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
 
     {:ok, state}
   end

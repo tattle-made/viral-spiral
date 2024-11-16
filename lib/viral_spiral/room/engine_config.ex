@@ -1,8 +1,8 @@
-defmodule ViralSpiral.Game.EngineConfig do
+defmodule ViralSpiral.Room.EngineConfig do
   @moduledoc """
   Global configuration for the game engine.
 
-  Unlike its room specific counterpart `ViralSpiral.Room.State.Room`, this configuration is global to every game room created on this server. These configuration are loaded at compile time and don't change throughout the runtime of the engine.
+  Unlike its room specific counterpart `ViralSpiral.Entity.Room`, this configuration is global to every game room created on this server. These configuration are loaded at compile time and don't change throughout the runtime of the engine.
 
   An imagined usecase of this module is to support spinning up varied instances of viral spiral with different characteristics. For instance,
   - Spinning up a server where only communities from :yellow and :red are available for gameplay.
@@ -11,7 +11,7 @@ defmodule ViralSpiral.Game.EngineConfig do
   """
   alias ViralSpiral.Bias
   alias ViralSpiral.Affinity
-  alias ViralSpiral.Game.EngineConfig
+  alias ViralSpiral.Room.EngineConfig
 
   @type volatility :: :low | :medium | :high
   @type t :: %__MODULE__{
@@ -27,8 +27,8 @@ defmodule ViralSpiral.Game.EngineConfig do
             volatility: Application.compile_env(:viral_spiral, EngineConfig)[:volatility]
 end
 
-defmodule ViralSpiral.Game.EngineConfig.Guards do
-  alias ViralSpiral.Game.EngineConfig
+defmodule ViralSpiral.Room.EngineConfig.Guards do
+  alias ViralSpiral.Room.EngineConfig
   @affinities Application.compile_env(:viral_spiral, EngineConfig)[:affinities]
   @communities Application.compile_env(:viral_spiral, EngineConfig)[:communities]
 

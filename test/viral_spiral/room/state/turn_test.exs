@@ -1,7 +1,7 @@
-defmodule ViralSpiral.Room.State.TurnTest do
-  alias ViralSpiral.Room.State.Change
-  alias ViralSpiral.Room.State.Turn
-  alias ViralSpiral.Room.State.Round
+defmodule ViralSpiral.Entity.TurnTest do
+  alias ViralSpiral.Entity.Change
+  alias ViralSpiral.Entity.Turn
+  alias ViralSpiral.Entity.Round
   use ExUnit.Case
 
   describe "turn progression" do

@@ -4,8 +4,8 @@ defmodule ViralSpiral.Game do
   """
   alias ViralSpiral.Canon.Card.Share
   alias ViralSpiral.Game.State
-  alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Room.State.Room
+  alias ViralSpiral.Entity.Player
+  alias ViralSpiral.Entity.Room
 
   @spec create_room(String.t()) :: Room.t()
   def create_room(_name) do

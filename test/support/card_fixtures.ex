@@ -1,7 +1,7 @@
 defmodule CardFixtures do
   alias ViralSpiral.Canon.Card.Affinity
   alias ViralSpiral.Canon.Card.Bias
-  import ViralSpiral.Game.EngineConfig.Guards
+  import ViralSpiral.Room.EngineConfig.Guards
 
   @doc """
   attrs is a map with keys suitable for`ViralSpiral.Canon.Card.Affinity`

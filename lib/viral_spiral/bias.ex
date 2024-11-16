@@ -1,6 +1,6 @@
 defmodule ViralSpiral.Bias do
   alias ViralSpiral.Bias
-  import ViralSpiral.Game.EngineConfig.Guards
+  import ViralSpiral.Room.EngineConfig.Guards
   defstruct target: nil
 
   @type target :: :red | :yellow | :blue

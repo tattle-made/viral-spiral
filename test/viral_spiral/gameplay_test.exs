@@ -4,11 +4,11 @@ defmodule ViralSpiral.GameTest do
 
   We only do 2 rounds for brevity.
   """
-  alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Room.State.Turn
-  alias ViralSpiral.Room.State.Round
-  alias ViralSpiral.Room.State.Root
-  alias ViralSpiral.Room.State.Room
+  alias ViralSpiral.Entity.Player
+  alias ViralSpiral.Entity.Turn
+  alias ViralSpiral.Entity.Round
+  alias ViralSpiral.Room.State
+  alias ViralSpiral.Entity.Room
   alias ViralSpiral.Game
   use ExUnit.Case
 
@@ -29,8 +29,8 @@ defmodule ViralSpiral.GameTest do
     assert room.communities != []
     assert room.state == :running
 
-    root = Root.new(room, ["adhiraj", "krys", "aman", "farah"])
-    assert match?(%Root{players: %{}, round: %Round{}, turn: %Turn{}}, root)
+    root = State.new(room, ["adhiraj", "krys", "aman", "farah"])
+    assert match?(%State{players: %{}, round: %Round{}, turn: %Turn{}}, root)
 
     round = root.round
     turn = root.turn
@@ -42,7 +42,7 @@ defmodule ViralSpiral.GameTest do
 
     # draw a card and pass it and check state at every point
     assert match?(
-             %Root{
+             %State{
                players: %{
                  ^player_a => %Player{clout: 0},
                  ^player_b => %Player{clout: 0, biases: %{yellow: 0}}

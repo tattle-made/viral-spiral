@@ -1,6 +1,6 @@
-defmodule ViralSpiral.Room.State.PlayerTest do
-  alias ViralSpiral.Room.State.Change
-  alias ViralSpiral.Room.State.Player
+defmodule ViralSpiral.Entity.PlayerTest do
+  alias ViralSpiral.Entity.Change
+  alias ViralSpiral.Entity.Player
   use ExUnit.Case
 
   describe "struct" do

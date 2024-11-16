@@ -1,6 +1,6 @@
 defmodule ViralSpiral.Affinity do
   alias ViralSpiral.Affinity
-  import ViralSpiral.Game.EngineConfig.Guards
+  import ViralSpiral.Room.EngineConfig.Guards
 
   defstruct target: nil
 

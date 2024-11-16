@@ -16,7 +16,7 @@ defmodule ViralSpiral.Room do
 
   use Supervisor
   alias ViralSpiral.Room.GameEngine.RoomReserved
-  alias ViralSpiral.Room.State.Room
+  alias ViralSpiral.Entity.Room
   alias ViralSpiral.Room.NotFound
 
   @room_gen ViralSpiral.Room.GameEngine

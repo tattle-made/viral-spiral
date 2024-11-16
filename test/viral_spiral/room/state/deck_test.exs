@@ -1,4 +1,4 @@
-defmodule ViralSpiral.Room.State.DeckTest do
+defmodule ViralSpiral.Entity.DeckTest do
   use ExUnit.Case
 
   describe "changes" do

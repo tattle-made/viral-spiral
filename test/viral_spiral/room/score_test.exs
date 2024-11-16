@@ -1,6 +1,6 @@
 defmodule ViralSpiral.Game.ScoreTest do
-  alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Game.EngineConfig
+  alias ViralSpiral.Entity.Player
+  alias ViralSpiral.Room.EngineConfig
   use ExUnit.Case
 
   setup_all do

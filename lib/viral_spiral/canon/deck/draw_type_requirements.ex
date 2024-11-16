@@ -21,9 +21,9 @@ end
 
 defmodule ViralSpiral.Canon.Deck.DrawTypeRequirements.Adapter do
   alias ViralSpiral.Canon.Deck.DrawTypeRequirements
-  alias ViralSpiral.Room.State.Root
+  alias ViralSpiral.Room.State
 
-  def new(%Root{} = state) do
+  def new(%State{} = state) do
     %DrawTypeRequirements{
       tgb: state.room
     }

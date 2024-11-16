@@ -1,19 +1,21 @@
-defmodule ViralSpiral.Room.State.Deck do
+defmodule ViralSpiral.Entity.Deck do
   alias ViralSpiral.Canon.Deck, as: CanonDeck
-  alias ViralSpiral.Room.State.Deck
-  alias ViralSpiral.Room.State.Change
+  alias ViralSpiral.Entity.Deck
+  alias ViralSpiral.Entity.Change
 
   defstruct available_cards: nil,
-            dealt_cards: nil
+            dealt_cards: nil,
+            store: nil
 
   @type change_opts :: [type: :remove | :shuffle]
   @type t :: %__MODULE__{
           available_cards: map(),
-          dealt_cards: map()
+          dealt_cards: map(),
+          store: map()
         }
 
   @doc """
-  todo : datastructure of cards, optimized for game operations
+  todo : datastructure of cards,  optimized for game operations
   """
   def new(cards) do
     %Deck{
@@ -27,7 +29,8 @@ defmodule ViralSpiral.Room.State.Deck do
 
     %Deck{
       available_cards: CanonDeck.create_sets(cards),
-      dealt_cards: %{}
+      dealt_cards: %{},
+      store: CanonDeck.create_store(cards)
     }
   end
 
@@ -42,8 +45,13 @@ defmodule ViralSpiral.Room.State.Deck do
     # @spec apply_change(Deck.t(), Deck.change_opts()) :: Deck.t()
     def apply_change(%Deck{} = deck, global_state, opts) do
       case opts[:type] do
-        :remove ->
-          Map.put(deck, :available_cards, MapSet.difference(deck.available_cards, opts[:target]))
+        :draw ->
+          deck
+
+        :remove_card ->
+          # sets, card_type, card
+          new_sets = CanonDeck.remove_card(deck.available_cards, opts[:draw_type], opts[:card_id])
+          Map.put(deck, :available_cards, new_sets)
 
         :shuffle ->
           Map.put(deck, :availabe_cards, Enum.shuffle(deck))

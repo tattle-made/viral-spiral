@@ -88,11 +88,11 @@ defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Affinity do
 end
 
 defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Topical do
-  alias ViralSpiral.Room.State.Root
+  alias ViralSpiral.Room.State
 
   # Increase passing player's clout
   # Update the turn
-  def pass(_card, %Root{} = state, from, to) do
+  def pass(_card, %State{} = state, from, to) do
     [
       {state.players[from], [type: :clout, offset: 1]},
       {state.turn, [type: :next, target: to]}

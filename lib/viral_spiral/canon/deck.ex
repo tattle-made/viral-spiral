@@ -13,7 +13,7 @@ defmodule ViralSpiral.Canon.Deck do
     Cards --> Sets : Room Specific
   </div>
 
-  Store is a Map of all cards. Keys in this Map are unique ids for every card and the values are cards (`ViralSpiral.Canon.Card.Affinity`, `ViralSpiral.Canon.Card.Bias`, `ViralSpiral.Canon.Card.Topical` and `ViralSpiral.Canon.Card.Conflated`).
+  Store is a Map of all cards. Keys in this Map are unique ids for every card and their veracity (eg: {"card_234234", true}) and the values are cards (`ViralSpiral.Canon.Card.Affinity`, `ViralSpiral.Canon.Card.Bias`, `ViralSpiral.Canon.Card.Topical` and `ViralSpiral.Canon.Card.Conflated`).
 
   Sets is a Map of cards. Keys of this Map are a tuple of the form `{type, veracity, target}`. Value of this Map is `MapSet` of cards. For instance, for a room where the active affinities are :cat and :sock; and the active communities are :red and :yellow; the Sets would have the following keys :
   ```elixir
@@ -579,7 +579,7 @@ defmodule ViralSpiral.Canon.Deck do
     {:bias, true, :yellow}
   ]
 
-  requirements = %{
+  requirements = %DrawTypeRequirements{
     tgb: 4,
     total_tgb: 10,
     biases: [:red, :blue],

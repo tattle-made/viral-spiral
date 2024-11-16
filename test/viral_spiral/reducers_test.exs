@@ -1,10 +1,10 @@
 defmodule ViralSpiral.ReducersTest do
-  alias ViralSpiral.GamePlay.Change.Options
-  alias ViralSpiral.Room.State.Change
+  alias ViralSpiral.Room.ChangeOptions
+  alias ViralSpiral.Entity.Change
   alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Reducers
-  alias ViralSpiral.Room.State.Root
-  alias ViralSpiral.Room.State.Room
+  alias ViralSpiral.Room.State
+  alias ViralSpiral.Entity.Room
   use ExUnit.Case
 
   describe "" do
@@ -12,7 +12,7 @@ defmodule ViralSpiral.ReducersTest do
       :rand.seed(:exsss, {12356, 123_534, 345_345})
 
       room = Room.reserve("test-room") |> Room.start(4)
-      state = Root.new(room, ["adhiraj", "krys", "aman", "farah"])
+      state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
 
       %{state: state}
     end
@@ -53,7 +53,7 @@ defmodule ViralSpiral.ReducersTest do
       :rand.seed(:exsss, {12356, 123_534, 345_345})
 
       room = Room.reserve("test-room") |> Room.start(4)
-      state = Root.new(room, ["adhiraj", "krys", "aman", "farah"])
+      state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
 
       %{state: state}
     end

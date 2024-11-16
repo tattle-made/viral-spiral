@@ -1,4 +1,4 @@
-defmodule ViralSpiral.Room.State.Room do
+defmodule ViralSpiral.Entity.Room do
   @moduledoc """
   Room specific configuration for every game.
 
@@ -7,8 +7,8 @@ defmodule ViralSpiral.Room.State.Room do
   """
   alias ViralSpiral.Bias
   alias ViralSpiral.Affinity
-  alias ViralSpiral.Room.State.Room
-  alias ViralSpiral.Game.EngineConfig
+  alias ViralSpiral.Entity.Room
+  alias ViralSpiral.Room.EngineConfig
 
   defstruct affinities: [],
             communities: [],
@@ -47,7 +47,7 @@ defmodule ViralSpiral.Room.State.Room do
     }
   end
 
-  def new(player_count) do
+  def start(%Room{} = room, player_count) do
     engine_config = %EngineConfig{}
 
     affinities = engine_config.affinities
@@ -68,14 +68,15 @@ defmodule ViralSpiral.Room.State.Room do
         _ -> communities
       end
 
-    %Room{
-      id: UXID.generate!(prefix: "room", size: :small),
-      state: :uninitialized,
-      affinities: room_affinities,
-      communities: room_communities,
-      chaos_counter: engine_config.chaos_counter,
-      chaos: engine_config.chaos_counter,
-      volatality: engine_config.volatility
+    %{
+      room
+      | id: UXID.generate!(prefix: "room", size: :small),
+        state: :uninitialized,
+        affinities: room_affinities,
+        communities: room_communities,
+        chaos_counter: engine_config.chaos_counter,
+        chaos: 0,
+        volatality: engine_config.volatility
     }
   end
 
@@ -87,6 +88,7 @@ defmodule ViralSpiral.Room.State.Room do
       name: name(),
       state: :uninitialized,
       chaos_counter: engine_config.chaos_counter,
+      chaos: engine_config.chaos_counter,
       volatality: engine_config.volatility
     }
   end
@@ -157,35 +159,11 @@ defmodule ViralSpiral.Room.State.Room do
 
     Enum.random(adjectives) <> "-" <> Enum.random(nouns)
   end
-
-  def start(%Room{} = room, player_count) do
-    engine_config = %EngineConfig{}
-
-    affinities = engine_config.affinities
-    total_affinities = length(affinities)
-
-    two_affinities =
-      Stream.repeatedly(fn -> :rand.uniform(total_affinities - 1) end)
-      |> Stream.dedup()
-      |> Enum.take(2)
-
-    room_affinities = Enum.map(two_affinities, &Enum.at(affinities, &1))
-
-    communities = engine_config.communities
-
-    room_communities =
-      case player_count do
-        x when x <= 3 -> Enum.shuffle(communities) |> Enum.take(2)
-        _ -> communities
-      end
-
-    %{room | affinities: room_affinities, communities: room_communities, state: :running}
-  end
 end
 
-defimpl ViralSpiral.Room.State.Change, for: ViralSpiral.Room.State.Room do
+defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Room do
   alias ViralSpiral.Game.State
-  alias ViralSpiral.Room.State.Room
+  alias ViralSpiral.Entity.Room
 
   @doc """
   Change state of a Room.

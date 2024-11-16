@@ -1,7 +1,7 @@
 defmodule ViralSpiral.PlayableTest do
-  alias ViralSpiral.Room.State.Player
-  alias ViralSpiral.Room.State.PlayerMap
-  alias ViralSpiral.Room.State.Root
+  alias ViralSpiral.Entity.Player
+  alias ViralSpiral.Entity.PlayerMap
+  alias ViralSpiral.Room.State
   alias ViralSpiral.Playable
   alias ViralSpiral.Affinity
   alias ViralSpiral.Canon.Deck
@@ -21,14 +21,14 @@ defmodule ViralSpiral.PlayableTest do
 
       affinity_card = CardFixtures.affinity_card_true_anti_cat()
       changes = Playable.pass(affinity_card, game_state, current_player_id, next_player_id)
-      new_state = Root.apply_changes(game_state, changes)
+      new_state = State.apply_changes(game_state, changes)
 
       assert new_state.players[current_player_id].affinities.cat == -1
       assert new_state.players[current_player_id].clout == 1
 
       affinity_card = CardFixtures.affinity_card_true_pro_cat()
       changes = Playable.pass(affinity_card, game_state, current_player_id, next_player_id)
-      new_state = Root.apply_changes(game_state, changes)
+      new_state = State.apply_changes(game_state, changes)
 
       assert new_state.players[current_player_id].affinities.cat == 1
       assert new_state.players[current_player_id].clout == 1
@@ -44,7 +44,7 @@ defmodule ViralSpiral.PlayableTest do
       affinity_card = CardFixtures.affinity_card_true_anti_cat()
 
       changes = Playable.keep(affinity_card, game_state, current_player_id)
-      new_state = Root.apply_changes(game_state, changes)
+      new_state = State.apply_changes(game_state, changes)
       assert new_state.turn.current == next_turn_player_id
       assert new_state.round.current == 1
     end
@@ -59,7 +59,7 @@ defmodule ViralSpiral.PlayableTest do
       affinity_card = CardFixtures.affinity_card_true_anti_cat()
 
       changes = Playable.keep(affinity_card, game_state, current_player_id)
-      new_state = Root.apply_changes(game_state, changes)
+      new_state = State.apply_changes(game_state, changes)
 
       assert new_state.turn.current == next_turn_player_id
       assert new_state.round.current == 1
@@ -83,7 +83,7 @@ defmodule ViralSpiral.PlayableTest do
       to_player_id = Enum.at(turn.pass_to, 1)
 
       changes = Playable.pass(card, game_state, current_player_id, to_player_id)
-      new_state = Root.apply_changes(game_state, changes)
+      new_state = State.apply_changes(game_state, changes)
 
       current_player = new_state.players[current_player_id]
       # current player's clout should increase by 1
@@ -111,7 +111,7 @@ defmodule ViralSpiral.PlayableTest do
       current_player_id = turn.current
 
       changes = Playable.keep(card, game_state, current_player_id)
-      new_state = Root.apply_changes(game_state, changes)
+      new_state = State.apply_changes(game_state, changes)
 
       # card is added to the player's hand
       assert new_state.players[current_player_id].hand == [card.id]

@@ -1,6 +1,6 @@
-defmodule ViralSpiral.Room.State.RoundTest do
-  alias ViralSpiral.Room.State.Change
-  alias ViralSpiral.Room.State.Round
+defmodule ViralSpiral.Entity.RoundTest do
+  alias ViralSpiral.Entity.Change
+  alias ViralSpiral.Entity.Round
   use ExUnit.Case
 
   describe "round progression" do

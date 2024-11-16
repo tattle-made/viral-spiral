@@ -1,6 +1,6 @@
 defmodule ViralSpiralWeb.GameRoom do
-  alias ViralSpiral.Room.State.Room
-  alias ViralSpiral.Room.State.Root
+  alias ViralSpiral.Room.State
+  alias ViralSpiral.Entity.Room
   use ViralSpiralWeb, :live_view
 
   def mount(params, session, socket) do
@@ -8,7 +8,7 @@ defmodule ViralSpiralWeb.GameRoom do
       Room.new()
       |> Room.start(4)
 
-    root = Root.new(room, ["adhiraj", "krys", "aman", "farah"])
+    root = State.new(room, ["adhiraj", "krys", "aman", "farah"])
     IO.inspect(root)
     IO.puts("hi")
 
