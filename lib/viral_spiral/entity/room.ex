@@ -33,6 +33,19 @@ defmodule ViralSpiral.Entity.Room do
           volatality: EngineConfig.volatility()
         }
 
+  def new() do
+    engine_config = %EngineConfig{}
+
+    %Room{
+      id: UXID.generate!(prefix: "room", size: :small),
+      name: name(),
+      state: :uninitialized,
+      chaos_counter: engine_config.chaos_counter,
+      chaos: engine_config.chaos_counter,
+      volatality: engine_config.volatility
+    }
+  end
+
   @doc """
   Reserve a room.
 
@@ -77,19 +90,6 @@ defmodule ViralSpiral.Entity.Room do
         chaos_counter: engine_config.chaos_counter,
         chaos: 0,
         volatality: engine_config.volatility
-    }
-  end
-
-  def new() do
-    engine_config = %EngineConfig{}
-
-    %Room{
-      id: UXID.generate!(prefix: "room", size: :small),
-      name: name(),
-      state: :uninitialized,
-      chaos_counter: engine_config.chaos_counter,
-      chaos: engine_config.chaos_counter,
-      volatality: engine_config.volatility
     }
   end
 
@@ -162,7 +162,6 @@ defmodule ViralSpiral.Entity.Room do
 end
 
 defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Room do
-  alias ViralSpiral.Game.State
   alias ViralSpiral.Entity.Room
 
   @doc """
