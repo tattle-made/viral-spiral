@@ -24,6 +24,6 @@ defmodule ViralSpiral.Room.ChangeOptions do
   @doc """
 
   """
-  def remove_card(draw_type, card_id),
-    do: [type: :remove_card, draw_type: draw_type, card: card_id]
+  def remove_card(draw_type, card),
+    do: [type: :remove_card, draw_type: draw_type, card_in_set: card]
 end

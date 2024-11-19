@@ -1,3 +1,3 @@
 defmodule CanonFixtures do
-  alias ViralSpiral.Canon.Deck.DrawTypeRequirements
+  alias ViralSpiral.Canon.DrawTypeRequirements
 end

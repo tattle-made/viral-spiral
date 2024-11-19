@@ -40,21 +40,15 @@ defmodule ViralSpiral.Entity.Deck do
 
     Possible changes :
     - Make card unavailable for drawing. Implemted by change type :remove
-    - Shuffle card. Implemented by change type :shuffle
     """
     # @spec apply_change(Deck.t(), Deck.change_opts()) :: Deck.t()
-    def apply_change(%Deck{} = deck, global_state, opts) do
+    def apply_change(%Deck{} = deck, _global_state, opts) do
       case opts[:type] do
-        :draw ->
-          deck
-
         :remove_card ->
-          # sets, card_type, card
-          new_sets = CanonDeck.remove_card(deck.available_cards, opts[:draw_type], opts[:card_id])
-          Map.put(deck, :available_cards, new_sets)
+          new_sets =
+            CanonDeck.remove_card(deck.available_cards, opts[:draw_type], opts[:card_in_set])
 
-        :shuffle ->
-          Map.put(deck, :availabe_cards, Enum.shuffle(deck))
+          Map.put(deck, :available_cards, new_sets)
       end
     end
   end

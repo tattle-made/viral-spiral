@@ -1,6 +1,6 @@
 defmodule ViralSpiral.Canon.DeckEncyclopediaTest do
   use ExUnit.Case
-  alias ViralSpiral.Canon.Deck.DrawTypeRequirements
+  alias ViralSpiral.Canon.DrawTypeRequirements
   alias ViralSpiral.Canon.Encyclopedia
   alias ViralSpiral.Canon.Deck
 
@@ -64,8 +64,8 @@ defmodule ViralSpiral.Canon.DeckEncyclopediaTest do
     card_opts = Deck.draw_type(requirements)
     current_size = Deck.size(sets, card_opts)
     assert current_size == 30
-    card_in_set = Deck.draw_card(sets, card_opts)
-    new_sets = Deck.remove_card(sets, card_opts, card_in_set)
+    draw_result = Deck.draw_card(sets, card_opts)
+    new_sets = Deck.remove_card(sets, card_opts, draw_result)
     new_size = Deck.size(new_sets, card_opts)
     assert new_size = 29
   end
@@ -89,8 +89,8 @@ defmodule ViralSpiral.Canon.DeckEncyclopediaTest do
       store = state[:store]
       article_store = state[:article_store]
 
-      card_key = Deck.draw_card(set, type: :affinity, veracity: true, tgb: 5, target: :sock)
-      card = store[{card_key.id, true}]
+      draw_result = Deck.draw_card(set, type: :affinity, veracity: true, tgb: 5, target: :sock)
+      card = store[{draw_result.id, true}]
       assert card.headline == "Socks attract rats to your house, beware"
 
       fake_card = Deck.get_fake_card(store, card.id)
@@ -102,8 +102,8 @@ defmodule ViralSpiral.Canon.DeckEncyclopediaTest do
       store = state[:store]
       article_store = state[:article_store]
 
-      card_in_set = Deck.draw_card(set, type: :topical, veracity: true, tgb: 5)
-      card = store[{card_in_set.id, true}]
+      draw_result = Deck.draw_card(set, type: :topical, veracity: true, tgb: 5)
+      card = store[{draw_result.id, true}]
       assert card.id == "card_27424926"
       assert card.veracity == true
 

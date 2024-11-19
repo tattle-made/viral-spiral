@@ -65,7 +65,7 @@ defmodule ViralSpiral.Canon.Deck do
   Read documentation of `draw_card` to see more examples of the responses.
 
   """
-  alias ViralSpiral.Canon.Deck.DrawTypeRequirements
+  alias ViralSpiral.Canon.DrawTypeRequirements
   alias ViralSpiral.Canon.Card.Conflated
   alias ViralSpiral.Canon.Card.Affinity
   alias ViralSpiral.Canon.Card.Bias
@@ -149,6 +149,11 @@ defmodule ViralSpiral.Canon.Deck do
     )
   end
 
+  @doc """
+  A map of MapSets.
+  Every item in the MapSet is a card identifier (eg: %{id: "card_234234", tgb: 3})
+  The keys of this map are of the form {type, veracity, target}
+  """
   def create_sets(cards, opts \\ @set_opts_default) do
     affinities = opts[:affinities]
     biases = opts[:biases]

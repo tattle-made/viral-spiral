@@ -2,15 +2,11 @@ defmodule ViralSpiral.Gameplay.Factory do
   @moduledoc """
   Create entities for a Game Room
   """
-  alias ViralSpiral.Canon.Deck.DrawTypeRequirements
+  alias ViralSpiral.Canon.DrawTypeRequirements
   alias ViralSpiral.Room.State
   alias ViralSpiral.Room.EngineConfig
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Entity.Room
-
-  def new_room(player_count) do
-    Room.new(player_count)
-  end
 
   def new_room() do
     engine_config = %EngineConfig{}

@@ -5,7 +5,7 @@ defmodule ViralSpiral.Room.Reducer do
   alias ViralSpiral.Playable
   alias ViralSpiral.Room.State
   alias ViralSpiral.Room.ChangeOptions
-  alias ViralSpiral.Canon.Deck.DrawTypeRequirements
+  alias ViralSpiral.Canon.DrawTypeRequirements
   alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Room.Action
 
@@ -26,9 +26,10 @@ defmodule ViralSpiral.Room.Reducer do
 
     # requirements = Factory.draw_type_requirements(state.room)
     current_player = State.current_player(state)
+
     sets = state.deck.available_cards
-    type = Deck.draw_type(requirements)
-    card_id = Deck.draw_card(sets, type) |> Map.get(:id)
+    draw_type = Deck.draw_type(requirements)
+    card_in_set = Deck.draw_card(sets, draw_type)
 
     # IO.inspect(current_player)
     # IO.inspect(type)
@@ -37,7 +38,7 @@ defmodule ViralSpiral.Room.Reducer do
 
     changes =
       [
-        {state.deck, nil, ChangeOptions.remove_card(type, card_id)}
+        {state.deck, nil, ChangeOptions.remove_card(draw_type, card_in_set)}
       ]
       |> IO.inspect()
 
