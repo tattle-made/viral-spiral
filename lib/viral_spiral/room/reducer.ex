@@ -5,7 +5,7 @@ defmodule ViralSpiral.Room.Reducer do
   alias ViralSpiral.Gameplay.Factory
   alias ViralSpiral.Playable
   alias ViralSpiral.Room.State
-  alias ViralSpiral.Room.ChangeOptions
+  alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Canon.DrawTypeRequirements
   alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Room.Action
@@ -21,8 +21,8 @@ defmodule ViralSpiral.Room.Reducer do
 
     changes =
       [
-        {state.deck, nil, ChangeOptions.remove_card(draw_type, draw_result)},
-        {state.players[current_player.id], nil, ChangeOptions.add_to_active(draw_result.id)}
+        {state.deck, ChangeDescriptions.remove_card(draw_type, draw_result)},
+        {state.players[current_player.id], ChangeDescriptions.add_to_active(draw_result.id)}
       ]
 
     State.apply_changes(state, changes)

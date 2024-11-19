@@ -129,8 +129,8 @@ defmodule ViralSpiral.Entity.Round do
     alias ViralSpiral.Entity.Round
 
     # @spec apply_change(Round.t(), Round.cphange_opts()) :: Round.t()
-    def apply_change(state, global_state, opts) do
-      case opts[:type] do
+    def apply_change(state, change_desc) do
+      case change_desc[:type] do
         :next -> Round.next(state)
       end
     end

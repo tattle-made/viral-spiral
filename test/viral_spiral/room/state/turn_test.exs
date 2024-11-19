@@ -55,7 +55,7 @@ defmodule ViralSpiral.Entity.TurnTest do
     end
 
     test "move to next turn", %{turn: turn, target: target} do
-      new_turn = Change.apply_change(turn, nil, type: :next, target: target)
+      new_turn = Change.apply_change(turn, type: :next, target: target)
       assert new_turn.current == target
     end
   end

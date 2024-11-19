@@ -80,7 +80,7 @@ defmodule ViralSpiral.Entity.RoundTest do
     end
 
     test "move to next round", %{round: round} do
-      new_round = Change.apply_change(round, nil, type: :next)
+      new_round = Change.apply_change(round, type: :next)
       assert new_round.current == 1
     end
   end

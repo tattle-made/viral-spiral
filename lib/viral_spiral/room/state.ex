@@ -77,13 +77,13 @@ defmodule ViralSpiral.Room.State do
   def apply_changes(state, changes) do
     Enum.reduce(changes, state, fn change, state ->
       data = get_target(state, elem(change, 0))
-      change_inst = elem(change, 2)
-      new_value = apply_change(data, state, change_inst)
+      change_desc = elem(change, 1)
+      new_value = apply_change(data, change_desc)
       put_target(state, new_value)
     end)
   end
 
-  defdelegate apply_change(change, state, opts), to: Change
+  defdelegate apply_change(change, change_desc), to: Change
 
   defp get_target(%State{} = state, %Player{id: id}) do
     state.players[id]

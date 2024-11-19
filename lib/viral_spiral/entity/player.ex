@@ -123,7 +123,7 @@ defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
     %{player | clout: new_clout}
   end
 
-  def apply_change(player, _game_state, change_desc) do
+  def apply_change(player, change_desc) do
     case change_desc[:type] do
       :clout -> change(player, :clout, change_desc[:offset])
       :affinity -> change(player, :affinity, change_desc[:target], change_desc[:offset])

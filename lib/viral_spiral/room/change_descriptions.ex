@@ -1,4 +1,4 @@
-defmodule ViralSpiral.Room.ChangeOptions do
+defmodule ViralSpiral.Room.ChangeDescriptions do
   @moduledoc """
   Commonly used change options put behind user friendly names.
   """

@@ -63,10 +63,10 @@ defmodule ViralSpiral.Entity.Turn do
   end
 
   defimpl Change do
-    def apply_change(turn, _global_state, opts) do
-      case opts[:type] do
-        :next -> Turn.next(turn, opts[:target])
-        :new -> Turn.new(opts[:round])
+    def apply_change(turn, change_desc) do
+      case change_desc[:type] do
+        :next -> Turn.next(turn, change_desc[:target])
+        :new -> Turn.new(change_desc[:round])
       end
     end
   end

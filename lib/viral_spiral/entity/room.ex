@@ -168,12 +168,11 @@ defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Room do
   @doc """
   Change state of a Room.
   """
-  @spec apply_change(Room.t(), State.t(), keyword()) :: Room.t()
-  def apply_change(%Room{} = score, _global_state, opts) do
-    opts = Keyword.validate!(opts, type: nil, offset: 0)
+  def apply_change(%Room{} = score, change_desc) do
+    change_desc = Keyword.validate!(change_desc, type: nil, offset: 0)
 
-    case opts[:type] do
-      :chaos_countdown -> Map.put(score, :chaos, score.chaos + opts[:offset])
+    case change_desc[:type] do
+      :chaos_countdown -> Map.put(score, :chaos, score.chaos + change_desc[:offset])
     end
   end
 end

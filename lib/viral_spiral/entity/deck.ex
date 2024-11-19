@@ -42,13 +42,15 @@ defmodule ViralSpiral.Entity.Deck do
     - Make card unavailable for drawing. Implemted by change type :remove
     """
     # @spec apply_change(Deck.t(), Deck.change_opts()) :: Deck.t()
-    def apply_change(%Deck{} = deck, _global_state, opts) do
-      IO.inspect(opts)
-
-      case opts[:type] do
+    def apply_change(%Deck{} = deck, change_desc) do
+      case change_desc[:type] do
         :remove_card ->
           new_sets =
-            CanonDeck.remove_card(deck.available_cards, opts[:draw_type], opts[:card_in_set])
+            CanonDeck.remove_card(
+              deck.available_cards,
+              change_desc[:draw_type],
+              change_desc[:card_in_set]
+            )
 
           Map.put(deck, :available_cards, new_sets)
       end
