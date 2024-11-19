@@ -49,7 +49,7 @@ defmodule ViralSpiral.Room.State do
 
     round = Round.new(players)
     turn = Turn.new(round)
-    deck = Deck.new()
+    deck = Factory.new_deck(room)
 
     %State{
       room: room,
@@ -77,7 +77,7 @@ defmodule ViralSpiral.Room.State do
   def apply_changes(state, changes) do
     Enum.reduce(changes, state, fn change, state ->
       data = get_target(state, elem(change, 0))
-      change_inst = elem(change, 1)
+      change_inst = elem(change, 2)
       new_value = apply_change(data, state, change_inst)
       put_target(state, new_value)
     end)
@@ -97,7 +97,7 @@ defmodule ViralSpiral.Room.State do
     state.round
   end
 
-  defp get_target(%State{} = state, %Deck{} = round) do
+  defp get_target(%State{} = state, %Deck{} = deck) do
     state.deck
   end
 
@@ -129,6 +129,10 @@ defmodule ViralSpiral.Room.State do
 
   defp put_target(%State{} = state, %Turn{} = turn) do
     Map.put(state, :turn, turn)
+  end
+
+  defp put_target(%State{} = state, %Deck{} = deck) do
+    Map.put(state, :deck, deck)
   end
 
   def current_turn_player(%State{} = state), do: state.players[state.turn.current]

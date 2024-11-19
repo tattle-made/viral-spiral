@@ -17,7 +17,7 @@ defmodule ViralSpiral.Entity.DeckTest do
       draw_result = CanonDeck.draw_card(deck.available_cards, draw_type)
 
       new_deck = Change.apply_change(deck, nil, ChangeOptions.remove_card(draw_type, draw_result))
-      assert MapSet.size(new_deck.available_cards[{:affinity, true, :cat}]) == 59
+      assert CanonDeck.size(new_deck.available_cards, draw_type) == 59
     end
   end
 end

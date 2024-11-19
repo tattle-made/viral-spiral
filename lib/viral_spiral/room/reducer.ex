@@ -2,6 +2,7 @@ defmodule ViralSpiral.Room.Reducer do
   @moduledoc """
 
   """
+  alias ViralSpiral.Gameplay.Factory
   alias ViralSpiral.Playable
   alias ViralSpiral.Room.State
   alias ViralSpiral.Room.ChangeOptions
@@ -10,46 +11,21 @@ defmodule ViralSpiral.Room.Reducer do
   alias ViralSpiral.Room.Action
 
   @spec reduce(State.t(), Action.t()) :: State.t()
-  def reduce(%State{} = state, %{type: :draw_card}) do
-    # todo : this is a hardcoded value, should be fixed later
-    # this should be derivable from state.room
+  def reduce(%State{} = state, %{type: :draw_card} = action) do
+    draw_type = action.payload.draw_type
 
-    requirements = %DrawTypeRequirements{
-      tgb: 4,
-      total_tgb: 10,
-      biases: [:red, :yellow, :blue],
-      affinities: [:skub, :highfive],
-      current_player: %{
-        identity: :blue
-      }
-    }
-
-    # requirements = Factory.draw_type_requirements(state.room)
-    current_player = State.current_player(state)
+    current_player = State.current_round_player(state)
 
     sets = state.deck.available_cards
-    draw_type = Deck.draw_type(requirements)
-    card_in_set = Deck.draw_card(sets, draw_type)
-
-    # IO.inspect(current_player)
-    # IO.inspect(type)
-    # IO.inspect(card_id)
-    # IO.inspect("hello")
+    draw_result = Deck.draw_card(sets, draw_type)
 
     changes =
       [
-        {state.deck, nil, ChangeOptions.remove_card(draw_type, card_in_set)}
+        {state.deck, nil, ChangeOptions.remove_card(draw_type, draw_result)},
+        {state.players[current_player.id], nil, ChangeOptions.add_to_active(draw_result.id)}
       ]
-      |> IO.inspect()
 
-    # State.apply_changes(state, changes) |> IO.inspect()
-    # [
-    #   {state.deck, ChangeOptions.remove_card(type, card_id)},
-    #   {state.players[current_player], ChangeOptions.add_to_active(card_id)}
-    # ]
-    # |> State.apply_changes()
-
-    state
+    State.apply_changes(state, changes)
   end
 
   def reduce(%State{} = state, %{type: pass_card} = action) do

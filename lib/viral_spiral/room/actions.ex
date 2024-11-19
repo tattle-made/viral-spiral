@@ -4,8 +4,8 @@ defmodule ViralSpiral.Room.Actions do
   """
   alias ViralSpiral.Room.Action
 
-  def draw_card() do
-    %Action{type: :draw_card}
+  def draw_card(draw_type) do
+    %Action{type: :draw_card, payload: %{draw_type: draw_type}}
   end
 
   @spec pass_card(String.t(), String.t(), String.t() | list(String.t())) :: Action.t()

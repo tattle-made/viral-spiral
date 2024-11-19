@@ -43,6 +43,8 @@ defmodule ViralSpiral.Entity.Deck do
     """
     # @spec apply_change(Deck.t(), Deck.change_opts()) :: Deck.t()
     def apply_change(%Deck{} = deck, _global_state, opts) do
+      IO.inspect(opts)
+
       case opts[:type] do
         :remove_card ->
           new_sets =

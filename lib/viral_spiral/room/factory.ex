@@ -2,6 +2,8 @@ defmodule ViralSpiral.Gameplay.Factory do
   @moduledoc """
   Create entities for a Game Room
   """
+  alias ViralSpiral.Entity.Deck
+  alias ViralSpiral.Canon.Deck, as: CanonDeck
   alias ViralSpiral.Canon.DrawTypeRequirements
   alias ViralSpiral.Room.State
   alias ViralSpiral.Room.EngineConfig
@@ -51,6 +53,21 @@ defmodule ViralSpiral.Gameplay.Factory do
       current_player: %{
         identity: State.current_round_player(state).identity
       }
+    }
+  end
+
+  def new_deck(%Room{} = room) do
+    cards = CanonDeck.load_cards()
+
+    set_opts = [
+      affinities: room.affinities,
+      biases: room.communities
+    ]
+
+    %Deck{
+      available_cards: CanonDeck.create_sets(cards, set_opts),
+      dealt_cards: %{},
+      store: CanonDeck.create_store(cards)
     }
   end
 end
