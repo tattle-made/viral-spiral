@@ -9,7 +9,7 @@ defmodule ViralSpiral.Game.PlayerTest do
   use ExUnit.Case
 
   test "create player from room config" do
-    room = Room.new(4)
+    room = Room.reserve("hello") |> Room.start(4)
 
     player =
       Factory.new_player_for_room(room)
@@ -76,42 +76,42 @@ defmodule ViralSpiral.Game.PlayerTest do
     end
 
     test "change clout", %{player: player} do
-      player = Change.apply_change(player, Options.change_clout(4))
+      player = Change.apply_change(player, ChangeDescriptions.change_clout(4))
       assert player.clout == 4
     end
 
     test "change affinity", %{player: player} do
-      player = Change.apply_change(player, Options.change_affinity(:cat, 2))
+      player = Change.apply_change(player, ChangeDescriptions.change_affinity(:cat, 2))
       assert player.affinities.cat == 2
     end
 
     test "change bias", %{player: player} do
-      player = Change.apply_change(player, Options.change_bias(:yellow, -1))
+      player = Change.apply_change(player, ChangeDescriptions.change_bias(:yellow, -1))
       assert player.biases.yellow == 1
     end
 
     test "add card to hand", %{player: player} do
-      player = Change.apply_change(player, Options.add_to_hand("card_23b2323"))
+      player = Change.apply_change(player, ChangeDescriptions.add_to_hand("card_23b2323"))
       assert length(player.hand) == 1
       assert hd(player.hand) == "card_23b2323"
     end
 
     test "add_active_card", %{player: player} do
-      player = Change.apply_change(player, Options.add_to_active("card_29323"))
+      player = Change.apply_change(player, ChangeDescriptions.add_to_active("card_29323"))
       assert player.active_cards == ["card_29323"]
 
-      player = Change.apply_change(player, Options.add_to_active("card_84843"))
+      player = Change.apply_change(player, ChangeDescriptions.add_to_active("card_84843"))
       assert player.active_cards == ["card_29323", "card_84843"]
     end
 
     test "remove_active_card", %{player: player} do
       player =
         %{player | active_cards: ["card_29323", "card_84843"]}
-        |> Change.apply_change(Options.remove_active("card_29323"))
+        |> Change.apply_change(ChangeDescriptions.remove_active("card_29323"))
 
       assert player.active_cards == ["card_84843"]
 
-      player = Change.apply_change(player, Options.remove_active("card_84843"))
+      player = Change.apply_change(player, ChangeDescriptions.remove_active("card_84843"))
 
       assert player.active_cards == []
     end

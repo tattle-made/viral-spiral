@@ -13,7 +13,8 @@ defmodule ViralSpiral.Room.ChangeDescriptions do
   def change_chaos(offset), do: [type: :chaos_countdown, offset: offset]
 
   def new_round(), do: []
-  def next_round(), do: []
+  def next_round(), do: [type: :next]
+  def skip_player(player_id), do: [type: :skip, player_id: player_id]
   def new_turn(), do: []
   def pass_turn_to(player) when is_binary(player), do: []
   def pass_turn_to(players) when is_list(players), do: []

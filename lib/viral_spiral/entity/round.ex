@@ -132,6 +132,7 @@ defmodule ViralSpiral.Entity.Round do
     def apply_change(state, change_desc) do
       case change_desc[:type] do
         :next -> Round.next(state)
+        :skip -> Round.add_skip(state, change_desc[:player_id])
       end
     end
   end

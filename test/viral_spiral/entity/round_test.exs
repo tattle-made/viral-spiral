@@ -1,4 +1,5 @@
 defmodule ViralSpiral.Entity.RoundTest do
+  alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.Round
   use ExUnit.Case
@@ -74,14 +75,24 @@ defmodule ViralSpiral.Entity.RoundTest do
 
   describe "changes" do
     setup do
-      players = Fixtures.players()
-      round = Round.new(players)
+      round = Fixtures.new_round()
       %{round: round}
     end
 
     test "move to next round", %{round: round} do
-      new_round = Change.apply_change(round, type: :next)
+      new_round = Change.apply_change(round, ChangeDescriptions.next_round())
       assert new_round.current == 1
+
+      new_round = Change.apply_change(new_round, ChangeDescriptions.next_round())
+      assert new_round.current == 2
+    end
+
+    test "skip a player's round", %{round: round} do
+      new_round =
+        Change.apply_change(round, ChangeDescriptions.skip_player("player_def"))
+        |> Change.apply_change(ChangeDescriptions.next_round())
+
+      assert new_round.current == 2
     end
   end
 end

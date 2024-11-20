@@ -68,6 +68,8 @@ defmodule ViralSpiral.Entity.Player do
 end
 
 defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
+  alias ViralSpiral.Affinity
+  alias ViralSpiral.Bias
   alias ViralSpiral.Entity.Player
   import ViralSpiral.Room.EngineConfig.Guards
 
