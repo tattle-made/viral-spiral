@@ -28,20 +28,15 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, changes)
   end
 
-  def reduce(%State{} = state, %{type: pass_card} = action) do
-    %{card: card_id, player: from, target: to} = action
-    card = card_id
-    # card = store[card_id]
-    changes = Playable.pass(card, state, from, to)
+  def reduce(%State{} = state, %{type: :pass_card} = action) do
+    %{card: card_id, veracity: veracity, player: from, target: to} = action.payload
+    card = state.deck.store[{card_id, veracity}]
 
-    changes ++
-      [
-        {state.players[from], [type: :clout, offset: 1]},
-        {state.players[from], [type: :bias, target: card.target, offset: 1]}
-      ] ++
-      (Map.keys(state.players)
-       |> Enum.filter(&(state.players[&1].identity == card.target))
-       |> Enum.map(&{state.players[&1], [type: :clout, offset: -1]}))
+    changes =
+      Playable.pass(card, state, from, to) ++
+        [{state.players[to], ChangeDescriptions.add_to_active(card_id)}]
+
+    State.apply_changes(state, changes)
   end
 
   def reduce(%State{} = state, %{type: discard_card} = action) do

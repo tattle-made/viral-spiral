@@ -53,24 +53,37 @@ defmodule ViralSpiral.ReducersTest do
     end
   end
 
-  # describe "pass card" do
-  #   setup do
-  #     :rand.seed(:exsss, {12356, 123_534, 345_345})
+  describe "pass card" do
+    setup do
+      :rand.seed(:exsss, {12356, 123_534, 345_345})
 
-  #     room = Room.reserve("test-room") |> Room.start(4)
-  #     state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
+      room = Room.reserve("test-room") |> Room.start(4)
+      state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
 
-  #     %{state: state}
-  #   end
+      players = StoreFixtures.player_by_names(state)
 
-  #   test "passing an affinity card should increase player's clout", %{state: state} do
-  #     sets = state.deck.available_cards
-  #     type = [type: :affinity, veracity: true, tgb: 0, target: :skub]
-  #     card_id = Deck.draw_card(sets, type)
+      %{state: state, players: players}
+    end
 
-  #     IO.inspect(card_id)
-  #   end
-  # end
+    test "passing affinity card", %{state: state, players: players} do
+      sets = state.deck.available_cards
+      store = state.deck.store
+      %{aman: aman, adhiraj: adhiraj} = players
+
+      draw_type = [type: :affinity, veracity: true, tgb: 2, target: :skub]
+      draw_result = Deck.draw_card(sets, draw_type)
+      card = store[{draw_result.id, true}]
+
+      new_state =
+        Reducer.reduce(state, Actions.pass_card(card.id, card.veracity, aman.id, adhiraj.id))
+
+      assert new_state.players[aman.id].affinities[:skub] == 1
+      assert new_state.players[aman.id].clout == 1
+      assert new_state.players[adhiraj.id].active_cards |> length == 1
+      assert new_state.turn.current == adhiraj.id
+      assert new_state.turn.pass_to |> length() == 2
+    end
+  end
 
   # @tag timeout: :infinity
   # test "temp" do

@@ -498,13 +498,13 @@ defmodule ViralSpiral.Canon.Deck do
   id: "card_01J69V12V7D5A1"
   ```
   """
-  def draw_card(set, opts) do
-    type = opts[:type]
-    veracity = opts[:veracity]
-    tgb = opts[:tgb]
-    target = opts[:target]
+  def draw_card(set, draw_type) do
+    type = draw_type[:type]
+    veracity = draw_type[:veracity]
+    tgb = draw_type[:tgb]
+    target = draw_type[:target]
 
-    case opts[:type] do
+    case draw_type[:type] do
       :topical ->
         set[{type, veracity}] |> filter_tgb(tgb) |> choose_one
 

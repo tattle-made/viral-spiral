@@ -8,20 +8,21 @@ defmodule ViralSpiral.Room.Actions do
     %Action{type: :draw_card, payload: %{draw_type: draw_type}}
   end
 
-  @spec pass_card(String.t(), String.t(), String.t() | list(String.t())) :: Action.t()
-  def pass_card(card, from, to) when is_bitstring(to) or is_list(to) do
+  # @spec pass_card(String.t(), String.t(), String.t() | list(String.t())) :: Action.t()
+  def pass_card(card, veracity, from, to) when is_bitstring(to) or is_list(to) do
     %Action{
       type: :pass_card,
       payload: %{
         card: card,
+        veracity: veracity,
         player: from,
         target: to
       }
     }
   end
 
-  def pass_card(%{"card" => card, "from" => from, "to" => to}) do
-    pass_card(card, from, to)
+  def pass_card(%{"card" => card, "veracity" => veracity, "from" => from, "to" => to}) do
+    pass_card(card, veracity, from, to)
   end
 
   def keep_card(card, from) do
