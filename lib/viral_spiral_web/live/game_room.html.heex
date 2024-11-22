@@ -4,7 +4,7 @@
   <span><%= @state.room.state %></span> --%>
   <span><%= @state.room.chaos %></span>
 </div>
-
+<%!-- <vs-calendar id="cal" phx-hook="CalendarHook"></vs-calendar> --%>
 <div class="mt-2 flex flex-row justify-between">
   <div
     :for={player <- @state.players}
