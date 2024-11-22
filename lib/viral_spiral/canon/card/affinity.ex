@@ -8,6 +8,11 @@ defmodule ViralSpiral.Canon.Card.Affinity do
             headline: nil,
             image: nil,
             article_id: nil
+
+  @type t :: %__MODULE__{
+          id: String.t(),
+          tgb: integer()
+        }
 end
 
 # defmodule ViralSpiral.Canon.Card.Affinity.Cat do

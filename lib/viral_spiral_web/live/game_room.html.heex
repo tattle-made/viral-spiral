@@ -1,20 +1,61 @@
 <div class="p-4 border-red-200 border-2 rounded-2xl flex flex-row justify-between ">
-  <span><%= @root.room.name %></span>
-  <span><%= @root.room.id %></span>
-  <span><%= @root.room.state %></span>
-  <span><%= @root.room.chaos_counter %></span>
+  <span><%= @state.room.name %></span>
+  <%!-- <span><%= @state.room.id %></span>
+  <span><%= @state.room.state %></span> --%>
+  <span><%= @state.room.chaos %></span>
 </div>
 
-<div class="p-4 mt-2 border-red-200 border-2 rounded-2xl flex flex-row justify-between">
-  <%= for player <- Enum.map(@root.players, fn {_id, player} -> player end) do %>
-    <div class={[
-      "p-2  border-2 w-full rounded-xl",
-      if(@root.turn.current == player.id,
+<div class="mt-2 flex flex-row justify-between">
+  <div
+    :for={player <- @state.players}
+    class={[
+      "p-2 border-2 w-full rounded-xl m-2",
+      if(player.is_active,
         do: "border-red-400",
         else: "border-red-100"
       )
-    ]}>
-      <%= player.name %>
+    ]}
+  >
+    <span><%= player.name %></span>
+
+    <%!-- <span class="ml-6"><%= player.identity %></span> --%>
+    <div class="h-2"></div>
+    <div>
+      <h2 class="font-semibold">Clout</h2>
+      <span><%= player.clout %></span>
     </div>
-  <% end %>
+    <div class="h-2"></div>
+    <div>
+      <h2 class="font-semibold">Affinities</h2>
+      <div :for={affinity <- player.affinities}>
+        <span><%= elem(affinity, 0) %></span>
+        <span><%= elem(affinity, 1) %></span>
+      </div>
+
+      <div class="h-2"></div>
+      <h2 class="font-semibold">Bias</h2>
+      <div :for={bias <- player.biases}>
+        <span><%= elem(bias, 0) %></span>
+        <span><%= elem(bias, 1) %></span>
+      </div>
+
+      <div class="h-4"></div>
+
+      <div :for={card <- player.cards} :if={player.is_active}>
+        <.card card={card}></.card>
+      </div>
+    </div>
+
+    <%!-- <div class="h-4"></div>
+      <%= if current_player?(@state, player)  do %>
+        <.card>
+          <p><%= card(@state, player).headline %></p>
+        </.card>
+
+        <h3>Pass to</h3>
+        <%= for pass_to <- player_options(@state, player) do %>
+          <span class="mr-4"><%= pass_to %></span>
+        <% end %>
+      <% end %> --%>
+  </div>
 </div>

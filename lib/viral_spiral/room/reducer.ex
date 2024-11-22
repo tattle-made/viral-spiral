@@ -10,7 +10,7 @@ defmodule ViralSpiral.Room.Reducer do
   alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Room.Action
 
-  @spec reduce(State.t(), Action.t()) :: State.t()
+  # @spec reduce(State.t(), Action.t()) :: State.t()
   def reduce(%State{} = state, %{type: :draw_card} = action) do
     draw_type = action.payload.draw_type
 

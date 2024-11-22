@@ -8,4 +8,9 @@ defmodule ViralSpiral.Canon.Card.Bias do
             headline: nil,
             image: nil,
             article_id: nil
+
+  @type t :: %__MODULE__{
+          id: String.t(),
+          tgb: integer()
+        }
 end

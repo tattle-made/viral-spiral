@@ -2,6 +2,7 @@ defmodule ViralSpiral.Gameplay.Factory do
   @moduledoc """
   Create entities for a Game Room
   """
+  alias ViralSpiralWeb.GameRoomState
   alias ViralSpiral.Entity.Deck
   alias ViralSpiral.Canon.Deck, as: CanonDeck
   alias ViralSpiral.Canon.DrawTypeRequirements
@@ -68,6 +69,39 @@ defmodule ViralSpiral.Gameplay.Factory do
       available_cards: CanonDeck.create_sets(cards, set_opts),
       dealt_cards: %{},
       store: CanonDeck.create_store(cards)
+    }
+  end
+
+  def make_gameroom(%State{} = state) do
+    %GameRoomState{
+      room: %{
+        name: state.room.name,
+        chaos: state.room.chaos
+      },
+      players:
+        for(
+          {_id, player} <- state.players,
+          do: %{
+            name: player.name,
+            clout: player.clout,
+            affinities: player.affinities,
+            biases: player.biases,
+            is_active: state.turn.current == player.id,
+            cards:
+              player.active_cards
+              |> Enum.map(&state.deck.store[{&1, true}])
+              |> Enum.map(
+                &%{
+                  id: &1.id,
+                  type: &1.type,
+                  veracity: &1.veracity,
+                  headline: &1.headline,
+                  image: &1.image,
+                  article_id: &1.article_id
+                }
+              )
+          }
+        )
     }
   end
 end
