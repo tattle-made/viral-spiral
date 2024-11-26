@@ -85,6 +85,34 @@ defmodule ViralSpiral.ReducersTest do
     end
   end
 
+  @tag timeout: :infinity
+  describe "view source" do
+    setup do
+      :rand.seed(:exsss, {12356, 123_534, 345_345})
+      state = Fixtures.new_game()
+      players = Fixtures.player_by_names(state)
+
+      %{state: state, players: players}
+    end
+
+    test "true card", %{state: state, players: players} do
+      %{aman: aman, farah: farah} = players
+      sets = state.deck.available_cards
+      store = state.deck.store
+
+      draw_type = [type: :affinity, veracity: true, tgb: 2, target: :skub]
+      draw_result = Deck.draw_card(sets, draw_type)
+      card = store[{draw_result.id, true}] |> IO.inspect()
+
+      IO.inspect(state.deck.article_store[{card.id, card.veracity}])
+      # IO.inspect(draw_result)
+      # IO.inspect(card)
+
+      # state = Reducer.reduce(state, Actions.view_source())
+      # IO.inspect(state.players[aman.id])
+    end
+  end
+
   # @tag timeout: :infinity
   # test "temp" do
   #   :rand.seed(:exsss, {12356, 123_534, 345_345})

@@ -22,6 +22,9 @@ defmodule ViralSpiral.Room.ChangeDescriptions do
   def draw_new_card(), do: []
   def discard_card(), do: []
 
+  def set_article(card, article), do: [type: :set_article, card: card, article: article]
+  def reset_article(card), do: [type: :reset_article, card: card]
+
   @doc """
 
   """

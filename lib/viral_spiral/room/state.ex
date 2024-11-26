@@ -25,14 +25,17 @@ defmodule ViralSpiral.Room.State do
             players: [],
             round: nil,
             turn: nil,
-            deck: nil
+            turns: %{},
+            deck: nil,
+            articles: nil
 
   @type t :: %__MODULE__{
           room: Room.t(),
           players: %{String.t() => Player.t()},
           round: Round.t(),
           turn: Turn.t(),
-          deck: Deck.t()
+          deck: Deck.t(),
+          articles: map()
         }
 
   def empty() do
@@ -51,12 +54,17 @@ defmodule ViralSpiral.Room.State do
     turn = Turn.new(round)
     deck = Factory.new_deck(room)
 
+    turns =
+      Map.keys(players)
+      |> Enum.map()
+
     %State{
       room: room,
       players: players,
       round: round,
       turn: turn,
-      deck: deck
+      deck: deck,
+      articles: %{}
     }
   end
 

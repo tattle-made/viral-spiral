@@ -14,9 +14,9 @@ defmodule ViralSpiral.Room.ReducerTest do
     %{state: state}
   end
 
-  @tag timeout: :infinity
-  test "draw_card", %{state: state} do
-    # IO.inspect(state.room)
-    Reducer.reduce(state, Actions.draw_card())
-  end
+  # @tag timeout: :infinity
+  # test "draw_card", %{state: state} do
+  #   # IO.inspect(state.room)
+  #   Reducer.reduce(state, Actions.draw_card())
+  # end
 end

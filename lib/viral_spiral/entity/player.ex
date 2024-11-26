@@ -65,6 +65,18 @@ defmodule ViralSpiral.Entity.Player do
       _ -> Map.put(player, :active_cards, List.delete(player.active_cards, card_id))
     end
   end
+
+  def set_article(%Player{} = player, card, article) do
+    case Enum.find(player.active_cards, &(&1 == card.id)) do
+      nil ->
+        player
+
+      ix ->
+        entry = Enum.at(player.active_cards, ix)
+        new_entry = Map.put(entry, :source, article)
+        Map.put(player, :active_cards, new_entry)
+    end
+  end
 end
 
 defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
@@ -134,6 +146,7 @@ defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
       :remove_from_hand -> player
       :add_active_card -> Player.add_active_card(player, change_desc[:card_id])
       :remove_active_card -> Player.remove_active_card(player, change_desc[:card_id])
+      :set_article -> Player.set_article(change_desc[:card], change_desc[:article])
       :ignore -> player
     end
   end

@@ -1,17 +1,20 @@
 defmodule ViralSpiral.Entity.Deck do
+  alias ViralSpiral.Canon.Encyclopedia
   alias ViralSpiral.Canon.Deck, as: CanonDeck
   alias ViralSpiral.Entity.Deck
   alias ViralSpiral.Entity.Change
 
   defstruct available_cards: nil,
             dealt_cards: nil,
-            store: nil
+            store: nil,
+            article_store: nil
 
   @type change_opts :: [type: :remove | :shuffle]
   @type t :: %__MODULE__{
           available_cards: map(),
           dealt_cards: map(),
-          store: map()
+          store: map(),
+          article_store: map()
         }
 
   @doc """
@@ -26,11 +29,14 @@ defmodule ViralSpiral.Entity.Deck do
 
   def new() do
     cards = CanonDeck.load_cards()
+    articles = Encyclopedia.load_articles()
+    article_store = Encyclopedia.create_store(articles)
 
     %Deck{
       available_cards: CanonDeck.create_sets(cards),
       dealt_cards: %{},
-      store: CanonDeck.create_store(cards)
+      store: CanonDeck.create_store(cards),
+      article_store: article_store
     }
   end
 
@@ -53,6 +59,12 @@ defmodule ViralSpiral.Entity.Deck do
             )
 
           Map.put(deck, :available_cards, new_sets)
+
+        :view_source ->
+          deck
+          # article = Encyclopedia.get_article_by_card(deck.encyclopedia, card)
+
+          # Map.put(deck, :)
       end
     end
   end

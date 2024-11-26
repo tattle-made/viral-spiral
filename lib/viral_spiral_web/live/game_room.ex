@@ -19,6 +19,8 @@ defmodule ViralSpiralWeb.GameRoom do
 
     gameroom_state = Factory.make_gameroom(state)
 
+    IO.inspect("hello")
+
     {:ok, assign(socket, :state, gameroom_state)}
   end
 

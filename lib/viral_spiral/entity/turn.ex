@@ -2,8 +2,8 @@ defmodule ViralSpiral.Entity.Turn do
   @moduledoc """
   Orchestrates whose turn it is in the game.
 
-  This also evaluates who are they allowed to pass the card to.
   It answers whose turn it is and what actions are they allowed to take.
+  This also evaluates who are they allowed to pass the card to.
 
   todo : could the field be actions and not tied to every concrete thing like pass, discard etc.
   """

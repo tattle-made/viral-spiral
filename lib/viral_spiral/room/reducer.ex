@@ -2,6 +2,7 @@ defmodule ViralSpiral.Room.Reducer do
   @moduledoc """
 
   """
+  alias ViralSpiral.Canon.Encyclopedia
   alias ViralSpiral.Gameplay.Factory
   alias ViralSpiral.Playable
   alias ViralSpiral.Room.State
@@ -39,21 +40,55 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, changes)
   end
 
-  def reduce(%State{} = state, %{type: discard_card} = action) do
+  def reduce(%State{} = state, %{type: :discard_card} = action) do
   end
 
-  def reduce(%State{} = state, %{type: keep_card} = action) do
+  def reduce(%State{} = state, %{type: :keep_card} = action) do
   end
 
-  def reduce(%State{} = state, %{type: draw_card} = action) do
+  def reduce(%State{} = state, %{type: :draw_card} = action) do
   end
 
-  def reduce(%State{} = state, %{type: create_room}) do
+  def reduce(%State{} = state, %{type: :create_room}) do
   end
 
-  def reduce(%State{} = state, %{type: join_room}) do
+  def reduce(%State{} = state, %{type: :join_room}) do
   end
 
-  def reduce(%State{} = state, %{type: start_game}) do
+  def reduce(%State{} = state, %{type: :start_game}) do
+  end
+
+  def reduce(%State{} = state, %{type: :check_source} = action) do
+    card = action.payload.card
+    player = action.payload.player
+
+    article = state.deck.article_store
+    article_entity = Factory.make_entity_article(article)
+
+    changes = [
+      {state.articles[player.id], ChangeDescriptions.set_article(card, article_entity)}
+    ]
+
+    State.apply_changes(state, changes)
+  end
+
+  def reduce(%State{} = state, %{type: :hide_source} = action) do
+    # card = action.payload.card
+    # player = action.payload.player
+
+    # changes = [
+    #   {state.articles[player.id], ChangeDescriptions.reset_article(card)}
+    # ]
+
+    # State.apply_changes(state, changes)
+  end
+
+  def reduce(%State{} = state, %{type: :turn_to_fake}) do
+    # card = action.payload.card
+
+    # changes = [
+    #   # modify the player's active
+    #   {state.players[player.id], ChangeDescriptions.turn_to_fake()}
+    # ]
   end
 end

@@ -19,6 +19,15 @@ defmodule Fixtures do
     State.new(room, ["adhiraj", "krys", "aman", "farah"])
   end
 
+  def player_by_names(%State{} = root) do
+    players = root.players
+
+    Map.keys(root.players)
+    |> Enum.reduce(%{}, fn player_id, all ->
+      Map.put(all, String.to_atom(players[player_id].name), players[player_id])
+    end)
+  end
+
   def new_round() do
     %Round{
       order: ["player_abc", "player_def", "player_ghi", "player_jkl"],

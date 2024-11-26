@@ -2,6 +2,9 @@ defmodule ViralSpiral.Gameplay.Factory do
   @moduledoc """
   Create entities for a Game Room
   """
+  alias ViralSpiral.Canon.Encyclopedia
+  alias ViralSpiral.Entity.Article, as: EntityArticle
+  alias ViralSpiral.Canon.Article
   alias ViralSpiralWeb.GameRoomState
   alias ViralSpiral.Entity.Deck
   alias ViralSpiral.Canon.Deck, as: CanonDeck
@@ -59,6 +62,10 @@ defmodule ViralSpiral.Gameplay.Factory do
 
   def new_deck(%Room{} = room) do
     cards = CanonDeck.load_cards()
+    articles = Encyclopedia.load_articles()
+    article_store = Encyclopedia.create_store(articles)
+
+    cards = CanonDeck.link(cards, article_store)
 
     set_opts = [
       affinities: room.affinities,
@@ -68,7 +75,8 @@ defmodule ViralSpiral.Gameplay.Factory do
     %Deck{
       available_cards: CanonDeck.create_sets(cards, set_opts),
       dealt_cards: %{},
-      store: CanonDeck.create_store(cards)
+      store: CanonDeck.create_store(cards),
+      article_store: article_store
     }
   end
 
@@ -102,6 +110,16 @@ defmodule ViralSpiral.Gameplay.Factory do
               )
           }
         )
+    }
+  end
+
+  def make_entity_article(%Article{} = article) do
+    %EntityArticle{
+      headline: article.headline,
+      veracity: article.veracity,
+      type: article.type,
+      content: article.content,
+      author: article.author
     }
   end
 end
