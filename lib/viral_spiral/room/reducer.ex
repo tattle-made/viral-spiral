@@ -4,7 +4,7 @@ defmodule ViralSpiral.Room.Reducer do
   """
   alias ViralSpiral.Entity.PowerViralSpiral
   alias ViralSpiral.Canon.Encyclopedia
-  alias ViralSpiral.Gameplay.Factory
+  alias ViralSpiral.Room.Factory
   alias ViralSpiral.Playable
   alias ViralSpiral.Room.State
   alias ViralSpiral.Room.ChangeDescriptions
@@ -16,14 +16,15 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %{type: :draw_card} = action) do
     current_player = State.current_round_player(state)
 
-    draw_type = action.payload.draw_type
+    draw_type = action.payload.draw_type |> IO.inspect()
     sets = state.deck.available_cards
     draw_result = Deck.draw_card(sets, draw_type)
 
     changes =
       [
         {state.deck, ChangeDescriptions.remove_card(draw_type, draw_result)},
-        {state.players[current_player.id], ChangeDescriptions.add_to_active(draw_result.id)}
+        {state.players[current_player.id],
+         ChangeDescriptions.add_to_active(draw_result.id, draw_type[:veracity])}
       ]
 
     State.apply_changes(state, changes)
@@ -35,7 +36,7 @@ defmodule ViralSpiral.Room.Reducer do
 
     changes =
       Playable.pass(card, state, from, to) ++
-        [{state.players[to], ChangeDescriptions.add_to_active(card_id)}]
+        [{state.players[to], ChangeDescriptions.add_to_active(card_id, veracity)}]
 
     State.apply_changes(state, changes)
   end

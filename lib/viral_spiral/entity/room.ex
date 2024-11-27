@@ -10,14 +10,15 @@ defmodule ViralSpiral.Entity.Room do
   alias ViralSpiral.Entity.Room
   alias ViralSpiral.Room.EngineConfig
 
-  defstruct affinities: [],
-            communities: [],
-            chaos_counter: nil,
-            volatality: :medium,
-            id: nil,
+  defstruct id: nil,
             name: nil,
             state: :uninitialized,
-            chaos: nil
+            unjoined_players: [],
+            affinities: [],
+            communities: [],
+            chaos_counter: nil,
+            chaos: nil,
+            volatality: :medium
 
   @all_states [:reserved, :uninitialized, :waiting_for_players, :running, :paused]
 
@@ -26,6 +27,7 @@ defmodule ViralSpiral.Entity.Room do
           id: String.t(),
           name: String.t(),
           state: states(),
+          unjoined_players: list(String.t()),
           affinities: list(Affinity.target()),
           communities: list(Bias.target()),
           chaos_counter: integer(),
@@ -167,11 +169,16 @@ defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Room do
   @doc """
   Change state of a Room.
   """
-  def apply_change(%Room{} = score, change_desc) do
-    change_desc = Keyword.validate!(change_desc, type: nil, offset: 0)
+  def apply_change(%Room{} = room, change_desc) do
+    # change_desc = Keyword.validate!(change_desc, type: nil, offset: 0)
 
     case change_desc[:type] do
-      :chaos_countdown -> Map.put(score, :chaos, score.chaos + change_desc[:offset])
+      :join ->
+        new_player = change_desc[:player_name]
+        %{room | unjoined_players: room.unjoined_players ++ [new_player]}
+
+      :chaos_countdown ->
+        Map.put(room, :chaos, room.chaos + change_desc[:offset])
     end
   end
 end

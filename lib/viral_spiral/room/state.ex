@@ -12,7 +12,7 @@ defmodule ViralSpiral.Room.State do
   """
 
   alias ViralSpiral.Entity.PowerViralSpiral
-  alias ViralSpiral.Gameplay.Factory
+  alias ViralSpiral.Room.Factory
   alias ViralSpiral.Entity.Deck
   alias ViralSpiral.Entity.Room
   alias ViralSpiral.Entity.Turn
@@ -23,12 +23,13 @@ defmodule ViralSpiral.Room.State do
   alias ViralSpiral.Entity.Change
 
   defstruct room: nil,
-            players: [],
+            unjoined_players: [],
+            players: %{},
             round: nil,
             turn: nil,
             turns: %{},
             deck: nil,
-            articles: nil,
+            articles: %{},
             power_viralspiral: nil
 
   @type t :: %__MODULE__{

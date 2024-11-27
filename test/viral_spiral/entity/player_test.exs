@@ -1,5 +1,5 @@
 defmodule ViralSpiral.Game.PlayerTest do
-  alias ViralSpiral.Gameplay.Factory
+  alias ViralSpiral.Room.Factory
   alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Entity.Room
   alias ViralSpiral.Entity.Player.ActiveCardDoesNotExist

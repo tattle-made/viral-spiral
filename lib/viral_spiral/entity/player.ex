@@ -50,10 +50,10 @@ defmodule ViralSpiral.Entity.Player do
     Map.put(player, :hand, player.hand ++ [card_id])
   end
 
-  @spec add_active_card(Player.t(), String.t()) :: Player.t()
-  def add_active_card(%Player{} = player, card_id) do
-    case Enum.find(player.active_cards, &(&1 == card_id)) do
-      nil -> Map.put(player, :active_cards, player.active_cards ++ [card_id])
+  @spec add_active_card(Player.t(), String.t(), boolean()) :: Player.t()
+  def add_active_card(%Player{} = player, card_id, veracity) do
+    case Enum.find(player.active_cards, &(&1.id == card_id)) do
+      nil -> Map.put(player, :active_cards, player.active_cards ++ [{card_id, veracity}])
       _ -> raise DuplicateActiveCardException
     end
   end
@@ -139,15 +139,32 @@ defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
 
   def apply_change(player, change_desc) do
     case change_desc[:type] do
-      :clout -> change(player, :clout, change_desc[:offset])
-      :affinity -> change(player, :affinity, change_desc[:target], change_desc[:offset])
-      :bias -> change(player, :bias, change_desc[:target], change_desc[:offset])
-      :add_to_hand -> Player.add_to_hand(player, change_desc[:card_id])
-      :remove_from_hand -> player
-      :add_active_card -> Player.add_active_card(player, change_desc[:card_id])
-      :remove_active_card -> Player.remove_active_card(player, change_desc[:card_id])
-      :set_article -> Player.set_article(change_desc[:card], change_desc[:article])
-      :ignore -> player
+      :clout ->
+        change(player, :clout, change_desc[:offset])
+
+      :affinity ->
+        change(player, :affinity, change_desc[:target], change_desc[:offset])
+
+      :bias ->
+        change(player, :bias, change_desc[:target], change_desc[:offset])
+
+      :add_to_hand ->
+        Player.add_to_hand(player, change_desc[:card_id])
+
+      :remove_from_hand ->
+        player
+
+      :add_active_card ->
+        Player.add_active_card(player, change_desc[:card_id], change_desc[:veracity])
+
+      :remove_active_card ->
+        Player.remove_active_card(player, change_desc[:card_id])
+
+      :set_article ->
+        Player.set_article(change_desc[:card], change_desc[:article])
+
+      :ignore ->
+        player
     end
   end
 end

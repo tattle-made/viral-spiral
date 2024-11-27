@@ -1,6 +1,7 @@
 defmodule ViralSpiral.Room.ReducerTest do
+  alias ViralSpiral.Canon.Article
   alias ViralSpiral.Entity.PlayerMap
-  alias ViralSpiral.Gameplay.Factory
+  alias ViralSpiral.Room.Factory
   alias ViralSpiral.Room.Actions
   alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Entity.Change
@@ -150,7 +151,12 @@ defmodule ViralSpiral.Room.ReducerTest do
       draw_result = Deck.draw_card(sets, draw_type)
       card = store[{draw_result.id, true}] |> IO.inspect()
 
+      article = state.deck.article_store[{card.id, card.veracity}]
       IO.inspect(state.deck.article_store[{card.id, card.veracity}])
+      assert article.veracity == true
+      assert article.card_id == "card_131675249"
+      assert article.type == "News"
+
       # IO.inspect(draw_result)
       # IO.inspect(card)
 

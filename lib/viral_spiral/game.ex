@@ -2,10 +2,14 @@ defmodule ViralSpiral.Game do
   @moduledoc """
   Context for Game
   """
+  alias ViralSpiral.Room.Factory
   alias ViralSpiral.Canon.Card.Share
   alias ViralSpiral.Game.State
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Entity.Room
+
+  def new() do
+  end
 
   @spec create_room(String.t()) :: Room.t()
   def create_room(_name) do

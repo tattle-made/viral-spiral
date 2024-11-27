@@ -1,7 +1,12 @@
-defmodule ViralSpiral.Gameplay.Factory do
+defmodule ViralSpiral.Room.Factory do
   @moduledoc """
   Create entities for a Game Room
   """
+  alias ViralSpiral.Canon.Card.Sparse
+  alias ViralSpiral.Room.Reducer
+  alias ViralSpiral.Room.Actions
+  alias ViralSpiral.Room.ChangeDescriptions
+  alias ViralSpiral.Entity.Change
   alias ViralSpiral.Canon.Encyclopedia
   alias ViralSpiral.Entity.Article, as: EntityArticle
   alias ViralSpiral.Canon.Article
@@ -121,5 +126,39 @@ defmodule ViralSpiral.Gameplay.Factory do
       content: article.content,
       author: article.author
     }
+  end
+
+  def new_game() do
+    %State{
+      room: Room.new()
+    }
+
+    # %State{
+    #   room: Room.new() |> Room.start()
+    # }
+    # |>
+
+    # room = Room.reserve("test-room") |> Room.start(4)
+    #   state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
+  end
+
+  def join(%State{} = state, player_name) do
+    room = Change.apply_change(state.room, ChangeDescriptions.Room.join(player_name))
+    %{state | room: room}
+  end
+
+  def start(%State{} = state) do
+    room = state.room |> Room.start(length(state.room.unjoined_players))
+    State.new(room, state.room.unjoined_players)
+  end
+
+  def draw_card(%State{} = state) do
+    requirements = draw_type(state)
+    draw_type = CanonDeck.draw_type(requirements)
+    Reducer.reduce(state, Actions.draw_card(draw_type))
+  end
+
+  def pass_card(%State{} = state, %Sparse{} = card, from, to) do
+    Reducer.reduce(state, Actions.pass_card(card.id, card.veracity, from, to))
   end
 end

@@ -3,7 +3,7 @@ defmodule ViralSpiralWeb.GameRoom do
   alias ViralSpiral.Canon.Card
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Canon.Deck
-  alias ViralSpiral.Gameplay.Factory
+  alias ViralSpiral.Room.Factory
   alias ViralSpiral.Room.Actions
   alias ViralSpiral.Room.Reducer
   alias ViralSpiral.Room.State

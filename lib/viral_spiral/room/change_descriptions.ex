@@ -7,7 +7,10 @@ defmodule ViralSpiral.Room.ChangeDescriptions do
   def change_affinity(target, offset), do: [type: :affinity, target: target, offset: offset]
   def change_bias(target, offset), do: [type: :bias, target: target, offset: offset]
   def add_to_hand(card_id), do: [type: :add_to_hand, card_id: card_id]
-  def add_to_active(card_id), do: [type: :add_active_card, card_id: card_id]
+
+  def add_to_active(card_id, veracity),
+    do: [type: :add_active_card, card_id: card_id, veracity: veracity]
+
   def remove_active(card_id), do: [type: :remove_active_card, card_id: card_id]
 
   def change_chaos(offset), do: [type: :chaos_countdown, offset: offset]
@@ -44,6 +47,12 @@ defmodule ViralSpiral.Room.ChangeDescriptions do
 
     def pass(from, to) do
       [type: :pass, from: from, to: to]
+    end
+  end
+
+  defmodule Room do
+    def join(player_name) do
+      [type: :join, player_name: player_name]
     end
   end
 end
