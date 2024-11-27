@@ -11,6 +11,7 @@ defmodule ViralSpiral.Room.State do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
 
+  alias ViralSpiral.Entity.PowerViralSpiral
   alias ViralSpiral.Gameplay.Factory
   alias ViralSpiral.Entity.Deck
   alias ViralSpiral.Entity.Room
@@ -27,7 +28,8 @@ defmodule ViralSpiral.Room.State do
             turn: nil,
             turns: %{},
             deck: nil,
-            articles: nil
+            articles: nil,
+            power_viralspiral: nil
 
   @type t :: %__MODULE__{
           room: Room.t(),
@@ -35,7 +37,8 @@ defmodule ViralSpiral.Room.State do
           round: Round.t(),
           turn: Turn.t(),
           deck: Deck.t(),
-          articles: map()
+          articles: map(),
+          power_viralspiral: PowerViralSpiral.t()
         }
 
   def empty() do
@@ -53,10 +56,6 @@ defmodule ViralSpiral.Room.State do
     round = Round.new(players)
     turn = Turn.new(round)
     deck = Factory.new_deck(room)
-
-    turns =
-      Map.keys(players)
-      |> Enum.map()
 
     %State{
       room: room,
@@ -113,6 +112,9 @@ defmodule ViralSpiral.Room.State do
     state
   end
 
+  defp get_target(%State{} = state, %PowerViralSpiral{} = power) do
+  end
+
   @doc """
   Generalized way to get a nested entity from state.
 
@@ -141,6 +143,10 @@ defmodule ViralSpiral.Room.State do
 
   defp put_target(%State{} = state, %Deck{} = deck) do
     Map.put(state, :deck, deck)
+  end
+
+  defp put_target(%State{} = state, %PowerViralSpiral{} = power) do
+    Map.put(state, :power_viralspiral, power)
   end
 
   def current_turn_player(%State{} = state), do: state.players[state.turn.current]

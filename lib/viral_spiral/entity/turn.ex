@@ -7,14 +7,17 @@ defmodule ViralSpiral.Entity.Turn do
 
   todo : could the field be actions and not tied to every concrete thing like pass, discard etc.
   """
+  alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Entity.Round
 
-  defstruct current: nil,
+  defstruct card: nil,
+            current: nil,
             pass_to: []
 
   @type t :: %__MODULE__{
+          card: Sparse.t(),
           current: String.t() | nil,
           pass_to: list(String.t())
         }

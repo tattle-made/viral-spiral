@@ -1,8 +1,8 @@
-defmodule StoreFixtures do
+defmodule StateFixtures do
   alias ViralSpiral.Room.State
   alias ViralSpiral.Entity.Room
 
-  def new_store() do
+  def new_state() do
     room = Room.reserve("test-room") |> Room.start(4)
     state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
 

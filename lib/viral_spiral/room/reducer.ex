@@ -2,6 +2,7 @@ defmodule ViralSpiral.Room.Reducer do
   @moduledoc """
 
   """
+  alias ViralSpiral.Entity.PowerViralSpiral
   alias ViralSpiral.Canon.Encyclopedia
   alias ViralSpiral.Gameplay.Factory
   alias ViralSpiral.Playable
@@ -13,10 +14,9 @@ defmodule ViralSpiral.Room.Reducer do
 
   # @spec reduce(State.t(), Action.t()) :: State.t()
   def reduce(%State{} = state, %{type: :draw_card} = action) do
-    draw_type = action.payload.draw_type
-
     current_player = State.current_round_player(state)
 
+    draw_type = action.payload.draw_type
     sets = state.deck.available_cards
     draw_result = Deck.draw_card(sets, draw_type)
 
@@ -90,5 +90,20 @@ defmodule ViralSpiral.Room.Reducer do
     #   # modify the player's active
     #   {state.players[player.id], ChangeDescriptions.turn_to_fake()}
     # ]
+  end
+
+  def reduce(%State{} = state, %{type: :viral_spiral_pass, to: players} = action)
+      when is_list(players) do
+    card = action.payload.card
+
+    changes = [
+      {%PowerViralSpiral{}, ChangeDescriptions.PowerViralSpiral.set(players, card)}
+    ]
+
+    State.apply_changes(state, changes)
+  end
+
+  def reduce(%State{} = state, %{type: :viral_spiral_pass, to: player})
+      when is_bitstring(player) do
   end
 end

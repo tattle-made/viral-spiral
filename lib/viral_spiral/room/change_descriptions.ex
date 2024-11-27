@@ -16,7 +16,7 @@ defmodule ViralSpiral.Room.ChangeDescriptions do
   def next_round(), do: [type: :next]
   def skip_player(player_id), do: [type: :skip, player_id: player_id]
   def new_turn(), do: []
-  def pass_turn_to(player) when is_binary(player), do: []
+  def pass_turn_to(player_id) when is_binary(player_id), do: [type: :next, target: player_id]
   def pass_turn_to(players) when is_list(players), do: []
 
   def draw_new_card(), do: []
@@ -30,4 +30,20 @@ defmodule ViralSpiral.Room.ChangeDescriptions do
   """
   def remove_card(draw_type, card),
     do: [type: :remove_card, draw_type: draw_type, card_in_set: card]
+
+  defmodule PowerViralSpiral do
+    alias ViralSpiral.Canon.Card.Sparse
+
+    def set(players, %Sparse{} = card) do
+      [type: :set, players: players, card: card]
+    end
+
+    def reset() do
+      [type: :reset]
+    end
+
+    def pass(from, to) do
+      [type: :pass, from: from, to: to]
+    end
+  end
 end
