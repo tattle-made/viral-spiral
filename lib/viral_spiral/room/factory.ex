@@ -2,22 +2,23 @@ defmodule ViralSpiral.Room.Factory do
   @moduledoc """
   Create entities for a Game Room
   """
-  alias ViralSpiral.Canon.Card.Sparse
+
   alias ViralSpiral.Room.Reducer
   alias ViralSpiral.Room.Actions
   alias ViralSpiral.Room.ChangeDescriptions
-  alias ViralSpiral.Entity.Change
-  alias ViralSpiral.Canon.Encyclopedia
-  alias ViralSpiral.Entity.Article, as: EntityArticle
-  alias ViralSpiral.Canon.Article
-  alias ViralSpiralWeb.GameRoomState
-  alias ViralSpiral.Entity.Deck
-  alias ViralSpiral.Canon.Deck, as: CanonDeck
-  alias ViralSpiral.Canon.DrawTypeRequirements
   alias ViralSpiral.Room.State
   alias ViralSpiral.Room.EngineConfig
+  alias ViralSpiral.Canon.Card.Sparse
+  alias ViralSpiral.Canon.Article
+  alias ViralSpiral.Canon.Encyclopedia
+  alias ViralSpiral.Canon.DrawTypeRequirements
+  alias ViralSpiral.Canon.Deck, as: CanonDeck
+  alias ViralSpiral.Entity.Change
+  alias ViralSpiral.Entity.Deck
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Entity.Room
+  alias ViralSpiral.Entity.Article, as: EntityArticle
+  alias ViralSpiralWeb.GameRoomState
 
   def new_room() do
     engine_config = %EngineConfig{}
@@ -148,7 +149,11 @@ defmodule ViralSpiral.Room.Factory do
   end
 
   def start(%State{} = state) do
-    room = state.room |> Room.start(length(state.room.unjoined_players))
+    room =
+      state.room
+      |> Room.start(length(state.room.unjoined_players))
+      |> Room.reset_unjoined_players()
+
     State.new(room, state.room.unjoined_players)
   end
 

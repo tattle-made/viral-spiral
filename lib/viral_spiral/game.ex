@@ -1,6 +1,32 @@
 defmodule ViralSpiral.Game do
   @moduledoc """
   Context for Game
+
+  ### Example Gameplay Code
+    new_game()
+    |> join(player)
+    |> join(player)
+    |> join(player)
+    |> start()
+    |> draw_card()
+    |> pass_card(card, from, to)
+    |> pass_card(card, from, to)
+    |> keep_card(card, from, to)
+    |> draw_card()
+    |> keep_card(from)
+    |> draw_card()
+    |> view_source()
+    |> hide_source()
+    |> pass_card(card, from, to)
+    |> turn_to_fake(card)
+    |> pass_card(card, from, to)
+    |> power_cancel_player(target, used_affinity)
+    |> draw_card()
+    |> power_viral_spiral(card, from, targets)
+    |> power_viral_spiral_pass(card, from, to)
+    |> keep_card(card, from)
+    |> keep_card(card, from)
+    |> pass_card(card, from, to)
   """
   alias ViralSpiral.Room.Factory
   alias ViralSpiral.Canon.Card.Share

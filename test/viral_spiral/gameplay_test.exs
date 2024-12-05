@@ -4,6 +4,7 @@ defmodule ViralSpiral.GameTest do
 
   We only do 2 rounds for brevity.
   """
+  alias ViralSpiral.Room.Factory
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Entity.Round
@@ -50,5 +51,21 @@ defmodule ViralSpiral.GameTest do
              },
              root
            )
+  end
+
+  test "happy path" do
+    :rand.seed(:exsss, {123, 135, 254})
+
+    Factory.new_game()
+    |> Factory.join("adhiraj")
+    |> Factory.join("aman")
+    |> Factory.join("farah")
+    |> Factory.join("krys")
+    |> Factory.start()
+    |> Factory.draw_card()
+    |> then(fn state ->
+      # IO.inspect(state.players)
+      IO.inspect(state.room)
+    end)
   end
 end

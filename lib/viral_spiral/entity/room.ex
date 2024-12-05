@@ -161,6 +161,10 @@ defmodule ViralSpiral.Entity.Room do
 
     Enum.random(adjectives) <> "-" <> Enum.random(nouns)
   end
+
+  def reset_unjoined_players(%Room{} = room) do
+    %{room | unjoined_players: []}
+  end
 end
 
 defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Room do
