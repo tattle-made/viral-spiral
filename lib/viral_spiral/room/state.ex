@@ -23,7 +23,6 @@ defmodule ViralSpiral.Room.State do
   alias ViralSpiral.Entity.Change
 
   defstruct room: nil,
-            unjoined_players: [],
             players: %{},
             round: nil,
             turn: nil,
@@ -150,8 +149,74 @@ defmodule ViralSpiral.Room.State do
     Map.put(state, :power_viralspiral, power)
   end
 
+  @spec current_round_player(State.t()) :: Player.t()
   def current_turn_player(%State{} = state), do: state.players[state.turn.current]
 
   def current_round_player(%State{} = state),
     do: state.players[Round.current_player_id(state.round)]
+
+  defimpl Inspect do
+    import Inspect.Algebra
+    alias Inspect.Opts
+
+    def inspect(state, _opts) do
+      players =
+        Map.keys(state.players)
+        |> Enum.map(fn id ->
+          player = state.players[id]
+
+          current_round = if player == State.current_round_player(state), do: "CR", else: ""
+          current_turn = if player == State.current_turn_player(state), do: "CT", else: ""
+
+          header = "#{player.id} : #{player.name} : #{player.identity} : #{player.clout} "
+
+          affinities =
+            Map.keys(player.affinities)
+            |> Enum.map(&"#{&1} : #{player.affinities[&1]}")
+            |> Enum.join(" | ")
+
+          biases =
+            Map.keys(player.biases)
+            |> Enum.map(&"#{&1} : #{player.biases[&1]}")
+            |> Enum.join(" | ")
+
+          active_cards =
+            player.active_cards
+            |> Enum.map(&"#{elem(&1, 0)} : #{elem(&1, 1)}")
+            |> IO.iodata_to_binary()
+
+          # hand =
+          #   player.hand
+          #   |> Enum.map(&"#{elem(&1, 0)} : #{elem(&1, 1)}")
+          #   |> IO.iodata_to_binary()
+
+          [current_round <> current_turn, header, affinities, biases, active_cards]
+          |> Enum.join("\n")
+          |> IO.iodata_to_binary()
+
+          # {player.id, player.name, player.clout, player.affinities, player.biases}
+          # |> IO.iodata_to_binary()
+        end)
+        |> Enum.intersperse(line())
+        |> Enum.intersperse(line())
+        |> concat()
+
+      concat([
+        nest(doc({state.room.id, state.room.name, state.room.chaos_counter}), 4),
+        line(),
+        players
+      ])
+    end
+
+    def doc(entity) do
+      to_doc(entity, %Opts{pretty: true})
+    end
+
+    def linebr() do
+      concat([
+        String.duplicate("_", 50),
+        line()
+      ])
+    end
+  end
 end

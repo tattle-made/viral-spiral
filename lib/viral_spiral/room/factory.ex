@@ -133,14 +133,6 @@ defmodule ViralSpiral.Room.Factory do
     %State{
       room: Room.new()
     }
-
-    # %State{
-    #   room: Room.new() |> Room.start()
-    # }
-    # |>
-
-    # room = Room.reserve("test-room") |> Room.start(4)
-    #   state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
   end
 
   def join(%State{} = state, player_name) do
@@ -165,5 +157,9 @@ defmodule ViralSpiral.Room.Factory do
 
   def pass_card(%State{} = state, %Sparse{} = card, from, to) do
     Reducer.reduce(state, Actions.pass_card(card.id, card.veracity, from, to))
+  end
+
+  def keep_card(%State{} = state, %Sparse{} = card, from) do
+    Reducer.reduce(state, Actions.keep_card(card, from))
   end
 end

@@ -11,7 +11,8 @@ defmodule ViralSpiral.Room.ChangeDescriptions do
   def add_to_active(card_id, veracity),
     do: [type: :add_active_card, card_id: card_id, veracity: veracity]
 
-  def remove_active(card_id), do: [type: :remove_active_card, card_id: card_id]
+  def remove_active(card_id, veracity),
+    do: [type: :remove_active_card, card_id: card_id, veracity: veracity]
 
   def change_chaos(offset), do: [type: :chaos_countdown, offset: offset]
 

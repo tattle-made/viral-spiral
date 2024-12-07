@@ -16,7 +16,7 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %{type: :draw_card} = action) do
     current_player = State.current_round_player(state)
 
-    draw_type = action.payload.draw_type |> IO.inspect()
+    draw_type = action.payload.draw_type
     sets = state.deck.available_cards
     draw_result = Deck.draw_card(sets, draw_type)
 
@@ -33,10 +33,16 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %{type: :pass_card} = action) do
     %{card: card_id, veracity: veracity, player: from, target: to} = action.payload
     card = state.deck.store[{card_id, veracity}]
+    current_round_player = State.current_round_player(state)
 
     changes =
       Playable.pass(card, state, from, to) ++
-        [{state.players[to], ChangeDescriptions.add_to_active(card_id, veracity)}]
+        [
+          {state.players[current_round_player.id], ChangeDescriptions.change_clout(1)},
+          {state.players[from], ChangeDescriptions.remove_active(card_id, veracity)},
+          {state.players[to], ChangeDescriptions.add_to_active(card_id, veracity)},
+          {state.turn, ChangeDescriptions.pass_turn_to(to)}
+        ]
 
     State.apply_changes(state, changes)
   end
@@ -45,6 +51,18 @@ defmodule ViralSpiral.Room.Reducer do
   end
 
   def reduce(%State{} = state, %{type: :keep_card} = action) do
+    %{player: from, card: card} = action.payload
+
+    State.apply_changes(state, [
+      {state.players[from], ChangeDescriptions.remove_active(card.id, card.veracity)},
+      {state.round, [type: :next]},
+      {state.players[from], [type: :add_to_hand, card: card]}
+    ])
+    |> State.apply_changes([
+      {state.turn, [type: :new, round: state.round]}
+    ])
+
+    # &{&1.turn, [type: :new, round: &1.round]}
   end
 
   def reduce(%State{} = state, %{type: :draw_card} = action) do

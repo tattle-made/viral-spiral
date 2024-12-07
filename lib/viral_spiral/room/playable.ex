@@ -55,7 +55,7 @@ end
 defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Affinity do
   # Increase the player's affinity by 1
   # Increase player's clout by 1
-  def pass(card, state, from, to) do
+  def pass(card, state, from, _to) do
     affinity_offset =
       case card.polarity do
         :positive -> +1
@@ -63,19 +63,13 @@ defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Affinity do
       end
 
     [
-      {state.players[from], [type: :affinity, offset: affinity_offset, target: card.target]},
-      {state.players[from], [type: :clout, offset: 1]},
-      {state.turn, [type: :next, target: to]}
+      {state.players[from], [type: :affinity, offset: affinity_offset, target: card.target]}
     ]
   end
 
   # End the turn
   def keep(_card, state, from) do
-    [
-      {state.round, [type: :next]},
-      {state.turn, [type: :new, round: state.round]},
-      {state.players[from], [type: :add_to_hand]}
-    ]
+    []
   end
 
   # End the turn

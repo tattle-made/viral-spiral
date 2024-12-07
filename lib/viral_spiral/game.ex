@@ -13,7 +13,7 @@ defmodule ViralSpiral.Game do
     |> pass_card(card, from, to)
     |> keep_card(card, from, to)
     |> draw_card()
-    |> keep_card(from)
+    |> discard_card(from)
     |> draw_card()
     |> view_source()
     |> hide_source()

@@ -4,6 +4,7 @@ defmodule ViralSpiral.Entity.Deck do
   alias ViralSpiral.Entity.Deck
   alias ViralSpiral.Entity.Change
 
+  @derive {Inspect, only: [:dealt_cards]}
   defstruct available_cards: nil,
             dealt_cards: nil,
             store: nil,

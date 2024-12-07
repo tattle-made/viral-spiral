@@ -46,8 +46,8 @@ defmodule ViralSpiral.Entity.Player do
     %{player | identity: identity}
   end
 
-  def add_to_hand(%Player{} = player, card_id) do
-    Map.put(player, :hand, player.hand ++ [card_id])
+  def add_to_hand(%Player{} = player, card) do
+    Map.put(player, :hand, player.hand ++ [card])
   end
 
   @spec add_active_card(Player.t(), String.t(), boolean()) :: Player.t()
@@ -58,11 +58,11 @@ defmodule ViralSpiral.Entity.Player do
     end
   end
 
-  @spec remove_active_card(Player.t(), String.t()) :: Player.t()
-  def remove_active_card(%Player{} = player, card_id) do
-    case Enum.find(player.active_cards, &(&1 == card_id)) do
+  @spec remove_active_card(Player.t(), String.t(), boolean()) :: Player.t()
+  def remove_active_card(%Player{} = player, card_id, veracity) do
+    case Enum.find(player.active_cards, &(elem(&1, 0) == card_id and elem(&1, 1) == veracity)) do
       nil -> raise ActiveCardDoesNotExist
-      _ -> Map.put(player, :active_cards, List.delete(player.active_cards, card_id))
+      _ -> Map.put(player, :active_cards, List.delete(player.active_cards, {card_id, veracity}))
     end
   end
 
@@ -149,7 +149,7 @@ defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
         change(player, :bias, change_desc[:target], change_desc[:offset])
 
       :add_to_hand ->
-        Player.add_to_hand(player, change_desc[:card_id])
+        Player.add_to_hand(player, change_desc[:card])
 
       :remove_from_hand ->
         player
@@ -158,7 +158,7 @@ defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
         Player.add_active_card(player, change_desc[:card_id], change_desc[:veracity])
 
       :remove_active_card ->
-        Player.remove_active_card(player, change_desc[:card_id])
+        Player.remove_active_card(player, change_desc[:card_id], change_desc[:veracity])
 
       :set_article ->
         Player.set_article(change_desc[:card], change_desc[:article])

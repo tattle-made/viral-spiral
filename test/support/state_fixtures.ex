@@ -1,4 +1,5 @@
 defmodule StateFixtures do
+  alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Room.State
   alias ViralSpiral.Entity.Room
 
@@ -15,18 +16,24 @@ defmodule StateFixtures do
     Map.put(root, :room, new_room)
   end
 
-  def player_by_names(%State{} = root) do
-    players = root.players
+  def player_by_names(%State{} = state) do
+    players = state.players
 
-    Map.keys(root.players)
+    Map.keys(state.players)
     |> Enum.reduce(%{}, fn player_id, all ->
       Map.put(all, String.to_atom(players[player_id].name), players[player_id])
     end)
   end
 
-  def current_round(%State{} = root) do
+  def active_cards(%State{} = state, player_id) do
+    state.players[player_id].active_cards
   end
 
-  def current_turn(%State{} = root) do
+  @spec active_card(State.t(), String.t(), integer()) :: tuple() | nil
+  def active_card(%State{} = state, player_id, ix) do
+    case state.players[player_id].active_cards |> Enum.at(ix) do
+      {id, veracity} -> Sparse.new({id, veracity})
+      nil -> nil
+    end
   end
 end

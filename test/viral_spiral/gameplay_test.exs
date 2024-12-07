@@ -53,19 +53,39 @@ defmodule ViralSpiral.GameTest do
            )
   end
 
+  @tag timeout: :infinity
   test "happy path" do
     :rand.seed(:exsss, {123, 135, 254})
+    alias ViralSpiral.Canon.Card.Sparse
 
-    Factory.new_game()
-    |> Factory.join("adhiraj")
-    |> Factory.join("aman")
-    |> Factory.join("farah")
-    |> Factory.join("krys")
-    |> Factory.start()
-    |> Factory.draw_card()
-    |> then(fn state ->
-      # IO.inspect(state.players)
-      IO.inspect(state.room)
-    end)
+    state =
+      Factory.new_game()
+      |> Factory.join("adhiraj")
+      |> Factory.join("aman")
+      |> Factory.join("farah")
+      |> Factory.join("krys")
+      |> Factory.start()
+      |> Factory.draw_card()
+      |> IO.inspect()
+
+    %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} =
+      StateFixtures.player_by_names(state)
+
+    require IEx
+    IEx.pry()
+
+    current_player = State.current_turn_player(state)
+    current_card = state.players[current_player.id].active_cards |> hd
+
+    # state
+    # |> Factory.pass_card(current_card,)
+
+    # IO.inspect(current_card)
+
+    # |> Factory.pass_card()
+    # |> then(fn state ->
+    #   IO.inspect(state.players)
+    #   IO.inspect(state.room)
+    # end)
   end
 end
