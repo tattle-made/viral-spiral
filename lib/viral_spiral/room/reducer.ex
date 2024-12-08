@@ -53,16 +53,16 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %{type: :keep_card} = action) do
     %{player: from, card: card} = action.payload
 
+    state =
+      State.apply_changes(state, [
+        {state.players[from], ChangeDescriptions.remove_active(card.id, card.veracity)},
+        {state.round, [type: :next]},
+        {state.players[from], [type: :add_to_hand, card: card]}
+      ])
+
     State.apply_changes(state, [
-      {state.players[from], ChangeDescriptions.remove_active(card.id, card.veracity)},
-      {state.round, [type: :next]},
-      {state.players[from], [type: :add_to_hand, card: card]}
-    ])
-    |> State.apply_changes([
       {state.turn, [type: :new, round: state.round]}
     ])
-
-    # &{&1.turn, [type: :new, round: &1.round]}
   end
 
   def reduce(%State{} = state, %{type: :draw_card} = action) do
@@ -77,29 +77,26 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %{type: :start_game}) do
   end
 
-  def reduce(%State{} = state, %{type: :check_source} = action) do
-    card = action.payload.card
-    player = action.payload.player
+  def reduce(%State{} = state, %{type: :view_source} = action) do
+    %{card: card, player_id: player_id} = action.payload
 
-    article = state.deck.article_store
+    article_store = state.deck.article_store
+    article = Encyclopedia.get_article_by_card(article_store, card)
     article_entity = Factory.make_entity_article(article)
 
-    changes = [
-      {state.articles[player.id], ChangeDescriptions.set_article(card, article_entity)}
-    ]
-
-    State.apply_changes(state, changes)
+    %{
+      state
+      | articles: Map.put(state.articles, {player_id, card}, article_entity)
+    }
   end
 
   def reduce(%State{} = state, %{type: :hide_source} = action) do
-    # card = action.payload.card
-    # player = action.payload.player
+    %{card: card, player_id: player_id} = action.payload
 
-    # changes = [
-    #   {state.articles[player.id], ChangeDescriptions.reset_article(card)}
-    # ]
-
-    # State.apply_changes(state, changes)
+    %{
+      state
+      | articles: Map.delete(state.articles, {player_id, card})
+    }
   end
 
   def reduce(%State{} = state, %{type: :turn_to_fake}) do

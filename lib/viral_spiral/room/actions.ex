@@ -53,10 +53,24 @@ defmodule ViralSpiral.Room.Actions do
     discard_card(card, from)
   end
 
-  def view_source(card_id, card_veracity) do
+  def view_source(player_id, card_id, card_veracity) do
     %Action{
       type: :view_source,
       payload: %{
+        player_id: player_id,
+        card: %{
+          id: card_id,
+          veracity: card_veracity
+        }
+      }
+    }
+  end
+
+  def hide_source(player_id, card_id, card_veracity) do
+    %Action{
+      type: :hide_source,
+      payload: %{
+        player_id: player_id,
         card: %{
           id: card_id,
           veracity: card_veracity

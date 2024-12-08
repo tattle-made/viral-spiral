@@ -11,6 +11,7 @@ defmodule ViralSpiral.Room.State do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
 
+  alias ViralSpiral.Entity.Article
   alias ViralSpiral.Entity.PowerViralSpiral
   alias ViralSpiral.Room.Factory
   alias ViralSpiral.Entity.Deck
@@ -115,6 +116,10 @@ defmodule ViralSpiral.Room.State do
   defp get_target(%State{} = state, %PowerViralSpiral{} = power) do
   end
 
+  defp get_target(%State{} = state, %Article{id: id} = article) do
+    state.articles[id]
+  end
+
   @doc """
   Generalized way to get a nested entity from state.
 
@@ -131,6 +136,11 @@ defmodule ViralSpiral.Room.State do
   defp put_target(%State{} = state, %Player{id: id} = player) do
     updated_player_map = Map.put(state.players, id, player)
     Map.put(state, :players, updated_player_map)
+  end
+
+  defp put_target(%State{} = state, %Article{id: id} = article) do
+    updated_article_map = Map.put(state.articles, id, article)
+    Map.put(state, :articles, updated_article_map)
   end
 
   defp put_target(%State{} = state, %Round{} = round) do
