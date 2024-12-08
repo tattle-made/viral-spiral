@@ -99,13 +99,14 @@ defmodule ViralSpiral.Room.Reducer do
     }
   end
 
-  def reduce(%State{} = state, %{type: :turn_to_fake}) do
-    # card = action.payload.card
+  def reduce(%State{} = state, %Action{type: :turn_card_to_fake} = action) do
+    %{player_id: player_id} = action.payload
 
-    # changes = [
-    #   # modify the player's active
-    #   {state.players[player.id], ChangeDescriptions.turn_to_fake()}
-    # ]
+    changes = [
+      {state.players[player_id], ChangeDescriptions.turn_to_fake(action)}
+    ]
+
+    State.apply_changes(state, changes)
   end
 
   def reduce(%State{} = state, %{type: :viral_spiral_pass, to: players} = action)

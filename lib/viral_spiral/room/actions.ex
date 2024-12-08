@@ -78,4 +78,14 @@ defmodule ViralSpiral.Room.Actions do
       }
     }
   end
+
+  def turn_card_to_fake(player_id, card_id) do
+    %Action{
+      type: :turn_card_to_fake,
+      payload: %{
+        player_id: player_id,
+        card_id: card_id
+      }
+    }
+  end
 end

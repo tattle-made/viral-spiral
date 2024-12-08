@@ -17,6 +17,7 @@ defmodule ViralSpiral.Game do
     |> draw_card()
     |> view_source()
     |> hide_source()
+    |> mark_as_fake()
     |> pass_card(card, from, to)
     |> turn_to_fake(card)
     |> pass_card(card, from, to)
