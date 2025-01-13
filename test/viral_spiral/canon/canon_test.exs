@@ -1,5 +1,6 @@
 defmodule ViralSpiral.Canon.DeckEncyclopediaTest do
   use ExUnit.Case
+  alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Canon.DrawTypeRequirements
   alias ViralSpiral.Canon.Encyclopedia
   alias ViralSpiral.Canon.Deck
@@ -103,11 +104,11 @@ defmodule ViralSpiral.Canon.DeckEncyclopediaTest do
       article_store = state[:article_store]
 
       draw_result = Deck.draw_card(set, type: :topical, veracity: true, tgb: 5)
-      card = store[{draw_result.id, true}]
-      assert card.id == "card_27424926"
-      assert card.veracity == true
+      sparse_card = Sparse.new({draw_result.id, true})
 
-      article = Encyclopedia.get_article_by_card(article_store, card)
+      article =
+        Encyclopedia.get_article_by_card(article_store, sparse_card)
+        |> IO.inspect()
 
       assert article.headline ==
                "Global pocket shortage finally hits City, driving up prices of dresses with pockets"

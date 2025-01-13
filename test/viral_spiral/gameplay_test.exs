@@ -4,6 +4,7 @@ defmodule ViralSpiral.GameTest do
 
   We only do 2 rounds for brevity.
   """
+  alias ViralSpiral.Entity.PlayerMap
   alias ViralSpiral.Room.Factory
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Entity.Turn
@@ -66,16 +67,38 @@ defmodule ViralSpiral.GameTest do
       |> Factory.join("krys")
       |> Factory.start()
       |> Factory.draw_card()
-      |> IO.inspect()
 
-    %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} =
-      StateFixtures.player_by_names(state)
-
-    require IEx
-    IEx.pry()
-
+    # %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} =
+    #   StateFixtures.player_by_names(state)
+    [player_a, player_b, player_c, player_d] = state.round.order
     current_player = State.current_turn_player(state)
-    current_card = state.players[current_player.id].active_cards |> hd
+
+    # player_a = state.players[player_a]
+    # player_b = state.players[player_b]
+    # player_c = state.players[player_c]
+    # player_d = state.players[player_d]
+
+    # assert current_player.id == player_a
+
+    current_card = StateFixtures.active_card(state, current_player.id, 0)
+
+    state =
+      state
+      |> Factory.pass_card(current_card, player_a, player_d)
+      |> Factory.pass_card(current_card, player_d, player_b)
+
+    # assert state.players[player_a].clout == 2
+    # assert state.players[player_a].affinities.skub == -1
+    # assert state.players[player_d].affinities.skub == -1
+
+    state =
+      state
+      |> Factory.keep_card(current_card, player_b)
+      |> Factory.draw_card()
+
+    current_card = StateFixtures.active_card(state, player_b, 0) |> IO.inspect()
+
+    state = state |> Factory.discard_card(current_card, player_b)
 
     # state
     # |> Factory.pass_card(current_card,)

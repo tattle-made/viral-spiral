@@ -2,6 +2,7 @@ defmodule ViralSpiral.Canon.Encyclopedia do
   @moduledoc """
   Load encyclopedia data from .csv file
   """
+  alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Canon.Article
 
   @filenames [
@@ -62,7 +63,7 @@ defmodule ViralSpiral.Canon.Encyclopedia do
     |> Enum.reduce(%{}, fn el, acc -> Map.put(acc, {el.card_id, el.veracity}, el) end)
   end
 
-  def get_article_by_card(article_store, card) do
+  def get_article_by_card(article_store, %Sparse{} = card) do
     article_store[{card.id, card.veracity}]
   end
 end

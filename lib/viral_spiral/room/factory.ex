@@ -162,4 +162,7 @@ defmodule ViralSpiral.Room.Factory do
   def keep_card(%State{} = state, %Sparse{} = card, from) do
     Reducer.reduce(state, Actions.keep_card(card, from))
   end
+
+  def discard_card(%State{} = state, %Sparse{} = card, from) do
+  end
 end
