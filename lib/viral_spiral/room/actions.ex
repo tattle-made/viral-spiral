@@ -58,10 +58,8 @@ defmodule ViralSpiral.Room.Actions do
       type: :view_source,
       payload: %{
         player_id: player_id,
-        card: %{
-          id: card_id,
-          veracity: card_veracity
-        }
+        card_id: card_id,
+        card_veracity: card_veracity
       }
     }
   end
@@ -71,10 +69,8 @@ defmodule ViralSpiral.Room.Actions do
       type: :hide_source,
       payload: %{
         player_id: player_id,
-        card: %{
-          id: card_id,
-          veracity: card_veracity
-        }
+        card_id: card_id,
+        card_veracity: card_veracity
       }
     }
   end

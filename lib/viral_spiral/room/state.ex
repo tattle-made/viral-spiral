@@ -11,6 +11,7 @@ defmodule ViralSpiral.Room.State do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
 
+  alias ViralSpiral.Entity.CheckSource
   alias ViralSpiral.Entity.Article
   alias ViralSpiral.Entity.PowerViralSpiral
   alias ViralSpiral.Room.Factory
@@ -23,6 +24,7 @@ defmodule ViralSpiral.Room.State do
   alias ViralSpiral.Room.State
   alias ViralSpiral.Entity.Change
 
+  @derive {Inspect, limit: 2}
   defstruct room: nil,
             players: %{},
             round: nil,
@@ -30,7 +32,8 @@ defmodule ViralSpiral.Room.State do
             turns: %{},
             deck: nil,
             articles: %{},
-            power_viralspiral: nil
+            power_viralspiral: nil,
+            power_check_source: CheckSource.new()
 
   @type t :: %__MODULE__{
           room: Room.t(),
@@ -39,7 +42,8 @@ defmodule ViralSpiral.Room.State do
           turn: Turn.t(),
           deck: Deck.t(),
           articles: map(),
-          power_viralspiral: PowerViralSpiral.t()
+          power_viralspiral: PowerViralSpiral.t(),
+          power_check_source: CheckSource.t()
         }
 
   def empty() do
@@ -84,6 +88,8 @@ defmodule ViralSpiral.Room.State do
   #         list({:ok, message :: String.t()} | {:error, reason :: String.t()})
   def apply_changes(state, changes) do
     Enum.reduce(changes, state, fn change, state ->
+      # require IEx
+      # IEx.pry()
       data = get_target(state, elem(change, 0))
       change_desc = elem(change, 1)
       new_value = apply_change(data, change_desc)
@@ -114,6 +120,10 @@ defmodule ViralSpiral.Room.State do
   end
 
   defp get_target(%State{} = state, %PowerViralSpiral{} = power) do
+  end
+
+  defp get_target(%State{} = state, %CheckSource{} = _check_source) do
+    state.power_check_source
   end
 
   defp get_target(%State{} = state, %Article{id: id} = article) do
@@ -159,74 +169,78 @@ defmodule ViralSpiral.Room.State do
     Map.put(state, :power_viralspiral, power)
   end
 
+  defp put_target(%State{} = state, %CheckSource{} = check_source) do
+    Map.put(state, :power_check_source, check_source)
+  end
+
   @spec current_round_player(State.t()) :: Player.t()
   def current_turn_player(%State{} = state), do: state.players[state.turn.current]
 
   def current_round_player(%State{} = state),
     do: state.players[Round.current_player_id(state.round)]
 
-  defimpl Inspect do
-    import Inspect.Algebra
-    alias Inspect.Opts
+  # defimpl Inspect do
+  #   import Inspect.Algebra
+  #   alias Inspect.Opts
 
-    def inspect(state, _opts) do
-      players =
-        Map.keys(state.players)
-        |> Enum.map(fn id ->
-          player = state.players[id]
+  #   def inspect(state, _opts) do
+  #     players =
+  #       Map.keys(state.players)
+  #       |> Enum.map(fn id ->
+  #         player = state.players[id]
 
-          current_round = if player == State.current_round_player(state), do: "CR", else: ""
-          current_turn = if player == State.current_turn_player(state), do: "CT", else: ""
+  #         current_round = if player == State.current_round_player(state), do: "CR", else: ""
+  #         current_turn = if player == State.current_turn_player(state), do: "CT", else: ""
 
-          header = "#{player.id} : #{player.name} : #{player.identity} : #{player.clout} "
+  #         header = "#{player.id} : #{player.name} : #{player.identity} : #{player.clout} "
 
-          affinities =
-            Map.keys(player.affinities)
-            |> Enum.map(&"#{&1} : #{player.affinities[&1]}")
-            |> Enum.join(" | ")
+  #         affinities =
+  #           Map.keys(player.affinities)
+  #           |> Enum.map(&"#{&1} : #{player.affinities[&1]}")
+  #           |> Enum.join(" | ")
 
-          biases =
-            Map.keys(player.biases)
-            |> Enum.map(&"#{&1} : #{player.biases[&1]}")
-            |> Enum.join(" | ")
+  #         biases =
+  #           Map.keys(player.biases)
+  #           |> Enum.map(&"#{&1} : #{player.biases[&1]}")
+  #           |> Enum.join(" | ")
 
-          active_cards =
-            player.active_cards
-            |> Enum.map(&"#{elem(&1, 0)} : #{elem(&1, 1)}")
-            |> IO.iodata_to_binary()
+  #         active_cards =
+  #           player.active_cards
+  #           |> Enum.map(&"#{elem(&1, 0)} : #{elem(&1, 1)}")
+  #           |> IO.iodata_to_binary()
 
-          # hand =
-          #   player.hand
-          #   |> Enum.map(&"#{elem(&1, 0)} : #{elem(&1, 1)}")
-          #   |> IO.iodata_to_binary()
+  #         # hand =
+  #         #   player.hand
+  #         #   |> Enum.map(&"#{elem(&1, 0)} : #{elem(&1, 1)}")
+  #         #   |> IO.iodata_to_binary()
 
-          [current_round <> current_turn, header, affinities, biases, active_cards]
-          |> Enum.join("\n")
-          |> IO.iodata_to_binary()
+  #         [current_round <> current_turn, header, affinities, biases, active_cards]
+  #         |> Enum.join("\n")
+  #         |> IO.iodata_to_binary()
 
-          # {player.id, player.name, player.clout, player.affinities, player.biases}
-          # |> IO.iodata_to_binary()
-        end)
-        |> Enum.intersperse(line())
-        |> Enum.intersperse(line())
-        |> concat()
+  #         # {player.id, player.name, player.clout, player.affinities, player.biases}
+  #         # |> IO.iodata_to_binary()
+  #       end)
+  #       |> Enum.intersperse(line())
+  #       |> Enum.intersperse(line())
+  #       |> concat()
 
-      concat([
-        nest(doc({state.room.id, state.room.name, state.room.chaos_counter}), 4),
-        line(),
-        players
-      ])
-    end
+  #     concat([
+  #       nest(doc({state.room.id, state.room.name, state.room.chaos_counter}), 4),
+  #       line(),
+  #       players
+  #     ])
+  #   end
 
-    def doc(entity) do
-      to_doc(entity, %Opts{pretty: true})
-    end
+  #   def doc(entity) do
+  #     to_doc(entity, %Opts{pretty: true})
+  #   end
 
-    def linebr() do
-      concat([
-        String.duplicate("_", 50),
-        line()
-      ])
-    end
-  end
+  #   def linebr() do
+  #     concat([
+  #       String.duplicate("_", 50),
+  #       line()
+  #     ])
+  #   end
+  # end
 end

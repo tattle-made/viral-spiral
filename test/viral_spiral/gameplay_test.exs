@@ -4,6 +4,8 @@ defmodule ViralSpiral.GameTest do
 
   We only do 2 rounds for brevity.
   """
+  alias ViralSpiral.Canon.Card.Sparse
+  alias ViralSpiral.Canon.Encyclopedia
   alias ViralSpiral.Entity.PlayerMap
   alias ViralSpiral.Room.Factory
   alias ViralSpiral.Entity.Player
@@ -110,5 +112,108 @@ defmodule ViralSpiral.GameTest do
     #   IO.inspect(state.players)
     #   IO.inspect(state.room)
     # end)
+  end
+
+  describe "check source power" do
+    setup do
+      state = %State{
+        room: %Room{
+          id: "room_abc",
+          name: "crazy-house-3213",
+          state: :running,
+          unjoined_players: [],
+          affinities: [:skub, :houseboat],
+          communities: [:red, :yellow, :blue],
+          chaos: 0,
+          chaos_counter: 10,
+          volatality: :medium
+        },
+        players: %{
+          "player_abc" => %Player{
+            id: "player_abc",
+            name: "farah",
+            biases: %{yellow: 0, blue: 0},
+            affinities: %{skub: 0, houseboat: 0},
+            clout: 0,
+            identity: :red,
+            hand: [],
+            active_cards: []
+          },
+          "player_def" => %Player{
+            id: "player_def",
+            name: "aman",
+            biases: %{red: 0, blue: 0},
+            affinities: %{skub: 0, houseboat: 0},
+            clout: 0,
+            identity: :yellow,
+            hand: [],
+            active_cards: []
+          },
+          "player_ghi" => %Player{
+            id: "player_ghi",
+            name: "krys",
+            biases: %{yellow: 0, blue: 0},
+            affinities: %{skub: 0, houseboat: 0},
+            clout: 0,
+            identity: :red,
+            hand: [],
+            active_cards: []
+          },
+          "player_jkl" => %Player{
+            id: "player_jkl",
+            biases: %{yellow: 0, blue: 0},
+            affinities: %{skub: 0, houseboat: 0},
+            clout: 0,
+            name: "adhiraj",
+            identity: :red,
+            hand: [],
+            active_cards: []
+          }
+        },
+        round: %Round{
+          order: ["player_jkl", "player_ghi", "player_def", "player_abc"],
+          count: 4,
+          current: 0,
+          skip: nil
+        },
+        turn: %Turn{
+          card: nil,
+          current: "player_jkl",
+          pass_to: ["player_abc", "player_def", "player_ghi"]
+        }
+      }
+
+      state = %{state | deck: Factory.new_deck(state.room)}
+
+      %{state: state}
+    end
+
+    test "view/hide source for true affinity card", %{state: state} do
+      state = state |> Factory.draw_card(type: :affinity, target: :skub, veracity: true)
+      current_player = State.current_turn_player(state)
+      active_card = current_player.active_cards |> hd
+      card = Sparse.new(active_card)
+
+      state = state |> Factory.view_source(current_player.id, card.id, card.veracity)
+      key = "#{current_player.id}_#{card.id}_#{card.veracity}"
+      assert state.power_check_source.map[key] != nil
+
+      state = state |> Factory.close_source(current_player.id, card.id, card.veracity)
+      assert state.power_check_source.map[key] == nil
+    end
+
+    test "view/hide source for false affinity card", %{state: state} do
+      state = state |> Factory.draw_card(type: :affinity, target: :houseboat, veracity: false)
+      current_player = State.current_turn_player(state)
+      active_card = current_player.active_cards |> hd
+      card = Sparse.new(active_card)
+
+      state = state |> Factory.view_source(current_player.id, card.id, card.veracity)
+      key = "#{current_player.id}_#{card.id}_#{card.veracity}"
+      assert state.power_check_source.map[key] != nil
+
+      state = state |> Factory.close_source(current_player.id, card.id, card.veracity)
+      assert state.power_check_source.map[key] == nil
+    end
   end
 end

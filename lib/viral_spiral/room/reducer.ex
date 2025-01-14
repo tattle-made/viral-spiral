@@ -2,6 +2,9 @@ defmodule ViralSpiral.Room.Reducer do
   @moduledoc """
 
   """
+  alias ViralSpiral.Entity.Source
+  alias ViralSpiral.Entity.CheckSource
+  alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Entity.PowerViralSpiral
   alias ViralSpiral.Canon.Encyclopedia
   alias ViralSpiral.Room.Factory
@@ -78,25 +81,35 @@ defmodule ViralSpiral.Room.Reducer do
   end
 
   def reduce(%State{} = state, %{type: :view_source} = action) do
-    %{card: card, player_id: player_id} = action.payload
+    %{card_id: card_id, card_veracity: card_veracity, player_id: player_id} = action.payload
+    card = Sparse.new({card_id, card_veracity})
+    article = Encyclopedia.get_article_by_card(state.deck.article_store, card)
 
-    article_store = state.deck.article_store
-    article = Encyclopedia.get_article_by_card(article_store, card)
-    article_entity = Factory.make_entity_article(article)
+    key = "#{player_id}_#{card_id}_#{card_veracity}"
 
-    %{
-      state
-      | articles: Map.put(state.articles, {player_id, card}, article_entity)
+    source = %Source{
+      owner: player_id,
+      headline: article.headline,
+      content: article.content,
+      author: article.author,
+      type: article.type
     }
+
+    state
+    |> State.apply_changes([
+      {state.power_check_source, [type: :put, key: key, source: source]}
+    ])
   end
 
   def reduce(%State{} = state, %{type: :hide_source} = action) do
-    %{card: card, player_id: player_id} = action.payload
+    %{card_id: card_id, card_veracity: card_veracity, player_id: player_id} = action.payload
 
-    %{
-      state
-      | articles: Map.delete(state.articles, {player_id, card})
-    }
+    key = "#{player_id}_#{card_id}_#{card_veracity}"
+
+    state
+    |> State.apply_changes([
+      {state.power_check_source, [type: :drop, key: key]}
+    ])
   end
 
   def reduce(%State{} = state, %Action{type: :turn_card_to_fake} = action) do

@@ -119,16 +119,6 @@ defmodule ViralSpiral.Room.Factory do
     }
   end
 
-  def make_entity_article(%Article{} = article) do
-    %EntityArticle{
-      headline: article.headline,
-      veracity: article.veracity,
-      type: article.type,
-      content: article.content,
-      author: article.author
-    }
-  end
-
   def new_game() do
     %State{
       room: Room.new()
@@ -155,6 +145,15 @@ defmodule ViralSpiral.Room.Factory do
     Reducer.reduce(state, Actions.draw_card(draw_type))
   end
 
+  @doc """
+  draw_type is a tuple.
+
+  For more, visit `ViralSpiral.Canon.Deck.draw_type/1`
+  """
+  def draw_card(%State{} = state, draw_type) do
+    Reducer.reduce(state, Actions.draw_card(draw_type))
+  end
+
   def pass_card(%State{} = state, %Sparse{} = card, from, to) do
     Reducer.reduce(state, Actions.pass_card(card.id, card.veracity, from, to))
   end
@@ -164,5 +163,13 @@ defmodule ViralSpiral.Room.Factory do
   end
 
   def discard_card(%State{} = state, %Sparse{} = card, from) do
+  end
+
+  def view_source(%State{} = state, player_id, card_id, card_veracity) do
+    Reducer.reduce(state, Actions.view_source(player_id, card_id, card_veracity))
+  end
+
+  def close_source(%State{} = state, player_id, card_id, card_veracity) do
+    Reducer.reduce(state, Actions.hide_source(player_id, card_id, card_veracity))
   end
 end

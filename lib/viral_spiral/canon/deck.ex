@@ -570,7 +570,12 @@ defmodule ViralSpiral.Canon.Deck do
 
   Returns a tuple that should be a valid key of a Store.
 
-  [
+  [type: :topical, veracity: false]
+  [type: :topical, veracity: true]
+  [type: :affinity, veracity: true, target: :skub]
+  [type: :bias, veracity: false, target: :yellow] and so on
+
+  deprecated : [
     {:conflated, false},
     {:topical, false},
     {:topical, true},
