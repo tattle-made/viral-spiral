@@ -42,7 +42,7 @@
       <div class="h-4"></div>
 
       <div :for={card <- player.cards} :if={player.is_active}>
-        <.card card={card}></.card>
+        <.card card={card} from={player.id}></.card>
       </div>
     </div>
 

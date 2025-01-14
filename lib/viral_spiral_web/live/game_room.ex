@@ -1,5 +1,6 @@
 defmodule ViralSpiralWeb.GameRoom do
   import ViralSpiralWeb.Atoms
+  alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Canon.Card
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Canon.Deck
@@ -28,12 +29,18 @@ defmodule ViralSpiralWeb.GameRoom do
     {:noreply, socket}
   end
 
-  def handle_event("pass_to", params, socket) do
-    # card = socket.assigns.card
+  def handle_event(
+        "pass_to",
+        params,
+        socket
+      ) do
+    %{"from" => from, "to" => to, "card-id" => card_id, "card-veracity" => card_veracity} = params
+    state = socket.assigns.state
 
-    # state = Reducers.reduce(state, Actions.pass_card())
+    state =
+      state |> Factory.pass_card(Sparse.new({card_id, String.to_atom(card_veracity)}), from, to)
 
-    {:noreply, socket}
+    {:noreply, assign(socket, :state, state)}
   end
 
   def player_options(state, player) do
