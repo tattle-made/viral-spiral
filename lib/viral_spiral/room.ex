@@ -8,7 +8,7 @@ defmodule ViralSpiral.Room do
   ## Usage :
   ```elixir
   room_reserved = Room.reserve()
-  room_gen = Room.room_gen!(room_reserved.name)
+  {:ok, room_gen} = Room.room_gen!(room_reserved.name)
   send(room_gen, "ok")
   :sys.get_state(room_gen)
   ```
@@ -45,10 +45,8 @@ defmodule ViralSpiral.Room do
 
   This ensures there is only one room registered with a path.
   """
-  @spec reserve() :: RoomReserved.t()
-  def reserve() do
-    room_name = Room.name()
-
+  @spec reserve(String.t()) :: RoomReserved.t()
+  def reserve(room_name) do
     pid =
       case DynamicSupervisor.start_child(@supervisor, {@room_gen, room_name}) do
         {:ok, pid} -> pid
@@ -64,8 +62,8 @@ defmodule ViralSpiral.Room do
   """
   def room_gen!(room_name) do
     case Registry.lookup(@registry, room_name) do
-      [{pid, _}] -> pid
-      _ -> raise NotFound
+      [{pid, _}] -> {:ok, pid}
+      _ -> {:error, :not_found}
     end
   end
 end

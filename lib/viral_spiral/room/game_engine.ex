@@ -4,6 +4,8 @@ defmodule ViralSpiral.Room.GameEngine do
 
   All player actions are sent to this genserver, which returns or broadcasts the changes made to the game State.
   """
+  alias ViralSpiral.Canon.Card.Sparse
+  alias ViralSpiral.Room.Factory
   alias ViralSpiral.Room.State
   alias ViralSpiral.Entity.Room
   use GenServer
@@ -16,8 +18,14 @@ defmodule ViralSpiral.Room.GameEngine do
 
   @impl true
   def init(name) do
-    room = Room.reserve(name) |> Room.start(4)
-    state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
+    state =
+      Factory.new_game()
+      |> Factory.join("adhiraj")
+      |> Factory.join("aman")
+      |> Factory.join("farah")
+      |> Factory.join("krys")
+      |> Factory.start()
+      |> Factory.draw_card()
 
     {:ok, state}
   end
@@ -31,11 +39,19 @@ defmodule ViralSpiral.Room.GameEngine do
   end
 
   @impl true
-  def handle_cast({:pass, from, to}, state) do
+  def handle_call({:pass, from, to, %Sparse{} = card}, _from, state) do
+    new_state = Factory.pass_card(state, card, from, to)
+    {:reply, new_state, new_state}
   end
 
   @impl true
-  def handle_cast({:keep, from}, state) do
+  def handle_call({:keep, from, %Sparse{} = card}, _from, state) do
+    new_state =
+      state
+      |> Factory.keep_card(card, from)
+      |> Factory.draw_card()
+
+    {:reply, new_state, new_state}
   end
 
   @impl true

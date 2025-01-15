@@ -11,17 +11,30 @@ defmodule ViralSpiralWeb.Atoms do
       <div class="h-3"></div>
       <span>pass to:</span>
 
-      <div :for={player <- @card.pass_to} }>
+      <div class="flex flex-row gap-x-2">
+        <div :for={player <- @card.pass_to} }>
+          <button
+            phx-click="pass_to"
+            value={1}
+            phx-value-to={player.id}
+            phx-value-from={@from}
+            phx-value-card-id={@card.id}
+            phx-value-card-veracity={"#{@card.veracity}"}
+            class=" py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
+          >
+            <%= player.name %>
+          </button>
+        </div>
+      </div>
+      <div class="mt-4">
         <button
-          phx-click="pass_to"
-          value={1}
-          phx-value-to={player.id}
+          phx-click="keep"
           phx-value-from={@from}
           phx-value-card-id={@card.id}
           phx-value-card-veracity={"#{@card.veracity}"}
-          class="inline"
+          class="py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
         >
-          <%= player.name %>
+          Keep
         </button>
       </div>
     </div>
