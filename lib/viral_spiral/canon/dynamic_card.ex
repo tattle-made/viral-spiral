@@ -46,13 +46,13 @@ defmodule ViralSpiral.Canon.DynamicCard do
           | :dominant_community
           | :oppressed_community
           | :unpopular_affinity
-          | :popular_community
+          | :popular_affinity
   @type replacements :: %{
           optional(:other_community) => Bias.target(),
           optional(:dominant_community) => Bias.target(),
           optional(:oppressed_community) => Bias.target(),
           optional(:unpopular_affinity) => Affinity.target(),
-          optional(:popular_community) => Affinity.target()
+          optional(:popular_affinity) => Affinity.target()
         }
 
   @doc """
@@ -90,5 +90,35 @@ defmodule ViralSpiral.Canon.DynamicCard do
       x when x in [:cat, :skub, :high_five, :houseboat, :sock] -> Affinity.label(atom)
       y when y in [:red, :yellow, :blue] -> Bias.label(atom)
     end
+  end
+
+  @doc """
+  Returns `true` if the card headline contains placeholder for dynamic content.
+  """
+  def valid?(headline) do
+    results =
+      Regex.scan(
+        ~r/(\(oppressed community\)|\(popular affinity\)|\(unpopular affinity\)|\(other community\)|\(dominant community\))/,
+        headline
+      )
+
+    results
+    |> Enum.map(&Enum.at(&1, 0))
+
+    length(results) != 0
+  end
+
+  @doc """
+  TODO : return a Card. Because this will need to update bias, affinity etc as well.
+  """
+  def patch(headline, gamestate_analytics) do
+    matches = find_placeholders(headline)
+
+    replacements = %{
+      unpopular_affinity: :skub,
+      dominant_community: :red
+    }
+
+    replace_text(headline, matches, replacements)
   end
 end

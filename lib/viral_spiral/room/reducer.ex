@@ -2,16 +2,15 @@ defmodule ViralSpiral.Room.Reducer do
   @moduledoc """
 
   """
+  alias ViralSpiral.Room.Analytics.GameState
+  alias ViralSpiral.Canon.DynamicCard
   alias ViralSpiral.Entity.Source
-  alias ViralSpiral.Entity.CheckSource
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Entity.PowerViralSpiral
   alias ViralSpiral.Canon.Encyclopedia
-  alias ViralSpiral.Room.Factory
   alias ViralSpiral.Playable
   alias ViralSpiral.Room.State
   alias ViralSpiral.Room.ChangeDescriptions
-  alias ViralSpiral.Canon.DrawTypeRequirements
   alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Room.Action
 
@@ -22,6 +21,15 @@ defmodule ViralSpiral.Room.Reducer do
     draw_type = action.payload.draw_type
     sets = state.deck.available_cards
     draw_result = Deck.draw_card(sets, draw_type)
+    card = state.deck.store[{draw_result.id, draw_type[:veracity]}]
+
+    gamestate_analytics = GameState.analytics(state)
+
+    # headline =
+    #   case DynamicCard.valid?(card.headline) do
+    #     true -> DynamicCard.patch(card.headline, gamestate_analytics)
+    #     false -> card.headline
+    #   end
 
     changes =
       [

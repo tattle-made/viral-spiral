@@ -14,44 +14,56 @@
     <div
       :for={player <- @state.players}
       class={[
-        "p-2 border-2 w-full rounded-xl m-2",
+        "border-2 w-full  m-2 bg-clip-border",
         if(player.is_active,
           do: "border-red-400",
           else: "border-red-100"
         )
       ]}
     >
-      <span><%= player.name %></span>
+      <div class={[
+        "w-full px-2 py-2",
+        if(player.is_active,
+          do: "bg-red-400",
+          else: "bg-red-100"
+        )
+      ]}>
+        <p><%= player.name %></p>
+      </div>
 
       <%!-- <span class="ml-6"><%= player.identity %></span> --%>
-      <div class="h-2"></div>
-      <div>
-        <h2 class="font-semibold">Clout</h2>
-        <span><%= player.clout %></span>
-      </div>
-      <div class="h-2"></div>
-      <div>
-        <h2 class="font-semibold">Affinities</h2>
-        <div :for={affinity <- player.affinities}>
-          <span><%= elem(affinity, 0) %></span>
-          <span><%= elem(affinity, 1) %></span>
+
+      <div class="p-2">
+        <div class="flex flex-row gap-8 flex-wrap">
+          <div>
+            <h2 class="font-semibold">Clout</h2>
+            <span><%= player.clout %></span>
+          </div>
+
+          <div>
+            <h2 class="font-semibold">Affinities</h2>
+            <div :for={affinity <- player.affinities}>
+              <span><%= elem(affinity, 0) %></span>
+              <span><%= elem(affinity, 1) %></span>
+            </div>
+          </div>
+
+          <div>
+            <h2 class="font-semibold">Biases</h2>
+            <div :for={bias <- player.biases}>
+              <span><%= elem(bias, 0) %></span>
+              <span><%= elem(bias, 1) %></span>
+            </div>
+          </div>
         </div>
 
-        <div class="h-2"></div>
-        <h2 class="font-semibold">Bias</h2>
-        <div :for={bias <- player.biases}>
-          <span><%= elem(bias, 0) %></span>
-          <span><%= elem(bias, 1) %></span>
-        </div>
-
-        <div class="h-4"></div>
+        <div class="mt-4"></div>
 
         <div :for={card <- player.cards} :if={player.is_active}>
           <.card card={card} from={player.id}></.card>
         </div>
-      </div>
 
-      <%!-- <div class="h-4"></div>
+        <%!-- <div class="h-4"></div>
       <%= if current_player?(@state, player)  do %>
         <.card>
           <p><%= card(@state, player).headline %></p>
@@ -62,6 +74,7 @@
           <span class="mr-4"><%= pass_to %></span>
         <% end %>
       <% end %> --%>
+      </div>
     </div>
   </div>
 </div>

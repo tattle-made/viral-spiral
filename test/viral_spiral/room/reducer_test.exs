@@ -31,9 +31,8 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       assert Deck.size(new_state.deck.available_cards, draw_type) == 59
 
-      current_player = State.current_round_player(state)
+      current_player = State.current_round_player(new_state)
       assert length(current_player.active_cards) == 1
-      IO.inspect(current_player)
     end
 
     test "keep_card" do
