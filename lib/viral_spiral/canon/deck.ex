@@ -544,12 +544,13 @@ defmodule ViralSpiral.Canon.Deck do
   end
 
   defp choose_one(list) do
-    ix = :rand.uniform(list |> Enum.to_list() |> length)
+    ix = :rand.uniform(list |> Enum.to_list() |> length) - 1
 
     list |> Enum.at(ix)
     # |> Map.get(:id)
   end
 
+  @spec key(atom() | %{:type => any(), :veracity => any(), optional(any()) => any()}) :: tuple()
   def key(card) do
     key = {}
 
@@ -570,10 +571,10 @@ defmodule ViralSpiral.Canon.Deck do
 
   Returns a tuple that should be a valid key of a Store.
 
-  [type: :topical, veracity: false]
-  [type: :topical, veracity: true]
-  [type: :affinity, veracity: true, target: :skub]
-  [type: :bias, veracity: false, target: :yellow] and so on
+  [type: :topical, veracity: false, tgb: 4]
+  [type: :topical, veracity: true, tgb: 1]
+  [type: :affinity, veracity: true, target: :skub, tgb: 2]
+  [type: :bias, veracity: false, target: :yellow, tgb: 0] and so on
 
   deprecated : [
     {:conflated, false},
@@ -620,7 +621,7 @@ defmodule ViralSpiral.Canon.Deck do
         :topical -> nil
       end
 
-    [type: type, veracity: veracity]
+    [type: type, veracity: veracity, tgb: requirements.tgb]
     |> then(fn type ->
       case target do
         nil -> type
