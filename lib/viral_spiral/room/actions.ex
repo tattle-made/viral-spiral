@@ -2,7 +2,9 @@ defmodule ViralSpiral.Room.Actions do
   @moduledoc """
   Instances of Action triggered by a Player or Game Engine .
   """
+  alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Room.Action
+  alias ViralSpiral.Entity.Turn
 
   def draw_card(draw_type) do
     %Action{type: :draw_card, payload: %{draw_type: draw_type}}
@@ -81,6 +83,17 @@ defmodule ViralSpiral.Room.Actions do
       payload: %{
         player_id: player_id,
         card_id: card_id
+      }
+    }
+  end
+
+  def mark_card_as_fake(from, %Sparse{} = card, %Turn{} = turn) do
+    %Action{
+      type: :mark_card_as_fake,
+      payload: %{
+        from: from,
+        card: card,
+        turn: turn
       }
     }
   end

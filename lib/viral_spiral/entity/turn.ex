@@ -14,12 +14,15 @@ defmodule ViralSpiral.Entity.Turn do
 
   defstruct card: nil,
             current: nil,
-            pass_to: []
+            pass_to: [],
+            # track the order in which this card has been passed around
+            path: []
 
   @type t :: %__MODULE__{
           card: Sparse.t(),
           current: String.t() | nil,
-          pass_to: list(String.t())
+          pass_to: list(String.t()),
+          path: list(String.t())
         }
 
   @spec new() :: Turn.t()
@@ -44,6 +47,8 @@ defmodule ViralSpiral.Entity.Turn do
 
   def set_pass_to(%Turn{} = turn, pass_to), do: %{turn | pass_to: pass_to}
 
+  def set_path(%Turn{} = turn, path), do: %{turn | path: path}
+
   @doc """
   todo :  add check to ensure that it only runs next if
   to is in the the current pass_to
@@ -53,6 +58,7 @@ defmodule ViralSpiral.Entity.Turn do
     from
     |> set_current(to)
     |> set_pass_to(List.delete(from.pass_to, to))
+    |> set_path(List.insert_at(from.path, -1, from.current))
   end
 
   @spec next(Turn.t(), list(String.t())) :: list(Turn.t())
@@ -73,4 +79,8 @@ defmodule ViralSpiral.Entity.Turn do
       end
     end
   end
+end
+
+defmodule ViralSpiral.Entity.Turn.IllegalPass do
+  defexception message: "This player can't be passed to in this Turn"
 end

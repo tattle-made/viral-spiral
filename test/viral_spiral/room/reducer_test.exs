@@ -1,4 +1,8 @@
 defmodule ViralSpiral.Room.ReducerTest do
+  alias ViralSpiral.Entity.Turn
+  alias ViralSpiral.Entity.Round
+  alias ViralSpiral.Entity.Player
+  alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Canon.Article
   alias ViralSpiral.Entity.PlayerMap
   alias ViralSpiral.Room.Factory
@@ -182,4 +186,102 @@ defmodule ViralSpiral.Room.ReducerTest do
   #   # IO.inspect(store.players)
   #   # IO.inspect(store.room)
   # end
+
+  describe "mark as fake" do
+    setup do
+      state = %State{
+        room: %Room{
+          id: "room_abc",
+          name: "crazy-house-3213",
+          state: :running,
+          unjoined_players: [],
+          affinities: [:skub, :houseboat],
+          communities: [:red, :yellow, :blue],
+          chaos: 0,
+          chaos_counter: 10,
+          volatality: :medium
+        },
+        players: %{
+          "player_abc" => %Player{
+            id: "player_abc",
+            name: "farah",
+            biases: %{yellow: 0, blue: 0},
+            affinities: %{skub: 0, houseboat: 0},
+            clout: 0,
+            identity: :red,
+            hand: [],
+            active_cards: []
+          },
+          "player_def" => %Player{
+            id: "player_def",
+            name: "aman",
+            biases: %{red: 0, blue: 0},
+            affinities: %{skub: 0, houseboat: 0},
+            clout: 0,
+            identity: :yellow,
+            hand: [],
+            active_cards: []
+          },
+          "player_ghi" => %Player{
+            id: "player_ghi",
+            name: "krys",
+            biases: %{yellow: 0, blue: 0},
+            affinities: %{skub: 0, houseboat: 0},
+            clout: 0,
+            identity: :red,
+            hand: [],
+            active_cards: []
+          },
+          "player_jkl" => %Player{
+            id: "player_jkl",
+            biases: %{yellow: 0, blue: 0},
+            affinities: %{skub: 0, houseboat: 0},
+            clout: 0,
+            name: "adhiraj",
+            identity: :red,
+            hand: [],
+            active_cards: []
+          }
+        },
+        round: %Round{
+          order: ["player_jkl", "player_ghi", "player_def", "player_abc"],
+          count: 4,
+          current: 1,
+          skip: nil
+        },
+        turn: %Turn{
+          current: "player_ghi",
+          pass_to: ["player_def"],
+          path: ["player_abc", "player_jkl"]
+        }
+      }
+
+      state = %{state | deck: Factory.new_deck(state.room)}
+
+      %{state: state}
+    end
+
+    # player_ghi has received a card from player_jkl
+    # We will force this card to be a true card and then have player_ghi mark it as fake
+    @tag timeout: :infinity
+    test "mark true card as fake", %{state: state} do
+      from = State.current_turn_player(state)
+      card = %Sparse{id: "card_121565043", veracity: true}
+      turn = state.turn
+
+      state = Reducer.reduce(state, Actions.mark_card_as_fake(from, card, turn))
+      assert state.players["player_ghi"].clout == -1
+      assert state.players["player_jkl"].clout == 0
+    end
+
+    test "mark false card as fake", %{state: state} do
+      from = State.current_turn_player(state)
+      card = %Sparse{id: "card_121565043", veracity: false}
+      turn = state.turn
+
+      state = Reducer.reduce(state, Actions.mark_card_as_fake(from, card, turn))
+      assert state.players["player_ghi"].clout == 0
+      assert state.players["player_jkl"].clout == -1
+    end
+  end
 end
