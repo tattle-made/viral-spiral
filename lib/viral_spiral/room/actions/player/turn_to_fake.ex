@@ -20,6 +20,8 @@ defmodule ViralSpiral.Room.Actions.Player.TurnToFake do
     turn_to_fake
     |> cast(attrs, [:player_id])
     |> cast_embed(:card, with: &card_changeset/2)
+
+    # todo : verify card veracity is false
   end
 
   def card_changeset(card, attrs) do
