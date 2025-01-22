@@ -2,7 +2,6 @@ defmodule ViralSpiral.Room.ChangeDescriptions do
   @moduledoc """
   Commonly used change options put behind user friendly names.
   """
-  alias ViralSpiral.Room.Action
 
   def change_clout(offset), do: [type: :clout, offset: offset]
   def change_affinity(target, offset), do: [type: :affinity, target: target, offset: offset]
@@ -58,7 +57,7 @@ defmodule ViralSpiral.Room.ChangeDescriptions do
     end
   end
 
-  def turn_to_fake(%Action{type: :turn_card_to_fake, payload: payload}) do
-    [type: :turn_card_to_fake, card_id: payload.card_id, player_id: payload.player_id]
+  def turn_to_fake(sparse_card) do
+    [type: :turn_card_to_fake, card: sparse_card]
   end
 end

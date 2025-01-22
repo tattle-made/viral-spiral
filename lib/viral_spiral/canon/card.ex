@@ -6,8 +6,9 @@ defmodule ViralSpiral.Canon.Card do
 end
 
 defmodule ViralSpiral.Canon.Card.Sparse do
+  alias ViralSpiral.Canon.Card
   alias ViralSpiral.Canon.Card.Sparse
-  defstruct id: nil, veracity: nil
+  defstruct id: nil, veracity: nil, headline: nil
 
   @type t :: %__MODULE__{
           id: String.t(),
@@ -18,6 +19,14 @@ defmodule ViralSpiral.Canon.Card.Sparse do
     %Sparse{
       id: id,
       veracity: veracity
+    }
+  end
+
+  def new(id, veracity, headline) when is_bitstring(id) and is_boolean(veracity) do
+    %Sparse{
+      id: id,
+      veracity: veracity,
+      headline: headline
     }
   end
 end

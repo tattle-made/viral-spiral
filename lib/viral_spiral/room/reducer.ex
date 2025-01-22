@@ -89,9 +89,6 @@ defmodule ViralSpiral.Room.Reducer do
     # todo : will the card be kept/discarded at this point?
   end
 
-  def reduce(%State{} = state, %{type: :draw_card} = action) do
-  end
-
   def reduce(%State{} = state, %{type: :create_room}) do
   end
 
@@ -134,10 +131,14 @@ defmodule ViralSpiral.Room.Reducer do
   end
 
   def reduce(%State{} = state, %Action{type: :turn_card_to_fake} = action) do
-    %{player_id: player_id} = action.payload
+    %{player_id: player_id, card: card} = action.payload
+
+    fake_card = state.deck.store[{card.id, false}]
+    # todo add dynamic headline
+    sparse_card = Sparse.new(fake_card.id, fake_card.veracity, fake_card.headline)
 
     changes = [
-      {state.players[player_id], ChangeDescriptions.turn_to_fake(action)}
+      {state.players[player_id], ChangeDescriptions.turn_to_fake(sparse_card)}
     ]
 
     State.apply_changes(state, changes)

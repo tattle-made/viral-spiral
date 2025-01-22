@@ -11,6 +11,7 @@ defmodule ViralSpiral.Room.State do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
 
+  alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Entity.CheckSource
   alias ViralSpiral.Entity.Article
   alias ViralSpiral.Entity.PowerViralSpiral
@@ -178,6 +179,14 @@ defmodule ViralSpiral.Room.State do
 
   def current_round_player(%State{} = state),
     do: state.players[Round.current_player_id(state.round)]
+
+  @spec active_card(State.t(), String.t(), integer()) :: tuple() | nil
+  def active_card(%State{} = state, player_id, ix) do
+    case state.players[player_id].active_cards |> Enum.at(ix) do
+      {id, veracity, _headline} -> Sparse.new({id, veracity})
+      nil -> nil
+    end
+  end
 
   # defimpl Inspect do
   #   import Inspect.Algebra

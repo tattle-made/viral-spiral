@@ -56,7 +56,7 @@ defmodule ViralSpiral.Canon.Encyclopedia do
   end
 
   @doc """
-  Convert list of articles into a map with the headline and veracity as its key
+  Convert list of articles into a map with the card id and veracity as its key
   """
   def create_store(articles) do
     articles

@@ -66,6 +66,15 @@ defmodule ViralSpiral.Entity.Player do
     end
   end
 
+  def update_active_card(%Player{} = player, card_id, new_card) do
+    ix = Enum.find_index(player.active_cards, fn x -> elem(x, 0) == card_id end)
+
+    active_cards =
+      List.replace_at(player.active_cards, ix, {card_id, new_card.veracity, new_card.headline})
+
+    %{player | active_cards: active_cards}
+  end
+
   def set_article(%Player{} = player, card, article) do
     case Enum.find(player.active_cards, &(&1 == card.id)) do
       nil ->
@@ -162,6 +171,9 @@ defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
 
       :set_article ->
         Player.set_article(change_desc[:card], change_desc[:article])
+
+      :turn_card_to_fake ->
+        Player.update_active_card(player, change_desc[:card].id, change_desc[:card])
 
       :ignore ->
         player

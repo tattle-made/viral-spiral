@@ -2,9 +2,11 @@ defmodule ViralSpiral.Room.Actions do
   @moduledoc """
   Instances of Action triggered by a Player or Game Engine .
   """
+  alias ViralSpiral.Room.Actions.Player.TurnToFake
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Room.Action
   alias ViralSpiral.Entity.Turn
+  import Ecto.Changeset
 
   def draw_card(draw_type) do
     %Action{type: :draw_card, payload: %{draw_type: draw_type}}
@@ -77,16 +79,6 @@ defmodule ViralSpiral.Room.Actions do
     }
   end
 
-  def turn_card_to_fake(player_id, card_id) do
-    %Action{
-      type: :turn_card_to_fake,
-      payload: %{
-        player_id: player_id,
-        card_id: card_id
-      }
-    }
-  end
-
   def mark_card_as_fake(from, %Sparse{} = card, %Turn{} = turn) do
     %Action{
       type: :mark_card_as_fake,
@@ -95,6 +87,22 @@ defmodule ViralSpiral.Room.Actions do
         card: card,
         turn: turn
       }
+    }
+  end
+
+  @doc """
+  Creates a valid Action for turn to fake power from user message
+  """
+  @spec turn_to_fake(map()) :: Action.t()
+  def turn_to_fake(attrs) do
+    action =
+      %TurnToFake{}
+      |> TurnToFake.changeset(attrs)
+      |> apply_changes()
+
+    %Action{
+      type: :turn_card_to_fake,
+      payload: action
     }
   end
 end

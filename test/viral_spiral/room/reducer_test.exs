@@ -1,4 +1,6 @@
 defmodule ViralSpiral.Room.ReducerTest do
+  require IEx
+  alias ViralSpiral.Room.Card.Player, as: CardPlayer
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Entity.Round
   alias ViralSpiral.Entity.Player
@@ -282,6 +284,42 @@ defmodule ViralSpiral.Room.ReducerTest do
       state = Reducer.reduce(state, Actions.mark_card_as_fake(from, card, turn))
       assert state.players["player_ghi"].clout == 0
       assert state.players["player_jkl"].clout == -1
+    end
+  end
+
+  describe "turn card to fake" do
+    setup do
+      state = StateFixtures.new_game()
+      state = %{state | deck: Factory.new_deck(state.room)}
+      active_cards = [{"card_94393892", true, "true headline"}]
+      state = put_in(state.players["player_abc"].active_cards, active_cards)
+
+      %{state: state}
+    end
+
+    test "turn card to fake", %{state: state} do
+      action_attr = %{
+        "player_id" => "player_abc",
+        "card" => %{
+          "id" => "card_94393892",
+          "type" => :affinity,
+          "veracity" => true,
+          "target" => :skub
+        }
+      }
+
+      player = State.current_turn_player(state)
+      active_card = State.active_card(state, player.id, 0)
+      assert active_card.id == "card_94393892"
+      assert active_card.veracity == true
+
+      action = Actions.turn_to_fake(action_attr)
+      state = Reducer.reduce(state, action)
+      active_card = State.active_card(state, player.id, 0)
+      assert active_card.id == "card_94393892"
+      assert active_card.veracity == false
+
+      # todo assert headline too
     end
   end
 end
