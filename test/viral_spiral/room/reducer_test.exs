@@ -17,7 +17,7 @@ defmodule ViralSpiral.Room.ReducerTest do
   alias ViralSpiral.Entity.Room
   use ExUnit.Case
 
-  describe "" do
+  describe "draw card" do
     setup do
       :rand.seed(:exsss, {123, 135, 254})
 
@@ -39,21 +39,6 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       current_player = State.current_round_player(new_state)
       assert length(current_player.active_cards) == 1
-    end
-
-    test "keep_card" do
-    end
-
-    test "discard_card" do
-    end
-
-    test "check_source" do
-    end
-
-    test "turn_to_fake" do
-    end
-
-    test "cancel_player" do
     end
   end
 
@@ -137,7 +122,6 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
   end
 
-  @tag timeout: :infinity
   describe "view source" do
     setup do
       :rand.seed(:exsss, {12356, 123_534, 345_345})
@@ -169,25 +153,6 @@ defmodule ViralSpiral.Room.ReducerTest do
       # IO.inspect(state.players[aman.id])
     end
   end
-
-  # @tag timeout: :infinity
-  # test "temp" do
-  #   :rand.seed(:exsss, {12356, 123_534, 345_345})
-  #   store = StateFixtures.new_state()
-  #   store = StateFixtures.set_chaos(store, 4)
-
-  #   %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} =
-  #     StateFixtures.player_by_names(store)
-
-  #   # draw card of a certain type(?)
-
-  #   Change.apply_change(store.players[aman.id], Options.change_clout(2))
-
-  #   # IO.inspect(store.round)
-  #   # IO.inspect(store.turn)
-  #   # IO.inspect(store.players)
-  #   # IO.inspect(store.room)
-  # end
 
   describe "mark as fake" do
     setup do
@@ -320,6 +285,28 @@ defmodule ViralSpiral.Room.ReducerTest do
       assert active_card.veracity == false
 
       # todo assert headline too
+    end
+  end
+
+  describe "cancel someone" do
+    setup do
+      state = StateFixtures.new_game()
+      state = %{state | deck: Factory.new_deck(state.room)}
+
+      %{state: state}
+    end
+
+    @tag timeout: :infinity
+    test "get one player to vote", %{state: state} do
+      IO.inspect(state)
+      require IEx
+      IEx.pry()
+      # apply initiate_cancel action to state
+      # apply cancel_vote action to state
+      # compare final state
+    end
+
+    test "get more than one player to vote" do
     end
   end
 end
