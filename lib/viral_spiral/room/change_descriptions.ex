@@ -51,6 +51,24 @@ defmodule ViralSpiral.Room.ChangeDescriptions do
     end
   end
 
+  defmodule PowerCancelPlayer do
+    def initiate(from, target, affinity) do
+      Keyword.new()
+      |> Keyword.put(:type, :initiate)
+      |> Keyword.put(:from, from)
+      |> Keyword.put(:target, target)
+      |> Keyword.put(:affinity, affinity)
+    end
+
+    def vote(from, vote, opts) do
+      Keyword.new()
+      |> Keyword.put(:type, :vote)
+      |> Keyword.put(:from, from)
+      |> Keyword.put(:vote, vote)
+      |> Keyword.put(:opts, opts)
+    end
+  end
+
   defmodule Room do
     def join(player_name) do
       [type: :join, player_name: player_name]

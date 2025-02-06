@@ -2,6 +2,8 @@ defmodule ViralSpiral.Room.Actions do
   @moduledoc """
   Instances of Action triggered by a Player or Game Engine .
   """
+  alias ViralSpiral.Room.Actions.Player.VoteToCancel
+  alias ViralSpiral.Room.Actions.Player.InitiateCancel
   alias ViralSpiral.Room.Actions.Player.TurnToFake
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Room.Action
@@ -102,6 +104,30 @@ defmodule ViralSpiral.Room.Actions do
 
     %Action{
       type: :turn_card_to_fake,
+      payload: action
+    }
+  end
+
+  def initiate_cancel(attrs) do
+    action =
+      %InitiateCancel{}
+      |> InitiateCancel.changeset(attrs)
+      |> apply_changes()
+
+    %Action{
+      type: :initiate_cancel,
+      payload: action
+    }
+  end
+
+  def vote_to_cancel(attrs) do
+    action =
+      %VoteToCancel{}
+      |> VoteToCancel.changeset(attrs)
+      |> apply_changes()
+
+    %Action{
+      type: :vote_to_cancel,
       payload: action
     }
   end

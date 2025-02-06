@@ -8,22 +8,24 @@ defmodule ViralSpiral.Entity.PowerCancelPlayerTest do
       power = %PowerCancelPlayer{}
       assert power.state == :idle
 
-      power = power |> start_vote("player_abc", :cat)
+      power = power |> start_vote("player_abc", "player_mno", :cat)
       assert power.state == :waiting
 
       power =
         power
         |> vote("player_def", true)
-        |> vote("player_jkl", true)
+        |> vote("player_ghi", true)
 
       assert power.votes |> length() == 2
 
-      power = power |> vote("player_lmn", false, done: true)
+      power = power |> vote("player_jkl", false, done: true)
       assert power.votes |> length() == 3
       assert power.state == :done
 
       power = power |> put_result()
       assert power.result == true
+
+      IO.inspect(power)
 
       power = power |> reset()
       assert power.state == :idle
@@ -32,5 +34,14 @@ defmodule ViralSpiral.Entity.PowerCancelPlayerTest do
   end
 
   describe "changes" do
+    setup do
+      %{}
+    end
+
+    test "initiate" do
+    end
+
+    test "vote" do
+    end
   end
 end

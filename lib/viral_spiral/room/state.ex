@@ -11,6 +11,7 @@ defmodule ViralSpiral.Room.State do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
 
+  alias ViralSpiral.Entity.PowerCancelPlayer
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Entity.CheckSource
   alias ViralSpiral.Entity.Article
@@ -34,7 +35,8 @@ defmodule ViralSpiral.Room.State do
             deck: nil,
             articles: %{},
             power_viralspiral: nil,
-            power_check_source: CheckSource.new()
+            power_check_source: CheckSource.new(),
+            power_cancel_player: %PowerCancelPlayer{}
 
   @type t :: %__MODULE__{
           room: Room.t(),
@@ -44,7 +46,8 @@ defmodule ViralSpiral.Room.State do
           deck: Deck.t(),
           articles: map(),
           power_viralspiral: PowerViralSpiral.t(),
-          power_check_source: CheckSource.t()
+          power_check_source: CheckSource.t(),
+          power_cancel_player: PowerCancelPlayer.t()
         }
 
   def empty() do

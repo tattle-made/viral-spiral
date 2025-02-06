@@ -215,6 +215,19 @@ defmodule ViralSpiral.Entity.PlayerMap do
   end
 
   @doc """
+  Return ids of players who like/dislike the same thing.
+
+  For instance, to get all players who like cats, call `of_same_affinity_polarity(players, :cat, :positive)`.
+  To get all players who hate skubs, call `of_same_affinity_polarity(players, :skub, :negative)`
+  """
+  def of_same_affinity_polarity(players, affinity, polarity)
+      when is_map(players) and is_affinity(affinity) and polarity in [:positive, :negative] do
+  end
+
+  def of_opposite_affinity_polarity(players, affinity) when is_affinity(affinity) do
+  end
+
+  @doc """
   Return all players whose identity is different from the passed player
   """
   # @spec(map(String.t(), Player.t()), String.t() :: list(Player.t()))
