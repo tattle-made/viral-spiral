@@ -24,8 +24,10 @@ defmodule ViralSpiral.Canon.Article do
 
   @spec new(String.t()) :: Article.t()
   def new(headline) do
+    uxid = Application.get_env(:viral_spiral, :uxid)
+
     %Article{
-      id: UXID.generate!(prefix: "article", size: :small),
+      id: uxid.generate!(prefix: "article", size: :small),
       card_id: "card_" <> Integer.to_string(:erlang.phash2(headline))
     }
   end

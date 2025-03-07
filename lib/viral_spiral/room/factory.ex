@@ -22,9 +22,10 @@ defmodule ViralSpiral.Room.Factory do
 
   def new_room() do
     engine_config = %EngineConfig{}
+    uxid = Application.get_env(:viral_spiral, :uxid)
 
     %Room{
-      id: UXID.generate!(prefix: "room", size: :small),
+      id: uxid.generate!(prefix: "room", size: :small),
       name: Room.name(),
       state: :uninitialized,
       chaos_counter: engine_config.chaos_counter,
@@ -45,8 +46,10 @@ defmodule ViralSpiral.Room.Factory do
     affinity_list = room.affinities
     affinity_map = Enum.reduce(affinity_list, %{}, fn x, acc -> Map.put(acc, x, 0) end)
 
+    uxid = Application.get_env(:viral_spiral, :uxid)
+
     %Player{
-      id: UXID.generate!(prefix: "player", size: :small),
+      id: uxid.generate!(prefix: "player", size: :small),
       identity: identity,
       biases: bias_map,
       affinities: affinity_map,

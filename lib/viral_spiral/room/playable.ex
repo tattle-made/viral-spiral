@@ -27,7 +27,6 @@ defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Bias do
   def pass(card, state, from, to) do
     [
       {state.turn, [type: :next, target: to]},
-      {state.players[from], [type: :clout, offset: 1]},
       {state.players[from], [type: :bias, target: card.target, offset: 1]}
     ] ++
       (Map.keys(state.players)
@@ -55,7 +54,7 @@ end
 defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Affinity do
   # Increase the player's affinity by 1
   # Increase player's clout by 1
-  def pass(card, state, from, _to) do
+  def pass(card, state, from, to) do
     affinity_offset =
       case card.polarity do
         :positive -> +1
@@ -63,6 +62,7 @@ defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Affinity do
       end
 
     [
+      {state.turn, [type: :next, target: to]},
       {state.players[from], [type: :affinity, offset: affinity_offset, target: card.target]}
     ]
   end
@@ -88,7 +88,6 @@ defimpl ViralSpiral.Playable, for: ViralSpiral.Canon.Card.Topical do
   # Update the turn
   def pass(_card, %State{} = state, from, to) do
     [
-      {state.players[from], [type: :clout, offset: 1]},
       {state.turn, [type: :next, target: to]}
     ]
   end

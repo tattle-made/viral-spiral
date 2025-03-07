@@ -28,6 +28,15 @@ defmodule Fixtures do
     end)
   end
 
+  def add_active_card(%State{} = state, player_id, card) do
+    player =
+      state.players[player_id]
+      |> Player.add_active_card(card.id, card.veracity)
+
+    players = Map.put(state.players, player_id, player)
+    %{state | players: players}
+  end
+
   def new_round() do
     %Round{
       order: ["player_abc", "player_def", "player_ghi", "player_jkl"],

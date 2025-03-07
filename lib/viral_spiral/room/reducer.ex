@@ -41,18 +41,18 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, changes)
   end
 
-  def reduce(%State{} = state, %{type: :pass_card} = action) do
-    %{card: card_id, veracity: veracity, player: from, target: to} = action.payload
-    card = state.deck.store[{card_id, veracity}]
+  def reduce(%State{} = state, %Action{type: :pass_card} = action) do
+    %{card: card, from_id: from_id, to_id: to_id} = action.payload
+    card = state.deck.store[{card.id, card.veracity}]
     current_round_player = State.current_round_player(state)
 
     changes =
-      Playable.pass(card, state, from, to) ++
+      Playable.pass(card, state, from_id, to_id) ++
         [
           {state.players[current_round_player.id], ChangeDescriptions.change_clout(1)},
-          {state.players[from], ChangeDescriptions.remove_active(card_id, veracity)},
-          {state.players[to], ChangeDescriptions.add_to_active(card_id, veracity)},
-          {state.turn, ChangeDescriptions.pass_turn_to(to)}
+          {state.players[from_id], ChangeDescriptions.remove_active(card.id, card.veracity)},
+          {state.players[to_id], ChangeDescriptions.add_to_active(card.id, card.veracity)},
+          {state.turn, ChangeDescriptions.pass_turn_to(to_id)}
         ]
 
     State.apply_changes(state, changes)
@@ -99,14 +99,14 @@ defmodule ViralSpiral.Room.Reducer do
   end
 
   def reduce(%State{} = state, %{type: :view_source} = action) do
-    %{card_id: card_id, card_veracity: card_veracity, player_id: player_id} = action.payload
-    card = Sparse.new({card_id, card_veracity})
-    article = Encyclopedia.get_article_by_card(state.deck.article_store, card)
+    %{from_id: from_id, card: card} = action.payload
+    sparse_card = Sparse.new({card.id, card.veracity})
+    article = Encyclopedia.get_article_by_card(state.deck.article_store, sparse_card)
 
-    key = "#{player_id}_#{card_id}_#{card_veracity}"
+    key = {from_id, card.id, card.veracity}
 
     source = %Source{
-      owner: player_id,
+      owner: from_id,
       headline: article.headline,
       content: article.content,
       author: article.author,
@@ -133,15 +133,22 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %Action{type: :turn_card_to_fake} = action) do
     %{player_id: player_id, card: card} = action.payload
 
-    fake_card = state.deck.store[{card.id, false}]
-    # todo add dynamic headline
-    sparse_card = Sparse.new(fake_card.id, fake_card.veracity, fake_card.headline)
+    # todo : only turn to fake if not already fake
+    case card.veracity do
+      true ->
+        fake_card = state.deck.store[{card.id, false}]
+        # todo add dynamic headline
+        sparse_card = Sparse.new(fake_card.id, fake_card.veracity, fake_card.headline)
 
-    changes = [
-      {state.players[player_id], ChangeDescriptions.turn_to_fake(sparse_card)}
-    ]
+        changes = [
+          {state.players[player_id], ChangeDescriptions.turn_to_fake(sparse_card)}
+        ]
 
-    State.apply_changes(state, changes)
+        State.apply_changes(state, changes)
+
+      false ->
+        raise "This card is already false"
+    end
   end
 
   def reduce(%State{} = state, %{type: :viral_spiral_pass, to: players} = action)

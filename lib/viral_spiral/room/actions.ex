@@ -2,6 +2,8 @@ defmodule ViralSpiral.Room.Actions do
   @moduledoc """
   Instances of Action triggered by a Player or Game Engine .
   """
+  alias ViralSpiral.Room.Actions.Player.ViewSource
+  alias ViralSpiral.Room.Actions.Player.PassCard
   alias ViralSpiral.Room.Actions.Player.VoteToCancel
   alias ViralSpiral.Room.Actions.Player.InitiateCancel
   alias ViralSpiral.Room.Actions.Player.TurnToFake
@@ -27,8 +29,17 @@ defmodule ViralSpiral.Room.Actions do
     }
   end
 
-  def pass_card(%{"card" => card, "veracity" => veracity, "from" => from, "to" => to}) do
-    pass_card(card, veracity, from, to)
+  def pass_card(attrs) do
+    changeset = PassCard.changeset(%PassCard{}, attrs)
+
+    case changeset.valid? do
+      true ->
+        payload = changeset |> apply_changes()
+        %Action{type: :pass_card, payload: payload}
+
+      false ->
+        raise "Invalid Player Action"
+    end
   end
 
   def keep_card(card, from) do
@@ -59,15 +70,17 @@ defmodule ViralSpiral.Room.Actions do
     discard_card(card, from)
   end
 
-  def view_source(player_id, card_id, card_veracity) do
-    %Action{
-      type: :view_source,
-      payload: %{
-        player_id: player_id,
-        card_id: card_id,
-        card_veracity: card_veracity
-      }
-    }
+  def view_source(attrs) do
+    changeset = ViewSource.changeset(%ViewSource{}, attrs)
+
+    case changeset.valid? do
+      true ->
+        payload = changeset |> apply_changes()
+        %Action{type: :view_source, payload: payload}
+
+      false ->
+        raise "Invalid format of action view source"
+    end
   end
 
   def hide_source(player_id, card_id, card_veracity) do

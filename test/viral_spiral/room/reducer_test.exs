@@ -42,115 +42,127 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
   end
 
-  describe "viral spiral" do
-    setup do
-      :rand.seed(:exsss, {123, 135, 254})
-
-      state = StateFixtures.new_state()
-      players = StateFixtures.player_by_names(state)
-
-      %{state: state, players: players}
-    end
-
-    test "pass to two players", %{state: state, players: players} do
-      %{adhiraj: adhiraj, krys: krys} = players
-
-      IO.inspect(adhiraj.identity)
-      IO.inspect(adhiraj.affinities)
-      IO.inspect(adhiraj.biases)
-      IO.inspect(adhiraj.active_cards)
-      # IO.inspect(state)
-      current_player = State.current_turn_player(state)
-
-      IO.inspect(current_player)
-
-      others = PlayerMap.others(state.players, current_player.id)
-
-      requirements = Factory.draw_type(state)
-      draw_type = Deck.draw_type(requirements)
-      new_state = Reducer.reduce(state, Actions.draw_card(draw_type))
-
-      # IO.inspect(new_state.players[current_player.id])
-
-      # test if the action creates power_viral_spiral struct
-      # test if further passes modify the power_viral_spiral struct
-      # test score(?)
-
-      # IO.inspect(new_state.round)
-      # IO.inspect(new_state.turn)
-      # IO.inspect(new_state.players)
-
-      # IO.inspect(state.players[krys.id], label: "before")
-
-      # krys = %{state.players[krys.id] | clout: 4, affinities: %{sock: 2, houseboat: 5}}
-      # new_state = %{state | players: %{state.players | krys.id => krys}}
-      # IO.inspect(new_state.players, label: "new state")
-
-      # IO.inspect(krys, label: "after")
-    end
-  end
-
   describe "pass card" do
     setup do
+      # Setup a room with affinities :sock and :skub
+      # and communities :red, :yellow and :blue
+      # current player is named farah
       :rand.seed(:exsss, {12356, 123_534, 345_345})
-
       room = Room.reserve("test-room") |> Room.start(4)
       state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
 
-      players = StateFixtures.player_by_names(state)
-
-      %{state: state, players: players}
+      %{state: state}
     end
 
-    test "passing affinity card", %{state: state, players: players} do
-      sets = state.deck.available_cards
-      store = state.deck.store
-      %{aman: aman, adhiraj: adhiraj} = players
+    test "pass affinity card", %{state: state} do
+      draw_type = [type: :affinity, target: :sock, veracity: true, tgb: 2]
+      draw_card_action = Actions.draw_card(draw_type)
+      state = Reducer.reduce(state, draw_card_action)
 
-      draw_type = [type: :affinity, veracity: true, tgb: 2, target: :skub]
-      draw_result = Deck.draw_card(sets, draw_type)
-      card = store[{draw_result.id, true}]
+      %{farah: farah, adhiraj: adhiraj} = StateFixtures.player_by_names(state)
+      card = StateFixtures.active_card(state, farah.id, 0)
 
-      new_state =
-        Reducer.reduce(state, Actions.pass_card(card.id, card.veracity, aman.id, adhiraj.id))
+      action =
+        Actions.pass_card(%{
+          "from_id" => farah.id,
+          "to_id" => adhiraj.id,
+          "card" => %{"id" => card.id, "veracity" => card.veracity}
+        })
 
-      assert new_state.players[aman.id].affinities[:skub] == 1
-      assert new_state.players[aman.id].clout == 1
-      assert new_state.players[adhiraj.id].active_cards |> length == 1
-      assert new_state.turn.current == adhiraj.id
-      assert new_state.turn.pass_to |> length() == 2
+      state = Reducer.reduce(state, action)
+
+      %{farah: farah, adhiraj: adhiraj} = StateFixtures.player_by_names(state)
+
+      assert farah.affinities.sock == 1
+      assert farah.clout == 1
+      assert adhiraj.active_cards == [{"card_82969419", true}]
+    end
+
+    test "pass bias card", %{state: state} do
+      draw_type = [type: :bias, target: :red, veracity: true, tgb: 2]
+      draw_card_action = Actions.draw_card(draw_type)
+      state = Reducer.reduce(state, draw_card_action)
+
+      %{farah: farah, adhiraj: adhiraj} = StateFixtures.player_by_names(state)
+      card = StateFixtures.active_card(state, farah.id, 0)
+
+      action =
+        Actions.pass_card(%{
+          "from_id" => farah.id,
+          "to_id" => adhiraj.id,
+          "card" => %{"id" => card.id, "veracity" => card.veracity}
+        })
+
+      state = Reducer.reduce(state, action)
+
+      %{farah: farah, adhiraj: adhiraj, aman: aman, krys: krys} =
+        StateFixtures.player_by_names(state)
+
+      assert farah.biases.red == 1
+      assert farah.clout == 1
+      assert adhiraj.active_cards == [{"card_4168848", true}]
+      assert aman.clout == -1
+      assert krys.clout == -1
+    end
+
+    test "pass topical card", %{state: state} do
+      draw_type = [type: :topical, veracity: true, tgb: 2]
+      draw_card_action = Actions.draw_card(draw_type)
+      state = Reducer.reduce(state, draw_card_action)
+
+      %{farah: farah, adhiraj: adhiraj} = StateFixtures.player_by_names(state)
+      card = StateFixtures.active_card(state, farah.id, 0)
+
+      action =
+        Actions.pass_card(%{
+          "from_id" => farah.id,
+          "to_id" => adhiraj.id,
+          "card" => %{"id" => card.id, "veracity" => card.veracity}
+        })
+
+      state = Reducer.reduce(state, action)
+
+      %{farah: farah, adhiraj: adhiraj, aman: aman, krys: krys} =
+        StateFixtures.player_by_names(state)
+
+      assert farah.clout == 1
+      assert adhiraj.active_cards == [{"card_63010791", true}]
     end
   end
 
-  describe "view source" do
+  describe "check source" do
+    import Fixtures
+
     setup do
       :rand.seed(:exsss, {12356, 123_534, 345_345})
-      state = Fixtures.new_game()
-      players = Fixtures.player_by_names(state)
+
+      state = new_game()
+      players = player_by_names(state)
+      %{farah: farah} = players
+      state = state |> add_active_card(farah.id, %{id: "card_88743234", veracity: true})
 
       %{state: state, players: players}
     end
 
     test "true card", %{state: state, players: players} do
       %{aman: aman, farah: farah} = players
-      sets = state.deck.available_cards
-      store = state.deck.store
+      card = StateFixtures.active_card(state, farah.id, 0)
 
-      draw_type = [type: :affinity, veracity: true, tgb: 2, target: :skub]
-      draw_result = Deck.draw_card(sets, draw_type)
-      card = store[{draw_result.id, true}] |> IO.inspect()
+      action_attr = %{
+        "from_id" => farah.id,
+        "card" => %{
+          "id" => card.id,
+          "veracity" => card.veracity
+        }
+      }
 
-      article = state.deck.article_store[{card.id, card.veracity}]
-      IO.inspect(state.deck.article_store[{card.id, card.veracity}])
-      assert article.veracity == true
-      assert article.card_id == "card_131675249"
-      assert article.type == "News"
+      view_source_action = Actions.view_source(action_attr)
+      state = Reducer.reduce(state, view_source_action)
+      source = state.power_check_source.map[{farah.id, card.id, card.veracity}]
 
-      # IO.inspect(draw_result)
-      # IO.inspect(card)
-
-      # state = Reducer.reduce(state, Actions.view_source())
-      # IO.inspect(state.players[aman.id])
+      assert source.owner == farah.id
+      assert source.headline == "A skub a day keeps the blues away!"
+      assert source.author == "City Desk"
     end
   end
 
@@ -230,7 +242,6 @@ defmodule ViralSpiral.Room.ReducerTest do
 
     # player_ghi has received a card from player_jkl
     # We will force this card to be a true card and then have player_ghi mark it as fake
-    @tag timeout: :infinity
     test "mark true card as fake", %{state: state} do
       from = State.current_turn_player(state)
       card = %Sparse{id: "card_121565043", veracity: true}
@@ -283,8 +294,65 @@ defmodule ViralSpiral.Room.ReducerTest do
       active_card = State.active_card(state, player.id, 0)
       assert active_card.id == "card_94393892"
       assert active_card.veracity == false
+    end
+  end
 
-      # todo assert headline too
+  @tag timeout: :infinity
+  describe "viral spiral" do
+    import Fixtures
+
+    setup do
+      # Setup a room with affinities :sock and :skub
+      # and communities :red, :yellow and :blue
+      # current player is named farah
+      :rand.seed(:exsss, {12356, 123_534, 345_345})
+
+      state = StateFixtures.new_state()
+      players = StateFixtures.player_by_names(state)
+      %{adhiraj: adhiraj} = players
+
+      state =
+        state
+        |> add_active_card(adhiraj.id, %{id: "card_129231083", veracity: true, tgb: 2})
+
+      %{state: state}
+    end
+
+    test "pass to two players", %{state: state} do
+      # %{adhiraj: adhiraj, krys: krys} = players
+
+      # IO.inspect(adhiraj.identity)
+      # IO.inspect(adhiraj.affinities)
+      # IO.inspect(adhiraj.biases)
+      # IO.inspect(adhiraj.active_cards)
+      # # IO.inspect(state)
+      # current_player = State.current_turn_player(state)
+
+      # IO.inspect(current_player)
+
+      # others = PlayerMap.others(state.players, current_player.id)
+
+      # requirements = Factory.draw_type(state)
+      # draw_type = Deck.draw_type(requirements)
+      # new_state = Reducer.reduce(state, Actions.draw_card(draw_type))
+
+      # IO.inspect(new_state.players[current_player.id])
+
+      # test if the action creates power_viral_spiral struct
+      # test if further passes modify the power_viral_spiral struct
+      # test score(?)
+
+      # IO.inspect(new_state.round)
+      # IO.inspect(new_state.turn)
+      # IO.inspect(new_state.players)
+
+      # IO.inspect(state.players[krys.id], label: "before")
+
+      # krys = %{state.players[krys.id] | clout: 4, affinities: %{sock: 2, houseboat: 5}}
+      # new_state = %{state | players: %{state.players | krys.id => krys}}
+      # IO.inspect(new_state.players, label: "new state")
+
+      # IO.inspect(krys, label: "after")
     end
   end
 
@@ -300,7 +368,7 @@ defmodule ViralSpiral.Room.ReducerTest do
     test "get one player to vote", %{state: state} do
       IO.inspect(state)
       require IEx
-      IEx.pry()
+      # IEx.pry()
       # apply initiate_cancel action to state
       # apply cancel_vote action to state
       # compare final state

@@ -37,9 +37,10 @@ defmodule ViralSpiral.Entity.Room do
 
   def new() do
     engine_config = %EngineConfig{}
+    uxid = Application.get_env(:viral_spiral, :uxid)
 
     %Room{
-      id: UXID.generate!(prefix: "room", size: :small),
+      id: uxid.generate!(prefix: "room", size: :small),
       name: name(),
       state: :uninitialized,
       chaos_counter: engine_config.chaos_counter,
@@ -55,8 +56,10 @@ defmodule ViralSpiral.Entity.Room do
   """
   @spec reserve(String.t()) :: Room.t()
   def reserve(name) when is_bitstring(name) do
+    uxid = Application.get_env(:viral_spiral, :uxid)
+
     %Room{
-      id: UXID.generate!(prefix: "room", size: :small),
+      id: uxid.generate!(prefix: "room", size: :small),
       name: name,
       state: :reserved
     }
@@ -83,9 +86,11 @@ defmodule ViralSpiral.Entity.Room do
         _ -> communities
       end
 
+    uxid = Application.get_env(:viral_spiral, :uxid)
+
     %{
       room
-      | id: UXID.generate!(prefix: "room", size: :small),
+      | id: uxid.generate!(prefix: "room", size: :small),
         state: :uninitialized,
         affinities: room_affinities,
         communities: room_communities,
