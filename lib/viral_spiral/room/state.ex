@@ -39,14 +39,14 @@ defmodule ViralSpiral.Room.State do
             power_cancel_player: %PowerCancelPlayer{}
 
   @type t :: %__MODULE__{
+          deck: Deck.t(),
           room: Room.t(),
           players: %{String.t() => Player.t()},
           round: Round.t(),
           turn: Turn.t(),
-          deck: Deck.t(),
           articles: map(),
-          power_viralspiral: PowerViralSpiral.t(),
           power_check_source: CheckSource.t(),
+          power_viralspiral: PowerViralSpiral.t(),
           power_cancel_player: PowerCancelPlayer.t()
         }
 

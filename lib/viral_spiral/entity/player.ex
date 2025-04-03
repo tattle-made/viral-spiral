@@ -9,6 +9,7 @@ defmodule ViralSpiral.Entity.Player do
       clout: 0
     }
   """
+  alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.Player.ActiveCardDoesNotExist
   alias ViralSpiral.Entity.Player.DuplicateActiveCardException
   alias ViralSpiral.Entity.Player
