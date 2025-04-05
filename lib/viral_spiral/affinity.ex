@@ -24,4 +24,9 @@ defmodule ViralSpiral.Affinity do
   def label(%Affinity{} = affinity) do
     @labels[affinity.target]
   end
+
+  @spec valid?(atom()) :: boolean()
+  def valid?(affinity) do
+    affinity in Map.keys(@labels)
+  end
 end

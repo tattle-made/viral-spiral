@@ -25,6 +25,30 @@ defmodule ViralSpiral.Game.PlayerTest do
       %{player: player}
     end
 
+    test "new/1" do
+      attrs = %{
+        id: "temp_id",
+        name: "temp_name",
+        identity: :red,
+        affinities: [:sock, :cat],
+        biases: [:blue, :yellow]
+      }
+
+      Player.new(attrs) |> IO.inspect()
+    end
+
+    test "new/1 exceptions" do
+      attrs = %{
+        identity: :red,
+        affinities: [:sock, :cow],
+        biases: [:blue, :yellow]
+      }
+
+      assert_raise RuntimeError, "Invalid parameters were passed while creating a Player", fn ->
+        Player.new(attrs)
+      end
+    end
+
     test "add and remove cards", %{player: player} do
       player =
         player
