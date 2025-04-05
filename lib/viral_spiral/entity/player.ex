@@ -38,7 +38,7 @@ defmodule ViralSpiral.Entity.Player do
 
   # Enable Ecto cast and validation features on this struct.
   # This allows us to create valid Player structs within the app and tests.
-  # todo : fix the :any time to limit it to atoms atleast
+  # todo : fix the :any type to limit it to atoms atleast
   @types %{
     id: :string,
     name: :string,
@@ -48,6 +48,9 @@ defmodule ViralSpiral.Entity.Player do
     affinities: {:array, :any}
   }
 
+  @doc """
+  Create a Player by passing maps with valid values.
+  """
   def new(attrs \\ %{}) do
     uxid = Application.get_env(:viral_spiral, :uxid)
 

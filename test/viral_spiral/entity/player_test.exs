@@ -1,4 +1,11 @@
 defmodule ViralSpiral.Game.PlayerTest do
+  alias ViralSpiral.Entity.Player.Changes.RemoveActiveCard
+  alias ViralSpiral.Entity.Player.Changes.AddActiveCard
+  alias ViralSpiral.Canon.Card.Sparse
+  alias ViralSpiral.Entity.Player.Changes.AddToHand
+  alias ViralSpiral.Entity.Player.Changes.Bias
+  alias ViralSpiral.Entity.Player.Changes.Affinity
+  alias ViralSpiral.Entity.Player.Changes.Clout
   alias ViralSpiral.Room.Factory
   alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Entity.Room
@@ -100,43 +107,42 @@ defmodule ViralSpiral.Game.PlayerTest do
     end
 
     test "change clout", %{player: player} do
-      player = Change.apply_change(player, ChangeDescriptions.change_clout(4))
+      player = Change.apply_change(player, %Clout{offset: 4})
       assert player.clout == 4
     end
 
     test "change affinity", %{player: player} do
-      player = Change.apply_change(player, ChangeDescriptions.change_affinity(:cat, 2))
-      assert player.affinities.cat == 2
+      player = Change.apply_change(player, %Affinity{target: :skub, offset: 2})
+      assert player.affinities.skub == 2
     end
 
     test "change bias", %{player: player} do
-      player = Change.apply_change(player, ChangeDescriptions.change_bias(:yellow, -1))
+      player = Change.apply_change(player, %Bias{target: :yellow, offset: 1})
       assert player.biases.yellow == 1
     end
 
     test "add card to hand", %{player: player} do
-      player = Change.apply_change(player, ChangeDescriptions.add_to_hand("card_23b2323"))
+      player =
+        Change.apply_change(player, %AddToHand{card: %Sparse{id: "card_23b2323", veracity: false}})
+
       assert length(player.hand) == 1
       assert hd(player.hand) == "card_23b2323"
     end
 
-    test "add_active_card", %{player: player} do
-      player = Change.apply_change(player, ChangeDescriptions.add_to_active("card_29323"))
-      assert player.active_cards == ["card_29323"]
+    test "active cards", %{player: player} do
+      card_a = %Sparse{id: "card_29323", veracity: true}
+      card_b = %Sparse{id: "card_84843", veracity: false}
 
-      player = Change.apply_change(player, ChangeDescriptions.add_to_active("card_84843"))
-      assert player.active_cards == ["card_29323", "card_84843"]
-    end
+      player = Change.apply_change(player, %AddActiveCard{card: card_a})
+      assert player.active_cards == [card_a]
 
-    test "remove_active_card", %{player: player} do
-      player =
-        %{player | active_cards: ["card_29323", "card_84843"]}
-        |> Change.apply_change(ChangeDescriptions.remove_active("card_29323"))
+      player = Change.apply_change(player, %AddActiveCard{card: card_b})
+      assert player.active_cards == [card_a, card_b]
 
-      assert player.active_cards == ["card_84843"]
+      player = Change.apply_change(player, %RemoveActiveCard{card: card_b})
+      assert player.active_cards == [card_a]
 
-      player = Change.apply_change(player, ChangeDescriptions.remove_active("card_84843"))
-
+      player = Change.apply_change(player, %RemoveActiveCard{card: card_a})
       assert player.active_cards == []
     end
   end
