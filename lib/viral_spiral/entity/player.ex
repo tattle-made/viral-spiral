@@ -103,119 +103,120 @@ defmodule ViralSpiral.Entity.Player do
       end
     end)
   end
-end
 
-defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
-  alias ViralSpiral.Entity.Change.UndefinedChange
-  alias ViralSpiral.Canon.Card.Sparse
-  alias ViralSpiral.Entity.Player
+  defimpl ViralSpiral.Entity.Change do
+    alias ViralSpiral.Entity.Change.UndefinedChange
+    alias ViralSpiral.Canon.Card.Sparse
+    alias ViralSpiral.Entity.Player
 
-  alias ViralSpiral.Entity.Player.Changes.{
-    Clout,
-    Affinity,
-    Bias,
-    AddActiveCard,
-    RemoveFromHand,
-    AddToHand,
-    RemoveActiveCard,
-    MakeActiveCardFake,
-    ViewArticle
-  }
+    alias ViralSpiral.Entity.Player.Changes.{
+      Clout,
+      Affinity,
+      Bias,
+      AddActiveCard,
+      RemoveFromHand,
+      AddToHand,
+      RemoveActiveCard,
+      MakeActiveCardFake,
+      ViewArticle
+    }
 
-  alias ViralSpiral.Entity.Player.Exceptions.{
-    ActiveCardDoesNotExist,
-    DuplicateActiveCardException
-  }
+    alias ViralSpiral.Entity.Player.Exceptions.{
+      ActiveCardDoesNotExist,
+      DuplicateActiveCardException
+    }
 
-  @type change_types ::
-          %Clout{}
-          | %Affinity{}
-          | %Bias{}
-          | %AddToHand{}
-          | %RemoveFromHand{}
-          | %AddActiveCard{}
-          | %RemoveActiveCard{}
-          | %MakeActiveCardFake{}
-          | %ViewArticle{}
+    @type change_types ::
+            %Clout{}
+            | %Affinity{}
+            | %Bias{}
+            | %AddToHand{}
+            | %RemoveFromHand{}
+            | %AddActiveCard{}
+            | %RemoveActiveCard{}
+            | %MakeActiveCardFake{}
+            | %ViewArticle{}
 
-  @spec change(Player.t(), change_types()) :: Player.t()
-  def change(%Player{} = player, %Clout{} = change) do
-    new_clout = player.clout + change.offset
-    %{player | clout: new_clout}
-  end
-
-  def change(%Player{} = player, %Affinity{} = change) do
-    current_affinity = player.affinities[change.target]
-    new_affinities = Map.put(player.affinities, change.target, current_affinity + change.offset)
-
-    %{player | affinities: new_affinities}
-  end
-
-  def change(%Player{} = player, %Bias{} = change) do
-    current_bias = player.biases[change.target]
-    new_biases = Map.put(player.biases, change.target, current_bias + change.offset)
-    %{player | biases: new_biases}
-  end
-
-  def change(%Player{} = player, %AddToHand{} = change) do
-    Map.put(player, :hand, player.hand ++ [change.card])
-  end
-
-  def change(%Player{} = player, %RemoveFromHand{} = _change) do
-    player
-  end
-
-  def change(%Player{} = player, %AddActiveCard{} = change) do
-    card = change.card
-
-    case Enum.find(player.active_cards, &(&1.id == card.id)) do
-      nil -> Map.put(player, :active_cards, player.active_cards ++ [card])
-      _ -> raise DuplicateActiveCardException
+    @spec change(Player.t(), change_types()) :: Player.t()
+    def change(%Player{} = player, %Clout{} = change) do
+      new_clout = player.clout + change.offset
+      %{player | clout: new_clout}
     end
-  end
 
-  def change(%Player{} = player, %RemoveActiveCard{} = change) do
-    card = change.card
+    def change(%Player{} = player, %Affinity{} = change) do
+      current_affinity = player.affinities[change.target]
+      new_affinities = Map.put(player.affinities, change.target, current_affinity + change.offset)
 
-    case Enum.find(
-           player.active_cards,
-           &(&1.id == card.id and &1.veracity == card.veracity)
-         ) do
-      nil ->
-        raise ActiveCardDoesNotExist
-
-      _ ->
-        Map.put(player, :active_cards, List.delete(player.active_cards, card))
+      %{player | affinities: new_affinities}
     end
-  end
 
-  def change(%Player{} = player, %MakeActiveCardFake{} = change) do
-    card_id = change.card.id
-    new_card = change.card
-
-    ix = Enum.find_index(player.active_cards, fn x -> elem(x, 0) == card_id end)
-
-    active_cards =
-      List.replace_at(player.active_cards, ix, {card_id, new_card.veracity, new_card.headline})
-
-    %{player | active_cards: active_cards}
-  end
-
-  def change(%Player{} = player, %ViewArticle{} = change) do
-    card = change.card
-
-    case Enum.find(player.active_cards, &(&1 == card.id)) do
-      nil ->
-        player
-
-      ix ->
-        entry = Enum.at(player.active_cards, ix)
-        new_entry = Map.put(entry, :source, change.article)
-        Map.put(player, :active_cards, new_entry)
+    def change(%Player{} = player, %Bias{} = change) do
+      current_bias = player.biases[change.target]
+      new_biases = Map.put(player.biases, change.target, current_bias + change.offset)
+      %{player | biases: new_biases}
     end
-  end
 
-  def change(%Player{} = _player, _change) do
-    raise UndefinedChange, message: "undefined change"
+    def change(%Player{} = player, %AddToHand{} = change) do
+      Map.put(player, :hand, player.hand ++ [change.card])
+    end
+
+    def change(%Player{} = player, %RemoveFromHand{} = _change) do
+      player
+    end
+
+    def change(%Player{} = player, %AddActiveCard{} = change) do
+      card = change.card
+
+      case Enum.find(player.active_cards, &(&1.id == card.id)) do
+        nil -> Map.put(player, :active_cards, player.active_cards ++ [card])
+        _ -> raise DuplicateActiveCardException
+      end
+    end
+
+    def change(%Player{} = player, %RemoveActiveCard{} = change) do
+      card = change.card
+
+      case Enum.find(
+             player.active_cards,
+             &(&1.id == card.id and &1.veracity == card.veracity)
+           ) do
+        nil ->
+          raise ActiveCardDoesNotExist
+
+        _ ->
+          Map.put(player, :active_cards, List.delete(player.active_cards, card))
+      end
+    end
+
+    def change(%Player{} = player, %MakeActiveCardFake{} = change) do
+      card_id = change.card.id
+      new_card = change.card
+
+      ix = Enum.find_index(player.active_cards, fn x -> elem(x, 0) == card_id end)
+
+      active_cards =
+        List.replace_at(player.active_cards, ix, {card_id, new_card.veracity, new_card.headline})
+
+      %{player | active_cards: active_cards}
+    end
+
+    def change(%Player{} = player, %ViewArticle{} = change) do
+      card = change.card
+
+      case Enum.find(player.active_cards, &(&1 == card.id)) do
+        nil ->
+          player
+
+        ix ->
+          entry = Enum.at(player.active_cards, ix)
+          new_entry = Map.put(entry, :source, change.article)
+          Map.put(player, :active_cards, new_entry)
+      end
+    end
+
+    def change(%Player{} = _player, _change) do
+      raise UndefinedChange,
+        message: "You are trying to make an unsupported change to this Player"
+    end
   end
 end

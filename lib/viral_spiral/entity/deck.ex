@@ -41,6 +41,19 @@ defmodule ViralSpiral.Entity.Deck do
     }
   end
 
+  def skeleton() do
+    cards = CanonDeck.load_cards()
+    articles = Encyclopedia.load_articles()
+    article_store = Encyclopedia.create_store(articles)
+
+    %Deck{
+      available_cards: CanonDeck.create_sets(cards),
+      dealt_cards: %{},
+      store: CanonDeck.create_store(cards),
+      article_store: article_store
+    }
+  end
+
   defimpl Change do
     @doc """
     Handle changes to the deck.

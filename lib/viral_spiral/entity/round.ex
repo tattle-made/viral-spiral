@@ -66,6 +66,10 @@ defmodule ViralSpiral.Entity.Round do
     new(player_list)
   end
 
+  def skeleton() do
+    %Round{}
+  end
+
   @doc """
   Skips a Player's `Turn`.
 

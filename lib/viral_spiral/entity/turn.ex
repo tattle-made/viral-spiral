@@ -43,6 +43,10 @@ defmodule ViralSpiral.Entity.Turn do
   def new(%Round{} = _round, %Turn{} = _turn) do
   end
 
+  def skeleton() do
+    %Turn{}
+  end
+
   def set_current(%Turn{} = turn, current), do: %{turn | current: current}
 
   def set_pass_to(%Turn{} = turn, pass_to), do: %{turn | pass_to: pass_to}

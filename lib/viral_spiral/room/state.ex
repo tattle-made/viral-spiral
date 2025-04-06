@@ -27,12 +27,12 @@ defmodule ViralSpiral.Room.State do
   alias ViralSpiral.Entity.Change
 
   @derive {Inspect, limit: 2}
-  defstruct room: nil,
+  defstruct room: Room.skeleton(),
             players: %{},
-            round: nil,
-            turn: nil,
+            round: Round.skeleton(),
+            turn: Turn.skeleton(),
             turns: %{},
-            deck: nil,
+            deck: Deck.skeleton(),
             articles: %{},
             power_viralspiral: nil,
             power_check_source: CheckSource.new(),
