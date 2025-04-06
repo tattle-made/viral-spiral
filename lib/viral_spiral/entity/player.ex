@@ -82,10 +82,8 @@ defmodule ViralSpiral.Entity.Player do
 
   defp validate_bias(changeset) do
     validate_change(changeset, :biases, fn field, value ->
-      IO.inspect(field)
-      IO.inspect(value)
-      atoms = Enum.filter(value, &is_atom(&1)) |> IO.inspect()
-      valid_atoms = Enum.filter(atoms, &ViralSpiralBias.valid?(&1)) |> IO.inspect()
+      atoms = Enum.filter(value, &is_atom(&1))
+      valid_atoms = Enum.filter(atoms, &ViralSpiralBias.valid?(&1))
 
       case length(valid_atoms) == length(value) do
         true -> []
@@ -171,7 +169,7 @@ defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
     card = change.card
 
     case Enum.find(player.active_cards, &(&1.id == card.id)) do
-      nil -> Map.put(player, :active_cards, player.active_cards ++ [{card.id, card.veracity}])
+      nil -> Map.put(player, :active_cards, player.active_cards ++ [card])
       _ -> raise DuplicateActiveCardException
     end
   end
@@ -187,7 +185,7 @@ defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
         raise ActiveCardDoesNotExist
 
       _ ->
-        Map.put(player, :active_cards, List.delete(player.active_cards, {card.id, card.veracity}))
+        Map.put(player, :active_cards, List.delete(player.active_cards, card))
     end
   end
 
