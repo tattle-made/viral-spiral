@@ -7,6 +7,7 @@ defmodule ViralSpiral.Entity.Turn do
 
   todo : could the field be actions and not tied to every concrete thing like pass, discard etc.
   """
+  alias ViralSpiral.Entity.Turn.Exception.IllegalPass
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.Turn
@@ -59,10 +60,16 @@ defmodule ViralSpiral.Entity.Turn do
   """
   @spec next(Turn.t(), String.t()) :: Turn.t()
   def next(%Turn{} = from, to) when is_bitstring(to) do
-    from
-    |> set_current(to)
-    |> set_pass_to(List.delete(from.pass_to, to))
-    |> set_path(List.insert_at(from.path, -1, from.current))
+    can_pass = to in from.pass_to
+
+    if can_pass do
+      from
+      |> set_current(to)
+      |> set_pass_to(List.delete(from.pass_to, to))
+      |> set_path(List.insert_at(from.path, -1, from.current))
+    else
+      raise IllegalPass
+    end
   end
 
   @spec next(Turn.t(), list(String.t())) :: list(Turn.t())
@@ -76,15 +83,17 @@ defmodule ViralSpiral.Entity.Turn do
   end
 
   defimpl Change do
-    def apply_change(turn, change_desc) do
-      case change_desc[:type] do
-        :next -> Turn.next(turn, change_desc[:target])
-        :new -> Turn.new(change_desc[:round])
-      end
+    alias ViralSpiral.Entity.Turn.Change.{NewTurn, NextTurn}
+
+    @type changes :: NewTurn.t() | NextTurn.t()
+
+    @spec change(Turn.t(), changes()) :: Turn.t()
+    def change(%Turn{} = _turn, %NewTurn{} = change) do
+      Turn.new(change.round)
+    end
+
+    def change(%Turn{} = turn, %NextTurn{} = change) do
+      Turn.next(turn, change.target)
     end
   end
-end
-
-defmodule ViralSpiral.Entity.Turn.IllegalPass do
-  defexception message: "This player can't be passed to in this Turn"
 end

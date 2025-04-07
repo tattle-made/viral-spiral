@@ -53,6 +53,7 @@ defmodule ViralSpiral.Entity.Player do
   """
   def new(attrs \\ %{}) do
     uxid = Application.get_env(:viral_spiral, :uxid)
+    id = attrs.id || uxid.generate!(prefix: "player", size: :small)
 
     changeset =
       {%{}, @types}
@@ -75,7 +76,7 @@ defmodule ViralSpiral.Entity.Player do
       valid_attrs
       |> Map.put(:biases, biases)
       |> Map.put(:affinities, affinities)
-      |> Map.put(:id, uxid.generate!(prefix: "player", size: :small))
+      |> Map.put(:id, id)
 
     struct(Player, valid_attrs)
   end

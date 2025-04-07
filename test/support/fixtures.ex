@@ -10,8 +10,10 @@ defmodule Fixtures do
   alias ViralSpiral.Room.State
 
   def initialized_game() do
-    room = Room.reserve("test-room") |> Room.start(4)
-    State.new(room, ["adhiraj", "krys", "aman", "farah"])
+    %State{}
+    |> then(fn state ->
+      %{state | room: Room.start(state.room)}
+    end)
   end
 
   def new_game() do
