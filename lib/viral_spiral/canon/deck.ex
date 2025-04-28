@@ -3,10 +3,6 @@ defmodule ViralSpiral.Canon.Deck do
 
   """
   alias ViralSpiral.Canon.DrawTypeRequirements
-  alias ViralSpiral.Canon.Card.Conflated
-  alias ViralSpiral.Canon.Card.Affinity
-  alias ViralSpiral.Canon.Card.Bias
-  alias ViralSpiral.Canon.Card.Topical
 
   @set_opts_default [affinities: [:cat, :sock], biases: [:red, :yellow]]
 

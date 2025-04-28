@@ -1,6 +1,10 @@
 defmodule ViralSpiral.Canon.Card do
   @moduledoc """
   Load card data from external sources into struct.
+
+  Functions to load cards and handle collection of cards.
+
+  An important data structure with reference to cards is a Store which is a map of a sparse card and its associated card.
   """
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Canon.Card.{Bias, Affinity, Topical, Conflated}
