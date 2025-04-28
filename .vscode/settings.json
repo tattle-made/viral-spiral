@@ -1,0 +1,8 @@
+{
+    "[elixir]": {
+        "editor.formatOnPaste": true,
+        "editor.formatOnSave": true
+    },
+    "editor.fontFamily": "Fira Code",
+    "editor.fontLigatures": true
+}
