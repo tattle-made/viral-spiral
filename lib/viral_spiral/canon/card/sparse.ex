@@ -14,6 +14,13 @@ defmodule ViralSpiral.Canon.Card.Sparse do
     }
   end
 
+  def new(id, veracity) when is_bitstring(id) and is_boolean(veracity) do
+    %Sparse{
+      id: id,
+      veracity: veracity
+    }
+  end
+
   def new(id, veracity, headline) when is_bitstring(id) and is_boolean(veracity) do
     %Sparse{
       id: id,

@@ -1,5 +1,5 @@
 defmodule ViralSpiral.Canon.CardTest do
-  alias ViralSpiral.Canon.Card.{Topical, Bias, Affinity, Conflated}
+  alias ViralSpiral.Canon.Card.{Topical, Bias, Affinity, Conflated, Sparse}
   alias ViralSpiral.Canon.Card
   use ExUnit.Case
 
@@ -31,5 +31,25 @@ defmodule ViralSpiral.Canon.CardTest do
     [anti_cat_true, anti_cat_false] = Enum.slice(cards, 10..11)
     assert %Affinity{} = anti_cat_true
     assert %Affinity{} = anti_cat_false
+  end
+
+  test "create_store/1" do
+    cards = Card.load()
+    card_store = Card.create_store(cards)
+
+    assert length(Map.keys(card_store)) == 845
+
+    card = card_store[Sparse.new("card_36453698", true)]
+    assert %Affinity{} = card
+    assert card.headline == "Sock-maker bags Award for Outstanding Philanthropy"
+    assert card.polarity == :positive
+  end
+
+  test "card_id/1" do
+    id_a = Card.card_id("example headline goes here")
+    assert id_a == "card_15224363"
+
+    id_b = Card.card_id("another example headline goes here")
+    assert id_b == "card_121882267"
   end
 end

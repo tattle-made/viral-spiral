@@ -1,11 +1,11 @@
 defmodule ViralSpiral.Canon.Card do
   @moduledoc """
-
+  Load card data from external sources into struct.
   """
-
+  alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Canon.Card.{Bias, Affinity, Topical, Conflated}
 
-  @type t :: Affinity.t() | Bias.t()
+  @type t :: Affinity.t() | Bias.t() | Topical.t() | Conflated.t()
 
   # a mapping between human readable column headings and their index in the csv file
   @columns %{
@@ -57,6 +57,7 @@ defmodule ViralSpiral.Canon.Card do
   @doc """
   Load card data from file and creates struct
   """
+  @spec load() :: list(t())
   def load() do
     parse_file()
     |> Enum.map(&parse_row/1)
@@ -66,17 +67,16 @@ defmodule ViralSpiral.Canon.Card do
   end
 
   @doc """
-  Creates a Map of MapSet of cards partitioned by its type and veracity.
+  Create a map of sparse_card and its associated card.
 
-  For instance to access affinity cards of veracity true, access deck[{:affinity, true}]
-  iex> {store, set} = Deck.create_partitioned_deck
-  store[{:bias, false}] |> Mapset.size
+  This store is used as the storage for entire card data - headline, veracity etc. For most game state operations you truly only need a card's id and veracity.
   """
+  @spec create_store(list(t())) :: %{Sparse.t() => t()}
   def create_store(cards) do
     Enum.reduce(
       cards,
       %{},
-      &Map.put(&2, {&1.id, &1.veracity}, &1)
+      &Map.put(&2, Sparse.new(&1.id, &1.veracity), &1)
     )
   end
 
