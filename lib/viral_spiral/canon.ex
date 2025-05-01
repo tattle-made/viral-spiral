@@ -107,4 +107,24 @@ defmodule ViralSpiral.Canon do
 
   def turn_card_to_fake(card_sets, sparse_card) do
   end
+
+  @doc """
+  Find matching article for cards and add its id to the corresponding Card struct.
+  """
+  @spec link(list(Card.t()), any()) :: list(Card.t())
+  def link(cards, articles) do
+    cards
+    |> Enum.map(fn card ->
+      try do
+        if card.type == :conflated do
+          # IO.inspect(card)
+        end
+
+        article = articles[{card.id, card.veracity}]
+        %{card | article_id: article.id}
+      rescue
+        KeyError -> card
+      end
+    end)
+  end
 end

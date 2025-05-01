@@ -71,9 +71,9 @@ defmodule ViralSpiral.Canon.Card do
   end
 
   @doc """
-  Create a map of sparse_card and its associated card.
+  Create a map of Sparse Card and its associated Card.
 
-  This store is used as the storage for entire card data - headline, veracity etc. For most game state operations you truly only need a card's id and veracity.
+  This store is used as the storage for Card data - headline, veracity etc. For most game state operations you truly only need a card's id and veracity (which is stored in a Sparse Card). The store is where you look when you want all remaining fields related to a Sparse Card.
   """
   @spec create_store(list(t())) :: %{Sparse.t() => t()}
   def create_store(cards) do

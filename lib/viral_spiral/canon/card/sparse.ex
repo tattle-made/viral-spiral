@@ -1,4 +1,9 @@
 defmodule ViralSpiral.Canon.Card.Sparse do
+  @moduledoc """
+  A sparse representation of a Card.
+
+  A Card in viral spiral is uniquely identified by a combination of its id and veracity. As a result using only an id field in the Card struct would not suffice. Storing all the fields of a Card in the state seemed wasteful memory wise. Sparse Card fills that need. It is useful for storing in state and other state related operations.
+  """
   alias ViralSpiral.Canon.Card.Sparse
   defstruct id: nil, veracity: nil, headline: nil
 
