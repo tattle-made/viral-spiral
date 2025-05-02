@@ -45,10 +45,13 @@ defmodule ViralSpiral.Canon.DeckTest do
       assert %Sparse{} = cardset_member
     end
 
-    test "remove_card/3" do
-    end
+    test "remove_card/3", %{sets: sets} do
+      true_anti_yellow_set = CardSet.key(:bias, :yellow, true)
+      assert Deck.size(new_sets, true_anti_yellow_set) == 30
 
-    test "get_fake_card/2" do
+      card = CardSet.member("card_102551558", 7)
+      new_sets = Deck.remove_card(sets, true_anti_yellow_set, card)
+      Deck.size(new_sets, true_anti_yellow_set)
     end
 
     test "size/2", %{sets: sets} do

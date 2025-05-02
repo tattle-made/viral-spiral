@@ -5,6 +5,7 @@ defmodule ViralSpiral.Canon.Deck.CardSet do
   @type key_type ::
           {:affinity, atom(), boolean()} | {:bias, atom(), boolean()} | {:topical, boolean()}
   @type member :: %{id: String.t(), tgb: integer()}
+  @type card_sets :: %{optional(key_type()) => member()}
 
   @doc """
   Creates a key for the card set in Deck, when you don't have a card.
@@ -30,5 +31,10 @@ defmodule ViralSpiral.Canon.Deck.CardSet do
 
   def make_member(card) when is_card(card) do
     %{id: card.id, tgb: card.tgb}
+  end
+
+  @spec member(String.t(), integer()) :: %{id: String.t(), tgb: integer()}
+  def member(card_id, card_tgb) do
+    %{id: card_id, tgb: card_tgb}
   end
 end

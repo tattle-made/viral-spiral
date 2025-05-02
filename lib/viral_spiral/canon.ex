@@ -108,6 +108,14 @@ defmodule ViralSpiral.Canon do
   def turn_card_to_fake(card_sets, sparse_card) do
   end
 
+  def get_fake_card_from_card_store(store, card_id) when is_bitstring(card_id) do
+    store[{card_id, false}]
+  end
+
+  def get_fake_card_from_card_store(store, card) do
+    store[{card.id, false}]
+  end
+
   @doc """
   Find matching article for cards and add its id to the corresponding Card struct.
   """

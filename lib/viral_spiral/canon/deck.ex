@@ -2,24 +2,17 @@ defmodule ViralSpiral.Canon.Deck do
   @moduledoc """
 
   """
-  alias ViralSpiral.Canon.Card.Sparse
-  alias ViralSpiral.Canon.Deck.CardSet
-  alias ViralSpiral.Canon.Card
-  alias ViralSpiral.Canon.Deck.Set
   alias ViralSpiral.Canon.Deck
+  alias ViralSpiral.Canon.Deck.CardSet
+  alias ViralSpiral.Canon.Card.Sparse
+  alias ViralSpiral.Canon.Card
 
   @set_opts_default [affinities: [:cat, :sock], biases: [:red, :yellow]]
 
-  @type card_sets :: %{
-          optional(CardSet.key_type()) => list(CardSet.member())
-        }
-
   @doc """
-  A map of MapSets.
-  Every item in the MapSet is a card identifier (eg: %{id: "card_234234", tgb: 3})
-  The keys of this map are of the form {type, veracity, target}
+  Partition cards into sets.
   """
-  @spec create_sets(list(Card.t()), keyword()) :: card_sets()
+  @spec create_sets(list(Card.t()), keyword()) :: CardSet.card_sets()
   def create_sets(cards, opts \\ @set_opts_default) do
     affinities = opts[:affinities]
     biases = opts[:biases]
@@ -45,20 +38,8 @@ defmodule ViralSpiral.Canon.Deck do
 
   @doc """
   Probabilistically draw a card with specific constraits.
-
-  ### Usage Examples
-  ```elixir
-  card = Deck.draw_card(set, type: :affinity, veracity: true, tgb: 0, target: :skub)
-  "card_01J69V12V73K30"
-
-  Deck.draw_card(set, type: :bias, veracity: true, tgb: 0, target: :red)
-  "card_01J69V12V7T5J1"
-
-  Deck.draw_card(set, type: :topical, veracity: true, tgb: 2)
-  id: "card_01J69V12V7D5A1"
-  ```
   """
-  @spec draw_card(any(), CardSet.key_type(), integer()) :: Sparse.t()
+  @spec draw_card(CardSet.card_sets(), CardSet.key_type(), integer()) :: Sparse.t()
   def draw_card(card_sets, set_key, tgb) do
     {_, veracity, _} = set_key
 
@@ -80,48 +61,25 @@ defmodule ViralSpiral.Canon.Deck do
   defp choose_one(list) do
     ix = :rand.uniform(list |> Enum.to_list() |> length) - 1
     list |> Enum.at(ix)
-    # |> Map.get(:id)
   end
 
   @doc """
   Removes a card from set.
   """
-  def remove_card(sets, card_type, card) do
-    card_type_tuple = draw_type_opts_to_tuple(card_type)
-
+  @spec remove_card(any(), CardSet.key_type(), CardSet.member()) :: any()
+  def remove_card(card_sets, card_set_key, card_set_member) do
     {_, new_sets} =
-      Map.get_and_update(sets, card_type_tuple, fn set ->
-        {set, MapSet.delete(set, card)}
+      Map.get_and_update(card_sets, card_set_key, fn set ->
+        {set, MapSet.delete(set, card_set_member)}
       end)
 
     new_sets
   end
 
-  defp draw_type_opts_to_tuple(opts) do
-    type = Keyword.get(opts, :type)
-    veracity = Keyword.get(opts, :veracity)
-    target = Keyword.get(opts, :target)
+  @doc """
 
-    {}
-    |> Tuple.insert_at(0, type)
-    |> Tuple.insert_at(1, veracity)
-    |> then(fn type ->
-      case target do
-        nil -> type
-        _ -> type |> Tuple.insert_at(2, target)
-      end
-    end)
-  end
-
-  def get_fake_card(store, card_id) when is_bitstring(card_id) do
-    store[{card_id, false}]
-  end
-
-  def get_fake_card(store, card) do
-    store[{card.id, false}]
-  end
-
-  @spec size(sets :: term(), Set.key_type()) :: non_neg_integer()
+  """
+  @spec size(sets :: CardSet.card_sets(), Set.key_type()) :: non_neg_integer()
   def size(sets, set_key) do
     case sets[set_key] do
       nil -> -1
@@ -129,7 +87,7 @@ defmodule ViralSpiral.Canon.Deck do
     end
   end
 
-  @spec size(sets :: term(), Set.key_type()) :: non_neg_integer()
+  @spec size(sets :: CardSet.card_sets(), CardSet.key_type()) :: non_neg_integer()
   def size!(sets, set_key) do
     sets[set_key]
     |> MapSet.size()
