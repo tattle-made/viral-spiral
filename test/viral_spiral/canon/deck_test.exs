@@ -5,13 +5,18 @@ defmodule ViralSpiral.Canon.DeckTest do
   alias ViralSpiral.Canon.Card
   use ExUnit.Case
 
-  # RESUME : Deck.remove_card
-  # draw_type_opts_to_tuple might not be needed either.
-
   test "create_sets/1" do
     cards = Card.load()
     set = Deck.create_sets(cards)
-    # assert
+    assert length(Map.keys(set)) == 11
+
+    set =
+      Deck.create_sets(cards,
+        affinities: [:cat, :sock, :skub, :houseboat, :highfive],
+        biases: [:red, :yellow, :blue]
+      )
+
+    assert length(Map.keys(set)) == 19
   end
 
   describe "set" do
@@ -47,11 +52,11 @@ defmodule ViralSpiral.Canon.DeckTest do
 
     test "remove_card/3", %{sets: sets} do
       true_anti_yellow_set = CardSet.key(:bias, :yellow, true)
-      assert Deck.size(new_sets, true_anti_yellow_set) == 30
+      assert Deck.size(sets, true_anti_yellow_set) == 30
 
       card = CardSet.member("card_102551558", 7)
       new_sets = Deck.remove_card(sets, true_anti_yellow_set, card)
-      Deck.size(new_sets, true_anti_yellow_set)
+      assert Deck.size(new_sets, true_anti_yellow_set) == 29
     end
 
     test "size/2", %{sets: sets} do
@@ -80,15 +85,15 @@ defmodule ViralSpiral.Canon.DeckTest do
     end
 
     test "size!/2", %{sets: sets} do
-      set_key = Set.key(:affinity, :sock, true)
+      set_key = CardSet.key(:affinity, :sock, true)
       assert Deck.size(sets, set_key) > 0
 
       assert_raise FunctionClauseError, fn ->
-        Deck.size(sets, Set.key(:affinity, :random, true))
+        Deck.size(sets, CardSet.key(:affinity, :random, true))
       end
 
       assert_raise FunctionClauseError, fn ->
-        Deck.size(sets, Set.key(1, :random, true))
+        Deck.size(sets, CardSet.key(1, :random, true))
       end
     end
   end
