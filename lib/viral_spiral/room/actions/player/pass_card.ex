@@ -2,6 +2,15 @@ defmodule ViralSpiral.Room.Actions.Player.PassCard do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{
+          from_id: UXID.uxid_string(),
+          to_id: UXID.uxid_string(),
+          card: %ViralSpiral.Room.Actions.Player.PassCard.Card{
+            id: UXID.uxid_string(),
+            veracity: boolean()
+          }
+        }
+
   @primary_key false
   embedded_schema do
     field :from_id, :string

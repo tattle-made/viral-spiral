@@ -134,14 +134,29 @@ defmodule ViralSpiral.Room.Actions do
   end
 
   def vote_to_cancel(attrs) do
-    action =
+    # action =
+    #   %VoteToCancel{}
+    #   |> VoteToCancel.changeset(attrs)
+    #   |> apply_changes()
+
+    changeset =
       %VoteToCancel{}
       |> VoteToCancel.changeset(attrs)
-      |> apply_changes()
 
-    %Action{
-      type: :vote_to_cancel,
-      payload: action
-    }
+    case changeset.valid? do
+      true ->
+        %Action{
+          type: :vote_to_cancel,
+          payload: apply_changes(changeset)
+        }
+
+      false ->
+        raise "Invalid Attributes"
+    end
+
+    # %Action{
+    #   type: :vote_to_cancel,
+    #   payload: action
+    # }
   end
 end

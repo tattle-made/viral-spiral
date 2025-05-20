@@ -7,4 +7,9 @@ defmodule ViralSpiral.Canon.Card.Topical do
             headline: nil,
             image: nil,
             article_id: nil
+
+  @type t :: %__MODULE__{
+          id: String.t(),
+          tgb: integer()
+        }
 end

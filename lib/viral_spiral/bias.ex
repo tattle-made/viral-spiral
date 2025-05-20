@@ -21,4 +21,9 @@ defmodule ViralSpiral.Bias do
   def label(%Bias{} = affinity) do
     @labels[affinity.target]
   end
+
+  @spec valid?(atom()) :: boolean()
+  def valid?(bias) do
+    bias in Map.keys(@labels)
+  end
 end

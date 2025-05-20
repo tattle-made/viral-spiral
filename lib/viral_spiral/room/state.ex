@@ -27,11 +27,12 @@ defmodule ViralSpiral.Room.State do
   alias ViralSpiral.Entity.Change
 
   @derive {Inspect, limit: 2}
-  defstruct room: nil,
+  defstruct room: Room.skeleton(),
             players: %{},
-            round: nil,
-            turn: nil,
+            round: Round.skeleton(),
+            turn: Turn.skeleton(),
             turns: %{},
+            # deck: Deck.skeleton(),
             deck: nil,
             articles: %{},
             power_viralspiral: nil,
@@ -39,14 +40,14 @@ defmodule ViralSpiral.Room.State do
             power_cancel_player: %PowerCancelPlayer{}
 
   @type t :: %__MODULE__{
+          deck: Deck.t(),
           room: Room.t(),
           players: %{String.t() => Player.t()},
           round: Round.t(),
           turn: Turn.t(),
-          deck: Deck.t(),
           articles: map(),
-          power_viralspiral: PowerViralSpiral.t(),
           power_check_source: CheckSource.t(),
+          power_viralspiral: PowerViralSpiral.t(),
           power_cancel_player: PowerCancelPlayer.t()
         }
 

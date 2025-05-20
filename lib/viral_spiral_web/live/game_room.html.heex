@@ -13,8 +13,8 @@
   <div class="mt-2 flex flex-row justify-between">
     <div
       :for={player <- @state.players}
-      class={[
-        "border-2 w-full  m-2 bg-clip-border",
+      class={[ 
+        "border-2 w-full m-2 bg-clip-border",
         if(player.is_active,
           do: "border-red-400",
           else: "border-red-100"

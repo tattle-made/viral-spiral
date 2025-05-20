@@ -1,4 +1,6 @@
 defmodule ViralSpiral.Entity.RoundTest do
+  alias ViralSpiral.Entity.Round.Changes.SkipRound
+  alias ViralSpiral.Entity.Round.Changes.NextRound
   alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.Round
@@ -6,8 +8,14 @@ defmodule ViralSpiral.Entity.RoundTest do
 
   describe "round progression" do
     test "round progress" do
-      %{players: players} = Fixtures.initialized_game()
-      round = Round.new(players)
+      round =
+        Round.new([
+          %{id: "player_abc"},
+          %{id: "player_def"},
+          %{id: "player_ghi"},
+          %{id: "player_jkl"}
+        ])
+
       assert round.current == 0
 
       round = Round.next(round)
@@ -25,9 +33,20 @@ defmodule ViralSpiral.Entity.RoundTest do
   end
 
   describe "skip player in a round" do
-    test "if the player hasn't had their turn in this round, skip them in the current round itself" do
-      %{players: players} = Fixtures.initialized_game()
-      round = Round.new(players)
+    setup do
+      round =
+        Round.new([
+          %{id: "player_abc"},
+          %{id: "player_def"},
+          %{id: "player_ghi"},
+          %{id: "player_jkl"}
+        ])
+
+      %{round: round}
+    end
+
+    test "if the player hasn't had their turn in this round, skip them in the current round itself",
+         %{round: round} do
       player_order = round.order
       to_skip = Enum.at(player_order, 2)
 
@@ -40,9 +59,8 @@ defmodule ViralSpiral.Entity.RoundTest do
       assert round.current == 3
     end
 
-    test "if the player has had their turn in the active round, skip their turn in the next round" do
-      %{players: players} = Fixtures.initialized_game()
-      round = Round.new(players)
+    test "if the player has had their turn in the active round, skip their turn in the next round",
+         %{round: round} do
       player_order = round.order
 
       assert round.current == 0
@@ -75,24 +93,28 @@ defmodule ViralSpiral.Entity.RoundTest do
 
   describe "changes" do
     setup do
-      round = Fixtures.new_round()
+      round =
+        Round.new([
+          %{id: "player_abc"},
+          %{id: "player_def"},
+          %{id: "player_ghi"},
+          %{id: "player_jkl"}
+        ])
+
       %{round: round}
     end
 
     test "move to next round", %{round: round} do
-      new_round = Change.apply_change(round, ChangeDescriptions.next_round())
+      new_round = Change.change(round, %NextRound{})
       assert new_round.current == 1
 
-      new_round = Change.apply_change(new_round, ChangeDescriptions.next_round())
+      new_round = Change.change(new_round, %NextRound{})
       assert new_round.current == 2
     end
 
     test "skip a player's round", %{round: round} do
-      new_round =
-        Change.apply_change(round, ChangeDescriptions.skip_player("player_def"))
-        |> Change.apply_change(ChangeDescriptions.next_round())
-
-      assert new_round.current == 2
+      new_round = Change.change(round, %SkipRound{player_id: "player_def"})
+      assert new_round.skip.player == "player_def"
     end
   end
 end

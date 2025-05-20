@@ -1,4 +1,11 @@
 defmodule ViralSpiral.Game.PlayerTest do
+  alias ViralSpiral.Entity.Player.Changes.RemoveActiveCard
+  alias ViralSpiral.Entity.Player.Changes.AddActiveCard
+  alias ViralSpiral.Canon.Card.Sparse
+  alias ViralSpiral.Entity.Player.Changes.AddToHand
+  alias ViralSpiral.Entity.Player.Changes.Bias
+  alias ViralSpiral.Entity.Player.Changes.Affinity
+  alias ViralSpiral.Entity.Player.Changes.Clout
   alias ViralSpiral.Room.Factory
   alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Entity.Room
@@ -8,15 +15,15 @@ defmodule ViralSpiral.Game.PlayerTest do
   alias ViralSpiral.Entity.Change
   use ExUnit.Case
 
-  test "create player from room config" do
-    room = Room.reserve("hello") |> Room.start(4)
+  # test "create player from room config" do
+  #   room = Room.reserve("hello") |> Room.start(4)
 
-    player =
-      Factory.new_player_for_room(room)
-      |> Player.set_name("adhiraj")
+  #   player =
+  #     Factory.new_player_for_room(room)
+  #     |> Player.set_name("adhiraj")
 
-    assert player.name == "adhiraj"
-  end
+  #   assert player.name == "adhiraj"
+  # end
 
   describe "struct operations" do
     setup do
@@ -25,36 +32,29 @@ defmodule ViralSpiral.Game.PlayerTest do
       %{player: player}
     end
 
-    test "add and remove cards", %{player: player} do
-      player =
-        player
-        |> Player.add_active_card("card_293848")
-        |> Player.add_active_card("card_238422")
+    test "new/1" do
+      attrs = %{
+        id: "temp_id",
+        name: "temp_name",
+        identity: :red,
+        affinities: [:sock, :cat],
+        biases: [:blue, :yellow]
+      }
 
-      assert player.active_cards == ["card_293848", "card_238422"]
-
-      player = Player.remove_active_card(player, "card_293848")
-      assert player.active_cards == ["card_238422"]
+      player = Player.new(attrs)
+      assert %Player{biases: biases} = player
+      assert biases.blue == 0
     end
 
-    test "player should not be able to hold same card twice", %{player: player} do
-      assert_raise DuplicateActiveCardException, fn ->
-        player
-        |> Player.add_active_card("card_293848")
-        |> Player.add_active_card("card_293848")
-      end
-    end
+    test "new/1 exception" do
+      attrs = %{
+        identity: :red,
+        affinities: [:sock, :cow],
+        biases: [:blue, :yellow]
+      }
 
-    test "raise when trying to remove a card that is not an active card", %{player: player} do
-      assert_raise ActiveCardDoesNotExist, fn ->
-        player
-        |> Player.remove_active_card("card_39293")
-      end
-
-      assert_raise ActiveCardDoesNotExist, fn ->
-        player
-        |> Player.add_active_card("card_232323")
-        |> Player.remove_active_card("card_392323")
+      assert_raise RuntimeError, "Invalid parameters were passed while creating a Player", fn ->
+        Player.new(attrs)
       end
     end
   end
@@ -62,6 +62,8 @@ defmodule ViralSpiral.Game.PlayerTest do
   describe "changes" do
     setup do
       player = %Player{
+        id: "player_abc",
+        identity: :blue,
         affinities: %{
           skub: 0,
           cat: 0
@@ -76,43 +78,51 @@ defmodule ViralSpiral.Game.PlayerTest do
     end
 
     test "change clout", %{player: player} do
-      player = Change.apply_change(player, ChangeDescriptions.change_clout(4))
+      player = Change.change(player, %Clout{offset: 4})
       assert player.clout == 4
+
+      player = Change.change(player, %Clout{offset: -2})
+      assert player.clout == 2
     end
 
     test "change affinity", %{player: player} do
-      player = Change.apply_change(player, ChangeDescriptions.change_affinity(:cat, 2))
-      assert player.affinities.cat == 2
+      player = Change.change(player, %Affinity{target: :skub, offset: 2})
+      assert player.affinities.skub == 2
+
+      player = Change.change(player, %Affinity{target: :skub, offset: -1})
+      assert player.affinities.skub == 1
     end
 
     test "change bias", %{player: player} do
-      player = Change.apply_change(player, ChangeDescriptions.change_bias(:yellow, -1))
-      assert player.biases.yellow == 1
+      player = Change.change(player, %Bias{target: :yellow, offset: 1})
+      assert player.biases.yellow == 3
+
+      player = Change.change(player, %Bias{target: :yellow, offset: -3})
+      assert player.biases.yellow == 0
     end
 
     test "add card to hand", %{player: player} do
-      player = Change.apply_change(player, ChangeDescriptions.add_to_hand("card_23b2323"))
+      card = %Sparse{id: "card_23b2323", veracity: false}
+      player = Change.change(player, %AddToHand{card: card})
+
       assert length(player.hand) == 1
-      assert hd(player.hand) == "card_23b2323"
+      assert hd(player.hand) == card
     end
 
-    test "add_active_card", %{player: player} do
-      player = Change.apply_change(player, ChangeDescriptions.add_to_active("card_29323"))
-      assert player.active_cards == ["card_29323"]
+    test "active cards", %{player: player} do
+      card_a = %Sparse{id: "card_29323", veracity: true}
+      card_b = %Sparse{id: "card_84843", veracity: false}
 
-      player = Change.apply_change(player, ChangeDescriptions.add_to_active("card_84843"))
-      assert player.active_cards == ["card_29323", "card_84843"]
-    end
+      player = Change.change(player, %AddActiveCard{card: card_a})
+      assert player.active_cards == [card_a]
 
-    test "remove_active_card", %{player: player} do
-      player =
-        %{player | active_cards: ["card_29323", "card_84843"]}
-        |> Change.apply_change(ChangeDescriptions.remove_active("card_29323"))
+      player = Change.change(player, %AddActiveCard{card: card_b})
+      assert player.active_cards == [card_a, card_b]
 
-      assert player.active_cards == ["card_84843"]
+      player = Change.change(player, %RemoveActiveCard{card: card_b})
+      assert player.active_cards == [card_a]
 
-      player = Change.apply_change(player, ChangeDescriptions.remove_active("card_84843"))
-
+      player = Change.change(player, %RemoveActiveCard{card: card_a})
       assert player.active_cards == []
     end
   end

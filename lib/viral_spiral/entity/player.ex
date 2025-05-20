@@ -4,16 +4,17 @@ defmodule ViralSpiral.Entity.Player do
 
   ## Example
   iex> player_score = %ViralSpiral.Game.Score.Player{
-      biases: %{red: 0, blue: 0},
-      affinities: %{cat: 0, sock: 0},
-      clout: 0
-    }
+    biases: %{red: 0, blue: 0},
+    affinities: %{cat: 0, sock: 0},
+    clout: 0
+  }
   """
-  alias ViralSpiral.Entity.Player.ActiveCardDoesNotExist
-  alias ViralSpiral.Entity.Player.DuplicateActiveCardException
+
   alias ViralSpiral.Entity.Player
-  alias ViralSpiral.Bias
-  import ViralSpiral.Room.EngineConfig.Guards
+  alias ViralSpiral.Canon.Card.Sparse
+  alias ViralSpiral.Bias, as: ViralSpiralBias
+  alias ViralSpiral.Affinity, as: ViralSpiralAffinity
+  import Ecto.Changeset
 
   defstruct id: nil,
             biases: %{},
@@ -24,276 +25,199 @@ defmodule ViralSpiral.Entity.Player do
             hand: [],
             active_cards: []
 
-  @type change_opts :: [type: :clout | :affinity | :bias, offset: integer(), target: atom()]
   @type t :: %__MODULE__{
           id: String.t(),
-          biases: map(),
-          affinities: map(),
-          clout: integer(),
           name: String.t(),
-          identity: Bias.target(),
-          hand: list(),
-          active_cards: list()
+          identity: ViralSpiralBias.target(),
+          clout: integer(),
+          biases: %{optional(ViralSpiralBias.target()) => integer()},
+          affinities: %{optional(ViralSpiralAffinity.target()) => integer()},
+          hand: list(Sparse.t()),
+          active_cards: list(Sparse.t())
         }
 
-  @spec set_name(Player.t(), String.t()) :: Player.t()
-  def set_name(%Player{} = player, name) do
-    %{player | name: name}
+  # Enable Ecto cast and validation features on this struct.
+  # This allows us to create valid Player structs within the app and tests.
+  # todo : fix the :any type to limit it to atoms atleast
+  @types %{
+    id: :string,
+    name: :string,
+    identity: :any,
+    clout: :integer,
+    biases: {:array, :any},
+    affinities: {:array, :any}
+  }
+
+  @doc """
+  Create a Player by passing maps with valid values.
+  """
+  def new(attrs \\ %{}) do
+    uxid = Application.get_env(:viral_spiral, :uxid)
+    id = attrs.id || uxid.generate!(prefix: "player", size: :small)
+
+    changeset =
+      {%{}, @types}
+      |> cast(attrs, Map.keys(@types))
+      |> validate_affinity()
+      |> validate_bias()
+
+    valid_attrs =
+      case changeset.valid? do
+        true -> apply_changes(changeset)
+        false -> raise "Invalid parameters were passed while creating a Player"
+      end
+
+    biases = Enum.reduce(valid_attrs.biases, %{}, fn bias, acc -> Map.put(acc, bias, 0) end)
+
+    affinities =
+      Enum.reduce(valid_attrs.affinities, %{}, fn affin, acc -> Map.put(acc, affin, 0) end)
+
+    valid_attrs =
+      valid_attrs
+      |> Map.put(:biases, biases)
+      |> Map.put(:affinities, affinities)
+      |> Map.put(:id, id)
+
+    struct(Player, valid_attrs)
   end
 
-  @spec set_identity(Player.t(), Bias.target()) :: Player.t()
-  def set_identity(%Player{} = player, identity) do
-    %{player | identity: identity}
+  defp validate_bias(changeset) do
+    validate_change(changeset, :biases, fn field, value ->
+      atoms = Enum.filter(value, &is_atom(&1))
+      valid_atoms = Enum.filter(atoms, &ViralSpiralBias.valid?(&1))
+
+      case length(valid_atoms) == length(value) do
+        true -> []
+        false -> [{field, "invalid bias passed"}]
+      end
+    end)
   end
 
-  def add_to_hand(%Player{} = player, card) do
-    Map.put(player, :hand, player.hand ++ [card])
+  defp validate_affinity(changeset) do
+    validate_change(changeset, :affinities, fn field, value ->
+      atoms = Enum.filter(value, &is_atom(&1))
+      valid_atoms = Enum.filter(atoms, &ViralSpiralAffinity.valid?(&1))
+
+      case length(valid_atoms) == length(value) do
+        true -> []
+        false -> [{field, "invalid affinity passed"}]
+      end
+    end)
   end
 
-  @spec add_active_card(Player.t(), String.t(), boolean()) :: Player.t()
-  def add_active_card(%Player{} = player, card_id, veracity) do
-    case Enum.find(player.active_cards, &(&1.id == card_id)) do
-      nil -> Map.put(player, :active_cards, player.active_cards ++ [{card_id, veracity}])
-      _ -> raise DuplicateActiveCardException
+  defimpl ViralSpiral.Entity.Change do
+    alias ViralSpiral.Entity.Change.UndefinedChange
+    alias ViralSpiral.Canon.Card.Sparse
+    alias ViralSpiral.Entity.Player
+
+    alias ViralSpiral.Entity.Player.Changes.{
+      Clout,
+      Affinity,
+      Bias,
+      AddActiveCard,
+      RemoveFromHand,
+      AddToHand,
+      RemoveActiveCard,
+      MakeActiveCardFake,
+      ViewArticle
+    }
+
+    alias ViralSpiral.Entity.Player.Exceptions.{
+      ActiveCardDoesNotExist,
+      DuplicateActiveCardException
+    }
+
+    @type change_types ::
+            %Clout{}
+            | %Affinity{}
+            | %Bias{}
+            | %AddToHand{}
+            | %RemoveFromHand{}
+            | %AddActiveCard{}
+            | %RemoveActiveCard{}
+            | %MakeActiveCardFake{}
+            | %ViewArticle{}
+
+    @spec change(Player.t(), change_types()) :: Player.t()
+    def change(%Player{} = player, %Clout{} = change) do
+      new_clout = player.clout + change.offset
+      %{player | clout: new_clout}
     end
-  end
 
-  @spec remove_active_card(Player.t(), String.t(), boolean()) :: Player.t()
-  def remove_active_card(%Player{} = player, card_id, veracity) do
-    case Enum.find(player.active_cards, &(elem(&1, 0) == card_id and elem(&1, 1) == veracity)) do
-      nil -> raise ActiveCardDoesNotExist
-      _ -> Map.put(player, :active_cards, List.delete(player.active_cards, {card_id, veracity}))
+    def change(%Player{} = player, %Affinity{} = change) do
+      current_affinity = player.affinities[change.target]
+      new_affinities = Map.put(player.affinities, change.target, current_affinity + change.offset)
+
+      %{player | affinities: new_affinities}
     end
-  end
 
-  def update_active_card(%Player{} = player, card_id, new_card) do
-    ix = Enum.find_index(player.active_cards, fn x -> elem(x, 0) == card_id end)
-
-    active_cards =
-      List.replace_at(player.active_cards, ix, {card_id, new_card.veracity, new_card.headline})
-
-    %{player | active_cards: active_cards}
-  end
-
-  def set_article(%Player{} = player, card, article) do
-    case Enum.find(player.active_cards, &(&1 == card.id)) do
-      nil ->
-        player
-
-      ix ->
-        entry = Enum.at(player.active_cards, ix)
-        new_entry = Map.put(entry, :source, article)
-        Map.put(player, :active_cards, new_entry)
+    def change(%Player{} = player, %Bias{} = change) do
+      current_bias = player.biases[change.target]
+      new_biases = Map.put(player.biases, change.target, current_bias + change.offset)
+      %{player | biases: new_biases}
     end
-  end
-end
 
-defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Player do
-  alias ViralSpiral.Affinity
-  alias ViralSpiral.Bias
-  alias ViralSpiral.Entity.Player
-  import ViralSpiral.Room.EngineConfig.Guards
-
-  @doc """
-  Change a Player's Score.
-
-  Change function pattern matches depending on the function's parameter.
-  The second parameter can be :clout, :affinity: :bias. These determine which score to change.
-  Corresponding score is changed based on the values passed in the opts keyword list.
-
-  The various possible values that can be passed in opts are defined later.
-
-  ## Options to change Bias
-  - target : can be :red, :blue or :yellow
-  - offset : The value to increment/decrement current score by. Must be an integer.
-
-  ## Options to change affinity
-  - target : can be :sock, :houseboat, :highfive, :cat or :skub
-  - offset : The value to increment/decrement current score by. Must be an integer
-
-  ## Options to change clout
-  - offset : The value to increment/decrement current score by. Must be an integer
-  """
-  @spec change(
-          Player.t(),
-          :bias,
-          Bias.target(),
-          integer()
-        ) :: Player.t()
-  def change(%Player{} = player, :bias, target_bias, count)
-      when is_community(target_bias) and is_integer(count) do
-    new_biases = Map.put(player.biases, target_bias, player.biases[target_bias] + count)
-    %{player | biases: new_biases}
-  end
-
-  @spec change(
-          Player.t(),
-          :affinity,
-          Affinity.target(),
-          integer()
-        ) :: Player.t()
-  def change(%Player{} = player, :affinity, target_affinity, count)
-      when is_affinity(target_affinity) and is_integer(count) do
-    new_affinities =
-      Map.put(player.affinities, target_affinity, player.affinities[target_affinity] + count)
-
-    %{player | affinities: new_affinities}
-  end
-
-  @spec change(Player.t(), :clout, integer()) :: Player.t()
-  def change(%Player{} = player, :clout, count) when is_integer(count) do
-    new_clout = player.clout + count
-    %{player | clout: new_clout}
-  end
-
-  def apply_change(player, change_desc) do
-    case change_desc[:type] do
-      :clout ->
-        change(player, :clout, change_desc[:offset])
-
-      :affinity ->
-        change(player, :affinity, change_desc[:target], change_desc[:offset])
-
-      :bias ->
-        change(player, :bias, change_desc[:target], change_desc[:offset])
-
-      :add_to_hand ->
-        Player.add_to_hand(player, change_desc[:card])
-
-      :remove_from_hand ->
-        player
-
-      :add_active_card ->
-        Player.add_active_card(player, change_desc[:card_id], change_desc[:veracity])
-
-      :remove_active_card ->
-        Player.remove_active_card(player, change_desc[:card_id], change_desc[:veracity])
-
-      :set_article ->
-        Player.set_article(change_desc[:card], change_desc[:article])
-
-      :turn_card_to_fake ->
-        Player.update_active_card(player, change_desc[:card].id, change_desc[:card])
-
-      :ignore ->
-        player
+    def change(%Player{} = player, %AddToHand{} = change) do
+      Map.put(player, :hand, player.hand ++ [change.card])
     end
-  end
-end
 
-defmodule ViralSpiral.Entity.Player.DuplicateActiveCardException do
-  defexception message: "This card is already held by the player"
-end
+    def change(%Player{} = player, %RemoveFromHand{} = _change) do
+      player
+    end
 
-defmodule ViralSpiral.Entity.Player.ActiveCardDoesNotExist do
-  defexception message: "This card is not an active card for this player "
-end
+    def change(%Player{} = player, %AddActiveCard{} = change) do
+      card = change.card
 
-defmodule ViralSpiral.Entity.PlayerMap do
-  @moduledoc """
-  Functions for handling a Map of `ViralSpiral.Entity.Player` in a Room.
+      case Enum.find(player.active_cards, &(&1.id == card.id)) do
+        nil -> Map.put(player, :active_cards, player.active_cards ++ [card])
+        _ -> raise DuplicateActiveCardException
+      end
+    end
 
-  Player's id is the key for each player in the provided map
-  """
-  import ViralSpiral.Room.EngineConfig.Guards
+    def change(%Player{} = player, %RemoveActiveCard{} = change) do
+      card = change.card
 
-  @doc """
-  Return all players of an identity
-  """
-  def of_identity(players, identity) when is_community(identity) and is_map(players) do
-    Map.keys(players)
-    |> Enum.filter(&(players[&1].identity == identity))
-    |> to_full_map(players)
-  end
+      case Enum.find(
+             player.active_cards,
+             &(&1.id == card.id and &1.veracity == card.veracity)
+           ) do
+        nil ->
+          raise ActiveCardDoesNotExist
 
-  @doc """
-  Return all players not of an identity
-  """
-  def not_of_identity(players, identity) when is_community(identity) and is_map(players) do
-    Map.keys(players)
-    |> Enum.filter(&(players[&1].identity != identity))
-  end
+        _ ->
+          Map.put(player, :active_cards, List.delete(player.active_cards, card))
+      end
+    end
 
-  @doc """
-  Return ids of players who like/dislike the same thing.
+    def change(%Player{} = player, %MakeActiveCardFake{} = change) do
+      card_id = change.card.id
+      new_card = change.card
 
-  For instance, to get all players who like cats, call `of_same_affinity_polarity(players, :cat, :positive)`.
-  To get all players who hate skubs, call `of_same_affinity_polarity(players, :skub, :negative)`
-  """
-  def of_same_affinity_polarity(players, affinity, polarity)
-      when is_map(players) and is_affinity(affinity) and polarity in [:positive, :negative] do
-  end
+      ix = Enum.find_index(player.active_cards, fn x -> elem(x, 0) == card_id end)
 
-  def of_opposite_affinity_polarity(players, affinity) when is_affinity(affinity) do
-  end
+      active_cards =
+        List.replace_at(player.active_cards, ix, {card_id, new_card.veracity, new_card.headline})
 
-  @doc """
-  Return all players whose identity is different from the passed player
-  """
-  # @spec(map(String.t(), Player.t()), String.t() :: list(Player.t()))
-  def others(players, player) when is_map(players) and is_bitstring(player) do
-    Map.keys(players)
-    |> Enum.filter(&(&1 != player))
-    |> Enum.reduce(%{}, &Map.put(&2, &1, players[&1]))
-  end
+      %{player | active_cards: active_cards}
+    end
 
-  @doc """
-  Convert a list of `Player` into Map suitable for `PlayerMap`.
+    def change(%Player{} = player, %ViewArticle{} = change) do
+      card = change.card
 
-  ## Examples :
+      case Enum.find(player.active_cards, &(&1 == card.id)) do
+        nil ->
+          player
 
-      iex> players = [ %Player{id: "abc", identity: :red}, %Player{id: "def", identity: :yellow} ]
-      [
-        %ViralSpiral.Entity.Player{
-          id: "abc",
-          biases: %{},
-          affinities: %{},
-          clout: 0,
-          name: "",
-          identity: :red,
-          hand: [],
-          active_cards: []
-        },
-        %ViralSpiral.Entity.Player{
-          id: "def",
-          biases: %{},
-          affinities: %{},
-          clout: 0,
-          name: "",
-          identity: :yellow,
-          hand: [],
-          active_cards: []
-        }
-      ]
-      iex> PlayerMap.to_map(players)
-      %{
-        def: %ViralSpiral.Entity.Player{
-          id: "def",
-          biases: %{},
-          affinities: %{},
-          clout: 0,
-          name: "",
-          identity: :yellow,
-          hand: [],
-          active_cards: []
-        },
-        abc: %ViralSpiral.Entity.Player{
-          id: "abc",
-          biases: %{},
-          affinities: %{},
-          clout: 0,
-          name: "",
-          identity: :red,
-          hand: [],
-          active_cards: []
-        }
-      }
-  """
-  def to_map(players) when is_list(players) do
-    Enum.reduce(players, %{}, &Map.put(&2, String.to_atom(&1.id), &1))
-  end
+        ix ->
+          entry = Enum.at(player.active_cards, ix)
+          new_entry = Map.put(entry, :source, change.article)
+          Map.put(player, :active_cards, new_entry)
+      end
+    end
 
-  def to_full_map(ids, players) when is_list(ids) do
-    Enum.reduce(ids, %{}, &Map.put(&2, &1, players[&1]))
+    def change(%Player{} = _player, _change) do
+      raise UndefinedChange,
+        message: "You are trying to make an unsupported change to this Player"
+    end
   end
 end

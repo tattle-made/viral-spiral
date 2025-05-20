@@ -20,7 +20,7 @@ defmodule ViralSpiral.Entity.Room do
             chaos: nil,
             volatality: :medium
 
-  @all_states [:reserved, :uninitialized, :waiting_for_players, :running, :paused]
+  @states [:uninitialized, :reserved, :waiting_for_players, :running, :paused]
 
   @type states :: :reserved | :uninitialized | :waiting_for_players | :running | :paused
   @type t :: %__MODULE__{
@@ -31,7 +31,6 @@ defmodule ViralSpiral.Entity.Room do
           affinities: list(Affinity.target()),
           communities: list(Bias.target()),
           chaos_counter: integer(),
-          chaos: integer(),
           volatality: EngineConfig.volatility()
         }
 
@@ -44,9 +43,31 @@ defmodule ViralSpiral.Entity.Room do
       name: name(),
       state: :uninitialized,
       chaos_counter: engine_config.chaos_counter,
-      chaos: engine_config.chaos_counter,
       volatality: engine_config.volatility
     }
+  end
+
+  @doc """
+  Create a Room with fields that don't require user input.
+  """
+  def skeleton() do
+    engine_config = %EngineConfig{}
+    uxid = Application.get_env(:viral_spiral, :uxid)
+
+    %Room{
+      id: uxid.generate!(prefix: "room", size: :small),
+      name: name(),
+      state: :uninitialized,
+      chaos_counter: engine_config.chaos_counter,
+      volatality: engine_config.volatility
+    }
+  end
+
+  def can_reserve?(%Room{} = room) do
+    is_uninitialized = room.state == :uninitialized
+    no_other_players = length(room.unjoined_players) == 0
+
+    is_uninitialized && no_other_players
   end
 
   @doc """
@@ -65,7 +86,9 @@ defmodule ViralSpiral.Entity.Room do
     }
   end
 
-  def start(%Room{} = room, player_count) do
+  def start(%Room{} = room) do
+    player_count = length(room.unjoined_players)
+
     engine_config = %EngineConfig{}
 
     affinities = engine_config.affinities
@@ -86,21 +109,17 @@ defmodule ViralSpiral.Entity.Room do
         _ -> communities
       end
 
-    uxid = Application.get_env(:viral_spiral, :uxid)
-
     %{
       room
-      | id: uxid.generate!(prefix: "room", size: :small),
-        state: :uninitialized,
+      | state: :running,
         affinities: room_affinities,
         communities: room_communities,
         chaos_counter: engine_config.chaos_counter,
-        chaos: 0,
         volatality: engine_config.volatility
     }
   end
 
-  def set_state(%Room{} = room, state) when state in @all_states do
+  def set_state(%Room{} = room, state) when state in @states do
     %{room | state: state}
   end
 
@@ -167,27 +186,72 @@ defmodule ViralSpiral.Entity.Room do
     Enum.random(adjectives) <> "-" <> Enum.random(nouns)
   end
 
+  def join(%Room{} = room, player_name) do
+    %{room | unjoined_players: room.unjoined_players ++ [player_name]}
+  end
+
   def reset_unjoined_players(%Room{} = room) do
     %{room | unjoined_players: []}
   end
-end
 
-defimpl ViralSpiral.Entity.Change, for: ViralSpiral.Entity.Room do
-  alias ViralSpiral.Entity.Room
+  defimpl ViralSpiral.Entity.Change do
+    @moduledoc """
+    Change properties of a Room
+    """
+    alias ViralSpiral.Entity.Room.Exceptions.JoinBeforeReserving
+    alias ViralSpiral.Entity.Room.Exceptions.IllegalReservation
+    alias ViralSpiral.Entity.Change.UndefinedChange
 
-  @doc """
-  Change state of a Room.
-  """
-  def apply_change(%Room{} = room, change_desc) do
-    # change_desc = Keyword.validate!(change_desc, type: nil, offset: 0)
+    alias ViralSpiral.Entity.Room.Changes.{
+      ReserveRoom,
+      JoinRoom,
+      StartGame,
+      ChangeCountdown,
+      ResetUnjoinedPlayers
+    }
 
-    case change_desc[:type] do
-      :join ->
-        new_player = change_desc[:player_name]
-        %{room | unjoined_players: room.unjoined_players ++ [new_player]}
+    alias ViralSpiral.Entity.Room
 
-      :chaos_countdown ->
-        Map.put(room, :chaos, room.chaos + change_desc[:offset])
+    @type change_types ::
+            ReserveRoom.t()
+            | JoinRoom.t()
+            | StartGame.t()
+            | ChangeCountdown.t()
+            | ResetUnjoinedPlayers.t()
+
+    @spec change(Room.t(), change_types()) :: Room.t()
+    def change(%Room{} = room, %ReserveRoom{} = change) do
+      case Room.can_reserve?(room) do
+        true -> Room.join(room, change.player_name) |> Room.set_state(:reserved)
+        false -> raise IllegalReservation, message: "You can not reserve this room"
+      end
+    end
+
+    def change(%Room{} = room, %JoinRoom{} = change) do
+      case room.state in [:reserved, :waiting_for_players] do
+        true ->
+          Room.join(room, change.player_name)
+          |> Room.set_state(:waiting_for_players)
+
+        false ->
+          raise JoinBeforeReserving
+      end
+    end
+
+    def change(%Room{} = room, %StartGame{} = _change) do
+      room |> Room.start()
+    end
+
+    def change(%Room{} = room, %ChangeCountdown{} = change) do
+      Map.put(room, :chaos, room.chaos_counter + change.offset)
+    end
+
+    def change(%Room{} = room, %ResetUnjoinedPlayers{} = _change) do
+      Room.reset_unjoined_players(room)
+    end
+
+    def change(%Room{} = _room, _change) do
+      raise UndefinedChange, message: "You are trying to make an unsupported change to this Room"
     end
   end
 end

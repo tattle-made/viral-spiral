@@ -46,7 +46,7 @@ defmodule ViralSpiral.Entity.Round do
         }
 
   @doc """
-  todo : this doesn't really need the players, merely a count of players, maybe?
+  Initialize a valid Round
   """
   @spec new(list(Player.t())) :: ViralSpiral.Entity.Round.t()
   def new(player_list) when is_list(player_list) do
@@ -61,9 +61,13 @@ defmodule ViralSpiral.Entity.Round do
     }
   end
 
-  def new(players) when is_map(players) do
-    player_list = Map.keys(players) |> Enum.map(&players[&1])
-    new(player_list)
+  # def new(players) when is_map(players) do
+  #   player_list = Map.keys(players) |> Enum.map(&players[&1])
+  #   new(player_list)
+  # end
+
+  def skeleton() do
+    %Round{}
   end
 
   @doc """
@@ -77,7 +81,7 @@ defmodule ViralSpiral.Entity.Round do
     round: :next || :current
   }
   """
-  def add_skip(%__MODULE__{} = round, player_id) when is_bitstring(player_id) do
+  def add_skip(%Round{} = round, player_id) when is_bitstring(player_id) do
     skip =
       case Enum.find(round.order, &(&1 == player_id)) do
         x ->
@@ -87,28 +91,28 @@ defmodule ViralSpiral.Entity.Round do
           end
       end
 
-    %__MODULE__{round | skip: skip}
+    %Round{round | skip: skip}
   end
 
-  def add_skip(%__MODULE__{} = round, nil) do
-    %__MODULE__{round | skip: nil}
+  def add_skip(%Round{} = round, nil) do
+    %Round{round | skip: nil}
   end
 
   @doc """
   todo :  add logic if skipping is enabled
   """
-  def next(%__MODULE__{skip: nil} = round) do
+  def next(%Round{skip: nil} = round) do
     ix = rem(round.current + 1, round.count)
-    %__MODULE__{round | current: ix}
+    %Round{round | current: ix}
   end
 
-  def next(%__MODULE__{skip: %{round: :next, player: player} = skip} = round) do
+  def next(%Round{skip: %{round: :next, player: player} = skip} = round) do
     ix = rem(round.current + 1, round.count)
     skip = if ix == 0, do: %{skip: %{round: :current, player: player}}, else: skip
-    %__MODULE__{round | skip: skip, current: ix}
+    %Round{round | skip: skip, current: ix}
   end
 
-  def next(%__MODULE__{skip: %{round: :current, player: player}} = round) do
+  def next(%Round{skip: %{round: :current, player: player}} = round) do
     ix = rem(round.current + 1, round.count)
 
     changes =
@@ -121,19 +125,23 @@ defmodule ViralSpiral.Entity.Round do
     Map.merge(round, changes)
   end
 
+  @spec current_player_id(Round.t()) :: String.t()
   def current_player_id(%Round{} = round) do
     Enum.at(round.order, round.current)
   end
 
   defimpl Change do
-    alias ViralSpiral.Entity.Round
+    alias ViralSpiral.Entity.Round.Changes.{NextRound, SkipRound}
 
-    # @spec apply_change(Round.t(), Round.cphange_opts()) :: Round.t()
-    def apply_change(state, change_desc) do
-      case change_desc[:type] do
-        :next -> Round.next(state)
-        :skip -> Round.add_skip(state, change_desc[:player_id])
-      end
+    @type changes :: NextRound.t() | SkipRound.t()
+
+    @spec change(Round.t(), changes()) :: Round.t()
+    def change(%Round{} = round, %NextRound{} = _change) do
+      Round.next(round)
+    end
+
+    def change(%Round{} = round, %SkipRound{} = change) do
+      Round.add_skip(round, change.player_id)
     end
   end
 end

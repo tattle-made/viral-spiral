@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Factory do
   Create entities for a Game Room
   """
 
+  alias ViralSpiral.Canon.DrawConstraints
   alias ViralSpiral.Room.Reducer
   alias ViralSpiral.Room.Actions
   alias ViralSpiral.Room.ChangeDescriptions
@@ -11,7 +12,6 @@ defmodule ViralSpiral.Room.Factory do
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Canon.Article
   alias ViralSpiral.Canon.Encyclopedia
-  alias ViralSpiral.Canon.DrawTypeRequirements
   alias ViralSpiral.Canon.Deck, as: CanonDeck
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.Deck
@@ -58,7 +58,7 @@ defmodule ViralSpiral.Room.Factory do
   end
 
   def draw_type(%State{} = state) do
-    %DrawTypeRequirements{
+    %DrawConstraints{
       tgb: state.room.chaos,
       total_tgb: state.room.chaos_counter,
       biases: state.room.communities,
