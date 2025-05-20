@@ -54,7 +54,7 @@ defmodule ViralSpiral.Canon.DeckTest do
       true_anti_yellow_set = CardSet.key(:bias, :yellow, true)
       assert Deck.size(sets, true_anti_yellow_set) == 30
 
-      card = CardSet.member("card_102551558", 7)
+      card = CardSet.make_member("card_102551558", 7)
       new_sets = Deck.remove_card(sets, true_anti_yellow_set, card)
       assert Deck.size(new_sets, true_anti_yellow_set) == 29
     end

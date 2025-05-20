@@ -47,9 +47,10 @@ defmodule ViralSpiral.Canon.Deck do
       card_sets[set_key]
       |> filter_tgb(tgb)
       |> choose_one()
-      |> Map.get(:id)
 
-    Sparse.new(card_id, veracity)
+    # |> Map.get(:id)
+
+    # Sparse.new(card_id, veracity)
   end
 
   defp filter_tgb(set, tgb) do

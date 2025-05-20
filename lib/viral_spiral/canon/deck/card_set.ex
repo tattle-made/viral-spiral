@@ -1,9 +1,10 @@
 defmodule ViralSpiral.Canon.Deck.CardSet do
+  alias ViralSpiral.Canon.Card.Sparse
   import ViralSpiral.Room.EngineConfig.Guards
   import ViralSpiral.Canon.Card.Guards
 
   @type key_type ::
-          {:affinity, atom(), boolean()} | {:bias, atom(), boolean()} | {:topical, boolean()}
+          {:affinity, boolean(), atom()} | {:bias, boolean(), atom()} | {:topical, boolean()}
   @type member :: %{id: String.t(), tgb: integer()}
   @type card_sets :: %{optional(key_type()) => member()}
 
@@ -33,8 +34,13 @@ defmodule ViralSpiral.Canon.Deck.CardSet do
     %{id: card.id, tgb: card.tgb}
   end
 
-  @spec member(String.t(), integer()) :: %{id: String.t(), tgb: integer()}
-  def member(card_id, card_tgb) do
+  @spec make_member(String.t(), integer()) :: %{id: String.t(), tgb: integer()}
+  def make_member(card_id, card_tgb) do
     %{id: card_id, tgb: card_tgb}
   end
+
+  # @spec make_member(member()) ::
+  #         def(make_member(%Sparse{} = card)) do
+  #   %{id: card.id, tgb: card.tgb}
+  # end
 end

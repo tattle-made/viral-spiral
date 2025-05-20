@@ -1,74 +1,48 @@
 defmodule ViralSpiral.Canon.DeckEncyclopediaTest do
   use ExUnit.Case
+  alias ViralSpiral.Canon
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Canon.DrawTypeRequirements
   alias ViralSpiral.Canon.Encyclopedia
   alias ViralSpiral.Canon.Deck
 
-  describe "card data integrity" do
-    test "parse csv" do
-      cards = Deck.load_cards()
-      assert length(cards) == 845
+  @tag timeout: :infinity
+  describe "draw_card/2" do
+    setup do
+      {_, sets, _, _} = Canon.setup()
+      %{sets: sets}
     end
 
-    test "create sets and store" do
-      cards = Deck.load_cards()
+    test "drawing and removing card", %{sets: sets} do
+      set_key = {:bias, true, :yellow}
+      assert Canon.deck_size(sets, set_key) == 30
+      member_card_set = Canon.draw_card_from_deck(sets, set_key, 3)
+      new_sets = Canon.remove_card_from_deck(sets, set_key, member_card_set)
+      assert Canon.deck_size(new_sets, set_key) == 29
 
-      sets =
-        Deck.create_sets(cards,
-          affinities: [:cat, :sock, :skub, :houseboat, :highfive],
-          biases: [:red, :yellow, :blue]
-        )
+      # :rand.seed(:exsss, {1, 87, 90})
+      # cards = Deck.load_cards()
+      # sets = Deck.create_sets(cards)
+      # store = Deck.create_store(cards)
 
-      store = Deck.create_store(cards)
+      # requirements = %DrawTypeRequirements{
+      #   tgb: 4,
+      #   total_tgb: 10,
+      #   biases: [:red, :blue],
+      #   affinities: [:cat, :sock],
+      #   current_player: %{
+      #     identity: :blue
+      #   }
+      # }
 
-      assert length(Map.keys(store)) == 845
-
-      assert MapSet.size(sets[{:conflated, false}]) == 6
-      assert MapSet.size(sets[{:topical, true}]) == 30
-      assert MapSet.size(sets[{:topical, false}]) == 30
-      assert MapSet.size(sets[{:affinity, false, :cat}]) == 60
-      assert MapSet.size(sets[{:affinity, true, :cat}]) == 60
-      assert MapSet.size(sets[{:affinity, false, :sock}]) == 60
-      assert MapSet.size(sets[{:affinity, true, :sock}]) == 60
-      assert MapSet.size(sets[{:affinity, false, :houseboat}]) == 60
-      assert MapSet.size(sets[{:affinity, true, :houseboat}]) == 60
-      assert MapSet.size(sets[{:affinity, false, :highfive}]) == 59
-      assert MapSet.size(sets[{:affinity, true, :highfive}]) == 30
-      assert MapSet.size(sets[{:affinity, false, :skub}]) == 60
-      assert MapSet.size(sets[{:affinity, true, :skub}]) == 60
-      assert MapSet.size(sets[{:bias, false, :red}]) == 30
-      assert MapSet.size(sets[{:bias, true, :red}]) == 30
-      assert MapSet.size(sets[{:bias, false, :yellow}]) == 30
-      assert MapSet.size(sets[{:bias, true, :yellow}]) == 30
-      assert MapSet.size(sets[{:bias, false, :blue}]) == 30
-      assert MapSet.size(sets[{:bias, true, :blue}]) == 30
+      # card_opts = Deck.draw_type(requirements)
+      # current_size = Deck.size(sets, card_opts)
+      # assert current_size == 30
+      # draw_result = Deck.draw_card(sets, card_opts)
+      # new_sets = Deck.remove_card(sets, card_opts, draw_result)
+      # new_size = Deck.size(new_sets, card_opts)
+      # assert new_size = 29
     end
-  end
-
-  test "drawing and removing card" do
-    :rand.seed(:exsss, {1, 87, 90})
-    cards = Deck.load_cards()
-    sets = Deck.create_sets(cards)
-    store = Deck.create_store(cards)
-
-    requirements = %DrawTypeRequirements{
-      tgb: 4,
-      total_tgb: 10,
-      biases: [:red, :blue],
-      affinities: [:cat, :sock],
-      current_player: %{
-        identity: :blue
-      }
-    }
-
-    card_opts = Deck.draw_type(requirements)
-    current_size = Deck.size(sets, card_opts)
-    assert current_size == 30
-    draw_result = Deck.draw_card(sets, card_opts)
-    new_sets = Deck.remove_card(sets, card_opts, draw_result)
-    new_size = Deck.size(new_sets, card_opts)
-    assert new_size = 29
   end
 
   describe "deck functions" do

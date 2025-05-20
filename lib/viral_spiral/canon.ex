@@ -66,41 +66,37 @@ defmodule ViralSpiral.Canon do
   ```
   Read documentation of `draw_card` to see more examples of the responses.
   """
-  alias ViralSpiral.Canon.Deck
-  alias ViralSpiral.Canon.Encyclopedia
-  alias ViralSpiral.Canon.Card
-  alias ViralSpiral.Canon.Card.Sparse
+  alias ViralSpiral.Canon.{Card, Deck, Encyclopedia, Article}
+  alias ViralSpiral.Canon.Card.{Sparse}
   import ViralSpiral.Canon.Card.Guards
 
-  def load() do
+  def setup() do
     cards = Card.load()
     card_store = Card.create_store(cards)
     articles = Encyclopedia.load_articles()
     article_store = Encyclopedia.create_store(articles)
 
-    cards = Deck.link(cards, article_store)
+    cards = link(cards, article_store)
     card_sets = Deck.create_sets(cards)
 
-    %{
-      card_store: card_store,
-      card_sets: card_sets,
-      articles: articles,
-      article_store: article_store
-    }
+    {card_store, card_sets, articles, article_store}
   end
 
   @doc """
   Return a sparse representation of a card for storing in state
   """
+  @spec sparse_card(Card.t()) :: Sparse.t()
   def sparse_card(card) when is_card(card) do
     Sparse.new(card.id, card.veracity, card.headline)
   end
 
-  def draw_card(card_sets, constraints) do
-  end
+  defdelegate draw_card_from_deck(card_sets, set_key, tgb), to: Deck, as: :draw_card
 
-  def remove_card(card_sets, sparse_card) do
-  end
+  defdelegate remove_card_from_deck(card_sets, set_key, member_card_sets),
+    to: Deck,
+    as: :remove_card
+
+  defdelegate deck_size(card_sets, set_key), to: Deck, as: :size
 
   def get_source(sparse_card) do
   end
@@ -120,7 +116,7 @@ defmodule ViralSpiral.Canon do
   Find matching article for cards and add its id to the corresponding Card struct.
   """
   @spec link(list(Card.t()), any()) :: list(Card.t())
-  def link(cards, articles) do
+  defp link(cards, articles) do
     cards
     |> Enum.map(fn card ->
       try do
