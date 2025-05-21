@@ -1,5 +1,5 @@
-defmodule ViralSpiral.Room.Actions.Player.InitiateCancelTest do
-  alias ViralSpiral.Room.Actions.Player.InitiateCancel
+defmodule ViralSpiral.Room.Actions.Player.CancelPlayerInitiateTest do
+  alias ViralSpiral.Room.Actions.Player.CancelPlayerInitiate
   use ExUnit.Case
 
   @valid_attr %{
@@ -16,14 +16,14 @@ defmodule ViralSpiral.Room.Actions.Player.InitiateCancelTest do
 
   test "validation" do
     changeset =
-      %InitiateCancel{}
-      |> InitiateCancel.changeset(@valid_attr)
+      %CancelPlayerInitiate{}
+      |> CancelPlayerInitiate.changeset(@valid_attr)
 
     assert changeset.valid? == true
 
     changeset =
-      %InitiateCancel{}
-      |> InitiateCancel.changeset(@invaid_attr)
+      %CancelPlayerInitiate{}
+      |> CancelPlayerInitiate.changeset(@invaid_attr)
 
     assert changeset.valid? == false
   end

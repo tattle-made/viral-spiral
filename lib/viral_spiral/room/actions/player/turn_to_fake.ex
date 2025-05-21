@@ -2,30 +2,33 @@ defmodule ViralSpiral.Room.Actions.Player.TurnToFake do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{
+          from_id: UXID.uxid_string(),
+          card: %ViralSpiral.Room.Actions.Player.TurnToFake.Card{
+            id: UXID.uxid_string(),
+            veracity: boolean()
+          }
+        }
+
   @primary_key false
   embedded_schema do
-    field :player_id, :string
+    field :from_id, :string
 
     embeds_one :card, Card, primary_key: false do
       field :id, :string
-      field :type, Ecto.Enum, values: [:affinity, :topical, :bias]
       field :veracity, :boolean
-
-      field :target, Ecto.Enum,
-        values: [:houseboat, :skub, :cat, :highfive, :socks, :yellow, :red, :blue]
     end
   end
 
   def changeset(turn_to_fake, attrs) do
     turn_to_fake
-    |> cast(attrs, [:player_id])
+    |> cast(attrs, [:from_id])
     |> cast_embed(:card, with: &card_changeset/2)
-
-    # todo : verify card veracity is false
   end
 
   def card_changeset(card, attrs) do
     card
-    |> cast(attrs, [:id, :type, :veracity, :target])
+    |> cast(attrs, [:id, :veracity])
+    |> validate_required([:id, :veracity])
   end
 end

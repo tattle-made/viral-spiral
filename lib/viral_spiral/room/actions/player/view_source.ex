@@ -2,6 +2,14 @@ defmodule ViralSpiral.Room.Actions.Player.ViewSource do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{
+          from_id: UXID.uxid_string(),
+          card: %ViralSpiral.Room.Actions.Player.ViewSource.Card{
+            id: UXID.uxid_string(),
+            veracity: boolean()
+          }
+        }
+
   @primary_key false
   embedded_schema do
     field :from_id, :string

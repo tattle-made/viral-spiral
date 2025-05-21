@@ -2,107 +2,108 @@ defmodule ViralSpiral.Room.Actions do
   @moduledoc """
   Instances of Action triggered by a Player or Game Engine .
   """
-  alias ViralSpiral.Room.Actions.Player.ViewSource
-  alias ViralSpiral.Room.Actions.Player.PassCard
-  alias ViralSpiral.Room.Actions.Player.VoteToCancel
-  alias ViralSpiral.Room.Actions.Player.InitiateCancel
-  alias ViralSpiral.Room.Actions.Player.TurnToFake
-  alias ViralSpiral.Canon.Card.Sparse
+
+  alias ViralSpiral.Room.Actions.Player.{
+    ReserveRoom,
+    JoinRoom,
+    StartGame,
+    KeepCard,
+    PassCard,
+    DiscardCard,
+    MarkAsFake,
+    TurnToFake,
+    ViewSource,
+    CancelPlayerInitiate,
+    CancelPlayerVote,
+    HideSource
+  }
+
+  alias ViralSpiral.Room.Actions.Engine.{
+    DrawCard
+  }
+
   alias ViralSpiral.Room.Action
-  alias ViralSpiral.Entity.Turn
+
   import Ecto.Changeset
 
-  def draw_card(draw_type) do
-    %Action{type: :draw_card, payload: %{draw_type: draw_type}}
+  def reserve_room(attrs) do
+    changeset = %ReserveRoom{} |> ReserveRoom.changeset(attrs)
+
+    case changeset.valid? do
+      true -> %Action{type: :reserve_room, payload: apply_changes(changeset)}
+      false -> raise "Invalid Attributes"
+    end
   end
 
-  # @spec pass_card(String.t(), String.t(), String.t() | list(String.t())) :: Action.t()
-  def pass_card(card, veracity, from, to) when is_bitstring(to) or is_list(to) do
-    %Action{
-      type: :pass_card,
-      payload: %{
-        card: card,
-        veracity: veracity,
-        player: from,
-        target: to
-      }
-    }
+  def join_room(attrs) do
+    changeset = %JoinRoom{} |> JoinRoom.changeset(attrs)
+
+    case changeset.valid? do
+      true -> %Action{type: :join_room, payload: apply_changes(changeset)}
+      false -> raise "Invalid Attributes"
+    end
+  end
+
+  def start_game() do
+    %Action{type: :start_game, payload: %StartGame{}}
+  end
+
+  def draw_card() do
+    %Action{type: :draw_card, payload: %DrawCard{}}
   end
 
   def pass_card(attrs) do
-    changeset = PassCard.changeset(%PassCard{}, attrs)
+    changeset = %PassCard{} |> PassCard.changeset(attrs)
 
     case changeset.valid? do
-      true ->
-        payload = changeset |> apply_changes()
-        %Action{type: :pass_card, payload: payload}
-
-      false ->
-        raise "Invalid Player Action"
+      true -> %Action{type: :pass_card, payload: apply_changes(changeset)}
+      false -> raise "Invalid Attributes"
     end
   end
 
-  def keep_card(card, from) do
-    %Action{
-      type: :keep_card,
-      payload: %{
-        card: card,
-        player: from
-      }
-    }
+  def keep_card(attrs) do
+    changeset = %KeepCard{} |> KeepCard.changeset(attrs)
+
+    case changeset.valid? do
+      true -> %Action{type: :keep_card, payload: apply_changes(changeset)}
+      false -> raise "Invalid Attributes"
+    end
   end
 
-  def keep_card(%{"card" => card, "from" => from}) do
-    keep_card(card, from)
-  end
+  def discard_card(attrs) do
+    changeset = %DiscardCard{} |> DiscardCard.changeset(attrs)
 
-  def discard_card(card, from) do
-    %Action{
-      type: :discard_card,
-      payload: %{
-        card: card,
-        player: from
-      }
-    }
-  end
-
-  def discard_card(%{"card" => card, "from" => from}) do
-    discard_card(card, from)
+    case changeset.valid? do
+      true -> %Action{type: :discard_card, payload: apply_changes(changeset)}
+      false -> raise "Invalid Attributes"
+    end
   end
 
   def view_source(attrs) do
-    changeset = ViewSource.changeset(%ViewSource{}, attrs)
+    changeset = %ViewSource{} |> ViewSource.changeset(attrs)
 
     case changeset.valid? do
-      true ->
-        payload = changeset |> apply_changes()
-        %Action{type: :view_source, payload: payload}
-
-      false ->
-        raise "Invalid format of action view source"
+      true -> %Action{type: :view_source, payload: apply_changes(changeset)}
+      false -> raise "Invalid format of action view source"
     end
   end
 
-  def hide_source(player_id, card_id, card_veracity) do
-    %Action{
-      type: :hide_source,
-      payload: %{
-        player_id: player_id,
-        card_id: card_id,
-        card_veracity: card_veracity
-      }
-    }
+  def hide_source(attrs) do
+    changeset = %HideSource{} |> HideSource.changeset(attrs)
+
+    case changeset.valid? do
+      true -> %Action{type: :hide_source, payload: apply_changes(changeset)}
+      false -> raise "Invalid attributes"
+    end
   end
 
-  def mark_card_as_fake(from, %Sparse{} = card, %Turn{} = turn) do
-    %Action{
-      type: :mark_card_as_fake,
-      payload: %{
-        from: from,
-        card: card,
-        turn: turn
-      }
-    }
+  def mark_card_as_fake(attrs) do
+    changeset = %MarkAsFake{} |> MarkAsFake.changeset(attrs)
+
+    case changeset.valid? do
+      true -> %Action{type: :mark_as_fake, payload: apply_changes(changeset)}
+      false -> raise "Invalid attributes"
+    end
   end
 
   @doc """
@@ -110,53 +111,29 @@ defmodule ViralSpiral.Room.Actions do
   """
   @spec turn_to_fake(map()) :: Action.t()
   def turn_to_fake(attrs) do
-    action =
-      %TurnToFake{}
-      |> TurnToFake.changeset(attrs)
-      |> apply_changes()
+    changeset = %TurnToFake{} |> TurnToFake.changeset(attrs)
 
-    %Action{
-      type: :turn_card_to_fake,
-      payload: action
-    }
+    case changeset.valid? do
+      true -> %Action{type: :turn_to_fake, payload: apply_changes(changeset)}
+      false -> raise "Invalid attributes"
+    end
   end
 
   def initiate_cancel(attrs) do
-    action =
-      %InitiateCancel{}
-      |> InitiateCancel.changeset(attrs)
-      |> apply_changes()
+    changeset = %CancelPlayerInitiate{} |> CancelPlayerInitiate.changeset(attrs)
 
-    %Action{
-      type: :initiate_cancel,
-      payload: action
-    }
+    case changeset.valid? do
+      true -> %Action{type: :cancel_player_initiate, payload: apply_changes(changeset)}
+      false -> raise "Invalid attributes"
+    end
   end
 
   def vote_to_cancel(attrs) do
-    # action =
-    #   %VoteToCancel{}
-    #   |> VoteToCancel.changeset(attrs)
-    #   |> apply_changes()
-
-    changeset =
-      %VoteToCancel{}
-      |> VoteToCancel.changeset(attrs)
+    changeset = %CancelPlayerVote{} |> CancelPlayerVote.changeset(attrs)
 
     case changeset.valid? do
-      true ->
-        %Action{
-          type: :vote_to_cancel,
-          payload: apply_changes(changeset)
-        }
-
-      false ->
-        raise "Invalid Attributes"
+      true -> %Action{type: :cancel_player_vote, payload: apply_changes(changeset)}
+      false -> raise "Invalid attributes"
     end
-
-    # %Action{
-    #   type: :vote_to_cancel,
-    #   payload: action
-    # }
   end
 end

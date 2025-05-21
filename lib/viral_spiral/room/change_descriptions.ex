@@ -1,6 +1,8 @@
 defmodule ViralSpiral.Room.ChangeDescriptions do
   @moduledoc """
   Commonly used change options put behind user friendly names.
+
+  deprecated. to be deleted.
   """
 
   def change_clout(offset), do: [type: :clout, offset: offset]

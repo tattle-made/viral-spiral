@@ -1,5 +1,5 @@
-defmodule ViralSpiral.Room.Actions.Player.VoteToCancelTest do
-  alias ViralSpiral.Room.Actions.Player.VoteToCancel
+defmodule ViralSpiral.Room.Actions.Player.CancelPlayerVoteTest do
+  alias ViralSpiral.Room.Actions.Player.CancelPlayerVote
   use ExUnit.Case
 
   @valid_attr %{
@@ -14,14 +14,14 @@ defmodule ViralSpiral.Room.Actions.Player.VoteToCancelTest do
 
   test "validation" do
     changeset =
-      %VoteToCancel{}
-      |> VoteToCancel.changeset(@valid_attr)
+      %CancelPlayerVote{}
+      |> CancelPlayerVote.changeset(@valid_attr)
 
     assert changeset.valid? == true
 
     changeset =
-      %VoteToCancel{}
-      |> VoteToCancel.changeset(@invalid_attr)
+      %CancelPlayerVote{}
+      |> CancelPlayerVote.changeset(@invalid_attr)
 
     assert changeset.valid? == false
   end
