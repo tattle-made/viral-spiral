@@ -1,4 +1,6 @@
 defmodule ViralSpiral.Entity.DeckTest do
+  alias ViralSpiral.Entity.Deck.Changes.RemoveCard
+  alias ViralSpiral.Canon
   alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.Deck
@@ -7,20 +9,20 @@ defmodule ViralSpiral.Entity.DeckTest do
   describe "changes" do
     setup do
       deck = Deck.new()
-
       %{deck: deck}
     end
 
-    @tag timeout: :infinity
     test "remove card", %{deck: deck} do
-      IO.inspect("hi")
-      # draw_type = [type: :affinity, veracity: true, tgb: 2, target: :cat]
-      # draw_result = CanonDeck.draw_card(deck.available_cards, draw_type)
+      card_sets = deck.available_cards
 
-      # new_deck =
-      #   Change.apply_change(deck, ChangeDescriptions.remove_card(draw_type, draw_result))
+      set_key = {:bias, true, :yellow}
+      assert Canon.deck_size(card_sets, set_key) == 30
+      card = Canon.draw_card_from_deck(card_sets, set_key, 3)
 
-      # assert CanonDeck.size(new_deck.available_cards, draw_type) == 59
+      new_deck =
+        Change.change(deck, %RemoveCard{card_sets: card_sets, card_type: set_key, card: card})
+
+      assert Canon.deck_size(new_deck.available_cards, set_key) == 29
     end
   end
 end

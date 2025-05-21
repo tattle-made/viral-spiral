@@ -52,31 +52,11 @@ defmodule ViralSpiral.Entity.Deck do
   end
 
   defimpl Change do
-    @doc """
-    Handle changes to the deck.
+    alias ViralSpiral.Entity.Deck.Changes.RemoveCard
 
-    Possible changes :
-    - Make card unavailable for drawing. Implemted by change type :remove
-    """
-    # @spec apply_change(Deck.t(), Deck.change_opts()) :: Deck.t()
-    def change(%Deck{} = deck, change_desc) do
-      case change_desc[:type] do
-        :remove_card ->
-          new_sets =
-            CanonDeck.remove_card(
-              deck.available_cards,
-              change_desc[:draw_type],
-              change_desc[:card_in_set]
-            )
-
-          Map.put(deck, :available_cards, new_sets)
-
-        :view_source ->
-          deck
-          # article = Encyclopedia.get_article_by_card(deck.encyclopedia, card)
-
-          # Map.put(deck, :)
-      end
+    def change(%Deck{} = deck, %RemoveCard{} = change) do
+      new_set = Canon.remove_card_from_deck(change.card_sets, change.card_type, change.card)
+      Map.put(deck, :available_cards, new_set)
     end
   end
 end
