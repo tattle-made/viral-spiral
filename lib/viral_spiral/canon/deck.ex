@@ -41,16 +41,11 @@ defmodule ViralSpiral.Canon.Deck do
   """
   @spec draw_card(CardSet.card_sets(), CardSet.key_type(), integer()) :: Sparse.t()
   def draw_card(card_sets, set_key, tgb) do
-    {_, veracity, _} = set_key
+    # {_, veracity, _} = set_key
 
-    card_id =
-      card_sets[set_key]
-      |> filter_tgb(tgb)
-      |> choose_one()
-
-    # |> Map.get(:id)
-
-    # Sparse.new(card_id, veracity)
+    card_sets[set_key]
+    |> filter_tgb(tgb)
+    |> choose_one()
   end
 
   defp filter_tgb(set, tgb) do

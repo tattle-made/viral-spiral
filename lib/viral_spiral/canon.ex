@@ -98,18 +98,16 @@ defmodule ViralSpiral.Canon do
 
   defdelegate deck_size(card_sets, set_key), to: Deck, as: :size
 
-  def get_source(sparse_card) do
-  end
-
-  def turn_card_to_fake(card_sets, sparse_card) do
+  def get_article(article_store, %Sparse{} = card) do
+    Encyclopedia.get_article_by_card(article_store, card)
   end
 
   def get_fake_card_from_card_store(store, card_id) when is_bitstring(card_id) do
-    store[{card_id, false}]
+    store[Sparse.new(card_id, false)]
   end
 
   def get_fake_card_from_card_store(store, card) do
-    store[{card.id, false}]
+    store[Sparse.new(card.id, false)]
   end
 
   @doc """
