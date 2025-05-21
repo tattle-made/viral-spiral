@@ -6,7 +6,6 @@ defmodule ViralSpiral.Entity.RoundTest do
   alias ViralSpiral.Entity.Round
   use ExUnit.Case
 
-  @tag :skip
   describe "round progression" do
     test "round progress" do
       round =
@@ -33,7 +32,6 @@ defmodule ViralSpiral.Entity.RoundTest do
     end
   end
 
-  @tag :skip
   describe "skip player in a round" do
     setup do
       round =
@@ -93,7 +91,6 @@ defmodule ViralSpiral.Entity.RoundTest do
     end
   end
 
-  @tag :skip
   describe "changes" do
     setup do
       round =

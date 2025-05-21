@@ -54,7 +54,6 @@ defmodule ViralSpiral.Entity.TurnTest do
     # end
   end
 
-  @tag :skip
   describe "changes" do
     setup do
       round = Fixtures.new_round()
