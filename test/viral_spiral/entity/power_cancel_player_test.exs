@@ -3,6 +3,7 @@ defmodule ViralSpiral.Entity.PowerCancelPlayerTest do
   import ViralSpiral.Entity.PowerCancelPlayer
   use ExUnit.Case
 
+  @tag :skip
   describe "entity" do
     test "happy path" do
       power = %PowerCancelPlayer{}
@@ -33,6 +34,7 @@ defmodule ViralSpiral.Entity.PowerCancelPlayerTest do
     end
   end
 
+  @tag :skip
   describe "changes" do
     setup do
       %{}

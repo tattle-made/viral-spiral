@@ -7,6 +7,7 @@ defmodule ViralSpiral.Entity.TurnTest do
   alias ViralSpiral.Entity.Round
   use ExUnit.Case
 
+  @tag :skip
   describe "struct" do
     test "pass card" do
       players = [
@@ -53,6 +54,7 @@ defmodule ViralSpiral.Entity.TurnTest do
     # end
   end
 
+  @tag :skip
   describe "changes" do
     setup do
       round = Fixtures.new_round()

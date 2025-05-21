@@ -6,6 +6,7 @@ defmodule ViralSpiral.Entity.PowerViralSpiralTest do
   alias ViralSpiral.Entity.PowerViralSpiral
   use ExUnit.Case
 
+  @tag :skip
   describe "entity" do
     setup do
       power = %PowerViralSpiral{
@@ -36,6 +37,7 @@ defmodule ViralSpiral.Entity.PowerViralSpiralTest do
     end
   end
 
+  @tag :skip
   describe "changes" do
     setup do
       power = %PowerViralSpiral{

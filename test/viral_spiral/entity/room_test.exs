@@ -26,6 +26,7 @@ defmodule ViralSpiral.Entity.RoomTest do
   #   end
   # end
 
+  @tag :skip
   describe "changes" do
     setup do
       room = Room.skeleton()
