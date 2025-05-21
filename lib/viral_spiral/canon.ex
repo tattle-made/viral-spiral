@@ -66,7 +66,7 @@ defmodule ViralSpiral.Canon do
   ```
   Read documentation of `draw_card` to see more examples of the responses.
   """
-  alias ViralSpiral.Canon.{Card, Deck, Encyclopedia, Article}
+  alias ViralSpiral.Canon.{Card, Deck, Encyclopedia}
   alias ViralSpiral.Canon.Card.{Sparse}
   import ViralSpiral.Canon.Card.Guards
 

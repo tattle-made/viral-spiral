@@ -1,4 +1,5 @@
 defmodule ViralSpiral.Entity.Deck do
+  alias ViralSpiral.Canon
   alias ViralSpiral.Canon.Encyclopedia
   alias ViralSpiral.Canon.Deck, as: CanonDeck
   alias ViralSpiral.Entity.Deck
@@ -29,27 +30,23 @@ defmodule ViralSpiral.Entity.Deck do
   end
 
   def new() do
-    cards = CanonDeck.load_cards()
-    articles = Encyclopedia.load_articles()
-    article_store = Encyclopedia.create_store(articles)
+    {card_store, card_sets, _, article_store} = Canon.setup()
 
     %Deck{
-      available_cards: CanonDeck.create_sets(cards),
+      available_cards: card_sets,
       dealt_cards: %{},
-      store: CanonDeck.create_store(cards),
+      store: card_store,
       article_store: article_store
     }
   end
 
   def skeleton() do
-    cards = CanonDeck.load_cards()
-    articles = Encyclopedia.load_articles()
-    article_store = Encyclopedia.create_store(articles)
+    {card_store, card_sets, _, article_store} = Canon.setup()
 
     %Deck{
-      available_cards: CanonDeck.create_sets(cards),
+      available_cards: card_sets,
       dealt_cards: %{},
-      store: CanonDeck.create_store(cards),
+      store: card_store,
       article_store: article_store
     }
   end

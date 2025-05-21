@@ -53,7 +53,7 @@ defmodule ViralSpiral.Entity.Player do
   """
   def new(attrs \\ %{}) do
     uxid = Application.get_env(:viral_spiral, :uxid)
-    id = attrs.id || uxid.generate!(prefix: "player", size: :small)
+    id = attrs[:id] || uxid.generate!(prefix: "player", size: :small)
 
     changeset =
       {%{}, @types}
