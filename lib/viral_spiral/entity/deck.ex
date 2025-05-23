@@ -19,6 +19,8 @@ defmodule ViralSpiral.Entity.Deck do
           article_store: map()
         }
 
+  @card_attrs_default [affinities: [:cat, :sock], biases: [:red, :yellow]]
+
   @doc """
   todo : datastructure of cards,  optimized for game operations
   """
@@ -40,8 +42,8 @@ defmodule ViralSpiral.Entity.Deck do
     }
   end
 
-  def skeleton() do
-    {card_store, card_sets, _, article_store} = Canon.setup()
+  def skeleton(card_attrs \\ @card_attrs_default) do
+    {card_store, card_sets, _, article_store} = Canon.setup(card_attrs)
 
     %Deck{
       available_cards: card_sets,

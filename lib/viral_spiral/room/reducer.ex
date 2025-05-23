@@ -2,41 +2,50 @@ defmodule ViralSpiral.Room.Reducer do
   @moduledoc """
 
   """
-  alias ViralSpiral.Room.Analytics.GameState
-  alias ViralSpiral.Canon.DynamicCard
-  alias ViralSpiral.Entity.Source
+  require IEx
+  alias ViralSpiral.Room.CardDraw
   alias ViralSpiral.Canon.Card.Sparse
-  alias ViralSpiral.Entity.PowerViralSpiral
-  alias ViralSpiral.Canon.Encyclopedia
-  alias ViralSpiral.Playable
-  alias ViralSpiral.Room.State
-  alias ViralSpiral.Room.ChangeDescriptions
-  alias ViralSpiral.Canon.Deck
+  alias ViralSpiral.Entity.Player.Changes.AddActiveCard
+  alias ViralSpiral.Entity.Deck.Changes.RemoveCard
+  alias ViralSpiral.Canon
   alias ViralSpiral.Room.Action
+  alias ViralSpiral.Room.State
+
+  alias ViralSpiral.Room.Actions.Player.{
+    ReserveRoom,
+    JoinRoom,
+    StartGame,
+    KeepCard,
+    PassCard,
+    DiscardCard,
+    MarkAsFake,
+    ViewSource,
+    CancelPlayerInitiate,
+    CancelPlayerVote
+  }
+
+  alias ViralSpiral.Room.Actions.Engine.{DrawCard}
 
   # @spec reduce(State.t(), Action.t()) :: State.t()
-  def reduce(%State{} = state, %{type: :draw_card} = action) do
+  def reduce(%State{} = state, %{type: :draw_card, payload: %DrawCard{}} = action) do
+    %{deck: deck} = state
+    card_sets = deck.available_cards
     current_player = State.current_round_player(state)
+    draw_constraints = State.draw_constraints(state)
+    card_type = CardDraw.draw_type(draw_constraints)
+    tgb = draw_constraints.tgb
+    card = Canon.draw_card_from_deck(card_sets, card_type, tgb)
 
-    draw_type = action.payload.draw_type
-    sets = state.deck.available_cards
-    draw_result = Deck.draw_card(sets, draw_type)
-    card = state.deck.store[{draw_result.id, draw_type[:veracity]}]
+    # room_stats = State.stats(state)
+    # card = DynamicCard.maybe_patch_headline(card, room_stats)
 
-    gamestate_analytics = GameState.analytics(state)
-
-    # headline =
-    #   case DynamicCard.valid?(card.headline) do
-    #     true -> DynamicCard.patch(card.headline, gamestate_analytics)
-    #     false -> card.headline
-    #   end
-
-    changes =
-      [
-        {state.deck, ChangeDescriptions.remove_card(draw_type, draw_result)},
-        {state.players[current_player.id],
-         ChangeDescriptions.add_to_active(draw_result.id, draw_type[:veracity])}
-      ]
+    changes = [
+      {state.deck, %RemoveCard{card_sets: card_sets, card_type: card_type, card: card}},
+      {
+        state.players[current_player.id],
+        %AddActiveCard{card: Sparse.new({card.id, elem(card_type, 1)})}
+      }
+    ]
 
     State.apply_changes(state, changes)
   end
@@ -105,13 +114,14 @@ defmodule ViralSpiral.Room.Reducer do
 
     key = {from_id, card.id, card.veracity}
 
-    source = %Source{
-      owner: from_id,
-      headline: article.headline,
-      content: article.content,
-      author: article.author,
-      type: article.type
-    }
+    source = %{}
+    # source = %Source{
+    #   owner: from_id,
+    #   headline: article.headline,
+    #   content: article.content,
+    #   author: article.author,
+    #   type: article.type
+    # }
 
     state
     |> State.apply_changes([
@@ -151,18 +161,18 @@ defmodule ViralSpiral.Room.Reducer do
     end
   end
 
-  def reduce(%State{} = state, %{type: :viral_spiral_pass, to: players} = action)
-      when is_list(players) do
-    card = action.payload.card
+  # def reduce(%State{} = state, %{type: :viral_spiral_pass, to: players} = action)
+  #     when is_list(players) do
+  #   card = action.payload.card
 
-    changes = [
-      {%PowerViralSpiral{}, ChangeDescriptions.PowerViralSpiral.set(players, card)}
-    ]
+  #   changes = [
+  #     {%PowerViralSpiral{}, ChangeDescriptions.PowerViralSpiral.set(players, card)}
+  #   ]
 
-    State.apply_changes(state, changes)
-  end
+  #   State.apply_changes(state, changes)
+  # end
 
-  def reduce(%State{} = state, %{type: :viral_spiral_pass, to: player})
-      when is_bitstring(player) do
-  end
+  # def reduce(%State{} = state, %{type: :viral_spiral_pass, to: player})
+  #     when is_bitstring(player) do
+  # end
 end

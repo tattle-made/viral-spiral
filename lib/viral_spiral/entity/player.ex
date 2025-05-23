@@ -105,6 +105,10 @@ defmodule ViralSpiral.Entity.Player do
     end)
   end
 
+  def set_name(%Player{} = player, name) do
+    %{player | name: name}
+  end
+
   defimpl ViralSpiral.Entity.Change do
     alias ViralSpiral.Entity.Change.UndefinedChange
     alias ViralSpiral.Canon.Card.Sparse

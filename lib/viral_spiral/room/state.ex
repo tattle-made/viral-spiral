@@ -11,6 +11,7 @@ defmodule ViralSpiral.Room.State do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
 
+  alias ViralSpiral.Room.DrawConstraints
   alias ViralSpiral.Entity.PowerCancelPlayer
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Entity.CheckSource
@@ -32,7 +33,6 @@ defmodule ViralSpiral.Room.State do
             round: Round.skeleton(),
             turn: Turn.skeleton(),
             turns: %{},
-            # deck: Deck.skeleton(),
             deck: nil,
             articles: %{},
             power_viralspiral: nil,
@@ -55,9 +55,14 @@ defmodule ViralSpiral.Room.State do
     %State{}
   end
 
-  def new(%Room{} = room, player_names) when is_list(player_names) do
+  def setup(%State{} = state) do
+    room = state.room
+
+    if length(room.unjoined_players) == 0,
+      do: raise("Can not initialize state when no players have joined")
+
     players =
-      player_names
+      room.unjoined_players
       |> Enum.map(fn player_name ->
         Factory.new_player_for_room(room) |> Player.set_name(player_name)
       end)
@@ -65,16 +70,11 @@ defmodule ViralSpiral.Room.State do
 
     round = Round.new(players)
     turn = Turn.new(round)
-    deck = Factory.new_deck(room)
 
-    %State{
-      room: room,
-      players: players,
-      round: round,
-      turn: turn,
-      deck: deck,
-      articles: %{}
-    }
+    card_attrs = State.card_attrs(state)
+    deck = Deck.skeleton(card_attrs)
+
+    %{state | room: room, players: players, round: round, turn: turn, deck: deck}
   end
 
   def set_round(%State{} = game, round) do
@@ -89,6 +89,24 @@ defmodule ViralSpiral.Room.State do
     %{game | turn: turn}
   end
 
+  def draw_constraints(%State{} = state) do
+    curr_player = current_round_player(state)
+
+    %DrawConstraints{
+      tgb: state.room.chaos_counter - 10,
+      total_tgb: 10,
+      biases: state.room.communities,
+      affinities: state.room.affinities,
+      current_player: %{identity: curr_player.identity}
+    }
+  end
+
+  def card_attrs(%State{} = state) do
+    []
+    |> Keyword.put(:affinities, state.room.affinities)
+    |> Keyword.put(:biases, state.room.communities)
+  end
+
   # @spec apply_changes(list(Change.t())) ::
   #         list({:ok, message :: String.t()} | {:error, reason :: String.t()})
   def apply_changes(state, changes) do
@@ -97,12 +115,12 @@ defmodule ViralSpiral.Room.State do
       # IEx.pry()
       data = get_target(state, elem(change, 0))
       change_desc = elem(change, 1)
-      new_value = apply_change(data, change_desc)
+      new_value = change(data, change_desc)
       put_target(state, new_value)
     end)
   end
 
-  defdelegate apply_change(change, change_desc), to: Change
+  defdelegate change(change, change_desc), to: Change
 
   defp get_target(%State{} = state, %Player{id: id}) do
     state.players[id]

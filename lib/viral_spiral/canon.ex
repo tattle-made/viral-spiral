@@ -70,14 +70,16 @@ defmodule ViralSpiral.Canon do
   alias ViralSpiral.Canon.Card.{Sparse}
   import ViralSpiral.Canon.Card.Guards
 
-  def setup() do
+  @card_attrs_default [affinities: [:cat, :sock], biases: [:red, :yellow]]
+
+  def setup(card_attrs \\ @card_attrs_default) do
     cards = Card.load()
     card_store = Card.create_store(cards)
     articles = Encyclopedia.load_articles()
     article_store = Encyclopedia.create_store(articles)
 
     cards = link(cards, article_store)
-    card_sets = Deck.create_sets(cards)
+    card_sets = Deck.create_sets(cards, card_attrs)
 
     {card_store, card_sets, articles, article_store}
   end

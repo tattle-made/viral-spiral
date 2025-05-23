@@ -75,7 +75,7 @@ defmodule ViralSpiral.Canon.Deck do
   @doc """
 
   """
-  @spec size(sets :: CardSet.card_sets(), Set.key_type()) :: non_neg_integer()
+  @spec size(sets :: CardSet.card_sets(), CardSet.key_type()) :: non_neg_integer()
   def size(sets, set_key) do
     case sets[set_key] do
       nil -> -1

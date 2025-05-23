@@ -61,10 +61,10 @@ defmodule ViralSpiral.Entity.Round do
     }
   end
 
-  # def new(players) when is_map(players) do
-  #   player_list = Map.keys(players) |> Enum.map(&players[&1])
-  #   new(player_list)
-  # end
+  def new(players) when is_map(players) do
+    player_list = Map.keys(players) |> Enum.map(&players[&1])
+    new(player_list)
+  end
 
   def skeleton() do
     %Round{}

@@ -1,5 +1,5 @@
-defmodule ViralSpiral.Rules.CardDraw do
-  alias ViralSpiral.Canon.DrawConstraints
+defmodule ViralSpiral.Room.CardDraw do
+  alias ViralSpiral.Room.DrawConstraints
 
   @doc """
   Determines what type of card to draw.
@@ -56,15 +56,14 @@ defmodule ViralSpiral.Rules.CardDraw do
         :topical -> nil
       end
 
-    [type: type, veracity: veracity, tgb: requirements.tgb]
-    |> then(fn type ->
+    {}
+    |> Tuple.insert_at(0, type)
+    |> then(fn val ->
       case target do
-        nil -> type
-        _ -> type |> Keyword.put(:target, target)
+        nil -> Tuple.insert_at(val, 1, veracity) |> Tuple.insert_at(2, nil)
+        _ -> Tuple.insert_at(val, 1, veracity) |> Tuple.insert_at(2, target)
       end
     end)
-
-    # todo it needs to emit something that can be used by Deck.draw_card
   end
 
   defp pick_one(list, opts \\ []) do

@@ -13,21 +13,21 @@ defmodule ViralSpiral.Canon.Deck.CardSet do
 
   General Syntax {type, target, veracity} or {type, veracity}
   """
-  def key(:affinity, target, veracity)
+  def key(:affinity, veracity, target)
       when is_affinity(target) and is_boolean(veracity) do
     {:affinity, veracity, target}
   end
 
-  def key(:bias, target, veracity) when is_community(target) and is_boolean(veracity) do
+  def key(:bias, veracity, target) when is_community(target) and is_boolean(veracity) do
     {:bias, veracity, target}
   end
 
-  def key(:topical, veracity) when is_boolean(veracity) do
-    {:topical, veracity}
+  def key(:topical, veracity, nil) when is_boolean(veracity) do
+    {:topical, veracity, nil}
   end
 
-  def key(:conflated, veracity) when is_boolean(veracity) do
-    {:conflated, veracity}
+  def key(:conflated, veracity, nil) when is_boolean(veracity) do
+    {:conflated, veracity, nil}
   end
 
   def make_member(card) when is_card(card) do

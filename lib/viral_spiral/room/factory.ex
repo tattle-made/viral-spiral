@@ -3,7 +3,8 @@ defmodule ViralSpiral.Room.Factory do
   Create entities for a Game Room
   """
 
-  alias ViralSpiral.Canon.DrawConstraints
+  alias ViralSpiral.Room.DrawConstraints
+
   alias ViralSpiral.Room.Reducer
   alias ViralSpiral.Room.Actions
   alias ViralSpiral.Room.ChangeDescriptions

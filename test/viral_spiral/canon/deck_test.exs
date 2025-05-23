@@ -33,25 +33,25 @@ defmodule ViralSpiral.Canon.DeckTest do
     end
 
     test "draw_card/2", %{sets: sets} do
-      set_key = CardSet.key(:bias, :yellow, true)
+      set_key = CardSet.key(:bias, true, :yellow)
       cardset_member = Deck.draw_card(sets, set_key, 2)
-      assert %Sparse{} = cardset_member
+      assert %{id: id, tgb: tgb} = cardset_member
 
-      set_key = CardSet.key(:bias, :yellow, false)
+      set_key = CardSet.key(:bias, true, :yellow)
       cardset_member = Deck.draw_card(sets, set_key, 8)
-      assert %Sparse{} = cardset_member
+      assert %{id: id, tgb: tgb} = cardset_member
 
-      set_key = CardSet.key(:affinity, :cat, true)
+      set_key = CardSet.key(:affinity, true, :cat)
       cardset_member = Deck.draw_card(sets, set_key, 8)
-      assert %Sparse{} = cardset_member
+      assert %{id: id, tgb: tgb} = cardset_member
 
-      set_key = CardSet.key(:affinity, :cat, false)
+      set_key = CardSet.key(:affinity, false, :cat)
       cardset_member = Deck.draw_card(sets, set_key, 8)
-      assert %Sparse{} = cardset_member
+      assert %{id: id, tgb: tgb} = cardset_member
     end
 
     test "remove_card/3", %{sets: sets} do
-      true_anti_yellow_set = CardSet.key(:bias, :yellow, true)
+      true_anti_yellow_set = CardSet.key(:bias, true, :yellow)
       assert Deck.size(sets, true_anti_yellow_set) == 30
 
       card = CardSet.make_member("card_102551558", 7)
@@ -60,40 +60,40 @@ defmodule ViralSpiral.Canon.DeckTest do
     end
 
     test "size/2", %{sets: sets} do
-      assert Deck.size(sets, CardSet.key(:conflated, false)) == 6
+      assert Deck.size(sets, CardSet.key(:conflated, false, nil)) == 6
 
-      assert Deck.size(sets, CardSet.key(:topical, true)) == 30
-      assert Deck.size(sets, CardSet.key(:topical, false)) == 30
+      assert Deck.size(sets, CardSet.key(:topical, true, nil)) == 30
+      assert Deck.size(sets, CardSet.key(:topical, false, nil)) == 30
 
-      assert Deck.size(sets, CardSet.key(:affinity, :cat, false)) == 60
-      assert Deck.size(sets, CardSet.key(:affinity, :cat, true)) == 60
-      assert Deck.size(sets, CardSet.key(:affinity, :sock, false)) == 60
-      assert Deck.size(sets, CardSet.key(:affinity, :sock, true)) == 60
-      assert Deck.size(sets, CardSet.key(:affinity, :houseboat, false)) == 60
-      assert Deck.size(sets, CardSet.key(:affinity, :houseboat, true)) == 60
-      assert Deck.size(sets, CardSet.key(:affinity, :highfive, false)) == 59
-      assert Deck.size(sets, CardSet.key(:affinity, :highfive, true)) == 30
-      assert Deck.size(sets, CardSet.key(:affinity, :skub, false)) == 60
-      assert Deck.size(sets, CardSet.key(:affinity, :skub, true)) == 60
+      assert Deck.size(sets, CardSet.key(:affinity, false, :cat)) == 60
+      assert Deck.size(sets, CardSet.key(:affinity, true, :cat)) == 60
+      assert Deck.size(sets, CardSet.key(:affinity, false, :sock)) == 60
+      assert Deck.size(sets, CardSet.key(:affinity, true, :sock)) == 60
+      assert Deck.size(sets, CardSet.key(:affinity, false, :houseboat)) == 60
+      assert Deck.size(sets, CardSet.key(:affinity, true, :houseboat)) == 60
+      assert Deck.size(sets, CardSet.key(:affinity, false, :highfive)) == 59
+      assert Deck.size(sets, CardSet.key(:affinity, true, :highfive)) == 30
+      assert Deck.size(sets, CardSet.key(:affinity, false, :skub)) == 60
+      assert Deck.size(sets, CardSet.key(:affinity, true, :skub)) == 60
 
-      assert Deck.size(sets, CardSet.key(:bias, :red, false)) == 30
-      assert Deck.size(sets, CardSet.key(:bias, :red, true)) == 30
-      assert Deck.size(sets, CardSet.key(:bias, :yellow, false)) == 30
-      assert Deck.size(sets, CardSet.key(:bias, :red, true)) == 30
-      assert Deck.size(sets, CardSet.key(:bias, :blue, false)) == 30
-      assert Deck.size(sets, CardSet.key(:bias, :blue, true)) == 30
+      assert Deck.size(sets, CardSet.key(:bias, false, :red)) == 30
+      assert Deck.size(sets, CardSet.key(:bias, true, :red)) == 30
+      assert Deck.size(sets, CardSet.key(:bias, false, :yellow)) == 30
+      assert Deck.size(sets, CardSet.key(:bias, true, :red)) == 30
+      assert Deck.size(sets, CardSet.key(:bias, false, :blue)) == 30
+      assert Deck.size(sets, CardSet.key(:bias, true, :blue)) == 30
     end
 
     test "size!/2", %{sets: sets} do
-      set_key = CardSet.key(:affinity, :sock, true)
+      set_key = CardSet.key(:affinity, true, :sock)
       assert Deck.size(sets, set_key) > 0
 
       assert_raise FunctionClauseError, fn ->
-        Deck.size(sets, CardSet.key(:affinity, :random, true))
+        Deck.size(sets, CardSet.key(:affinity, true, :random))
       end
 
       assert_raise FunctionClauseError, fn ->
-        Deck.size(sets, CardSet.key(1, :random, true))
+        Deck.size(sets, CardSet.key(1, true, :random))
       end
     end
   end

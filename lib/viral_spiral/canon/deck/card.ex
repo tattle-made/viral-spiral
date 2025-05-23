@@ -31,6 +31,7 @@ defimpl ViralSpiral.Canon.Deck.Card, for: ViralSpiral.Canon.Card.Topical do
     {}
     |> Tuple.insert_at(0, card.type)
     |> Tuple.insert_at(1, card.veracity)
+    |> Tuple.insert_at(2, nil)
   end
 end
 
@@ -41,5 +42,6 @@ defimpl ViralSpiral.Canon.Deck.Card, for: ViralSpiral.Canon.Card.Conflated do
     {}
     |> Tuple.insert_at(0, card.type)
     |> Tuple.insert_at(1, card.veracity)
+    |> Tuple.insert_at(2, nil)
   end
 end

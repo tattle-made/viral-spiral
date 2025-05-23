@@ -1,4 +1,4 @@
-defmodule ViralSpiral.Canon.DrawConstraints do
+defmodule ViralSpiral.Room.DrawConstraints do
   alias ViralSpiral.Affinity
   alias ViralSpiral.Bias
 
@@ -19,13 +19,13 @@ defmodule ViralSpiral.Canon.DrawConstraints do
         }
 end
 
-defmodule ViralSpiral.Canon.DrawTypeRequirements.Adapter do
-  alias ViralSpiral.Canon.DrawConstraints
-  alias ViralSpiral.Room.State
+# defmodule ViralSpiral.Room.DrawTypeRequirements.Adapter do
+#   alias ViralSpiral.Canon.DrawConstraints
+#   alias ViralSpiral.Room.State
 
-  def new(%State{} = state) do
-    %DrawConstraints{
-      tgb: state.room
-    }
-  end
-end
+#   def new(%State{} = state) do
+#     %DrawConstraints{
+#       tgb: state.room
+#     }
+#   end
+# end
