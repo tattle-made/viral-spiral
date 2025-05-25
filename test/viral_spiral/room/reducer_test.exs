@@ -114,6 +114,36 @@ defmodule ViralSpiral.Room.ReducerTest do
       assert state.players[adhiraj].biases.red == 1
       assert state.players[aman].active_cards |> length() == 1
     end
+
+    test "pass topical card", %{state: state, players: players} do
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
+      state =
+        state
+        |> StateFixtures.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateFixtures.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
+
+      card_sets = state.deck.available_cards
+      set_key = CardSet.key(:topical, true, nil)
+      cardset_member = Deck.draw_card(card_sets, set_key, 4)
+      sparse_card = Sparse.new(cardset_member.id, true)
+
+      state = state |> StateFixtures.update_player(adhiraj, %{active_cards: [sparse_card]})
+
+      pass_card_attrs = %{
+        from_id: adhiraj,
+        to_id: aman,
+        card: %{
+          id: cardset_member.id,
+          veracity: true
+        }
+      }
+
+      state = Reducer.reduce(state, Actions.pass_card(pass_card_attrs))
+
+      assert state.players[adhiraj].clout == 1
+      assert state.players[aman].active_cards |> length() == 1
+    end
   end
 
   # describe "pass card" do
