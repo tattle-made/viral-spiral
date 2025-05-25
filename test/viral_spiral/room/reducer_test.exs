@@ -180,6 +180,77 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
   end
 
+  describe "mark as fake" do
+    setup do
+      :rand.seed(:exsss, {123, 135, 254})
+      {state, players} = StateFixtures.new_game_with_four_players()
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
+      state =
+        state
+        |> StateFixtures.update_round(%{order: [adhiraj, aman, farah, krys]})
+        |> StateFixtures.update_turn(%{
+          current: farah,
+          pass_to: [krys],
+          path: [adhiraj, aman]
+        })
+
+      %{state: state, players: players}
+    end
+
+    # farah has received a true card from aman
+    # We will force draw a true card and then have farah mark it as fake
+    test "mark true card as fake", %{state: state, players: players} do
+      %{farah: farah, aman: aman} = players
+      card_sets = state.deck.available_cards
+      set_key = CardSet.key(:bias, true, :red)
+      cardset_member = Deck.draw_card(card_sets, set_key, 4)
+      sparse_card = Sparse.new(cardset_member.id, true)
+
+      state =
+        state
+        |> StateFixtures.update_player(farah, %{active_cards: [sparse_card]})
+
+      mark_as_fake_attrs = %{
+        from_id: farah,
+        card: %{
+          id: cardset_member.id,
+          veracity: true
+        }
+      }
+
+      state = Reducer.reduce(state, Actions.mark_card_as_fake(mark_as_fake_attrs))
+      assert state.players[farah].clout == -1
+      assert state.players[aman].clout == 0
+    end
+
+    # farah has received a fake card from aman
+    # We will force draw a fake card and then have farah mark it as fake
+    test "mark false card as fake", %{state: state, players: players} do
+      %{farah: farah, aman: aman} = players
+      card_sets = state.deck.available_cards
+      set_key = CardSet.key(:bias, false, :red)
+      cardset_member = Deck.draw_card(card_sets, set_key, 4)
+      sparse_card = Sparse.new(cardset_member.id, false)
+
+      state =
+        state
+        |> StateFixtures.update_player(farah, %{active_cards: [sparse_card]})
+
+      mark_as_fake_attrs = %{
+        from_id: farah,
+        card: %{
+          id: cardset_member.id,
+          veracity: false
+        }
+      }
+
+      state = Reducer.reduce(state, Actions.mark_card_as_fake(mark_as_fake_attrs))
+      assert state.players[farah].clout == 0
+      assert state.players[aman].clout == -1
+    end
+  end
+
   # describe "mark as fake" do
   #   setup do
   #     state = %State{

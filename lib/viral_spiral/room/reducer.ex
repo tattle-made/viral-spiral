@@ -92,16 +92,15 @@ defmodule ViralSpiral.Room.Reducer do
   end
 
   def reduce(%State{} = state, %Action{type: :mark_card_as_fake} = action) do
-    %{from: from, card: card, turn: turn} = action.payload
+    %{from_id: from_id, card: card} = action.payload
+    turn = state.turn
 
     clout_penalty_change =
       if card.veracity == false,
-        do: {state.players[Enum.at(turn.path, 1)], ChangeDescriptions.change_clout(-1)},
-        else: {state.players[from.id], ChangeDescriptions.change_clout(-1)}
+        do: {state.players[Enum.at(turn.path, 1)], %Clout{offset: -1}},
+        else: {state.players[from_id], %Clout{offset: -1}}
 
     State.apply_changes(state, [clout_penalty_change])
-
-    # todo : will the card be kept/discarded at this point?
   end
 
   def reduce(%State{} = state, %{type: :create_room}) do

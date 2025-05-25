@@ -101,7 +101,7 @@ defmodule ViralSpiral.Room.Actions do
     changeset = %MarkAsFake{} |> MarkAsFake.changeset(attrs)
 
     case changeset.valid? do
-      true -> %Action{type: :mark_as_fake, payload: apply_changes(changeset)}
+      true -> %Action{type: :mark_card_as_fake, payload: apply_changes(changeset)}
       false -> raise "Invalid attributes"
     end
   end

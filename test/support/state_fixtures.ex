@@ -51,6 +51,7 @@ defmodule StateFixtures do
   def update_turn(%State{} = state, attrs) do
     state = put_in(state.turn.current, attrs[:current] || state.turn.current)
     state = put_in(state.turn.pass_to, attrs[:pass_to] || state.round.pass_to)
+    state = put_in(state.turn.path, attrs[:path] || state.turn.path)
     state
   end
 
