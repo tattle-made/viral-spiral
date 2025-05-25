@@ -146,129 +146,39 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
   end
 
-  # describe "pass card" do
-  #   setup do
-  #     # Setup a room with affinities :sock and :skub
-  #     # and communities :red, :yellow and :blue
-  #     # current player is named farah
-  #     :rand.seed(:exsss, {12356, 123_534, 345_345})
-  #     room = Room.reserve("test-room") |> Room.start(4)
-  #     state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
+  describe "check source" do
+    setup do
+      :rand.seed(:exsss, {123, 135, 254})
+      {state, players} = StateFixtures.new_game_with_four_players()
+      %{state: state, players: players}
+    end
 
-  #     %{state: state}
-  #   end
+    test "view and hide source", %{state: state, players: players} do
+      %{adhiraj: adhiraj} = players
 
-  #   test "pass affinity card", %{state: state} do
-  #     draw_type = [type: :affinity, target: :sock, veracity: true, tgb: 2]
-  #     draw_card_action = Actions.draw_card(draw_type)
-  #     state = Reducer.reduce(state, draw_card_action)
+      card_sets = state.deck.available_cards
+      set_key = CardSet.key(:bias, true, :red)
+      cardset_member = Deck.draw_card(card_sets, set_key, 4)
 
-  #     %{farah: farah, adhiraj: adhiraj} = StateFixtures.player_by_names(state)
-  #     card = StateFixtures.active_card(state, farah.id, 0)
+      attrs = %{
+        from_id: adhiraj,
+        card: %{
+          id: cardset_member.id,
+          veracity: true
+        }
+      }
 
-  #     action =
-  #       Actions.pass_card(%{
-  #         "from_id" => farah.id,
-  #         "to_id" => adhiraj.id,
-  #         "card" => %{"id" => card.id, "veracity" => card.veracity}
-  #       })
+      state = Reducer.reduce(state, Actions.view_source(attrs))
+      sparse_card = Sparse.new(cardset_member.id, true)
+      assert state.players[adhiraj].open_articles[sparse_card] != nil
+      player_article = state.players[adhiraj].open_articles[sparse_card]
+      assert player_article.card_id == sparse_card.id
+      assert player_article.veracity == true
 
-  #     state = Reducer.reduce(state, action)
-
-  #     %{farah: farah, adhiraj: adhiraj} = StateFixtures.player_by_names(state)
-
-  #     assert farah.affinities.sock == 1
-  #     assert farah.clout == 1
-  #     assert adhiraj.active_cards == [{"card_82969419", true}]
-  #   end
-
-  #   test "pass bias card", %{state: state} do
-  #     draw_type = [type: :bias, target: :red, veracity: true, tgb: 2]
-  #     draw_card_action = Actions.draw_card(draw_type)
-  #     state = Reducer.reduce(state, draw_card_action)
-
-  #     %{farah: farah, adhiraj: adhiraj} = StateFixtures.player_by_names(state)
-  #     card = StateFixtures.active_card(state, farah.id, 0)
-
-  #     action =
-  #       Actions.pass_card(%{
-  #         "from_id" => farah.id,
-  #         "to_id" => adhiraj.id,
-  #         "card" => %{"id" => card.id, "veracity" => card.veracity}
-  #       })
-
-  #     state = Reducer.reduce(state, action)
-
-  #     %{farah: farah, adhiraj: adhiraj, aman: aman, krys: krys} =
-  #       StateFixtures.player_by_names(state)
-
-  #     assert farah.biases.red == 1
-  #     assert farah.clout == 1
-  #     assert adhiraj.active_cards == [{"card_4168848", true}]
-  #     assert aman.clout == -1
-  #     assert krys.clout == -1
-  #   end
-
-  #   test "pass topical card", %{state: state} do
-  #     draw_type = [type: :topical, veracity: true, tgb: 2]
-  #     draw_card_action = Actions.draw_card(draw_type)
-  #     state = Reducer.reduce(state, draw_card_action)
-
-  #     %{farah: farah, adhiraj: adhiraj} = StateFixtures.player_by_names(state)
-  #     card = StateFixtures.active_card(state, farah.id, 0)
-
-  #     action =
-  #       Actions.pass_card(%{
-  #         "from_id" => farah.id,
-  #         "to_id" => adhiraj.id,
-  #         "card" => %{"id" => card.id, "veracity" => card.veracity}
-  #       })
-
-  #     state = Reducer.reduce(state, action)
-
-  #     %{farah: farah, adhiraj: adhiraj, aman: aman, krys: krys} =
-  #       StateFixtures.player_by_names(state)
-
-  #     assert farah.clout == 1
-  #     assert adhiraj.active_cards == [{"card_63010791", true}]
-  #   end
-  # end
-
-  # describe "check source" do
-  #   import Fixtures
-
-  #   setup do
-  #     :rand.seed(:exsss, {12356, 123_534, 345_345})
-
-  #     state = new_game()
-  #     players = player_by_names(state)
-  #     %{farah: farah} = players
-  #     state = state |> add_active_card(farah.id, %{id: "card_88743234", veracity: true})
-
-  #     %{state: state, players: players}
-  #   end
-
-  #   test "true card", %{state: state, players: players} do
-  #     %{aman: aman, farah: farah} = players
-  #     card = StateFixtures.active_card(state, farah.id, 0)
-
-  #     action_attr = %{
-  #       "from_id" => farah.id,
-  #       "card" => %{
-  #         "id" => card.id,
-  #         "veracity" => card.veracity
-  #       }
-  #     }
-
-  #     view_source_action = Actions.view_source(action_attr)
-  #     state = Reducer.reduce(state, view_source_action)
-  #     source = state.power_check_source.map[{farah.id, card.id, card.veracity}]
-
-  #     assert source.owner == farah.id
-  #     assert source.headline == "A skub a day keeps the blues away!"
-  #     assert source.author == "City Desk"
-  #   end
-  # end
+      state = Reducer.reduce(state, Actions.hide_source(attrs))
+      assert state.players[adhiraj].open_articles[sparse_card] == nil
+    end
+  end
 
   # describe "mark as fake" do
   #   setup do

@@ -3,6 +3,8 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.Player.Changes.CloseArticle
+  alias ViralSpiral.Entity.Player.Changes.ViewArticle
   alias ViralSpiral.Entity.Player.Changes.Affinity
   alias ViralSpiral.Entity.Turn.Change.NextTurn
   alias ViralSpiral.Entity.Player.Changes.RemoveActiveCard
@@ -114,34 +116,24 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %{type: :view_source} = action) do
     %{from_id: from_id, card: card} = action.payload
     sparse_card = Sparse.new({card.id, card.veracity})
-    article = Encyclopedia.get_article_by_card(state.deck.article_store, sparse_card)
+    article = Canon.get_article(state.deck.article_store, sparse_card)
 
-    key = {from_id, card.id, card.veracity}
+    changes = [
+      {state.players[from_id], %ViewArticle{card: sparse_card, article: article}}
+    ]
 
-    source = %{}
-    # source = %Source{
-    #   owner: from_id,
-    #   headline: article.headline,
-    #   content: article.content,
-    #   author: article.author,
-    #   type: article.type
-    # }
-
-    state
-    |> State.apply_changes([
-      {state.power_check_source, [type: :put, key: key, source: source]}
-    ])
+    State.apply_changes(state, changes)
   end
 
   def reduce(%State{} = state, %{type: :hide_source} = action) do
-    %{card_id: card_id, card_veracity: card_veracity, player_id: player_id} = action.payload
+    %{from_id: from_id, card: card} = action.payload
+    sparse_card = Sparse.new({card.id, card.veracity})
 
-    key = "#{player_id}_#{card_id}_#{card_veracity}"
+    changes = [
+      {state.players[from_id], %CloseArticle{card: sparse_card}}
+    ]
 
-    state
-    |> State.apply_changes([
-      {state.power_check_source, [type: :drop, key: key]}
-    ])
+    State.apply_changes(state, changes)
   end
 
   def reduce(%State{} = state, %Action{type: :turn_card_to_fake} = action) do
