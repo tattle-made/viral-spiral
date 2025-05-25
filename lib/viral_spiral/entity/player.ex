@@ -10,6 +10,7 @@ defmodule ViralSpiral.Entity.Player do
   }
   """
 
+  alias ViralSpiral.Entity.Article
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Bias, as: ViralSpiralBias
@@ -23,7 +24,8 @@ defmodule ViralSpiral.Entity.Player do
             name: "",
             identity: nil,
             hand: [],
-            active_cards: []
+            active_cards: [],
+            open_articles: %{}
 
   @type t :: %__MODULE__{
           id: String.t(),
@@ -33,7 +35,8 @@ defmodule ViralSpiral.Entity.Player do
           biases: %{optional(ViralSpiralBias.target()) => integer()},
           affinities: %{optional(ViralSpiralAffinity.target()) => integer()},
           hand: list(Sparse.t()),
-          active_cards: list(Sparse.t())
+          active_cards: list(Sparse.t()),
+          open_articles: %{headline: String.t(), description: String.t()}
         }
 
   # Enable Ecto cast and validation features on this struct.
@@ -110,6 +113,7 @@ defmodule ViralSpiral.Entity.Player do
   end
 
   defimpl ViralSpiral.Entity.Change do
+    alias ViralSpiral.Entity.Player.Changes.CloseArticle
     alias ViralSpiral.Entity.Change.UndefinedChange
     alias ViralSpiral.Canon.Card.Sparse
     alias ViralSpiral.Entity.Player
@@ -206,17 +210,13 @@ defmodule ViralSpiral.Entity.Player do
     end
 
     def change(%Player{} = player, %ViewArticle{} = change) do
-      card = change.card
+      open_articles = Map.put(player.open_articles, change.card, change.article)
+      %{player | open_articles: open_articles}
+    end
 
-      case Enum.find(player.active_cards, &(&1 == card.id)) do
-        nil ->
-          player
-
-        ix ->
-          entry = Enum.at(player.active_cards, ix)
-          new_entry = Map.put(entry, :source, change.article)
-          Map.put(player, :active_cards, new_entry)
-      end
+    def change(%Player{} = player, %CloseArticle{} = change) do
+      open_articles = Map.delete(player.open_articles, change.card)
+      %{player | open_articles: open_articles}
     end
 
     def change(%Player{} = _player, _change) do

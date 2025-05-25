@@ -80,4 +80,13 @@ defmodule ViralSpiral.Entity.Player.Changes do
             article: Article.t()
           }
   end
+
+  defmodule CloseArticle do
+    alias ViralSpiral.Canon.Card.Sparse
+    defstruct [:card]
+
+    @type t :: %__MODULE__{
+            card: Sparse.t()
+          }
+  end
 end

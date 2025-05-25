@@ -1,4 +1,7 @@
 defmodule ViralSpiral.Game.PlayerTest do
+  alias ViralSpiral.Entity.Player.Changes.CloseArticle
+  alias ViralSpiral.Entity.Player.Changes.ViewArticle
+  alias ViralSpiral.Canon.Article
   alias ViralSpiral.Entity.Player.Changes.RemoveActiveCard
   alias ViralSpiral.Entity.Player.Changes.AddActiveCard
   alias ViralSpiral.Canon.Card.Sparse
@@ -124,6 +127,23 @@ defmodule ViralSpiral.Game.PlayerTest do
 
       player = Change.change(player, %RemoveActiveCard{card: card_a})
       assert player.active_cards == []
+    end
+
+    test "view and hide source", %{player: player} do
+      card_a = %Sparse{id: "card_29323", veracity: true}
+      article_a = %Article{card_id: "card_29323", veracity: true}
+      player = Change.change(player, %ViewArticle{card: card_a, article: article_a})
+      assert player.open_articles[card_a] == article_a
+
+      card_b = %Sparse{id: "card_6866", veracity: true}
+      article_b = %Article{card_id: "card_6866", veracity: true}
+      player = Change.change(player, %ViewArticle{card: card_b, article: article_b})
+      assert player.open_articles[card_b] == article_b
+
+      assert Map.keys(player.open_articles) |> length() == 2
+      player = Change.change(player, %CloseArticle{card: card_a})
+      assert player.open_articles[card_a] == nil
+      assert Map.keys(player.open_articles) |> length() == 1
     end
   end
 end
