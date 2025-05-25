@@ -10,7 +10,6 @@ defmodule ViralSpiral.Game.PlayerTest do
   alias ViralSpiral.Entity.Player.Changes.Affinity
   alias ViralSpiral.Entity.Player.Changes.Clout
   alias ViralSpiral.Room.Factory
-  alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Entity.Room
   alias ViralSpiral.Entity.Player.ActiveCardDoesNotExist
   alias ViralSpiral.Entity.Player.DuplicateActiveCardException

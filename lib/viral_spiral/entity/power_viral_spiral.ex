@@ -67,39 +67,38 @@ defmodule ViralSpiral.Entity.PowerViralSpiral do
 
   defimpl Change do
     alias ViralSpiral.Canon.Card.Sparse
-    alias ViralSpiral.Room.ChangeDescriptions
 
-    def apply_change(state, change_desc) do
-      case change_desc[:type] do
-        :set ->
-          players = change_desc[:players]
-          card = change_desc[:card]
+    # def apply_change(state, change_desc) do
+    #   case change_desc[:type] do
+    #     :set ->
+    #       players = change_desc[:players]
+    #       card = change_desc[:card]
 
-          PowerViralSpiral.new(card, players)
+    #       PowerViralSpiral.new(card, players)
 
-        :reset ->
-          PowerViralSpiral.reset(state)
+    #     :reset ->
+    #       PowerViralSpiral.reset(state)
 
-        :pass ->
-          from = change_desc[:from]
-          to = change_desc[:to]
-          turn = PowerViralSpiral.get_turn(state, from)
+    #     :pass ->
+    #       from = change_desc[:from]
+    #       to = change_desc[:to]
+    #       turn = PowerViralSpiral.get_turn(state, from)
 
-          turn = Change.apply_change(turn, ChangeDescriptions.pass_turn_to(to))
+    #       turn = Change.apply_change(turn, ChangeDescriptions.pass_turn_to(to))
 
-          # remove options from other player's turn
-          other_turns =
-            PowerViralSpiral.other_turns(state, from)
-            |> Enum.map(&Map.put(&1, :pass_to, &1.pass_to -- [to]))
+    #       # remove options from other player's turn
+    #       other_turns =
+    #         PowerViralSpiral.other_turns(state, from)
+    #         |> Enum.map(&Map.put(&1, :pass_to, &1.pass_to -- [to]))
 
-          new_turn = [turn] ++ other_turns
+    #       new_turn = [turn] ++ other_turns
 
-          # check if this no possible pass options remain
-          case length(turn.pass_to) do
-            0 -> nil
-            _ -> %{state | turns: new_turn}
-          end
-      end
-    end
+    #       # check if this no possible pass options remain
+    #       case length(turn.pass_to) do
+    #         0 -> nil
+    #         _ -> %{state | turns: new_turn}
+    #       end
+    #   end
+    # end
   end
 end

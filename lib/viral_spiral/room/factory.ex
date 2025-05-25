@@ -7,7 +7,6 @@ defmodule ViralSpiral.Room.Factory do
 
   alias ViralSpiral.Room.Reducer
   alias ViralSpiral.Room.Actions
-  alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Room.State
   alias ViralSpiral.Room.EngineConfig
   alias ViralSpiral.Canon.Card.Sparse
@@ -133,11 +132,6 @@ defmodule ViralSpiral.Room.Factory do
     %State{
       room: Room.new()
     }
-  end
-
-  def join(%State{} = state, player_name) do
-    room = Change.apply_change(state.room, ChangeDescriptions.Room.join(player_name))
-    %{state | room: room}
   end
 
   def start(%State{} = state) do

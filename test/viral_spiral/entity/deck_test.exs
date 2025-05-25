@@ -1,7 +1,6 @@
 defmodule ViralSpiral.Entity.DeckTest do
   alias ViralSpiral.Entity.Deck.Changes.RemoveCard
   alias ViralSpiral.Canon
-  alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.Deck
   use ExUnit.Case

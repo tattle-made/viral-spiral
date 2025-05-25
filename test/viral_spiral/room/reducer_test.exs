@@ -11,7 +11,6 @@ defmodule ViralSpiral.Room.ReducerTest do
   alias ViralSpiral.Entity.PlayerMap
   alias ViralSpiral.Room.Factory
   alias ViralSpiral.Room.Actions
-  alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Room.Reducer

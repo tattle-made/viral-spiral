@@ -1,7 +1,6 @@
 defmodule ViralSpiral.Entity.RoundTest do
   alias ViralSpiral.Entity.Round.Changes.SkipRound
   alias ViralSpiral.Entity.Round.Changes.NextRound
-  alias ViralSpiral.Room.ChangeDescriptions
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.Round
   use ExUnit.Case
