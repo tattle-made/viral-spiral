@@ -250,39 +250,77 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
   end
 
-  # describe "turn card to fake" do
-  #   setup do
-  #     state = StateFixtures.new_game()
-  #     state = %{state | deck: Factory.new_deck(state.room)}
-  #     active_cards = [{"card_94393892", true, "true headline"}]
-  #     state = put_in(state.players["player_abc"].active_cards, active_cards)
+  describe "turn to fake" do
+    setup do
+      :rand.seed(:exsss, {123, 135, 254})
+      {state, players} = StateFixtures.new_game_with_four_players()
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
-  #     %{state: state}
-  #   end
+      state =
+        state
+        |> StateFixtures.update_round(%{order: [adhiraj, aman, farah, krys]})
+        |> StateFixtures.update_turn(%{
+          current: adhiraj,
+          pass_to: [aman, farah, krys],
+          path: []
+        })
 
-  #   test "turn card to fake", %{state: state} do
-  #     action_attr = %{
-  #       "player_id" => "player_abc",
-  #       "card" => %{
-  #         "id" => "card_94393892",
-  #         "type" => :affinity,
-  #         "veracity" => true,
-  #         "target" => :skub
-  #       }
-  #     }
+      %{state: state, players: players}
+    end
 
-  #     player = State.current_turn_player(state)
-  #     active_card = State.active_card(state, player.id, 0)
-  #     assert active_card.id == "card_94393892"
-  #     assert active_card.veracity == true
+    test "true card", %{state: state, players: players} do
+      %{farah: farah} = players
+      card_sets = state.deck.available_cards
+      set_key = CardSet.key(:affinity, true, :highfive)
+      cardset_member = Deck.draw_card(card_sets, set_key, 4)
+      sparse_card = Sparse.new(cardset_member.id, true)
 
-  #     action = Actions.turn_to_fake(action_attr)
-  #     state = Reducer.reduce(state, action)
-  #     active_card = State.active_card(state, player.id, 0)
-  #     assert active_card.id == "card_94393892"
-  #     assert active_card.veracity == false
-  #   end
-  # end
+      state =
+        state
+        |> StateFixtures.update_player(farah, %{active_cards: [sparse_card]})
+
+      attrs = %{
+        from_id: farah,
+        card: %{
+          id: cardset_member.id,
+          veracity: true
+        }
+      }
+
+      active_card = StateFixtures.active_card(state, farah, 0)
+      assert active_card.veracity == true
+      state = Reducer.reduce(state, Actions.turn_to_fake(attrs))
+      active_card = StateFixtures.active_card(state, farah, 0)
+      assert active_card.veracity == false
+    end
+
+    test "false card", %{state: state, players: players} do
+      %{farah: farah} = players
+      card_sets = state.deck.available_cards
+      set_key = CardSet.key(:affinity, false, :highfive)
+      cardset_member = Deck.draw_card(card_sets, set_key, 4)
+      sparse_card = Sparse.new(cardset_member.id, false)
+
+      state =
+        state
+        |> StateFixtures.update_player(farah, %{active_cards: [sparse_card]})
+
+      attrs = %{
+        from_id: farah,
+        card: %{
+          id: cardset_member.id,
+          veracity: false
+        }
+      }
+
+      active_card = StateFixtures.active_card(state, farah, 0)
+      assert active_card.veracity == false
+
+      assert_raise RuntimeError, "This card is already false", fn ->
+        state = Reducer.reduce(state, Actions.turn_to_fake(attrs))
+      end
+    end
+  end
 
   # @tag timeout: :infinity
   # describe "viral spiral" do

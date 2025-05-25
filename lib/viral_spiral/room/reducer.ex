@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.Player.Changes.MakeActiveCardFake
   alias ViralSpiral.Entity.Player.Changes.CloseArticle
   alias ViralSpiral.Entity.Player.Changes.ViewArticle
   alias ViralSpiral.Entity.Player.Changes.Affinity
@@ -136,24 +137,24 @@ defmodule ViralSpiral.Room.Reducer do
   end
 
   def reduce(%State{} = state, %Action{type: :turn_card_to_fake} = action) do
-    %{player_id: player_id, card: card} = action.payload
+    %{from_id: from_id, card: card} = action.payload
 
     # todo : only turn to fake if not already fake
-    # case card.veracity do
-    #   true ->
-    #     fake_card = state.deck.store[{card.id, false}]
-    #     # todo add dynamic headline
-    #     sparse_card = Sparse.new(fake_card.id, fake_card.veracity, fake_card.headline)
+    case card.veracity do
+      true ->
+        fake_card = state.deck.store[Sparse.new(card.id, false)]
+        sparse_card = Sparse.new(fake_card.id, fake_card.veracity, fake_card.headline)
+        # todo add dynamic headline
 
-    #     changes = [
-    #       {state.players[player_id],  ChangeDescriptions.turn_to_fake(sparse_card)}
-    #     ]
+        changes = [
+          {state.players[from_id], %MakeActiveCardFake{card: sparse_card}}
+        ]
 
-    #     State.apply_changes(state, changes)
+        State.apply_changes(state, changes)
 
-    #   false ->
-    #     raise "This card is already false"
-    # end
+      false ->
+        raise "This card is already false"
+    end
   end
 
   # def reduce(%State{} = state, %{type: :viral_spiral_pass, to: players} = action)

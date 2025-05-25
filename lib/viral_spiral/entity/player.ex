@@ -201,10 +201,14 @@ defmodule ViralSpiral.Entity.Player do
       card_id = change.card.id
       new_card = change.card
 
-      ix = Enum.find_index(player.active_cards, fn x -> elem(x, 0) == card_id end)
+      ix = Enum.find_index(player.active_cards, fn card -> card.id == card_id end)
 
       active_cards =
-        List.replace_at(player.active_cards, ix, {card_id, new_card.veracity, new_card.headline})
+        List.replace_at(
+          player.active_cards,
+          ix,
+          Sparse.new(card_id, new_card.veracity, new_card.headline)
+        )
 
       %{player | active_cards: active_cards}
     end
