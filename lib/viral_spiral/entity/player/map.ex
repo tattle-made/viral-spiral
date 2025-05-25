@@ -12,7 +12,6 @@ defmodule ViralSpiral.Entity.Player.Map do
   def of_identity(players, identity) when is_community(identity) and is_map(players) do
     Map.keys(players)
     |> Enum.filter(&(players[&1].identity == identity))
-    |> to_full_map(players)
   end
 
   @doc """

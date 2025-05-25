@@ -1,5 +1,7 @@
 defmodule ViralSpiral.Room.ReducerTest do
   require IEx
+  alias ViralSpiral.Canon.Deck.CardSet
+  alias ViralSpiral.Room.Actions.Player.PassCard
   alias ViralSpiral.Room.Card.Player, as: CardPlayer
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Entity.Round
@@ -38,8 +40,79 @@ defmodule ViralSpiral.Room.ReducerTest do
 
     test "draw_card", %{state: state} do
       state = Reducer.reduce(state, Actions.draw_card())
+      current_player = State.current_round_player(state)
       # assert Deck.size(new_state.deck.available_cards, draw_type) == 59
       assert length(current_player.active_cards) == 1
+    end
+  end
+
+  describe "pass card" do
+    setup do
+      :rand.seed(:exsss, {123, 135, 254})
+      {state, players} = StateFixtures.new_game_with_four_players()
+      %{state: state, players: players}
+    end
+
+    test "pass affinity card", %{state: state, players: players} do
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
+      state =
+        state
+        |> StateFixtures.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateFixtures.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
+
+      card_sets = state.deck.available_cards
+      set_key = CardSet.key(:affinity, true, :houseboat)
+      cardset_member = Deck.draw_card(card_sets, set_key, 4)
+      sparse_card = Sparse.new(cardset_member.id, true)
+
+      state = state |> StateFixtures.update_player(adhiraj, %{active_cards: [sparse_card]})
+
+      pass_card_attrs = %{
+        from_id: adhiraj,
+        to_id: aman,
+        card: %{
+          id: cardset_member.id,
+          veracity: true
+        }
+      }
+
+      state = Reducer.reduce(state, Actions.pass_card(pass_card_attrs))
+
+      assert state.players[adhiraj].clout == 1
+      assert state.players[adhiraj].affinities.houseboat == -1
+      assert state.players[aman].active_cards |> length() == 1
+    end
+
+    test "pass bias card", %{state: state, players: players} do
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
+      state =
+        state
+        |> StateFixtures.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateFixtures.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
+
+      card_sets = state.deck.available_cards
+      set_key = CardSet.key(:bias, true, :red)
+      cardset_member = Deck.draw_card(card_sets, set_key, 4)
+      sparse_card = Sparse.new(cardset_member.id, true)
+
+      state = state |> StateFixtures.update_player(adhiraj, %{active_cards: [sparse_card]})
+
+      pass_card_attrs = %{
+        from_id: adhiraj,
+        to_id: aman,
+        card: %{
+          id: cardset_member.id,
+          veracity: true
+        }
+      }
+
+      state = Reducer.reduce(state, Actions.pass_card(pass_card_attrs))
+
+      assert state.players[adhiraj].clout == 1
+      assert state.players[adhiraj].biases.red == 1
+      assert state.players[aman].active_cards |> length() == 1
     end
   end
 

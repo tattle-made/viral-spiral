@@ -3,6 +3,11 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.Player.Changes.Affinity
+  alias ViralSpiral.Entity.Turn.Change.NextTurn
+  alias ViralSpiral.Entity.Player.Changes.RemoveActiveCard
+  alias ViralSpiral.Entity.Player.Changes.Clout
+  alias ViralSpiral.Room.Playable
   alias ViralSpiral.Room.CardDraw
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Entity.Player.Changes.AddActiveCard
@@ -52,16 +57,15 @@ defmodule ViralSpiral.Room.Reducer do
 
   def reduce(%State{} = state, %Action{type: :pass_card} = action) do
     %{card: card, from_id: from_id, to_id: to_id} = action.payload
-    card = state.deck.store[{card.id, card.veracity}]
-    current_round_player = State.current_round_player(state)
+    sparse_card = Sparse.new(card.id, card.veracity)
+    card = state.deck.store[sparse_card]
 
     changes =
       Playable.pass(card, state, from_id, to_id) ++
         [
-          {state.players[current_round_player.id], ChangeDescriptions.change_clout(1)},
-          {state.players[from_id], ChangeDescriptions.remove_active(card.id, card.veracity)},
-          {state.players[to_id], ChangeDescriptions.add_to_active(card.id, card.veracity)},
-          {state.turn, ChangeDescriptions.pass_turn_to(to_id)}
+          {state.players[from_id], %RemoveActiveCard{card: sparse_card}},
+          {state.players[to_id], %AddActiveCard{card: sparse_card}},
+          {state.turn, %NextTurn{target: to_id}}
         ]
 
     State.apply_changes(state, changes)

@@ -6,13 +6,6 @@ defmodule StateFixtures do
   alias ViralSpiral.Room.State
   alias ViralSpiral.Entity.Room
 
-  def new_state() do
-    room = Room.reserve("test-room") |> Room.start(4)
-    state = State.new(room, ["adhiraj", "krys", "aman", "farah"])
-
-    state
-  end
-
   def set_chaos(%State{} = root, chaos) do
     room = root.room
     new_room = %{room | chaos: chaos}
@@ -28,6 +21,15 @@ defmodule StateFixtures do
     end)
   end
 
+  def player_id_by_names(%State{} = state) do
+    players = state.players
+
+    Map.keys(state.players)
+    |> Enum.reduce(%{}, fn player_id, all ->
+      Map.put(all, String.to_atom(players[player_id].name), player_id)
+    end)
+  end
+
   def active_cards(%State{} = state, player_id) do
     state.players[player_id].active_cards
   end
@@ -38,6 +40,25 @@ defmodule StateFixtures do
       {id, veracity} -> Sparse.new({id, veracity})
       nil -> nil
     end
+  end
+
+  def update_round(%State{} = state, attrs) do
+    state = put_in(state.round.order, attrs[:order] || state.round.order)
+    state = put_in(state.round.current, attrs[:current] || state.round.current)
+    state
+  end
+
+  def update_turn(%State{} = state, attrs) do
+    state = put_in(state.turn.current, attrs[:current] || state.turn.current)
+    state = put_in(state.turn.pass_to, attrs[:pass_to] || state.round.pass_to)
+    state
+  end
+
+  def update_player(%State{} = state, player_id, attrs) do
+    player = state.players[player_id]
+    player = put_in(player.active_cards, attrs[:active_cards] || player.active_cards)
+    state = put_in(state.players[player_id], player)
+    state
   end
 
   def new_game() do
@@ -107,5 +128,23 @@ defmodule StateFixtures do
         path: []
       }
     }
+  end
+
+  def new_game_with_four_players() do
+    room =
+      Room.skeleton()
+      |> Room.join("adhiraj")
+      |> Room.set_state(:reserved)
+      |> Room.join("aman")
+      |> Room.join("farah")
+      |> Room.join("krys")
+      |> Room.start()
+
+    state = %State{room: room}
+    state = State.setup(state)
+    state = %{state | room: room |> Room.reset_unjoined_players()}
+    players = player_id_by_names(state)
+
+    {state, players}
   end
 end
