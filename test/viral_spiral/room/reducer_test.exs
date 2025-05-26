@@ -322,6 +322,62 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
   end
 
+  @tag timeout: :infinity
+  describe "cancel player" do
+    setup do
+      :rand.seed(:exsss, {123, 899, 254})
+      {state, players} = StateFixtures.new_game_with_four_players()
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
+      state =
+        state
+        |> StateFixtures.update_player(adhiraj, %{affinities: %{sock: 5, skub: 0}})
+        |> StateFixtures.update_player(aman, %{affinities: %{sock: 2, skub: 0}})
+        |> StateFixtures.update_player(farah, %{affinities: %{sock: 2, skub: 0}})
+        |> StateFixtures.update_player(krys, %{affinities: %{sock: -1, skub: 4}})
+        |> StateFixtures.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateFixtures.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
+
+      %{state: state, players: players}
+    end
+
+    test "successful cancellation flow", %{state: state, players: players} do
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
+      initiate_cancel_attrs = %{
+        from_id: adhiraj,
+        target_id: krys,
+        affinity: :sock,
+        polarity: :positive
+      }
+
+      state = Reducer.reduce(state, Actions.initiate_cancel(initiate_cancel_attrs))
+      assert state.power_cancel_player.state == :waiting
+      assert state.power_cancel_player.from != nil
+      assert state.power_cancel_player.target != nil
+      assert state.power_cancel_player.affinity == :sock
+      assert state.power_cancel_player.allowed_voters |> length() == 3
+
+      vote_cancel_attrs_a = %{
+        from_id: aman,
+        vote: true
+      }
+
+      state = Reducer.reduce(state, Actions.vote_to_cancel(vote_cancel_attrs_a))
+
+      vote_cancel_attrs_b = %{
+        from_id: farah,
+        vote: true
+      }
+
+      state = Reducer.reduce(state, Actions.vote_to_cancel(vote_cancel_attrs_b))
+
+      assert state.round.skip != nil
+      assert state.round.skip.round == :current
+      assert state.round.skip.player == krys
+    end
+  end
+
   # @tag timeout: :infinity
   # describe "viral spiral" do
   #   import Fixtures
@@ -378,28 +434,6 @@ defmodule ViralSpiral.Room.ReducerTest do
   #     # IO.inspect(new_state.players, label: "new state")
 
   #     # IO.inspect(krys, label: "after")
-  #   end
-  # end
-
-  # describe "cancel someone" do
-  #   setup do
-  #     state = StateFixtures.new_game()
-  #     state = %{state | deck: Factory.new_deck(state.room)}
-
-  #     %{state: state}
-  #   end
-
-  #   @tag timeout: :infinity
-  #   test "get one player to vote", %{state: state} do
-  #     IO.inspect(state)
-  #     require IEx
-  #     # IEx.pry()
-  #     # apply initiate_cancel action to state
-  #     # apply cancel_vote action to state
-  #     # compare final state
-  #   end
-
-  #   test "get more than one player to vote" do
   #   end
   # end
 end

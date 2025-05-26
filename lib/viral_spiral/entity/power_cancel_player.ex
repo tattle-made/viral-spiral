@@ -83,6 +83,8 @@ defmodule ViralSpiral.Entity.PowerCancelPlayer do
           false -> power
         end
       end)
+
+      # todo make this then block a maybe_* function
     end
 
     def change(_power_cancel_player, %ResetCancel{} = _change) do

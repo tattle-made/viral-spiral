@@ -3,6 +3,9 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.Round.Changes.SkipRound
+  alias ViralSpiral.Entity.PowerCancelPlayer.Changes.VoteCancel
+  alias ViralSpiral.Entity.PowerCancelPlayer.Changes.InitiateCancel
   alias ViralSpiral.Canon.DynamicCard
   alias ViralSpiral.Entity.Player.Changes.MakeActiveCardFake
   alias ViralSpiral.Entity.Player.Changes.CloseArticle
@@ -163,7 +166,48 @@ defmodule ViralSpiral.Room.Reducer do
     end
   end
 
-  def reduce(%State{} = state, action) do
+  def reduce(%State{} = state, %Action{type: :cancel_player_initiate} = action) do
+    %{from_id: from_id, target_id: target_id, affinity: affinity, polarity: polarity} =
+      action.payload
+
+    allowed_voters =
+      Map.keys(state.players)
+      |> then(fn players ->
+        case polarity do
+          :positive -> players |> Enum.filter(&(state.players[&1].affinities[affinity] > 0))
+          :negative -> players |> Enum.filter(&(state.players[&1].affinities[affinity] < 0))
+        end
+      end)
+
+    changes = [
+      {state.power_cancel_player,
+       %InitiateCancel{
+         from_id: from_id,
+         to_id: target_id,
+         affinity: affinity,
+         allowed_voters: allowed_voters
+       }},
+      {state.power_cancel_player, %VoteCancel{from_id: from_id, vote: true}}
+    ]
+
+    State.apply_changes(state, changes)
+  end
+
+  def reduce(%State{} = state, %Action{type: :cancel_player_vote} = action) do
+    %{from_id: from_id, vote: vote} = action.payload
+
+    changes = [{state.power_cancel_player, %VoteCancel{from_id: from_id, vote: vote}}]
+    state = State.apply_changes(state, changes)
+
+    if state.power_cancel_player.result == true do
+      changes = [
+        {state.round, %SkipRound{player_id: state.power_cancel_player.target}}
+      ]
+
+      State.apply_changes(state, changes)
+    else
+      state
+    end
   end
 
   # def reduce(%State{} = state, %{type: :viral_spiral_pass, to: players} = action)
