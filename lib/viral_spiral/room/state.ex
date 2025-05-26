@@ -154,6 +154,10 @@ defmodule ViralSpiral.Room.State do
     state.articles[id]
   end
 
+  defp get_target(%State{} = state, %PowerCancelPlayer{} = power_cancel_player) do
+    state.power_cancel_player
+  end
+
   @doc """
   Generalized way to get a nested entity from state.
 
@@ -195,6 +199,10 @@ defmodule ViralSpiral.Room.State do
 
   defp put_target(%State{} = state, %CheckSource{} = check_source) do
     Map.put(state, :power_check_source, check_source)
+  end
+
+  defp put_target(%State{} = state, %PowerCancelPlayer{} = power_cancel_player) do
+    Map.put(state, :power_cancel_player, power_cancel_player)
   end
 
   @spec current_round_player(State.t()) :: Player.t()

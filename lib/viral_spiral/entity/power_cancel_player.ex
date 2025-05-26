@@ -5,6 +5,7 @@ defmodule ViralSpiral.Entity.PowerCancelPlayer do
   When a Player meets certain criteria, they are allowed to cancel another Player. This takes the following form :
   A player initiates cancellation by choosing which player they want to cancel and which of their affinity they want to use for it. The affinity they choose determines who can vote to cancel this player. If the majority votes to cancel the targetted Player, that player will skip a turn.
   """
+  require IEx
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.PowerCancelPlayer
   alias ViralSpiral.Affinity
@@ -33,6 +34,10 @@ defmodule ViralSpiral.Entity.PowerCancelPlayer do
           result: boolean()
         }
 
+  def skekelton() do
+    %PowerCancelPlayer{}
+  end
+
   @spec start_vote(t(), String.t(), String.t(), Affinity.target()) :: t()
   def start_vote(%PowerCancelPlayer{} = power, from, target, affinity)
       when is_affinity(affinity) do
@@ -58,17 +63,30 @@ defmodule ViralSpiral.Entity.PowerCancelPlayer do
     %{power | result: result, state: :done}
   end
 
-  @spec reset(t()) :: t()
-  def reset(%PowerCancelPlayer{} = _power) do
-    %PowerCancelPlayer{}
-  end
-
   defimpl Change do
-    def apply_change(state, change_desc) do
-      case change_desc[:type] do
-        :initiate -> state
-        :add_vote -> state
-      end
+    alias ViralSpiral.Entity.PowerCancelPlayer.Changes.ResetCancel
+    alias ViralSpiral.Entity.PowerCancelPlayer.Changes.VoteCancel
+    alias ViralSpiral.Entity.PowerCancelPlayer.Changes.InitiateCancel
+
+    def change(power_cancel_player, %InitiateCancel{} = change) do
+      power_cancel_player
+      |> PowerCancelPlayer.start_vote(change.from_id, change.to_id, change.affinity)
+      |> PowerCancelPlayer.allowed_voters(change.allowed_voters)
+    end
+
+    def change(power_cancel_player, %VoteCancel{} = change) do
+      power_cancel_player
+      |> PowerCancelPlayer.vote(change.from_id, change.vote)
+      |> then(fn power ->
+        case length(power.votes) == length(power.allowed_voters) do
+          true -> PowerCancelPlayer.put_result(power)
+          false -> power
+        end
+      end)
+    end
+
+    def change(_power_cancel_player, %ResetCancel{} = _change) do
+      PowerCancelPlayer.skekelton()
     end
   end
 end

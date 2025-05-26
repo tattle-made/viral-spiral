@@ -163,6 +163,9 @@ defmodule ViralSpiral.Room.Reducer do
     end
   end
 
+  def reduce(%State{} = state, action) do
+  end
+
   # def reduce(%State{} = state, %{type: :viral_spiral_pass, to: players} = action)
   #     when is_list(players) do
   #   card = action.payload.card
