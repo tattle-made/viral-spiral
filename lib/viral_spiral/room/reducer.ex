@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Canon.DynamicCard
   alias ViralSpiral.Entity.Player.Changes.MakeActiveCardFake
   alias ViralSpiral.Entity.Player.Changes.CloseArticle
   alias ViralSpiral.Entity.Player.Changes.ViewArticle
@@ -44,8 +45,11 @@ defmodule ViralSpiral.Room.Reducer do
     tgb = draw_constraints.tgb
     card = Canon.draw_card_from_deck(card_sets, card_type, tgb)
 
-    # room_stats = State.stats(state)
-    # card = DynamicCard.maybe_patch_headline(card, room_stats)
+    # todo dynamic card text replacement
+    # headline = fake_card.headline
+    # stats = State.identity_stats(state)
+    # patched_headline = DynamicCard.patch(headline, stats)
+    # sparse_card = Sparse.new(fake_card.id, fake_card.veracity, patched_headline)
 
     changes = [
       {state.deck, %RemoveCard{card_sets: card_sets, card_type: card_type, card: card}},
@@ -143,8 +147,10 @@ defmodule ViralSpiral.Room.Reducer do
     case card.veracity do
       true ->
         fake_card = state.deck.store[Sparse.new(card.id, false)]
-        sparse_card = Sparse.new(fake_card.id, fake_card.veracity, fake_card.headline)
-        # todo add dynamic headline
+        headline = fake_card.headline
+        stats = State.identity_stats(state)
+        patched_headline = DynamicCard.patch(headline, stats)
+        sparse_card = Sparse.new(fake_card.id, fake_card.veracity, patched_headline)
 
         changes = [
           {state.players[from_id], %MakeActiveCardFake{card: sparse_card}}

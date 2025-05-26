@@ -111,14 +111,9 @@ defmodule ViralSpiral.Canon.DynamicCard do
   @doc """
   TODO : return a Card. Because this will need to update bias, affinity etc as well.
   """
-  def patch(headline, gamestate_analytics) do
+  def patch(headline, identity_Stats) do
     matches = find_placeholders(headline)
 
-    replacements = %{
-      unpopular_affinity: :skub,
-      dominant_community: :red
-    }
-
-    replace_text(headline, matches, replacements)
+    replace_text(headline, matches, identity_Stats)
   end
 end
