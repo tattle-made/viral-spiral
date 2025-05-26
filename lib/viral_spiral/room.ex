@@ -15,6 +15,7 @@ defmodule ViralSpiral.Room do
   """
 
   use Supervisor
+  alias ViralSpiral.Room.State
   alias ViralSpiral.Room.GameEngine.RoomReserved
   alias ViralSpiral.Entity.Room
   alias ViralSpiral.Room.NotFound
@@ -65,6 +66,15 @@ defmodule ViralSpiral.Room do
       [{pid, _}] -> {:ok, pid}
       _ -> {:error, :not_found}
     end
+  end
+
+  def identity_statistics(%State{} = state) do
+    room = state.room
+    players = state.players
+
+    current_turn_player = State.current_turn_player(state)
+
+    # :other_community, :dominant_community, :oppressed_community, :unpopular_affinity, :popular_affinity
   end
 end
 

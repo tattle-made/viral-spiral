@@ -11,6 +11,7 @@ defmodule ViralSpiral.Room.State do
   When a round begins, we also start a Turn. Within each Round there's a turn that includes everyone except the person who started the turn.
   """
 
+  require IEx
   alias ViralSpiral.Room.DrawConstraints
   alias ViralSpiral.Entity.PowerCancelPlayer
   alias ViralSpiral.Canon.Card.Sparse
@@ -208,6 +209,60 @@ defmodule ViralSpiral.Room.State do
       {id, veracity, _headline} -> Sparse.new({id, veracity})
       nil -> nil
     end
+  end
+
+  def identity_stats(%State{} = state) do
+    players = Map.keys(state.players) |> Enum.map(&state.players[&1])
+    # dominant community
+    # currently defined as identity of the player with the largest clout
+    dominant_community =
+      players
+      |> Enum.sort(&(&1.clout >= &2.clout))
+      |> hd
+      |> Map.get(:identity)
+
+    other_community =
+      state.room.communities
+      |> Enum.filter(&(&1 != State.current_turn_player(state).identity))
+      |> Enum.shuffle()
+      |> hd
+
+    # currently defined as the identity of the player with lowest clout
+    oppressed_community =
+      players
+      |> Enum.sort(&(&1.clout <= &2.clout))
+      |> hd
+      |> Map.get(:identity)
+
+    affinity_count_map =
+      state.room.affinities
+      |> Enum.reduce(%{}, fn x, acc -> Map.put(acc, x, 0) end)
+
+    affinity_cum =
+      Map.keys(state.players)
+      |> Enum.map(&state.players[&1].affinities)
+      |> Enum.flat_map(fn x -> x end)
+      |> Enum.reduce(affinity_count_map, fn {aff, cnt}, acc ->
+        Map.put(acc, aff, acc[aff] + cnt)
+      end)
+
+    unpopular_affinity =
+      affinity_cum
+      |> Enum.min_by(fn {_k, v} -> v end)
+      |> elem(0)
+
+    popular_affinity =
+      affinity_cum
+      |> Enum.max_by(fn {_k, v} -> v end)
+      |> elem(0)
+
+    %{
+      dominant_community: dominant_community,
+      other_community: other_community,
+      oppressed_community: oppressed_community,
+      unpopular_affinity: unpopular_affinity,
+      popular_affinity: popular_affinity
+    }
   end
 
   # defimpl Inspect do

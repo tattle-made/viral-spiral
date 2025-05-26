@@ -57,7 +57,11 @@ defmodule StateFixtures do
 
   def update_player(%State{} = state, player_id, attrs) do
     player = state.players[player_id]
+    player = put_in(player.identity, attrs[:identity] || player.identity)
     player = put_in(player.active_cards, attrs[:active_cards] || player.active_cards)
+    player = put_in(player.clout, attrs[:clout] || player.clout)
+    player = put_in(player.affinities, attrs[:affinities] || player.affinities)
+    player = put_in(player.biases, attrs[:biases] || player.biases)
     state = put_in(state.players[player_id], player)
     state
   end
