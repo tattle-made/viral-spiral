@@ -3,6 +3,8 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.Room.{Changes.ReserveRoom, Changes.JoinRoom, Changes.StartGame}
+  alias ViralSpiral.Entity.Room.Changes.JoinRoom
   alias ViralSpiral.Entity.Round.Changes.SkipRound
   alias ViralSpiral.Entity.PowerCancelPlayer.Changes.VoteCancel
   alias ViralSpiral.Entity.PowerCancelPlayer.Changes.InitiateCancel
@@ -37,6 +39,40 @@ defmodule ViralSpiral.Room.Reducer do
   }
 
   alias ViralSpiral.Room.Actions.Engine.{DrawCard}
+
+  def reduce(%State{} = state, %{type: :reserve_room} = action) do
+    alias ViralSpiral.Entity.Room.Changes.ReserveRoom
+
+    %{player_name: player_name} = action.payload
+
+    changes = [
+      {state.room, %ReserveRoom{player_name: player_name}}
+    ]
+
+    State.apply_changes(state, changes)
+  end
+
+  def reduce(%State{} = state, %{type: :join_room} = action) do
+    alias ViralSpiral.Entity.Room.Changes.JoinRoom
+    %{player_name: player_name} = action.payload
+
+    changes = [
+      {state.room, %JoinRoom{player_name: player_name}}
+    ]
+
+    State.apply_changes(state, changes)
+  end
+
+  def reduce(%State{} = state, %{type: :start_game} = _action) do
+    alias ViralSpiral.Entity.Room.Changes.StartGame
+
+    changes = [
+      {state.room, %StartGame{}}
+    ]
+
+    state = State.apply_changes(state, changes)
+    state |> State.setup()
+  end
 
   # @spec reduce(State.t(), Action.t()) :: State.t()
   def reduce(%State{} = state, %{type: :draw_card, payload: %DrawCard{}} = action) do

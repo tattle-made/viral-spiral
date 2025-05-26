@@ -18,6 +18,26 @@ defmodule ViralSpiral.Room.ReducerTest do
   alias ViralSpiral.Entity.Room
   use ExUnit.Case
 
+  test "room setup" do
+    :rand.seed(:exsss, {645, 135, 722})
+    state = State.skeleton()
+
+    reserve_room_attrs = %{player_name: "adhiraj"}
+    state = Reducer.reduce(state, Actions.reserve_room(reserve_room_attrs))
+
+    join_room_attrs_a = %{player_name: "aman"}
+    state = Reducer.reduce(state, Actions.join_room(join_room_attrs_a))
+
+    join_room_attrs_b = %{player_name: "farah"}
+    state = Reducer.reduce(state, Actions.join_room(join_room_attrs_b))
+
+    join_room_attrs_c = %{player_name: "krys"}
+    state = Reducer.reduce(state, Actions.join_room(join_room_attrs_c))
+
+    state = Reducer.reduce(state, Actions.start_game())
+    assert 1 == 1
+  end
+
   describe "draw card" do
     setup do
       :rand.seed(:exsss, {123, 135, 254})
@@ -322,7 +342,6 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
   end
 
-  @tag timeout: :infinity
   describe "cancel player" do
     setup do
       :rand.seed(:exsss, {123, 899, 254})

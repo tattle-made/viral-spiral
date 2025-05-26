@@ -52,7 +52,7 @@ defmodule ViralSpiral.Room.State do
           power_cancel_player: PowerCancelPlayer.t()
         }
 
-  def empty() do
+  def skeleton() do
     %State{}
   end
 
@@ -82,8 +82,8 @@ defmodule ViralSpiral.Room.State do
     %{game | round: round}
   end
 
-  def set_room(%State{} = State, room) do
-    %{State | room: room}
+  def set_room(%State{} = state, room) do
+    %{state | room: room}
   end
 
   def set_turn(%State{} = game, turn) do
@@ -122,6 +122,10 @@ defmodule ViralSpiral.Room.State do
   end
 
   defdelegate change(change, change_desc), to: Change
+
+  defp get_target(%State{} = state, %Room{} = _room) do
+    state.room
+  end
 
   defp get_target(%State{} = state, %Player{id: id}) do
     state.players[id]
@@ -203,6 +207,10 @@ defmodule ViralSpiral.Room.State do
 
   defp put_target(%State{} = state, %PowerCancelPlayer{} = power_cancel_player) do
     Map.put(state, :power_cancel_player, power_cancel_player)
+  end
+
+  defp put_target(%State{} = state, %Room{} = room) do
+    Map.put(state, :room, room)
   end
 
   @spec current_round_player(State.t()) :: Player.t()
