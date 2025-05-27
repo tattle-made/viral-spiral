@@ -1,4 +1,6 @@
 defmodule ViralSpiralWeb.GameRoom.StateAdapter do
+  require IEx
+  alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Room.State
 
   def game_room(%State{} = state) do
@@ -22,21 +24,40 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
             cards:
               player.active_cards
               |> Enum.map(&state.deck.store[&1])
-              |> Enum.map(
-                &%{
-                  id: &1.id,
-                  type: &1.type,
-                  veracity: &1.veracity,
-                  headline: &1.headline,
-                  image: &1.image,
-                  article_id: &1.article_id,
+              |> Enum.map(fn card ->
+                %{
+                  id: card.id,
+                  type: card.type,
+                  veracity: card.veracity,
+                  headline: card.headline,
+                  image: card.image,
+                  article_id: card.article_id,
                   pass_to:
                     state.turn.pass_to
-                    |> Enum.map(fn id -> %{id: id, name: state.players[id].name} end)
+                    |> Enum.map(fn id -> %{id: id, name: state.players[id].name} end),
+                  source: parse_source(state.players[player.id], card)
                 }
-              )
+              end)
           }
         )
     }
+  end
+
+  defp parse_source(player, card) do
+    sparse_card = Sparse.new(card.id, card.veracity)
+    article = player.open_articles[sparse_card]
+
+    case article do
+      nil ->
+        nil
+
+      article ->
+        %{
+          type: article.type,
+          headline: article.headline,
+          content: article.content,
+          author: article.author
+        }
+    end
   end
 end

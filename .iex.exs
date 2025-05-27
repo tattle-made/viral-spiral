@@ -5,11 +5,14 @@ alias ViralSpiral.Entity.{Room, Player, Round, Turn}
 alias ViralSpiral.Room.State
 
 defmodule Debug do
+  alias ViralSpiralWeb.GameRoom.StateAdapter
   alias ViralSpiral.Room
 
-  def room_state(room_name) do
+  def state(room_name) do
     {:ok, pid} = Room.room_gen!(room_name)
     state = :sys.get_state(pid)
-    state
+    ui_state = StateAdapter.game_room(state)
+
+    {state, ui_state}
   end
 end

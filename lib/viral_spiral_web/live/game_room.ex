@@ -26,7 +26,7 @@ defmodule ViralSpiralWeb.GameRoom do
 
     genserver_state = :sys.get_state(pid)
     # IO.inspect(genserver_state)
-    room_state = Factory.make_gameroom(genserver_state)
+    room_state = StateAdapter.game_room(genserver_state)
     # assign(socket, :state, room_state)
 
     socket =
@@ -61,6 +61,22 @@ defmodule ViralSpiralWeb.GameRoom do
 
   def handle_event("discard", params, %{assigns: %{room_gen: room_gen}} = socket) do
     action = Actions.discard_card(Actions.string_to_map(params))
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.game_room(gen_state)
+    socket = assign(socket, :state, room_state)
+    {:noreply, socket}
+  end
+
+  def handle_event("view_source", params, %{assigns: %{room_gen: room_gen}} = socket) do
+    action = Actions.view_source(Actions.string_to_map(params))
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.game_room(gen_state)
+    socket = assign(socket, :state, room_state)
+    {:noreply, socket}
+  end
+
+  def handle_event("hide_source", params, %{assigns: %{room_gen: room_gen}} = socket) do
+    action = Actions.hide_source(Actions.string_to_map(params))
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.game_room(gen_state)
     socket = assign(socket, :state, room_state)

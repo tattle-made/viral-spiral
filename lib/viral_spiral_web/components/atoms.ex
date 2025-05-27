@@ -62,6 +62,51 @@ defmodule ViralSpiralWeb.Atoms do
           Discard
         </button>
       </div>
+
+      <div :if={@card.source == nil} class="mt-4">
+        <button
+          phx-click="view_source"
+          value={
+            Jason.encode!(%{
+              from_id: @from,
+              card: %{
+                id: @card.id,
+                veracity: @card.veracity
+              }
+            })
+          }
+          class="py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
+        >
+          View Source
+        </button>
+      </div>
+
+      <div :if={@card.source != nil} class="mt-4">
+        <button
+          phx-click="hide_source"
+          value={
+            Jason.encode!(%{
+              from_id: @from,
+              card: %{
+                id: @card.id,
+                veracity: @card.veracity
+              }
+            })
+          }
+          class="py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
+        >
+          Hide Source
+        </button>
+      </div>
+
+      <div :if={@card.source != nil} class="bg-zinc-100 p-2 mt-2">
+        <p class="font-light text-gray-800">Author</p>
+        <p class="font-normal"><%= @card.source.author %></p>
+        <p class="font-light text-gray-800">Headline</p>
+        <p class="font-normal"><%= @card.source.headline %></p>
+        <p class="font-light text-gray-800">Content</p>
+        <p class="font-normal"><%= @card.source.content %></p>
+      </div>
     </div>
     """
   end

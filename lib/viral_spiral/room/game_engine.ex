@@ -69,32 +69,38 @@ defmodule ViralSpiral.Room.GameEngine do
 
   @impl true
   def handle_call(%ViewSource{} = action, _from, state) do
-    {:reply, state, state}
+    new_state = Reducer.reduce(state, action)
+    {:reply, new_state, new_state}
   end
 
   @impl true
   def handle_call(%HideSource{} = action, _from, state) do
-    {:reply, state, state}
+    new_state = Reducer.reduce(state, action)
+    {:reply, new_state, new_state}
   end
 
   @impl true
   def handle_call(%TurnToFake{} = action, _from, state) do
-    {:reply, state, state}
+    new_state = Reducer.reduce(state, action)
+    {:reply, new_state, new_state}
   end
 
   @impl true
   def handle_call(%MarkAsFake{} = action, _from, state) do
-    {:reply, state, state}
+    new_state = Reducer.reduce(state, action)
+    {:reply, new_state, new_state}
   end
 
   @impl true
   def handle_call(%CancelPlayerInitiate{} = action, _from, state) do
-    {:reply, state, state}
+    new_state = Reducer.reduce(state, action)
+    {:reply, new_state, new_state}
   end
 
   @impl true
   def handle_call(%CancelPlayerVote{} = action, _from, state) do
-    {:reply, state, state}
+    new_state = Reducer.reduce(state, action)
+    {:reply, new_state, new_state}
   end
 
   @impl true
