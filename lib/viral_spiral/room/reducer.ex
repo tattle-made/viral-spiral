@@ -3,11 +3,12 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Room.Actions.Player.TurnToFake
+  alias ViralSpiral.Room.Actions.Player.HideSource
   alias ViralSpiral.Entity.Turn.Change.NewTurn
   alias ViralSpiral.Entity.Player.Changes.AddToHand
   alias ViralSpiral.Entity.Round.Changes.NextRound
   alias ViralSpiral.Entity.Room.{Changes.ReserveRoom, Changes.JoinRoom, Changes.StartGame}
-  alias ViralSpiral.Entity.Room.Changes.JoinRoom
   alias ViralSpiral.Entity.Round.Changes.SkipRound
   alias ViralSpiral.Entity.PowerCancelPlayer.Changes.VoteCancel
   alias ViralSpiral.Entity.PowerCancelPlayer.Changes.InitiateCancel
@@ -43,10 +44,10 @@ defmodule ViralSpiral.Room.Reducer do
 
   alias ViralSpiral.Room.Actions.Engine.{DrawCard}
 
-  def reduce(%State{} = state, %{type: :reserve_room} = action) do
+  def reduce(%State{} = state, %ReserveRoom{} = action) do
     alias ViralSpiral.Entity.Room.Changes.ReserveRoom
 
-    %{player_name: player_name} = action.payload
+    %{player_name: player_name} = action
 
     changes = [
       {state.room, %ReserveRoom{player_name: player_name}}
@@ -55,9 +56,10 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, changes)
   end
 
-  def reduce(%State{} = state, %{type: :join_room} = action) do
+  def reduce(%State{} = state, %JoinRoom{} = action) do
     alias ViralSpiral.Entity.Room.Changes.JoinRoom
-    %{player_name: player_name} = action.payload
+
+    %{player_name: player_name} = action
 
     changes = [
       {state.room, %JoinRoom{player_name: player_name}}
@@ -66,7 +68,7 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, changes)
   end
 
-  def reduce(%State{} = state, %{type: :start_game} = _action) do
+  def reduce(%State{} = state, %StartGame{}) do
     alias ViralSpiral.Entity.Room.Changes.StartGame
 
     changes = [
@@ -77,8 +79,7 @@ defmodule ViralSpiral.Room.Reducer do
     state |> State.setup()
   end
 
-  # @spec reduce(State.t(), Action.t()) :: State.t()
-  def reduce(%State{} = state, %{type: :draw_card, payload: %DrawCard{}} = action) do
+  def reduce(%State{} = state, %DrawCard{}) do
     %{deck: deck} = state
     card_sets = deck.available_cards
     current_player = State.current_round_player(state)
@@ -104,8 +105,8 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, changes)
   end
 
-  def reduce(%State{} = state, %Action{type: :pass_card} = action) do
-    %{card: card, from_id: from_id, to_id: to_id} = action.payload
+  def reduce(%State{} = state, %PassCard{} = action) do
+    %{card: card, from_id: from_id, to_id: to_id} = action
     sparse_card = Sparse.new(card.id, card.veracity)
     card = state.deck.store[sparse_card]
 
@@ -120,8 +121,8 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, changes)
   end
 
-  def reduce(%State{} = state, %{type: :keep_card} = action) do
-    %{from_id: from_id, card: card} = action.payload
+  def reduce(%State{} = state, %KeepCard{} = action) do
+    %{from_id: from_id, card: card} = action
     sparse_card = Sparse.new(card.id, card.veracity)
     card = state.deck.store[sparse_card]
 
@@ -140,8 +141,8 @@ defmodule ViralSpiral.Room.Reducer do
     ])
   end
 
-  def reduce(%State{} = state, %{type: :discard_card} = action) do
-    %{from_id: from_id, card: card} = action.payload
+  def reduce(%State{} = state, %DiscardCard{} = action) do
+    %{from_id: from_id, card: card} = action
     sparse_card = Sparse.new(card.id, card.veracity)
     card = state.deck.store[sparse_card]
 
@@ -160,8 +161,8 @@ defmodule ViralSpiral.Room.Reducer do
     ])
   end
 
-  def reduce(%State{} = state, %Action{type: :mark_card_as_fake} = action) do
-    %{from_id: from_id, card: card} = action.payload
+  def reduce(%State{} = state, %MarkAsFake{} = action) do
+    %{from_id: from_id, card: card} = action
     turn = state.turn
 
     clout_penalty_change =
@@ -181,8 +182,8 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %{type: :start_game}) do
   end
 
-  def reduce(%State{} = state, %{type: :view_source} = action) do
-    %{from_id: from_id, card: card} = action.payload
+  def reduce(%State{} = state, %ViewSource{} = action) do
+    %{from_id: from_id, card: card} = action
     sparse_card = Sparse.new({card.id, card.veracity})
     article = Canon.get_article(state.deck.article_store, sparse_card)
 
@@ -193,8 +194,8 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, changes)
   end
 
-  def reduce(%State{} = state, %{type: :hide_source} = action) do
-    %{from_id: from_id, card: card} = action.payload
+  def reduce(%State{} = state, %HideSource{} = action) do
+    %{from_id: from_id, card: card} = action
     sparse_card = Sparse.new({card.id, card.veracity})
 
     changes = [
@@ -204,8 +205,8 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, changes)
   end
 
-  def reduce(%State{} = state, %Action{type: :turn_card_to_fake} = action) do
-    %{from_id: from_id, card: card} = action.payload
+  def reduce(%State{} = state, %TurnToFake{} = action) do
+    %{from_id: from_id, card: card} = action
 
     # todo : only turn to fake if not already fake
     case card.veracity do
@@ -227,9 +228,9 @@ defmodule ViralSpiral.Room.Reducer do
     end
   end
 
-  def reduce(%State{} = state, %Action{type: :cancel_player_initiate} = action) do
+  def reduce(%State{} = state, %CancelPlayerInitiate{} = action) do
     %{from_id: from_id, target_id: target_id, affinity: affinity, polarity: polarity} =
-      action.payload
+      action
 
     allowed_voters =
       Map.keys(state.players)
@@ -254,8 +255,8 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, changes)
   end
 
-  def reduce(%State{} = state, %Action{type: :cancel_player_vote} = action) do
-    %{from_id: from_id, vote: vote} = action.payload
+  def reduce(%State{} = state, %CancelPlayerVote{} = action) do
+    %{from_id: from_id, vote: vote} = action
 
     changes = [{state.power_cancel_player, %VoteCancel{from_id: from_id, vote: vote}}]
     state = State.apply_changes(state, changes)
@@ -273,7 +274,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   # def reduce(%State{} = state, %{type: :viral_spiral_pass, to: players} = action)
   #     when is_list(players) do
-  #   card = action.payload.card
+  #   card = action.card
 
   #   changes = [
   #     {%PowerViralSpiral{}, ChangeDescriptions.PowerViralSpiral.set(players, card)}

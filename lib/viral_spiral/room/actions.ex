@@ -30,7 +30,7 @@ defmodule ViralSpiral.Room.Actions do
     changeset = %ReserveRoom{} |> ReserveRoom.changeset(attrs)
 
     case changeset.valid? do
-      true -> %Action{type: :reserve_room, payload: apply_changes(changeset)}
+      true -> apply_changes(changeset)
       false -> raise "Invalid Attributes"
     end
   end
@@ -39,24 +39,24 @@ defmodule ViralSpiral.Room.Actions do
     changeset = %JoinRoom{} |> JoinRoom.changeset(attrs)
 
     case changeset.valid? do
-      true -> %Action{type: :join_room, payload: apply_changes(changeset)}
+      true -> apply_changes(changeset)
       false -> raise "Invalid Attributes"
     end
   end
 
   def start_game() do
-    %Action{type: :start_game, payload: %StartGame{}}
+    %StartGame{}
   end
 
   def draw_card() do
-    %Action{type: :draw_card, payload: %DrawCard{}}
+    %DrawCard{}
   end
 
   def pass_card(attrs) do
     changeset = %PassCard{} |> PassCard.changeset(attrs)
 
     case changeset.valid? do
-      true -> %Action{type: :pass_card, payload: apply_changes(changeset)}
+      true -> apply_changes(changeset)
       false -> raise "Invalid Attributes"
     end
   end
@@ -65,7 +65,7 @@ defmodule ViralSpiral.Room.Actions do
     changeset = %KeepCard{} |> KeepCard.changeset(attrs)
 
     case changeset.valid? do
-      true -> %Action{type: :keep_card, payload: apply_changes(changeset)}
+      true -> apply_changes(changeset)
       false -> raise "Invalid Attributes"
     end
   end
@@ -74,7 +74,7 @@ defmodule ViralSpiral.Room.Actions do
     changeset = %DiscardCard{} |> DiscardCard.changeset(attrs)
 
     case changeset.valid? do
-      true -> %Action{type: :discard_card, payload: apply_changes(changeset)}
+      true -> apply_changes(changeset)
       false -> raise "Invalid Attributes"
     end
   end
@@ -83,7 +83,7 @@ defmodule ViralSpiral.Room.Actions do
     changeset = %ViewSource{} |> ViewSource.changeset(attrs)
 
     case changeset.valid? do
-      true -> %Action{type: :view_source, payload: apply_changes(changeset)}
+      true -> apply_changes(changeset)
       false -> raise "Invalid format of action view source"
     end
   end
@@ -92,7 +92,7 @@ defmodule ViralSpiral.Room.Actions do
     changeset = %HideSource{} |> HideSource.changeset(attrs)
 
     case changeset.valid? do
-      true -> %Action{type: :hide_source, payload: apply_changes(changeset)}
+      true -> apply_changes(changeset)
       false -> raise "Invalid attributes"
     end
   end
@@ -101,7 +101,7 @@ defmodule ViralSpiral.Room.Actions do
     changeset = %MarkAsFake{} |> MarkAsFake.changeset(attrs)
 
     case changeset.valid? do
-      true -> %Action{type: :mark_card_as_fake, payload: apply_changes(changeset)}
+      true -> apply_changes(changeset)
       false -> raise "Invalid attributes"
     end
   end
@@ -114,7 +114,7 @@ defmodule ViralSpiral.Room.Actions do
     changeset = %TurnToFake{} |> TurnToFake.changeset(attrs)
 
     case changeset.valid? do
-      true -> %Action{type: :turn_card_to_fake, payload: apply_changes(changeset)}
+      true -> apply_changes(changeset)
       false -> raise "Invalid attributes"
     end
   end
@@ -123,7 +123,7 @@ defmodule ViralSpiral.Room.Actions do
     changeset = %CancelPlayerInitiate{} |> CancelPlayerInitiate.changeset(attrs)
 
     case changeset.valid? do
-      true -> %Action{type: :cancel_player_initiate, payload: apply_changes(changeset)}
+      true -> apply_changes(changeset)
       false -> raise "Invalid attributes"
     end
   end
@@ -132,7 +132,7 @@ defmodule ViralSpiral.Room.Actions do
     changeset = %CancelPlayerVote{} |> CancelPlayerVote.changeset(attrs)
 
     case changeset.valid? do
-      true -> %Action{type: :cancel_player_vote, payload: apply_changes(changeset)}
+      true -> apply_changes(changeset)
       false -> raise "Invalid attributes"
     end
   end
