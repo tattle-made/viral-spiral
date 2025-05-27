@@ -221,9 +221,43 @@ defmodule ViralSpiral.Room.ReducerTest do
       assert state.players[adhiraj].active_cards |> length() == 0
       assert state.players[adhiraj].clout == -1
     end
+  end
 
-    test "discard card" do
-      # todo write this.
+  describe "discard card" do
+    setup do
+      :rand.seed(:exsss, {123, 135, 254})
+      {state, players} = StateFixtures.new_game_with_four_players()
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
+      state =
+        state
+        |> StateFixtures.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateFixtures.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
+
+      %{state: state, players: players}
+    end
+
+    test "discard bias card", %{state: state, players: players} do
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
+      sparse_card = StateFixtures.draw_card(state, {:bias, true, :yellow})
+
+      state =
+        StateFixtures.update_player(state, adhiraj, %{active_cards: [sparse_card]})
+        |> StateFixtures.update_player(adhiraj, %{identity: :red, biases: %{yellow: 3, blue: 0}})
+
+      discard_card_attrs = %{
+        from_id: adhiraj,
+        card: %{
+          id: sparse_card.id,
+          veracity: true
+        }
+      }
+
+      state = Reducer.reduce(state, Actions.discard_card(discard_card_attrs))
+      assert state.players[adhiraj].hand |> length() == 1
+      assert state.players[adhiraj].active_cards |> length() == 0
+      assert state.players[adhiraj].clout == -1
     end
   end
 

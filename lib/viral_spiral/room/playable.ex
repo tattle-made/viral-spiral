@@ -47,12 +47,11 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
     end
   end
 
-  # @spec discard(%ViralSpiral.Canon.Card.Bias{}, any(), any()) :: nil
-  def discard(_card, state, _from) do
-    [
-      {state.round, [type: :next]},
-      {state.turn, [type: :new, round: state.round]}
-    ]
+  def discard(card, state, from) do
+    case state.players[from].biases[card.target] do
+      x when x > 0 -> [{state.players[from], %Clout{offset: -1}}]
+      _ -> []
+    end
   end
 end
 
@@ -84,10 +83,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
 
   # End the turn
   def discard(_card, state, _from) do
-    [
-      {state.turn, [type: :end]},
-      {state.turn, [type: :new, round: state.round]}
-    ]
+    []
   end
 end
 
@@ -109,10 +105,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
 
   # End the turn
   def discard(_card, state, _from) do
-    [
-      {state.turn, [type: :end]},
-      {state.turn, [type: :new, round: state.round]}
-    ]
+    []
   end
 end
 

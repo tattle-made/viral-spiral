@@ -133,11 +133,7 @@ defmodule ViralSpiral.Room.Reducer do
           {state.round, %NextRound{}}
         ]
 
-    IEx.pry()
-
     state = State.apply_changes(state, changes)
-
-    IEx.pry()
 
     State.apply_changes(state, [
       {state.turn, %NewTurn{round: state.round}}
@@ -145,6 +141,23 @@ defmodule ViralSpiral.Room.Reducer do
   end
 
   def reduce(%State{} = state, %{type: :discard_card} = action) do
+    %{from_id: from_id, card: card} = action.payload
+    sparse_card = Sparse.new(card.id, card.veracity)
+    card = state.deck.store[sparse_card]
+
+    changes =
+      Playable.discard(card, state, from_id) ++
+        [
+          {state.players[from_id], %RemoveActiveCard{card: sparse_card}},
+          {state.players[from_id], %AddToHand{card: sparse_card}},
+          {state.round, %NextRound{}}
+        ]
+
+    state = State.apply_changes(state, changes)
+
+    State.apply_changes(state, [
+      {state.turn, %NewTurn{round: state.round}}
+    ])
   end
 
   def reduce(%State{} = state, %Action{type: :mark_card_as_fake} = action) do
