@@ -29,7 +29,7 @@ defmodule ViralSpiral.Room.State do
   alias ViralSpiral.Entity.Change
 
   @derive {Inspect, limit: 2}
-  defstruct room: Room.skeleton(),
+  defstruct room: nil,
             players: %{},
             round: Round.skeleton(),
             turn: Turn.skeleton(),
@@ -52,8 +52,9 @@ defmodule ViralSpiral.Room.State do
           power_cancel_player: PowerCancelPlayer.t()
         }
 
-  def skeleton() do
-    %State{}
+  def skeleton(opts \\ []) do
+    state = %State{}
+    %{state | room: Room.skeleton(opts)}
   end
 
   def setup(%State{} = state) do

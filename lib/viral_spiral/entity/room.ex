@@ -50,13 +50,15 @@ defmodule ViralSpiral.Entity.Room do
   @doc """
   Create a Room with fields that don't require user input.
   """
-  def skeleton() do
+  def skeleton(opts \\ []) do
+    room_name = Keyword.get(opts, :room_name, name())
+
     engine_config = %EngineConfig{}
     uxid = Application.get_env(:viral_spiral, :uxid)
 
     %Room{
       id: uxid.generate!(prefix: "room", size: :small),
-      name: name(),
+      name: room_name,
       state: :uninitialized,
       chaos_counter: engine_config.chaos_counter,
       volatality: engine_config.volatility

@@ -48,13 +48,13 @@ defmodule ViralSpiral.Room do
   """
   @spec reserve(String.t()) :: RoomReserved.t()
   def reserve(room_name) do
-    pid =
+    _pid =
       case DynamicSupervisor.start_child(@supervisor, {@room_gen, room_name}) do
         {:ok, pid} -> pid
         {:error, {:already_started, pid}} -> pid
       end
 
-    send(pid, :new_room)
+    # send(pid, :new_room)
     %RoomReserved{name: room_name}
   end
 
@@ -66,15 +66,6 @@ defmodule ViralSpiral.Room do
       [{pid, _}] -> {:ok, pid}
       _ -> {:error, :not_found}
     end
-  end
-
-  def identity_statistics(%State{} = state) do
-    room = state.room
-    players = state.players
-
-    current_turn_player = State.current_turn_player(state)
-
-    # :other_community, :dominant_community, :oppressed_community, :unpopular_affinity, :popular_affinity
   end
 end
 

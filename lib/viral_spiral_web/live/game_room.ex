@@ -1,5 +1,7 @@
 defmodule ViralSpiralWeb.GameRoom do
   import ViralSpiralWeb.Atoms
+  require IEx
+  alias ViralSpiral.Room.Actions
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Room
   alias ViralSpiral.Room.Factory
@@ -22,8 +24,9 @@ defmodule ViralSpiralWeb.GameRoom do
       end
 
     genserver_state = :sys.get_state(pid)
+    # IO.inspect(genserver_state)
     room_state = Factory.make_gameroom(genserver_state)
-    assign(socket, :state, room_state)
+    # assign(socket, :state, room_state)
 
     socket =
       socket
@@ -38,13 +41,11 @@ defmodule ViralSpiralWeb.GameRoom do
   end
 
   def handle_event("pass_to", params, socket) do
-    %{"from" => from, "to" => to, "card-id" => card_id, "card-veracity" => card_veracity} = params
+    action = Actions.pass_card(Actions.string_to_map(params))
     room_gen = socket.assigns.room_gen
+    gen_state = GenServer.call(room_gen, action)
+    room_state = Factory.make_gameroom(gen_state)
 
-    msg = {:pass, from, to, Sparse.new({card_id, String.to_atom(card_veracity)})}
-    genserver_state = GenServer.call(room_gen, msg)
-
-    room_state = Factory.make_gameroom(genserver_state)
     socket = assign(socket, :state, room_state)
 
     {:noreply, socket}

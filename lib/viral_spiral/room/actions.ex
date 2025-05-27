@@ -136,4 +136,9 @@ defmodule ViralSpiral.Room.Actions do
       false -> raise "Invalid attributes"
     end
   end
+
+  def string_to_map(params) do
+    params["value"]
+    |> Jason.decode!()
+  end
 end

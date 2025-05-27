@@ -1,5 +1,6 @@
 defmodule ViralSpiralWeb.Home do
-  alias ViralSpiral.Entity.Room
+  alias ViralSpiral.Room
+  alias ViralSpiral.Entity.Room, as: EntityRoom
   use ViralSpiralWeb, :live_view
 
   def mount(params, session, socket) do
@@ -7,8 +8,20 @@ defmodule ViralSpiralWeb.Home do
   end
 
   def handle_event("create_room", _params, socket) do
-    name = Room.name()
+    room_name = EntityRoom.name()
+
+    _pid =
+      case Room.room_gen!(room_name) do
+        {:ok, pid} ->
+          pid
+
+        {:error, :not_found} ->
+          room_reserved = Room.reserve(room_name)
+          {:ok, pid} = Room.room_gen!(room_reserved.name)
+          pid
+      end
+
     # {:noreply, push_navigate(socket, to: "/waiting-room/#{name}")}
-    {:noreply, push_navigate(socket, to: "/room/#{name}")}
+    {:noreply, push_navigate(socket, to: "/room/#{room_name}")}
   end
 end

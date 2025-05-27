@@ -15,11 +15,13 @@ defmodule ViralSpiralWeb.Atoms do
         <div :for={player <- @card.pass_to} }>
           <button
             phx-click="pass_to"
-            value={1}
-            phx-value-to={player.id}
-            phx-value-from={@from}
-            phx-value-card-id={@card.id}
-            phx-value-card-veracity={"#{@card.veracity}"}
+            value={
+              Jason.encode!(%{
+                from_id: @from,
+                to_id: player.id,
+                card: %{id: @card.id, veracity: @card.veracity}
+              })
+            }
             class=" py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
           >
             <%= player.name %>

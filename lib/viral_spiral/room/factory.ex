@@ -109,7 +109,7 @@ defmodule ViralSpiral.Room.Factory do
             is_active: state.turn.current == player.id,
             cards:
               player.active_cards
-              |> Enum.map(&state.deck.store[{elem(&1, 0), elem(&1, 1)}])
+              |> Enum.map(&state.deck.store[&1])
               |> Enum.map(
                 &%{
                   id: &1.id,

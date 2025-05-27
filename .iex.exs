@@ -4,8 +4,12 @@ alias ViralSpiral.Canon.Card
 alias ViralSpiral.Entity.{Room, Player, Round, Turn}
 alias ViralSpiral.Room.State
 
-defmodule Test do
-  def hi() do
-    1
+defmodule Debug do
+  alias ViralSpiral.Room
+
+  def room_state(room_name) do
+    {:ok, pid} = Room.room_gen!(room_name)
+    state = :sys.get_state(pid)
+    state
   end
 end
