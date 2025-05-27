@@ -139,6 +139,7 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, [
       {state.turn, %NewTurn{round: state.round}}
     ])
+    |> reduce(%DrawCard{})
   end
 
   def reduce(%State{} = state, %DiscardCard{} = action) do
@@ -159,6 +160,7 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, [
       {state.turn, %NewTurn{round: state.round}}
     ])
+    |> reduce(%DrawCard{})
   end
 
   def reduce(%State{} = state, %MarkAsFake{} = action) do

@@ -60,20 +60,10 @@
         <div class="mt-4"></div>
 
         <div :for={card <- player.cards} :if={player.is_active}>
-          <.card card={card} from={player.id}></.card>
+          <.card card={card} from={player.id}/>
         </div>
 
-        <%!-- <div class="h-4"></div>
-      <%= if current_player?(@state, player)  do %>
-        <.card>
-          <p><%= card(@state, player).headline %></p>
-        </.card>
-
-        <h3>Pass to</h3>
-        <%= for pass_to <- player_options(@state, player) do %>
-          <span class="mr-4"><%= pass_to %></span>
-        <% end %>
-      <% end %> --%>
+        
       </div>
     </div>
   </div>

@@ -51,14 +51,18 @@ defmodule ViralSpiralWeb.GameRoom do
     {:noreply, socket}
   end
 
-  def handle_event("keep", params, socket) do
-    %{"from" => from, "card-id" => card_id, "card-veracity" => card_veracity} = params
-    room_gen = socket.assigns.room_gen
+  def handle_event("keep", params, %{assigns: %{room_gen: room_gen}} = socket) do
+    action = Actions.keep_card(Actions.string_to_map(params))
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.game_room(gen_state)
+    socket = assign(socket, :state, room_state)
+    {:noreply, socket}
+  end
 
-    msg = {:keep, from, Sparse.new({card_id, String.to_atom(card_veracity)})}
-    genserver_state = GenServer.call(room_gen, msg)
-
-    room_state = Factory.make_gameroom(genserver_state)
+  def handle_event("discard", params, %{assigns: %{room_gen: room_gen}} = socket) do
+    action = Actions.discard_card(Actions.string_to_map(params))
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.game_room(gen_state)
     socket = assign(socket, :state, room_state)
     {:noreply, socket}
   end

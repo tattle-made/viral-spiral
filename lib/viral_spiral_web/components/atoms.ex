@@ -28,15 +28,38 @@ defmodule ViralSpiralWeb.Atoms do
           </button>
         </div>
       </div>
-      <div class="mt-4">
+      <div class="mt-6">
         <button
           phx-click="keep"
-          phx-value-from={@from}
-          phx-value-card-id={@card.id}
-          phx-value-card-veracity={"#{@card.veracity}"}
+          value={
+            Jason.encode!(%{
+              from_id: @from,
+              card: %{
+                id: @card.id,
+                veracity: @card.veracity
+              }
+            })
+          }
           class="py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
         >
           Keep
+        </button>
+      </div>
+      <div class="mt-4">
+        <button
+          phx-click="discard"
+          value={
+            Jason.encode!(%{
+              from_id: @from,
+              card: %{
+                id: @card.id,
+                veracity: @card.veracity
+              }
+            })
+          }
+          class="py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
+        >
+          Discard
         </button>
       </div>
     </div>
