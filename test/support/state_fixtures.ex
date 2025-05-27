@@ -1,4 +1,7 @@
 defmodule StateFixtures do
+  alias ViralSpiral.Canon
+  alias ViralSpiral.Canon.Deck
+  alias ViralSpiral.Canon.Deck.CardSet
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Entity.Round
   alias ViralSpiral.Entity.Player
@@ -64,6 +67,13 @@ defmodule StateFixtures do
     player = put_in(player.biases, attrs[:biases] || player.biases)
     state = put_in(state.players[player_id], player)
     state
+  end
+
+  def draw_card(%State{} = state, {type, veracity, target}) do
+    card_sets = state.deck.available_cards
+    set_key = CardSet.key(type, veracity, target)
+    cardset_member = Canon.draw_card_from_deck(card_sets, set_key, 4)
+    Sparse.new(cardset_member.id, true)
   end
 
   def new_game() do

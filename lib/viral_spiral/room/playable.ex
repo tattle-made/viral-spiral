@@ -41,11 +41,10 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
   end
 
   def keep(card, state, from) do
-    [
-      {state.round, [type: :next]},
-      {state.turn, [type: :new, round: state.round]},
-      {state.players[from], [type: :add_to_hand, card_id: card.id]}
-    ]
+    case state.players[from].biases[card.target] do
+      x when x > 0 -> [{state.players[from], %Clout{offset: -1}}]
+      _ -> []
+    end
   end
 
   # @spec discard(%ViralSpiral.Canon.Card.Bias{}, any(), any()) :: nil
@@ -79,7 +78,6 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
     ]
   end
 
-  # End the turn
   def keep(_card, state, from) do
     []
   end
@@ -106,11 +104,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
   end
 
   def keep(_card, state, from) do
-    [
-      {state.round, [type: :next]},
-      {state.turn, [type: :new, round: state.round]},
-      {state.players[from], [type: :add_to_hand]}
-    ]
+    []
   end
 
   # End the turn

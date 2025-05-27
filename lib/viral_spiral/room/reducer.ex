@@ -3,6 +3,9 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.Turn.Change.NewTurn
+  alias ViralSpiral.Entity.Player.Changes.AddToHand
+  alias ViralSpiral.Entity.Round.Changes.NextRound
   alias ViralSpiral.Entity.Room.{Changes.ReserveRoom, Changes.JoinRoom, Changes.StartGame}
   alias ViralSpiral.Entity.Room.Changes.JoinRoom
   alias ViralSpiral.Entity.Round.Changes.SkipRound
@@ -117,22 +120,31 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, changes)
   end
 
-  def reduce(%State{} = state, %{type: :discard_card} = action) do
-  end
-
   def reduce(%State{} = state, %{type: :keep_card} = action) do
-    %{player: from, card: card} = action.payload
+    %{from_id: from_id, card: card} = action.payload
+    sparse_card = Sparse.new(card.id, card.veracity)
+    card = state.deck.store[sparse_card]
 
-    state =
-      State.apply_changes(state, [
-        {state.players[from], %RemoveActiveCard{card: card}},
-        {state.round, [type: :next]},
-        {state.players[from], [type: :add_to_hand, card: card]}
-      ])
+    changes =
+      Playable.keep(card, state, from_id) ++
+        [
+          {state.players[from_id], %RemoveActiveCard{card: sparse_card}},
+          {state.players[from_id], %AddToHand{card: sparse_card}},
+          {state.round, %NextRound{}}
+        ]
+
+    IEx.pry()
+
+    state = State.apply_changes(state, changes)
+
+    IEx.pry()
 
     State.apply_changes(state, [
-      {state.turn, [type: :new, round: state.round]}
+      {state.turn, %NewTurn{round: state.round}}
     ])
+  end
+
+  def reduce(%State{} = state, %{type: :discard_card} = action) do
   end
 
   def reduce(%State{} = state, %Action{type: :mark_card_as_fake} = action) do
