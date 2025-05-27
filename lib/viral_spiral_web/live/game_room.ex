@@ -1,6 +1,7 @@
 defmodule ViralSpiralWeb.GameRoom do
   import ViralSpiralWeb.Atoms
   require IEx
+  alias ViralSpiralWeb.GameRoom.StateAdapter
   alias ViralSpiral.Room.Actions
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Room
@@ -40,11 +41,10 @@ defmodule ViralSpiralWeb.GameRoom do
     {:noreply, socket}
   end
 
-  def handle_event("pass_to", params, socket) do
+  def handle_event("pass_to", params, %{assigns: %{room_gen: room_gen}} = socket) do
     action = Actions.pass_card(Actions.string_to_map(params))
-    room_gen = socket.assigns.room_gen
     gen_state = GenServer.call(room_gen, action)
-    room_state = Factory.make_gameroom(gen_state)
+    room_state = StateAdapter.game_room(gen_state)
 
     socket = assign(socket, :state, room_state)
 
