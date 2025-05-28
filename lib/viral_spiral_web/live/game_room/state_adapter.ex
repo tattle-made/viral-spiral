@@ -1,5 +1,7 @@
 defmodule ViralSpiralWeb.GameRoom.StateAdapter do
   require IEx
+
+  alias ViralSpiral.Entity.DynamicCard
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Room.State
@@ -30,7 +32,7 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
                   id: card.id,
                   type: card.type,
                   veracity: card.veracity,
-                  headline: card.headline,
+                  headline: maybe_patch_headline(card, state.dynamic_card),
                   image: card.image,
                   article_id: card.article_id,
                   pass_to:
@@ -66,5 +68,17 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
 
   defp can_mark_as_fake(%Turn{} = turn) do
     length(turn.path) > 0
+  end
+
+  def maybe_patch_headline(card, %DynamicCard{} = dynamic_card) do
+    alias ViralSpiral.Canon.DynamicCard
+
+    headline = card.headline
+    sparse_card = Sparse.new(card.id, card.veracity)
+
+    case dynamic_card.identity_stats[sparse_card] do
+      nil -> headline
+      stats -> DynamicCard.patch(headline, stats)
+    end
   end
 end
