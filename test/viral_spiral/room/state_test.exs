@@ -1,5 +1,6 @@
 defmodule ViralSpiral.Room.StateTest do
   use ExUnit.Case
+  alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Room.State
 
   test "identity_stats/0" do
@@ -9,23 +10,23 @@ defmodule ViralSpiral.Room.StateTest do
 
     state =
       state
-      |> StateFixtures.update_player(adhiraj, %{
+      |> StateTransformation.update_player(adhiraj, %{
         clout: 5,
         biases: %{blue: 3, red: 1},
         affinities: %{sock: 2, houseboat: -3}
       })
-      |> StateFixtures.update_player(aman, %{
+      |> StateTransformation.update_player(aman, %{
         clout: 3,
         biases: %{red: 0, yellow: 2},
         affinities: %{sock: -4, houseboat: 5}
       })
-      |> StateFixtures.update_player(farah, %{
+      |> StateTransformation.update_player(farah, %{
         identity: :red,
         clout: 1,
         biases: %{yellow: 0, red: 0},
         affinities: %{sock: 1, houseboat: 0}
       })
-      |> StateFixtures.update_player(krys, %{
+      |> StateTransformation.update_player(krys, %{
         clout: 4,
         biases: %{red: 3, yellow: 1},
         affinities: %{sock: 0, houseboat: 0}

@@ -1,5 +1,6 @@
 defmodule ViralSpiral.Room.ReducerTest do
   require IEx
+  alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Canon.Deck.CardSet
   alias ViralSpiral.Room.Card.Player, as: CardPlayer
   alias ViralSpiral.Canon.Card.Sparse
@@ -79,7 +80,7 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
 
     test "dynamic card", %{state: state} do
-      state = state |> StateFixtures.update_room(%{chaos: 0})
+      state = state |> StateTransformation.update_room(%{chaos: 0})
       state = Reducer.reduce(state, Actions.draw_card())
       assert Map.keys(state.dynamic_card.identity_stats) |> length() == 1
     end
@@ -97,15 +98,15 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
-        |> StateFixtures.update_round(%{order: [adhiraj, aman, krys, farah]})
-        |> StateFixtures.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
+        |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
 
       card_sets = state.deck.available_cards
       set_key = CardSet.key(:affinity, true, :houseboat)
       cardset_member = Deck.draw_card(card_sets, set_key, 4)
       sparse_card = Sparse.new(cardset_member.id, true)
 
-      state = state |> StateFixtures.update_player(adhiraj, %{active_cards: [sparse_card]})
+      state = state |> StateTransformation.update_player(adhiraj, %{active_cards: [sparse_card]})
 
       pass_card_attrs = %{
         from_id: adhiraj,
@@ -128,15 +129,15 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
-        |> StateFixtures.update_round(%{order: [adhiraj, aman, krys, farah]})
-        |> StateFixtures.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
+        |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
 
       card_sets = state.deck.available_cards
       set_key = CardSet.key(:bias, true, :red)
       cardset_member = Deck.draw_card(card_sets, set_key, 4)
       sparse_card = Sparse.new(cardset_member.id, true)
 
-      state = state |> StateFixtures.update_player(adhiraj, %{active_cards: [sparse_card]})
+      state = state |> StateTransformation.update_player(adhiraj, %{active_cards: [sparse_card]})
 
       pass_card_attrs = %{
         from_id: adhiraj,
@@ -159,15 +160,15 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
-        |> StateFixtures.update_round(%{order: [adhiraj, aman, krys, farah]})
-        |> StateFixtures.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
+        |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
 
       card_sets = state.deck.available_cards
       set_key = CardSet.key(:topical, true, nil)
       cardset_member = Deck.draw_card(card_sets, set_key, 4)
       sparse_card = Sparse.new(cardset_member.id, true)
 
-      state = state |> StateFixtures.update_player(adhiraj, %{active_cards: [sparse_card]})
+      state = state |> StateTransformation.update_player(adhiraj, %{active_cards: [sparse_card]})
 
       pass_card_attrs = %{
         from_id: adhiraj,
@@ -193,17 +194,17 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
-        |> StateFixtures.update_round(%{order: [adhiraj, aman, krys, farah]})
-        |> StateFixtures.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
+        |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
 
       %{state: state, players: players}
     end
 
     test "keep affinity card", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
-      sparse_card = StateFixtures.draw_card(state, {:affinity, true, :houseboat})
+      sparse_card = StateTransformation.draw_card(state, {:affinity, true, :houseboat})
 
-      state = StateFixtures.update_player(state, adhiraj, %{active_cards: [sparse_card]})
+      state = StateTransformation.update_player(state, adhiraj, %{active_cards: [sparse_card]})
 
       keep_card_attrs = %{
         from_id: adhiraj,
@@ -222,11 +223,14 @@ defmodule ViralSpiral.Room.ReducerTest do
     test "keep bias card", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
-      sparse_card = StateFixtures.draw_card(state, {:bias, true, :yellow})
+      sparse_card = StateTransformation.draw_card(state, {:bias, true, :yellow})
 
       state =
-        StateFixtures.update_player(state, adhiraj, %{active_cards: [sparse_card]})
-        |> StateFixtures.update_player(adhiraj, %{identity: :red, biases: %{yellow: 3, blue: 0}})
+        StateTransformation.update_player(state, adhiraj, %{active_cards: [sparse_card]})
+        |> StateTransformation.update_player(adhiraj, %{
+          identity: :red,
+          biases: %{yellow: 3, blue: 0}
+        })
 
       keep_card_attrs = %{
         from_id: adhiraj,
@@ -251,8 +255,8 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
-        |> StateFixtures.update_round(%{order: [adhiraj, aman, krys, farah]})
-        |> StateFixtures.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
+        |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
 
       %{state: state, players: players}
     end
@@ -260,11 +264,14 @@ defmodule ViralSpiral.Room.ReducerTest do
     test "discard bias card", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
-      sparse_card = StateFixtures.draw_card(state, {:bias, true, :yellow})
+      sparse_card = StateTransformation.draw_card(state, {:bias, true, :yellow})
 
       state =
-        StateFixtures.update_player(state, adhiraj, %{active_cards: [sparse_card]})
-        |> StateFixtures.update_player(adhiraj, %{identity: :red, biases: %{yellow: 3, blue: 0}})
+        StateTransformation.update_player(state, adhiraj, %{active_cards: [sparse_card]})
+        |> StateTransformation.update_player(adhiraj, %{
+          identity: :red,
+          biases: %{yellow: 3, blue: 0}
+        })
 
       discard_card_attrs = %{
         from_id: adhiraj,
@@ -323,8 +330,8 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
-        |> StateFixtures.update_round(%{order: [adhiraj, aman, farah, krys]})
-        |> StateFixtures.update_turn(%{
+        |> StateTransformation.update_round(%{order: [adhiraj, aman, farah, krys]})
+        |> StateTransformation.update_turn(%{
           current: farah,
           pass_to: [krys],
           path: [adhiraj, aman]
@@ -344,7 +351,7 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
-        |> StateFixtures.update_player(farah, %{active_cards: [sparse_card]})
+        |> StateTransformation.update_player(farah, %{active_cards: [sparse_card]})
 
       mark_as_fake_attrs = %{
         from_id: farah,
@@ -370,7 +377,7 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
-        |> StateFixtures.update_player(farah, %{active_cards: [sparse_card]})
+        |> StateTransformation.update_player(farah, %{active_cards: [sparse_card]})
 
       mark_as_fake_attrs = %{
         from_id: farah,
@@ -394,8 +401,8 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
-        |> StateFixtures.update_round(%{order: [adhiraj, aman, farah, krys]})
-        |> StateFixtures.update_turn(%{
+        |> StateTransformation.update_round(%{order: [adhiraj, aman, farah, krys]})
+        |> StateTransformation.update_turn(%{
           current: adhiraj,
           pass_to: [aman, farah, krys],
           path: []
@@ -413,7 +420,7 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
-        |> StateFixtures.update_player(farah, %{active_cards: [sparse_card]})
+        |> StateTransformation.update_player(farah, %{active_cards: [sparse_card]})
 
       attrs = %{
         from_id: farah,
@@ -423,10 +430,10 @@ defmodule ViralSpiral.Room.ReducerTest do
         }
       }
 
-      active_card = StateFixtures.active_card(state, farah, 0)
+      active_card = StateTransformation.active_card(state, farah, 0)
       assert active_card.veracity == true
       state = Reducer.reduce(state, Actions.turn_to_fake(attrs))
-      active_card = StateFixtures.active_card(state, farah, 0)
+      active_card = StateTransformation.active_card(state, farah, 0)
       assert active_card.veracity == false
     end
 
@@ -439,7 +446,7 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
-        |> StateFixtures.update_player(farah, %{active_cards: [sparse_card]})
+        |> StateTransformation.update_player(farah, %{active_cards: [sparse_card]})
 
       attrs = %{
         from_id: farah,
@@ -449,7 +456,7 @@ defmodule ViralSpiral.Room.ReducerTest do
         }
       }
 
-      active_card = StateFixtures.active_card(state, farah, 0)
+      active_card = StateTransformation.active_card(state, farah, 0)
       assert active_card.veracity == false
 
       assert_raise RuntimeError, "This card is already false", fn ->
@@ -466,12 +473,12 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
-        |> StateFixtures.update_player(adhiraj, %{affinities: %{sock: 5, skub: 0}})
-        |> StateFixtures.update_player(aman, %{affinities: %{sock: 2, skub: 0}})
-        |> StateFixtures.update_player(farah, %{affinities: %{sock: 2, skub: 0}})
-        |> StateFixtures.update_player(krys, %{affinities: %{sock: -1, skub: 4}})
-        |> StateFixtures.update_round(%{order: [adhiraj, aman, krys, farah]})
-        |> StateFixtures.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
+        |> StateTransformation.update_player(adhiraj, %{affinities: %{sock: 5, skub: 0}})
+        |> StateTransformation.update_player(aman, %{affinities: %{sock: 2, skub: 0}})
+        |> StateTransformation.update_player(farah, %{affinities: %{sock: 2, skub: 0}})
+        |> StateTransformation.update_player(krys, %{affinities: %{sock: -1, skub: 4}})
+        |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
 
       %{state: state, players: players}
     end

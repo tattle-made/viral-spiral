@@ -4,6 +4,7 @@ defmodule ViralSpiral.GameTest do
 
   We only do 2 rounds for brevity.
   """
+  alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Canon.Encyclopedia
   alias ViralSpiral.Entity.PlayerMap
@@ -82,7 +83,7 @@ defmodule ViralSpiral.GameTest do
 
     # assert current_player.id == player_a
 
-    current_card = StateFixtures.active_card(state, current_player.id, 0)
+    current_card = StateTransformation.active_card(state, current_player.id, 0)
 
     state =
       state
@@ -98,7 +99,7 @@ defmodule ViralSpiral.GameTest do
       |> Factory.keep_card(current_card, player_b)
       |> Factory.draw_card()
 
-    current_card = StateFixtures.active_card(state, player_b, 0) |> IO.inspect()
+    current_card = StateTransformation.active_card(state, player_b, 0) |> IO.inspect()
 
     state = state |> Factory.discard_card(current_card, player_b)
 
