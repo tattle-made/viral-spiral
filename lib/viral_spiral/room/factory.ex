@@ -59,7 +59,7 @@ defmodule ViralSpiral.Room.Factory do
 
   def draw_type(%State{} = state) do
     %DrawConstraints{
-      tgb: state.room.chaos,
+      chaos: state.room.chaos,
       total_tgb: state.room.chaos_counter,
       biases: state.room.communities,
       affinities: state.room.affinities,

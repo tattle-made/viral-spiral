@@ -92,7 +92,7 @@ defmodule ViralSpiral.Canon do
     Sparse.new(card.id, card.veracity)
   end
 
-  defdelegate draw_card_from_deck(card_sets, set_key, tgb), to: Deck, as: :draw_card
+  defdelegate draw_card_from_deck(card_sets, set_key, chaos), to: Deck, as: :draw_card
 
   defdelegate remove_card_from_deck(card_sets, set_key, member_card_sets),
     to: Deck,

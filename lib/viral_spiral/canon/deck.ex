@@ -40,11 +40,11 @@ defmodule ViralSpiral.Canon.Deck do
   Probabilistically draw a card with specific constraits.
   """
   @spec draw_card(CardSet.card_sets(), CardSet.key_type(), integer()) :: Sparse.t()
-  def draw_card(card_sets, set_key, tgb) do
+  def draw_card(card_sets, set_key, chaos) do
     # {_, veracity, _} = set_key
 
     card_sets[set_key]
-    |> filter_tgb(tgb)
+    |> filter_tgb(chaos)
     |> choose_one()
   end
 

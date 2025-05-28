@@ -12,6 +12,7 @@ defmodule ViralSpiral.Room.State do
   """
 
   require IEx
+  alias ViralSpiral.Entity.DynamicCard
   alias ViralSpiral.Room.DrawConstraints
   alias ViralSpiral.Entity.PowerCancelPlayer
   alias ViralSpiral.Canon.Card.Sparse
@@ -38,7 +39,8 @@ defmodule ViralSpiral.Room.State do
             articles: %{},
             power_viralspiral: nil,
             power_check_source: CheckSource.new(),
-            power_cancel_player: %PowerCancelPlayer{}
+            power_cancel_player: %PowerCancelPlayer{},
+            dynamic_card: DynamicCard.skeleton()
 
   @type t :: %__MODULE__{
           deck: Deck.t(),
@@ -49,7 +51,8 @@ defmodule ViralSpiral.Room.State do
           articles: map(),
           power_check_source: CheckSource.t(),
           power_viralspiral: PowerViralSpiral.t(),
-          power_cancel_player: PowerCancelPlayer.t()
+          power_cancel_player: PowerCancelPlayer.t(),
+          dynamic_card: DynamicCard.t()
         }
 
   def skeleton(opts \\ []) do
@@ -95,8 +98,8 @@ defmodule ViralSpiral.Room.State do
     curr_player = current_round_player(state)
 
     %DrawConstraints{
-      tgb: state.room.chaos_counter - 10,
-      total_tgb: 10,
+      chaos: state.room.chaos,
+      total_tgb: state.room.chaos_counter,
       biases: state.room.communities,
       affinities: state.room.affinities,
       current_player: %{identity: curr_player.identity}
@@ -163,6 +166,10 @@ defmodule ViralSpiral.Room.State do
     state.power_cancel_player
   end
 
+  defp get_target(%State{} = state, %DynamicCard{}) do
+    state.dynamic_card
+  end
+
   @doc """
   Generalized way to get a nested entity from state.
 
@@ -212,6 +219,10 @@ defmodule ViralSpiral.Room.State do
 
   defp put_target(%State{} = state, %Room{} = room) do
     Map.put(state, :room, room)
+  end
+
+  defp put_target(%State{} = state, %DynamicCard{} = dynamic_card) do
+    Map.put(state, :dynamic_card, dynamic_card)
   end
 
   @spec current_round_player(State.t()) :: Player.t()

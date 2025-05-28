@@ -51,12 +51,37 @@ defmodule ViralSpiral.Room.ReducerTest do
       %{state: state}
     end
 
-    @tag timeout: :infinity
     test "draw_card", %{state: state} do
       state = Reducer.reduce(state, Actions.draw_card())
       current_player = State.current_round_player(state)
       # assert Deck.size(new_state.deck.available_cards, draw_type) == 59
       assert length(current_player.active_cards) == 1
+    end
+  end
+
+  describe "draw dynamic card" do
+    setup do
+      :rand.seed(:exsss, {123, 568_392, 1833})
+
+      room =
+        Room.skeleton()
+        |> Room.join("adhiraj")
+        |> Room.set_state(:reserved)
+        |> Room.join("aman")
+        |> Room.join("farah")
+        |> Room.join("krys")
+        |> Room.start()
+
+      state = %State{room: room}
+      state = State.setup(state)
+
+      %{state: state}
+    end
+
+    test "dynamic card", %{state: state} do
+      state = state |> StateFixtures.update_room(%{chaos: 0})
+      state = Reducer.reduce(state, Actions.draw_card())
+      assert Map.keys(state.dynamic_card.identity_stats) |> length() == 1
     end
   end
 

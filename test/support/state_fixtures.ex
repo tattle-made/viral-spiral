@@ -68,6 +68,12 @@ defmodule StateFixtures do
     state
   end
 
+  def update_room(%State{} = state, attrs) do
+    chaos = Map.get(attrs, :chaos, 0)
+    state = put_in(state.room.chaos, chaos)
+    state
+  end
+
   def draw_card(%State{} = state, {type, veracity, target}) do
     card_sets = state.deck.available_cards
     set_key = CardSet.key(type, veracity, target)

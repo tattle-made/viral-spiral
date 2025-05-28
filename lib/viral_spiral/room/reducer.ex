@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.DynamicCard.Changes.AddIdentityStats
   alias ViralSpiral.Room.Actions.Player.TurnToFake
   alias ViralSpiral.Room.Actions.Player.HideSource
   alias ViralSpiral.Entity.Turn.Change.NewTurn
@@ -82,27 +83,37 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %DrawCard{}) do
     %{deck: deck} = state
     card_sets = deck.available_cards
+    card_store = deck.store
     current_player = State.current_round_player(state)
     draw_constraints = State.draw_constraints(state)
     card_type = CardDraw.draw_type(draw_constraints)
-    tgb = draw_constraints.tgb
-    card = Canon.draw_card_from_deck(card_sets, card_type, tgb)
+    chaos = draw_constraints.chaos
+    card = Canon.draw_card_from_deck(card_sets, card_type, chaos)
 
-    # todo dynamic card text replacement
-    # headline = fake_card.headline
-    # stats = State.identity_stats(state)
-    # patched_headline = DynamicCard.patch(headline, stats)
-    # sparse_card = Sparse.new(fake_card.id, fake_card.veracity, patched_headline)
+    full_card = card_store[Sparse.new(card.id, elem(card_type, 1))]
+    sparse_card = Sparse.new(card.id, elem(card_type, 1))
+    identity_stats = State.identity_stats(state)
+
+    dynamic_card_change =
+      case DynamicCard.find_placeholders(full_card.headline) do
+        [] ->
+          []
+
+        _ ->
+          [
+            {state.dynamic_card,
+             %AddIdentityStats{card: sparse_card, identity_stats: identity_stats}}
+          ]
+      end
 
     changes = [
       {state.deck, %RemoveCard{card_sets: card_sets, card_type: card_type, card: card}},
-      {
-        state.players[current_player.id],
-        %AddActiveCard{card: Sparse.new(card.id, elem(card_type, 1))}
-      }
+      {state.players[current_player.id], %AddActiveCard{card: sparse_card}}
     ]
 
-    State.apply_changes(state, changes)
+    all_changes = dynamic_card_change ++ changes
+    IEx.pry()
+    State.apply_changes(state, all_changes)
   end
 
   def reduce(%State{} = state, %PassCard{} = action) do

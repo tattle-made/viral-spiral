@@ -2,14 +2,14 @@ defmodule ViralSpiral.Room.DrawConstraints do
   alias ViralSpiral.Affinity
   alias ViralSpiral.Bias
 
-  defstruct tgb: 0,
+  defstruct chaos: 0,
             total_tgb: nil,
             biases: nil,
             affinities: nil,
             current_player: %{identity: nil}
 
   @type t :: %__MODULE__{
-          tgb: integer(),
+          chaos: integer(),
           total_tgb: integer(),
           biases: list(Bias.target()),
           affinities: list(Affinity.target()),
