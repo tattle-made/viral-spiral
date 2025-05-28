@@ -224,16 +224,28 @@ defmodule ViralSpiral.Room.Reducer do
     case card.veracity do
       true ->
         fake_card = state.deck.store[Sparse.new(card.id, false)]
-        headline = fake_card.headline
-        stats = State.identity_stats(state)
-        _patched_headline = DynamicCard.patch(headline, stats)
         sparse_card = Sparse.new(fake_card.id, fake_card.veracity)
+        identity_stats = State.identity_stats(state)
 
         changes = [
           {state.players[from_id], %MakeActiveCardFake{card: sparse_card}}
         ]
 
-        State.apply_changes(state, changes)
+        dynamic_card_change =
+          case DynamicCard.find_placeholders(fake_card.headline) do
+            [] ->
+              []
+
+            _ ->
+              [
+                {state.dynamic_card,
+                 %AddIdentityStats{card: sparse_card, identity_stats: identity_stats}}
+              ]
+          end
+
+        all_changes = changes ++ dynamic_card_change
+
+        State.apply_changes(state, all_changes)
 
       false ->
         raise "This card is already false"
