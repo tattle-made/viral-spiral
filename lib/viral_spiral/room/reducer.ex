@@ -112,7 +112,6 @@ defmodule ViralSpiral.Room.Reducer do
     ]
 
     all_changes = dynamic_card_change ++ changes
-    IEx.pry()
     State.apply_changes(state, all_changes)
   end
 
