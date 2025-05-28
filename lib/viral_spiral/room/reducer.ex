@@ -98,7 +98,7 @@ defmodule ViralSpiral.Room.Reducer do
       {state.deck, %RemoveCard{card_sets: card_sets, card_type: card_type, card: card}},
       {
         state.players[current_player.id],
-        %AddActiveCard{card: Sparse.new({card.id, elem(card_type, 1)})}
+        %AddActiveCard{card: Sparse.new(card.id, elem(card_type, 1))}
       }
     ]
 
@@ -186,7 +186,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   def reduce(%State{} = state, %ViewSource{} = action) do
     %{from_id: from_id, card: card} = action
-    sparse_card = Sparse.new({card.id, card.veracity})
+    sparse_card = Sparse.new(card.id, card.veracity)
     article = Canon.get_article(state.deck.article_store, sparse_card)
 
     changes = [
@@ -198,7 +198,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   def reduce(%State{} = state, %HideSource{} = action) do
     %{from_id: from_id, card: card} = action
-    sparse_card = Sparse.new({card.id, card.veracity})
+    sparse_card = Sparse.new(card.id, card.veracity)
 
     changes = [
       {state.players[from_id], %CloseArticle{card: sparse_card}}
@@ -216,8 +216,8 @@ defmodule ViralSpiral.Room.Reducer do
         fake_card = state.deck.store[Sparse.new(card.id, false)]
         headline = fake_card.headline
         stats = State.identity_stats(state)
-        patched_headline = DynamicCard.patch(headline, stats)
-        sparse_card = Sparse.new(fake_card.id, fake_card.veracity, patched_headline)
+        _patched_headline = DynamicCard.patch(headline, stats)
+        sparse_card = Sparse.new(fake_card.id, fake_card.veracity)
 
         changes = [
           {state.players[from_id], %MakeActiveCardFake{card: sparse_card}}

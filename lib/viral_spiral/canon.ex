@@ -89,7 +89,7 @@ defmodule ViralSpiral.Canon do
   """
   @spec sparse_card(Card.t()) :: Sparse.t()
   def sparse_card(card) when is_card(card) do
-    Sparse.new(card.id, card.veracity, card.headline)
+    Sparse.new(card.id, card.veracity)
   end
 
   defdelegate draw_card_from_deck(card_sets, set_key, tgb), to: Deck, as: :draw_card

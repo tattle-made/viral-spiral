@@ -207,7 +207,7 @@ defmodule ViralSpiral.Entity.Player do
         List.replace_at(
           player.active_cards,
           ix,
-          Sparse.new(card_id, new_card.veracity, new_card.headline)
+          Sparse.new(card_id, new_card.veracity)
         )
 
       %{player | active_cards: active_cards}

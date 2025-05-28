@@ -223,7 +223,7 @@ defmodule ViralSpiral.Room.State do
   @spec active_card(State.t(), String.t(), integer()) :: tuple() | nil
   def active_card(%State{} = state, player_id, ix) do
     case state.players[player_id].active_cards |> Enum.at(ix) do
-      {id, veracity, _headline} -> Sparse.new({id, veracity})
+      %Sparse{} = sparse_card -> sparse_card
       nil -> nil
     end
   end
