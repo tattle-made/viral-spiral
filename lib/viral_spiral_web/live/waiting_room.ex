@@ -6,7 +6,7 @@ defmodule ViralSpiralWeb.WaitingRoom do
   """
   use ViralSpiralWeb, :live_view
 
-  def mount(params, session, socket) do
+  def mount(_params, _session, socket) do
     {:ok, socket}
   end
 

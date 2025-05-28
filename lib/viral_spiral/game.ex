@@ -29,9 +29,7 @@ defmodule ViralSpiral.Game do
     |> keep_card(card, from)
     |> pass_card(card, from, to)
   """
-  alias ViralSpiral.Room.Factory
-  alias ViralSpiral.Canon.Card.Share
-  alias ViralSpiral.Game.State
+
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Entity.Room
 
@@ -50,7 +48,7 @@ defmodule ViralSpiral.Game do
   Pass a card from one player to another.
   """
   # @spec pass_card(Player.t(), Card.t()) :: list(Change.t())
-  def pass_card(state, card, %Player{} = from, %Player{} = to) do
+  def pass_card(_state, _card, %Player{} = _from, %Player{} = _to) do
     # _changes = Share.pass(card, state, from, to)
     # State.apply_changes(state, changes)
     # changes =

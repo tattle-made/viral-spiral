@@ -1,15 +1,9 @@
 defmodule ViralSpiral.Room.ReducerTest do
   require IEx
   alias ViralSpiral.Canon.Deck.CardSet
-  alias ViralSpiral.Room.Actions.Player.PassCard
   alias ViralSpiral.Room.Card.Player, as: CardPlayer
-  alias ViralSpiral.Entity.Turn
-  alias ViralSpiral.Entity.Round
-  alias ViralSpiral.Entity.Player
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Canon.Article
-  alias ViralSpiral.Entity.PlayerMap
-  alias ViralSpiral.Room.Factory
   alias ViralSpiral.Room.Actions
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Canon.Deck

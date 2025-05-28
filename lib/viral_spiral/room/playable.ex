@@ -27,7 +27,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
   2. their bias against the corresponding community increases by 1
   3. every player of that community loses a clout of 1
   """
-  def pass(card, state, from, to) do
+  def pass(card, state, from, _to) do
     sender_change = [
       {state.players[from], %Clout{offset: 1}},
       {state.players[from], %Bias{offset: 1, target: card.target}}
@@ -62,7 +62,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
 
   # Increase the player's affinity by 1
   # Increase player's clout by 1
-  def pass(%AffinityCard{} = card, %State{} = state, from, to) do
+  def pass(%AffinityCard{} = card, %State{} = state, from, _to) do
     current_round_player = State.current_round_player(state)
 
     affinity_offset =
@@ -77,12 +77,12 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
     ]
   end
 
-  def keep(_card, state, from) do
+  def keep(_card, _state, _from) do
     []
   end
 
   # End the turn
-  def discard(_card, state, _from) do
+  def discard(_card, _state, _from) do
     []
   end
 end
@@ -99,12 +99,12 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
     ]
   end
 
-  def keep(_card, state, from) do
+  def keep(_card, _state, _from) do
     []
   end
 
   # End the turn
-  def discard(_card, state, _from) do
+  def discard(_card, _state, _from) do
     []
   end
 end

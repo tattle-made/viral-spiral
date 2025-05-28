@@ -10,7 +10,6 @@ defmodule ViralSpiral.Entity.Player do
   }
   """
 
-  alias ViralSpiral.Entity.Article
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Bias, as: ViralSpiralBias

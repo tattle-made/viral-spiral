@@ -56,7 +56,13 @@ defmodule ViralSpiral.Entity.TurnTest do
 
   describe "changes" do
     setup do
-      round = Fixtures.new_round()
+      round = %Round{
+        order: ["player_abc", "player_def", "player_ghi", "player_jkl"],
+        count: 4,
+        current: 0,
+        skip: nil
+      }
+
       turn = Turn.new(round)
 
       current_player = Enum.at(round.order, 0)

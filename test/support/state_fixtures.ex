@@ -1,6 +1,5 @@
 defmodule StateFixtures do
   alias ViralSpiral.Canon
-  alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Canon.Deck.CardSet
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Entity.Round

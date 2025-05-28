@@ -4,7 +4,7 @@ defmodule ViralSpiral.Room.Analytics do
   @doc """
   identity of the player with most clout
   """
-  def dominant_community(%State{} = state) do
+  def dominant_community(%State{} = _state) do
   end
 end
 

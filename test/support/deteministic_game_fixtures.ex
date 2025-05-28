@@ -5,15 +5,6 @@ defmodule DeteministicGameFixtures do
   alias ViralSpiral.Entity.Room
   alias ViralSpiral.Room.State
 
-  defp deck() do
-    %{
-      available_cards: %{},
-      dealt_cards: %{},
-      store: %{},
-      article_store: %{}
-    }
-  end
-
   def new() do
     %State{
       room: %Room{
