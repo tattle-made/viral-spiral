@@ -1,9 +1,6 @@
 defmodule ViralSpiral.Room.ActionsTest do
   use ExUnit.Case
 
-  alias ViralSpiral.Room.Actions.Player.TurnToFake
-  alias ViralSpiral.Room.Actions.Player.HideSource
-
   alias ViralSpiral.Room.Actions.Player.{
     ReserveRoom,
     JoinRoom,
@@ -14,34 +11,35 @@ defmodule ViralSpiral.Room.ActionsTest do
     MarkAsFake,
     ViewSource,
     CancelPlayerInitiate,
-    CancelPlayerVote
+    CancelPlayerVote,
+    TurnToFake,
+    HideSource
   }
 
   alias ViralSpiral.Room.Actions.Engine.{
     DrawCard
   }
 
-  alias ViralSpiral.Room.Action
   alias ViralSpiral.Room.Actions
 
   test "reserve_room" do
     action = Actions.reserve_room(%{"player_name" => "adhiraj"})
-    assert %Action{type: :reserve_room, payload: %ReserveRoom{}} = action
+    assert %ReserveRoom{} = action
   end
 
   test "join room" do
     action = Actions.join_room(%{"player_name" => "aman"})
-    assert %Action{type: :join_room, payload: %JoinRoom{}} = action
+    assert %JoinRoom{} = action
   end
 
   test "start game" do
     action = Actions.start_game()
-    assert %Action{type: :start_game, payload: %StartGame{}} = action
+    assert %StartGame{} = action
   end
 
   test "draw card" do
     action = Actions.draw_card()
-    assert %Action{type: :draw_card, payload: %DrawCard{}} = action
+    assert %DrawCard{} = action
   end
 
   test "pass card" do
@@ -55,7 +53,7 @@ defmodule ViralSpiral.Room.ActionsTest do
     }
 
     action = Actions.pass_card(attrs)
-    assert %Action{type: :pass_card, payload: %PassCard{}} = action
+    assert %PassCard{} = action
   end
 
   test "keep card" do
@@ -68,7 +66,7 @@ defmodule ViralSpiral.Room.ActionsTest do
     }
 
     action = Actions.keep_card(attrs)
-    assert %Action{type: :keep_card, payload: %KeepCard{}} = action
+    assert %KeepCard{} = action
   end
 
   test "discard card" do
@@ -81,7 +79,7 @@ defmodule ViralSpiral.Room.ActionsTest do
     }
 
     action = Actions.discard_card(attrs)
-    assert %Action{type: :discard_card, payload: %DiscardCard{}} = action
+    assert %DiscardCard{} = action
   end
 
   test "view source" do
@@ -94,7 +92,7 @@ defmodule ViralSpiral.Room.ActionsTest do
     }
 
     action = Actions.view_source(attrs)
-    assert %Action{type: :view_source, payload: %ViewSource{}} = action
+    assert %ViewSource{} = action
   end
 
   test "hide source" do
@@ -107,7 +105,7 @@ defmodule ViralSpiral.Room.ActionsTest do
     }
 
     action = Actions.hide_source(attrs)
-    assert %Action{type: :hide_source, payload: %HideSource{}} = action
+    assert %HideSource{} = action
   end
 
   test "mark as fake" do
@@ -120,7 +118,7 @@ defmodule ViralSpiral.Room.ActionsTest do
     }
 
     action = Actions.mark_card_as_fake(attrs)
-    assert %Action{type: :mark_as_fake, payload: %MarkAsFake{}} = action
+    assert %MarkAsFake{} = action
   end
 
   test "turn to fake" do
@@ -133,7 +131,7 @@ defmodule ViralSpiral.Room.ActionsTest do
     }
 
     action = Actions.turn_to_fake(attrs)
-    assert %Action{type: :turn_to_fake, payload: %TurnToFake{}} = action
+    assert %TurnToFake{} = action
   end
 
   test "cancel player initiate" do
@@ -144,7 +142,7 @@ defmodule ViralSpiral.Room.ActionsTest do
     }
 
     action = Actions.initiate_cancel(attrs)
-    assert %Action{type: :cancel_player_initiate, payload: %CancelPlayerInitiate{}} = action
+    assert %CancelPlayerInitiate{} = action
   end
 
   test "cancel player vote" do
@@ -154,6 +152,6 @@ defmodule ViralSpiral.Room.ActionsTest do
     }
 
     action = Actions.vote_to_cancel(attrs)
-    assert %Action{type: :cancel_player_vote, payload: %CancelPlayerVote{}} = action
+    assert %CancelPlayerVote{} = action
   end
 end

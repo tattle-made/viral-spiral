@@ -24,7 +24,7 @@ defmodule ViralSpiral.Canon.DeckEncyclopediaTest do
     test "get source", %{canon: canon} do
       {card_store, card_sets, _, article_store} = canon
 
-      set_key = {:topical, true}
+      set_key = {:topical, true, nil}
       member_card_set = Canon.draw_card_from_deck(card_sets, set_key, 5)
 
       article = Canon.get_article(article_store, Sparse.new(member_card_set.id, true))
@@ -36,7 +36,7 @@ defmodule ViralSpiral.Canon.DeckEncyclopediaTest do
     test "get fake card", %{canon: canon} do
       {card_store, card_sets, _, _} = canon
 
-      set_key = {:topical, true}
+      set_key = {:topical, true, nil}
       member_card_set = Canon.draw_card_from_deck(card_sets, set_key, 6)
       card = card_store[Sparse.new(member_card_set.id, true)]
 

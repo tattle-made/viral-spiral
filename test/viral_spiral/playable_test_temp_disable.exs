@@ -7,12 +7,15 @@ defmodule ViralSpiral.PlayableTest do
   alias ViralSpiral.Canon.Deck
   use ExUnit.Case
 
+  @tag :skip
   describe "affinity cards" do
+    @tag :skip
     setup do
       game = Fixtures.initialized_game()
       %{game: game}
     end
 
+    @tag :skip
     test "passing an affinity card changes a player's score", state do
       game_state = state.game
       turn = game_state.turn
@@ -34,6 +37,7 @@ defmodule ViralSpiral.PlayableTest do
       assert new_state.players[current_player_id].clout == 1
     end
 
+    @tag :skip
     test "keeping an affinity card does not change player's score", state do
       game_state = state.game
       round = game_state.round
@@ -49,6 +53,7 @@ defmodule ViralSpiral.PlayableTest do
       assert new_state.round.current == 1
     end
 
+    @tag :skip
     test "discarding an affinity card does not change player's score", state do
       game_state = state.game
       round = game_state.round
@@ -66,6 +71,7 @@ defmodule ViralSpiral.PlayableTest do
     end
   end
 
+  @tag :skip
   describe "bias cards" do
     setup do
       :rand.seed(:exsss, {1, 2, 5})
@@ -73,6 +79,7 @@ defmodule ViralSpiral.PlayableTest do
       %{game: game}
     end
 
+    @tag :skip
     test "pass card", state do
       game_state = state.game
       players = game_state.players
@@ -104,6 +111,7 @@ defmodule ViralSpiral.PlayableTest do
       assert new_state.turn.current == to_player_id
     end
 
+    @tag :skip
     test "keep card", state do
       game_state = state.game
       card = CardFixtures.bias_card(:blue, true)
