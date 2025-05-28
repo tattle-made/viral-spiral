@@ -169,7 +169,7 @@ defmodule ViralSpiral.Room.Reducer do
 
     clout_penalty_change =
       if card.veracity == false,
-        do: {state.players[Enum.at(turn.path, 1)], %Clout{offset: -1}},
+        do: {state.players[Enum.at(turn.path, -1)], %Clout{offset: -1}},
         else: {state.players[from_id], %Clout{offset: -1}}
 
     State.apply_changes(state, [clout_penalty_change])

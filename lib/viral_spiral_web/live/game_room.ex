@@ -83,6 +83,14 @@ defmodule ViralSpiralWeb.GameRoom do
     {:noreply, socket}
   end
 
+  def handle_event("mark_as_fake", params, %{assigns: %{room_gen: room_gen}} = socket) do
+    action = Actions.mark_card_as_fake(Actions.string_to_map(params))
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.game_room(gen_state)
+    socket = assign(socket, :state, room_state)
+    {:noreply, socket}
+  end
+
   def player_options(state, player) do
     pass_to_ids = state.turn.pass_to
 

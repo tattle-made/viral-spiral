@@ -1,5 +1,6 @@
 defmodule ViralSpiralWeb.GameRoom.StateAdapter do
   require IEx
+  alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Room.State
 
@@ -35,7 +36,8 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
                   pass_to:
                     state.turn.pass_to
                     |> Enum.map(fn id -> %{id: id, name: state.players[id].name} end),
-                  source: parse_source(state.players[player.id], card)
+                  source: make_source(state.players[player.id], card),
+                  can_mark_as_fake: can_mark_as_fake(state.turn)
                 }
               end)
           }
@@ -43,7 +45,7 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
     }
   end
 
-  defp parse_source(player, card) do
+  defp make_source(player, card) do
     sparse_card = Sparse.new(card.id, card.veracity)
     article = player.open_articles[sparse_card]
 
@@ -59,5 +61,9 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
           author: article.author
         }
     end
+  end
+
+  defp can_mark_as_fake(%Turn{} = turn) do
+    length(turn.path) > 0
   end
 end

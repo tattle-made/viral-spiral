@@ -107,6 +107,24 @@ defmodule ViralSpiralWeb.Atoms do
         <p class="font-light text-gray-800">Content</p>
         <p class="font-normal"><%= @card.source.content %></p>
       </div>
+
+      <div :if={@card.can_mark_as_fake} class="mt-4">
+        <button
+          phx-click="mark_as_fake"
+          value={
+            Jason.encode!(%{
+              from_id: @from,
+              card: %{
+                id: @card.id,
+                veracity: @card.veracity
+              }
+            })
+          }
+          class="py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
+        >
+          Mark as fake
+        </button>
+      </div>
     </div>
     """
   end
