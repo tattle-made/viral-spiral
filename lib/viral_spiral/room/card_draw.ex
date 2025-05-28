@@ -45,7 +45,7 @@ defmodule ViralSpiral.Room.CardDraw do
 
     veracity =
       case :rand.uniform() do
-        a when a < requirements.tgb / requirements.total_tgb -> true
+        a when a > requirements.tgb / requirements.total_tgb -> true
         _ -> false
       end
 
