@@ -37,7 +37,8 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
                     state.turn.pass_to
                     |> Enum.map(fn id -> %{id: id, name: state.players[id].name} end),
                   source: make_source(state.players[player.id], card),
-                  can_mark_as_fake: can_mark_as_fake(state.turn)
+                  can_mark_as_fake: can_mark_as_fake(state.turn),
+                  can_turn_fake: card.veracity == true
                 }
               end)
           }
