@@ -29,8 +29,11 @@ defmodule ViralSpiral.Canon.DynamicCard do
 
   @mappings [
     {"(other community)", :other_community},
+    {"(Other community)", :Other_community},
     {"(dominant community)", :dominant_community},
+    {"(Dominant community)", :Dominant_community},
     {"(oppressed community)", :oppressed_community},
+    {"(Oppressed community)", :Oppressed_community},
     {"(unpopular affinity)", :unpopular_affinity},
     {"(popular affinity)", :popular_affinity}
   ]
@@ -62,7 +65,7 @@ defmodule ViralSpiral.Canon.DynamicCard do
   def find_placeholders(headline) do
     results =
       Regex.scan(
-        ~r/(\(oppressed community\)|\(popular affinity\)|\(unpopular affinity\)|\(other community\)|\(dominant community\))/,
+        ~r/(\(oppressed community\)|\(Oppressed community\)|\(popular affinity\)|\(unpopular affinity\)|\(other community\)|\(dominant community\)|\(Dominant community\))/,
         headline
       )
 
