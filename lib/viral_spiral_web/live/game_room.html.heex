@@ -21,13 +21,14 @@
       ]}
     >
       <div class={[
-        "w-full px-2 py-2",
+        "w-full px-2 py-2 flex flex-row gap-4",
         if(player.is_active,
           do: "bg-red-400",
           else: "bg-red-100"
         )
       ]}>
         <p><%= player.name %></p>
+        <p><%= player.identity %></p>
       </div>
 
       <%!-- <span class="ml-6"><%= player.identity %></span> --%>

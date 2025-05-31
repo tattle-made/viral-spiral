@@ -1,6 +1,7 @@
 defmodule ViralSpiralWeb.GameRoom.StateAdapter do
   require IEx
 
+  alias ViralSpiral.Bias
   alias ViralSpiral.Entity.Player.Map, as: PlayerMap
   alias ViralSpiral.Affinity
   alias Phoenix.HTML.FormData
@@ -23,6 +24,7 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
           {id, player} <- state.players,
           do: %{
             id: player.id,
+            identity: Bias.label(player.identity),
             name: player.name,
             clout: player.clout,
             affinities: player.affinities,
