@@ -24,6 +24,7 @@ defmodule ViralSpiral.Canon.DynamicCard do
 
   In practice you'd require visibility into the game state to create the replacements map show above. This falls under the responsibility of `ViralSpiral.Room.State.Analytics`
   """
+  require IEx
   alias ViralSpiral.Bias
   alias ViralSpiral.Affinity
 
@@ -35,7 +36,8 @@ defmodule ViralSpiral.Canon.DynamicCard do
     {"(oppressed community)", :oppressed_community},
     {"(Oppressed community)", :Oppressed_community},
     {"(unpopular affinity)", :unpopular_affinity},
-    {"(popular affinity)", :popular_affinity}
+    {"(popular affinity)", :popular_affinity},
+    {"(player community)", :player_community}
   ]
   @string_to_atom_map Enum.reduce(@mappings, %{}, fn x, acc ->
                         Map.put(acc, elem(x, 0), elem(x, 1))
@@ -57,6 +59,7 @@ defmodule ViralSpiral.Canon.DynamicCard do
           optional(:unpopular_affinity) => Affinity.target(),
           optional(:popular_affinity) => Affinity.target()
         }
+  @regex_pattern ~r/(\(oppressed community\)|\(Oppressed community\)|\(popular affinity\)|\(unpopular affinity\)|\(other community\)|\(Other community\)|\(dominant community\)|\(Dominant community\)|\(player community\))/
 
   @doc """
   Find types of placeholders present in a card headline
@@ -64,10 +67,7 @@ defmodule ViralSpiral.Canon.DynamicCard do
   @spec find_placeholders(String.t()) :: list(match())
   def find_placeholders(headline) do
     results =
-      Regex.scan(
-        ~r/(\(oppressed community\)|\(Oppressed community\)|\(popular affinity\)|\(unpopular affinity\)|\(other community\)|\(dominant community\)|\(Dominant community\))/,
-        headline
-      )
+      Regex.scan(@regex_pattern, headline)
 
     results
     |> Enum.map(&Enum.at(&1, 0))
@@ -100,10 +100,7 @@ defmodule ViralSpiral.Canon.DynamicCard do
   """
   def valid?(headline) do
     results =
-      Regex.scan(
-        ~r/(\(oppressed community\)|\(popular affinity\)|\(unpopular affinity\)|\(other community\)|\(dominant community\))/,
-        headline
-      )
+      Regex.scan(@regex_pattern, headline)
 
     results
     |> Enum.map(&Enum.at(&1, 0))
