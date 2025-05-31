@@ -7,6 +7,7 @@ defmodule ViralSpiral.Room.Actions.Player.CancelPlayerVote do
           vote: boolean()
         }
 
+  @primary_key false
   embedded_schema do
     field :from_id, :string
     field :vote, :boolean

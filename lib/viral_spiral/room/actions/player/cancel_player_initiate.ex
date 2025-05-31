@@ -5,8 +5,7 @@ defmodule ViralSpiral.Room.Actions.Player.CancelPlayerInitiate do
   @type t :: %__MODULE__{
           from_id: String.t(),
           target_id: String.t(),
-          affinity: :houseboat | :skub | :cat | :highfive | :sock,
-          polarity: :positive | :negative
+          affinity: :houseboat | :skub | :cat | :highfive | :sock
         }
 
   @primary_key false
@@ -14,11 +13,10 @@ defmodule ViralSpiral.Room.Actions.Player.CancelPlayerInitiate do
     field :from_id, :string
     field :target_id, :string
     field :affinity, Ecto.Enum, values: [:houseboat, :skub, :cat, :highfive, :sock]
-    field :polarity, Ecto.Enum, values: [:positive, :negative]
   end
 
   def changeset(initiate_cancel, attrs) do
     initiate_cancel
-    |> cast(attrs, [:from_id, :target_id, :affinity, :polarity])
+    |> cast(attrs, [:from_id, :target_id, :affinity])
   end
 end

@@ -4,6 +4,8 @@ defmodule ViralSpiral.Room.GameEngine do
 
   All player actions are sent to this genserver, which returns or broadcasts the changes made to the game State.
   """
+  require IEx
+  alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Room.Actions.Player.CancelPlayerVote
   alias ViralSpiral.Room.Actions.Player.CancelPlayerInitiate
   alias ViralSpiral.Room.Actions.Player.MarkAsFake
@@ -15,10 +17,8 @@ defmodule ViralSpiral.Room.GameEngine do
   alias ViralSpiral.Room.Actions.Player.PassCard
   alias ViralSpiral.Room.Actions
   alias ViralSpiral.Room.Reducer
-  alias ViralSpiral.Canon.Card.Sparse
-  alias ViralSpiral.Room.Factory
   alias ViralSpiral.Room.State
-  alias ViralSpiral.Entity.Room
+
   use GenServer
 
   @registry ViralSpiral.Room.Registry
@@ -36,17 +36,26 @@ defmodule ViralSpiral.Room.GameEngine do
       |> Reducer.reduce(Actions.join_room(%{player_name: "farah"}))
       |> Reducer.reduce(Actions.join_room(%{player_name: "krys"}))
       |> Reducer.reduce(Actions.start_game())
-      |> Reducer.reduce(Actions.draw_card())
+
+    # |> Reducer.reduce(Actions.draw_card())
+
+    # todo : only for debugging
+    players = StateTransformation.player_id_by_names(state)
+    %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
+    sparse_card = StateTransformation.draw_card(state, {:affinity, true, :sock})
+
+    state =
+      state
+      |> StateTransformation.update_player(adhiraj, %{affinities: %{sock: 5, skub: 0}})
+      |> StateTransformation.update_player(aman, %{affinities: %{sock: 2, skub: 0}})
+      |> StateTransformation.update_player(farah, %{affinities: %{sock: 2, skub: 0}})
+      |> StateTransformation.update_player(krys, %{affinities: %{sock: -1, skub: 4}})
+      |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
+      |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
+      |> StateTransformation.update_player(adhiraj, %{active_cards: [sparse_card]})
 
     {:ok, state}
-  end
-
-  @impl true
-  def handle_cast({:start}, state) do
-  end
-
-  @impl true
-  def handle_cast({:join, player_name}, state) do
   end
 
   @impl true
@@ -116,4 +125,10 @@ defmodule ViralSpiral.Room.GameEngine.RoomReserved do
   @type t :: %__MODULE__{
           name: String.t()
         }
+end
+
+defmodule ViralSpiral.Room.GameEngine.Exceptions do
+  defmodule CouldNotReserveRoom do
+    defexception message: "Could not reserve room"
+  end
 end

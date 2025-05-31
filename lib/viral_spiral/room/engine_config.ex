@@ -24,7 +24,9 @@ defmodule ViralSpiral.Room.EngineConfig do
   defstruct affinities: Application.compile_env(:viral_spiral, EngineConfig)[:affinities],
             communities: Application.compile_env(:viral_spiral, EngineConfig)[:communities],
             chaos_counter: Application.compile_env(:viral_spiral, EngineConfig)[:chaos_counter],
-            volatility: Application.compile_env(:viral_spiral, EngineConfig)[:volatility]
+            volatility: Application.compile_env(:viral_spiral, EngineConfig)[:volatility],
+            cancel_threshold:
+              Application.compile_env(:viral_spiral, EngineConfig)[:cancel_threshold]
 end
 
 defmodule ViralSpiral.Room.EngineConfig.Guards do

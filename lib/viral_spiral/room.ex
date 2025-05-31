@@ -15,6 +15,7 @@ defmodule ViralSpiral.Room do
   """
 
   use Supervisor
+  alias ViralSpiral.Room.GameEngine.Exceptions.CouldNotReserveRoom
   alias ViralSpiral.Room.State
   alias ViralSpiral.Room.GameEngine.RoomReserved
   alias ViralSpiral.Entity.Room
@@ -52,6 +53,7 @@ defmodule ViralSpiral.Room do
       case DynamicSupervisor.start_child(@supervisor, {@room_gen, room_name}) do
         {:ok, pid} -> pid
         {:error, {:already_started, pid}} -> pid
+        _ -> raise CouldNotReserveRoom
       end
 
     # send(pid, :new_room)

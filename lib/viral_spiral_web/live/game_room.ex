@@ -6,6 +6,7 @@ defmodule ViralSpiralWeb.GameRoom do
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Room
   alias ViralSpiral.Room.Factory
+  alias ViralSpiral.Entity.Player.Map, as: PlayerMap
   use ViralSpiralWeb, :live_view
 
   def mount(params, session, socket) do
@@ -93,6 +94,22 @@ defmodule ViralSpiralWeb.GameRoom do
 
   def handle_event("turn_fake", params, %{assigns: %{room_gen: room_gen}} = socket) do
     action = Actions.turn_to_fake(Actions.string_to_map(params))
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.game_room(gen_state)
+    socket = assign(socket, :state, room_state)
+    {:noreply, socket}
+  end
+
+  def handle_event("initiate_cancel", params, %{assigns: %{room_gen: room_gen}} = socket) do
+    action = Actions.initiate_cancel(params)
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.game_room(gen_state)
+    socket = assign(socket, :state, room_state)
+    {:noreply, socket}
+  end
+
+  def handle_event("cancel_vote", params, %{assigns: %{room_gen: room_gen}} = socket) do
+    action = Actions.vote_to_cancel(Actions.string_to_map(params))
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.game_room(gen_state)
     socket = assign(socket, :state, room_state)

@@ -1,5 +1,6 @@
 defmodule ViralSpiral.Room.ReducerTest do
   require IEx
+  alias ViralSpiral.Entity.PowerCancelPlayer.Exceptions.VoteAlreadyRegistered
   alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Canon.Deck.CardSet
   alias ViralSpiral.Room.Card.Player, as: CardPlayer
@@ -483,6 +484,7 @@ defmodule ViralSpiral.Room.ReducerTest do
       %{state: state, players: players}
     end
 
+    @tag timeout: :infinity
     test "successful cancellation flow", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
@@ -499,6 +501,16 @@ defmodule ViralSpiral.Room.ReducerTest do
       assert state.power_cancel_player.target != nil
       assert state.power_cancel_player.affinity == :sock
       assert state.power_cancel_player.allowed_voters |> length() == 3
+      assert state.players[adhiraj].affinities.sock == 4
+
+      illegal_vote_cancel_attrs = %{
+        from_id: adhiraj,
+        vote: true
+      }
+
+      assert_raise VoteAlreadyRegistered, fn ->
+        Reducer.reduce(state, Actions.vote_to_cancel(illegal_vote_cancel_attrs))
+      end
 
       vote_cancel_attrs_a = %{
         from_id: aman,
@@ -517,6 +529,7 @@ defmodule ViralSpiral.Room.ReducerTest do
       assert state.round.skip != nil
       assert state.round.skip.round == :current
       assert state.round.skip.player == krys
+      assert state.power_cancel_player.state == :idle
     end
   end
 

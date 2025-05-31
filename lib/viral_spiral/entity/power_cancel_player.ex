@@ -6,6 +6,7 @@ defmodule ViralSpiral.Entity.PowerCancelPlayer do
   A player initiates cancellation by choosing which player they want to cancel and which of their affinity they want to use for it. The affinity they choose determines who can vote to cancel this player. If the majority votes to cancel the targetted Player, that player will skip a turn.
   """
   require IEx
+  alias ViralSpiral.Entity.PowerCancelPlayer.Exceptions.VoteAlreadyRegistered
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.PowerCancelPlayer
   alias ViralSpiral.Affinity
@@ -48,7 +49,13 @@ defmodule ViralSpiral.Entity.PowerCancelPlayer do
   def vote(%PowerCancelPlayer{} = power, player, vote, opts \\ []) do
     done = Keyword.get(opts, :done, false)
     state = if done, do: :done, else: power.state
-    %{power | votes: power.votes ++ [%{id: player, vote: vote}], state: state}
+
+    vote_by_player = Enum.find(power.votes, fn vote -> vote.id == player end)
+
+    case vote_by_player do
+      nil -> %{power | votes: power.votes ++ [%{id: player, vote: vote}], state: state}
+      _ -> raise VoteAlreadyRegistered
+    end
   end
 
   def allowed_voters(%PowerCancelPlayer{} = power, players) when is_list(players) do

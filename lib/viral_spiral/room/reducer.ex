@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.PowerCancelPlayer.Changes.ResetCancel
   alias ViralSpiral.Entity.DynamicCard.Changes.AddIdentityStats
   alias ViralSpiral.Room.Actions.Player.TurnToFake
   alias ViralSpiral.Room.Actions.Player.HideSource
@@ -253,8 +254,13 @@ defmodule ViralSpiral.Room.Reducer do
   end
 
   def reduce(%State{} = state, %CancelPlayerInitiate{} = action) do
-    %{from_id: from_id, target_id: target_id, affinity: affinity, polarity: polarity} =
+    alias ViralSpiral.Entity.Player.Changes.Affinity
+
+    %{from_id: from_id, target_id: target_id, affinity: affinity} =
       action
+
+    # todo dynamically compute this
+    polarity = :positive
 
     allowed_voters =
       Map.keys(state.players)
@@ -273,7 +279,8 @@ defmodule ViralSpiral.Room.Reducer do
          affinity: affinity,
          allowed_voters: allowed_voters
        }},
-      {state.power_cancel_player, %VoteCancel{from_id: from_id, vote: true}}
+      {state.power_cancel_player, %VoteCancel{from_id: from_id, vote: true}},
+      {state.players[from_id], %Affinity{target: affinity, offset: -1}}
     ]
 
     State.apply_changes(state, changes)
@@ -287,7 +294,8 @@ defmodule ViralSpiral.Room.Reducer do
 
     if state.power_cancel_player.result == true do
       changes = [
-        {state.round, %SkipRound{player_id: state.power_cancel_player.target}}
+        {state.round, %SkipRound{player_id: state.power_cancel_player.target}},
+        {state.power_cancel_player, %ResetCancel{}}
       ]
 
       State.apply_changes(state, changes)

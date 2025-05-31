@@ -18,7 +18,8 @@ defmodule ViralSpiral.Entity.Room do
             communities: [],
             chaos_counter: nil,
             chaos: nil,
-            volatality: :medium
+            volatality: :medium,
+            cancel_threshold: 0
 
   @states [:uninitialized, :reserved, :waiting_for_players, :running, :paused]
 
@@ -31,7 +32,8 @@ defmodule ViralSpiral.Entity.Room do
           affinities: list(Affinity.target()),
           communities: list(Bias.target()),
           chaos_counter: integer(),
-          volatality: EngineConfig.volatility()
+          volatality: EngineConfig.volatility(),
+          cancel_threshold: integer()
         }
 
   def new() do
@@ -43,7 +45,8 @@ defmodule ViralSpiral.Entity.Room do
       name: name(),
       state: :uninitialized,
       chaos_counter: engine_config.chaos_counter,
-      volatality: engine_config.volatility
+      volatality: engine_config.volatility,
+      cancel_threshold: engine_config.cancel_threshold
     }
   end
 
@@ -61,7 +64,8 @@ defmodule ViralSpiral.Entity.Room do
       name: room_name,
       state: :uninitialized,
       chaos_counter: engine_config.chaos_counter,
-      volatality: engine_config.volatility
+      volatality: engine_config.volatility,
+      cancel_threshold: engine_config.cancel_threshold
     }
   end
 

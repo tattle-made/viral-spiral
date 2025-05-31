@@ -75,4 +75,7 @@ defmodule ViralSpiral.Entity.PowerCancelPlayerTest do
     assert power.state == :done
     assert power.result == false
   end
+
+  test "a player should not be allowed to vote more than once" do
+  end
 end

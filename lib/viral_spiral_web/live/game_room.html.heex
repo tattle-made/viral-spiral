@@ -5,9 +5,8 @@
 <div :if={@state != nil}>
   <div class="p-4 border-red-200 border-2 rounded-2xl flex flex-row justify-between ">
     <span><%= @state.room.name %></span>
-    <%!-- <span><%= @state.room.id %></span>
-  <span><%= @state.room.state %></span> --%>
-    <span><%= @state.room.chaos %></span>
+    <span><%= @state.room.chaos_counter %></span>
+  
   </div>
   <%!-- <vs-calendar id="cal" phx-hook="CalendarHook"></vs-calendar> --%>
   <div class="mt-2 flex flex-row justify-between">
@@ -66,6 +65,72 @@
         <div class="mt-2 mb-2 h-0.5 bg-zinc-400"></div>
         
       </div>
+
+      <div :if={player.is_active && player.power_cancel.can_cancel} class="p-2">
+        <button phx-click={show_modal("cancel-initiate-modal")}> Cancel Player </button>
+
+        <.modal id="cancel-initiate-modal">
+          <div>
+
+          <.simple_form for={player.power_cancel.form.data} phx-submit="initiate_cancel">
+            <.input type="select" 
+              field={player.power_cancel.form.data[:target_id]} 
+              label="Player" 
+              options={player.power_cancel.form.values.targets.options} 
+              value={player.power_cancel.form.values.targets.value}  
+            />
+            
+            <.input type="select" field={player.power_cancel.form.data[:affinity]} 
+              options={player.power_cancel.form.values.affinity.options} 
+              value={player.power_cancel.form.values.affinity.value} 
+              label="Affinities"
+            />
+
+            <.input type="hidden" name="from_id" value={player.id}/>
+            <:actions>
+              <.button>Save</.button>
+            </:actions>
+          </.simple_form>
+            
+          </div>
+          
+        
+        </.modal>
+      </div>
+
+      <div :if={player.power_cancel.can_vote != nil} class="p-2">
+        <p> Vote To Cancel </p>
+        <div class="flex flex-row gap-2">
+        <button
+            phx-click="cancel_vote"
+            value={
+              Jason.encode!(%{
+                vote: true,
+                from_id: player.id,
+              })
+            }
+            class=" py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
+          >
+            Yes
+          </button>
+
+          <button
+            phx-click="cancel_vote"
+            value={
+              Jason.encode!(%{
+                vote: false,
+                from_id: player.id,
+              })
+            }
+            class=" py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
+          >
+            No
+          </button>
+        </div>
+        
+        
+      </div>
+
     </div>
   </div>
 </div>

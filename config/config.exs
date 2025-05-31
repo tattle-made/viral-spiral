@@ -66,7 +66,8 @@ config :viral_spiral, EngineConfig,
   affinities: [:cat, :sock, :skub, :houseboat, :highfive],
   communities: [:red, :yellow, :blue],
   chaos_counter: 10,
-  volatility: :medium
+  volatility: :medium,
+  cancel_threshold: 4
 
 config :viral_spiral, CardConfig, card_types: [:affinity, :bias, :topical, :conflated]
 
