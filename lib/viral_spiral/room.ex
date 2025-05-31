@@ -15,6 +15,8 @@ defmodule ViralSpiral.Room do
   """
 
   use Supervisor
+  alias ViralSpiral.Repo
+  alias ViralSpiral.Room.GameSave
   alias ViralSpiral.Room.GameEngine.Exceptions.CouldNotReserveRoom
   alias ViralSpiral.Room.State
   alias ViralSpiral.Room.GameEngine.RoomReserved
@@ -68,6 +70,16 @@ defmodule ViralSpiral.Room do
       [{pid, _}] -> {:ok, pid}
       _ -> {:error, :not_found}
     end
+  end
+
+  def create_game_save(room_name, room_id, data, version) do
+    %GameSave{}
+    |> GameSave.changeset(%{room_name: room_name, room_id: room_id, data: data, version: version})
+    |> Repo.insert()
+  end
+
+  def get_game_save(room_name) do
+    Repo.get_by(GameSave, room_name: room_name)
   end
 end
 
