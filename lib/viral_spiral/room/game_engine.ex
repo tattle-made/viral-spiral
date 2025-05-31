@@ -40,8 +40,8 @@ defmodule ViralSpiral.Room.GameEngine do
           |> Reducer.reduce(Actions.join_room(%{player_name: "farah"}))
           |> Reducer.reduce(Actions.join_room(%{player_name: "krys"}))
           |> Reducer.reduce(Actions.start_game())
+          |> Reducer.reduce(Actions.draw_card())
 
-        # |> Reducer.reduce(Actions.draw_card())
         %GameSave{data: data} ->
           data
       end

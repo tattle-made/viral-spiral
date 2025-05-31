@@ -1,13 +1,30 @@
 defmodule ViralSpiralWeb.Atoms do
   use ViralSpiralWeb, :html
 
+  defp card_url(file_name) do
+    # Because of a mistake made by designers, all filenames have a space in it
+    # when uploaded to aws s3, that space is replaced with a + sign.
+    # this is a temporary fix
+    # todo : fix filenames
+    filename = file_name |> String.replace(" ", "+")
+    file_url = "https://s3.ap-south-1.amazonaws.com/media.viralspiral.net/" <> filename
+    file_url
+  end
+
   attr :card, :map, required: true
   attr :from, :string, required: true
 
   def card(assigns) do
     ~H"""
     <div class="p-2 border-2 rounded-lg bg-slate-200">
-      <p><%= @card.headline %></p>
+      <div class="relative">
+        <p class="absolute z-4 w-1/2 bottom-0 p-4 text-sm/4 bg-gray-50 bg-opacity-75 rounded-sm">
+          <%= @card.headline %>
+        </p>
+        <div class="w-1/2">
+          <img src={card_url(@card.image)} />
+        </div>
+      </div>
       <div class="mt-1 flex gap-2">
         <span class="px-2 py-1 bg-red-200 rounded-md"><%= @card.type %></span>
         <span class="px-2 py-1 bg-red-200 rounded-md"><%= @card.veracity %></span>
