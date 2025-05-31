@@ -31,20 +31,20 @@ defmodule ViralSpiral.Room.GameEngine do
 
   @impl true
   def init(room_name) do
-    state =
-      case Room.get_game_save(room_name) do
-        nil ->
-          State.skeleton(room_name: room_name)
-          |> Reducer.reduce(Actions.reserve_room(%{player_name: "adhiraj"}))
-          |> Reducer.reduce(Actions.join_room(%{player_name: "aman"}))
-          |> Reducer.reduce(Actions.join_room(%{player_name: "farah"}))
-          |> Reducer.reduce(Actions.join_room(%{player_name: "krys"}))
-          |> Reducer.reduce(Actions.start_game())
-          |> Reducer.reduce(Actions.draw_card())
+    # state =
+    #   case Room.get_game_save(room_name) do
+    #     nil ->
+    #       State.skeleton(room_name: room_name)
+    #       |> Reducer.reduce(Actions.reserve_room(%{player_name: "adhiraj"}))
+    #       |> Reducer.reduce(Actions.join_room(%{player_name: "aman"}))
+    #       |> Reducer.reduce(Actions.join_room(%{player_name: "farah"}))
+    #       |> Reducer.reduce(Actions.join_room(%{player_name: "krys"}))
+    #       |> Reducer.reduce(Actions.start_game())
+    #       |> Reducer.reduce(Actions.draw_card())
 
-        %GameSave{data: data} ->
-          data
-      end
+    #     %GameSave{data: data} ->
+    #       data
+    #   end
 
     # todo : only for debugging
     # players = StateTransformation.player_id_by_names(state)
@@ -61,6 +61,15 @@ defmodule ViralSpiral.Room.GameEngine do
     #   |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
     #   |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
     #   |> StateTransformation.update_player(adhiraj, %{active_cards: [sparse_card]})
+
+    state =
+      State.skeleton(room_name: room_name)
+      |> Reducer.reduce(Actions.reserve_room(%{player_name: "adhiraj"}))
+      |> Reducer.reduce(Actions.join_room(%{player_name: "aman"}))
+      |> Reducer.reduce(Actions.join_room(%{player_name: "farah"}))
+      |> Reducer.reduce(Actions.join_room(%{player_name: "krys"}))
+      |> Reducer.reduce(Actions.start_game())
+      |> Reducer.reduce(Actions.draw_card())
 
     {:ok, state}
   end

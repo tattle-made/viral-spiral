@@ -241,6 +241,13 @@ defmodule ViralSpiral.Room.State do
 
   def identity_stats(%State{} = state) do
     players = Map.keys(state.players) |> Enum.map(&state.players[&1])
+
+    current_player_id = State.current_turn_player(state).id
+    player_community = state.players[current_player_id].identity
+
+    # IO.inspect(current_player_id, label: "current player id")
+    # IO.inspect(player_community, label: "player_community")
+
     # dominant community
     # currently defined as identity of the player with the largest clout
     dominant_community =
@@ -289,7 +296,8 @@ defmodule ViralSpiral.Room.State do
       other_community: other_community,
       oppressed_community: oppressed_community,
       unpopular_affinity: unpopular_affinity,
-      popular_affinity: popular_affinity
+      popular_affinity: popular_affinity,
+      player_community: player_community
     }
   end
 
