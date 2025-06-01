@@ -20,7 +20,7 @@ defmodule ViralSpiralWeb.GameRoom do
           pid
 
         {:error, :not_found} ->
-          room_reserved = Room.reserve(room_name)
+          room_reserved = Room.reserve(room_name, :designer)
           {:ok, pid} = Room.room_gen!(room_reserved.name)
           pid
       end

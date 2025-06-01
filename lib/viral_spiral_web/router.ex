@@ -23,6 +23,14 @@ defmodule ViralSpiralWeb.Router do
     live "/room/:room", GameRoom
   end
 
+  scope "/multiplayer", ViralSpiralWeb do
+    pipe_through :browser
+
+    live "/", Multiplayer
+    live "/room/waiting-room/:room_name", MultiplayerWaitingRoom
+    live "/room/:room_name", MultiplayerRoom
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", ViralSpiralWeb do
   #   pipe_through :api

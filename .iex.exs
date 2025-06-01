@@ -15,4 +15,7 @@ defmodule Debug do
 
     {state, ui_state}
   end
+
+  def multiplayer_state(room_name) do
+  end
 end

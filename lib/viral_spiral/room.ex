@@ -18,10 +18,7 @@ defmodule ViralSpiral.Room do
   alias ViralSpiral.Repo
   alias ViralSpiral.Room.GameSave
   alias ViralSpiral.Room.GameEngine.Exceptions.CouldNotReserveRoom
-  alias ViralSpiral.Room.State
   alias ViralSpiral.Room.GameEngine.RoomReserved
-  alias ViralSpiral.Entity.Room
-  alias ViralSpiral.Room.NotFound
 
   @room_gen ViralSpiral.Room.GameEngine
   @registry ViralSpiral.Room.Registry
@@ -49,13 +46,18 @@ defmodule ViralSpiral.Room do
 
   This ensures there is only one room registered with a path.
   """
-  @spec reserve(String.t()) :: RoomReserved.t()
-  def reserve(room_name) do
+  @spec reserve(String.t(), atom()) :: RoomReserved.t()
+  def reserve(room_name, room_type) do
     _pid =
-      case DynamicSupervisor.start_child(@supervisor, {@room_gen, room_name}) do
-        {:ok, pid} -> pid
-        {:error, {:already_started, pid}} -> pid
-        _ -> raise CouldNotReserveRoom
+      case DynamicSupervisor.start_child(@supervisor, {@room_gen, {room_name, room_type}}) do
+        {:ok, pid} ->
+          pid
+
+        {:error, {:already_started, pid}} ->
+          pid
+
+        _ ->
+          raise CouldNotReserveRoom
       end
 
     # send(pid, :new_room)

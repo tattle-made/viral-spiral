@@ -22,9 +22,13 @@ import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import { CalendarElem, CalendarHook } from "../calendar";
+import PixiRoomMultiplayer from "./pixi-room-multiplayer";
+
+
 
 let Hooks = {
   CalendarHook,
+  PixiRoomMultiplayer
 };
 
 let csrfToken = document
