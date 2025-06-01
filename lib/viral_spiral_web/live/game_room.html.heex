@@ -57,6 +57,15 @@
           </div>
         </div>
 
+        <p class="text-sm text-zinc-700">Hand</p>
+        <div class="bg-zinc-200 mb-2 flex flex-row gap-1">
+          <div class=" overflow-scroll p-1 w-8 h-auto"
+            :for={card<- player.hand}
+          >
+            <.hand_card card={card} />
+          </div>
+        </div>
+
         <div class="mt-4"></div>
 
         <div :for={card <- player.cards} :if={player.is_active}>

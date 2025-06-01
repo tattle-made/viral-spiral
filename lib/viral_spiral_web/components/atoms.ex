@@ -17,87 +17,91 @@ defmodule ViralSpiralWeb.Atoms do
   def card(assigns) do
     ~H"""
     <div class="p-2 border-2 rounded-lg bg-slate-200">
-      <div class="relative">
-        <p class="absolute z-4 w-1/2 bottom-0 p-4 text-sm/4 bg-gray-50 bg-opacity-75 rounded-sm">
-          <%= @card.headline %>
-        </p>
-        <div class="w-1/2">
-          <img src={card_url(@card.image)} />
+      <div class="flex flex-row gap-2">
+        <div class="relative w-1/3 h-auto">
+          <p class="absolute z-4  bottom-0 p-4 text-sm/4 bg-gray-50 bg-opacity-75 rounded-sm">
+            <%= @card.headline %>
+          </p>
+          <div class="">
+            <img src={card_url(@card.image)} />
+          </div>
+        </div>
+        <div class="mt-1 flex gap-2 h-fit">
+          <span class="px-2 py-1 bg-red-200 rounded-md text-xs text-zinc-600"><%= @card.type %></span>
+          <span class="px-2 py-1 bg-red-200 rounded-md text-xs text-zinc-600">
+            <%= @card.veracity %>
+          </span>
+          <span :if={Map.get(@card, :target, nil)} class="px-2 py-1 bg-red-200 rounded-md">
+            <%= Map.get(@card, :target, "") %>
+          </span>
         </div>
       </div>
-      <div class="mt-1 flex gap-2">
-        <span class="px-2 py-1 bg-red-200 rounded-md"><%= @card.type %></span>
-        <span class="px-2 py-1 bg-red-200 rounded-md"><%= @card.veracity %></span>
-        <span :if={Map.get(@card, :target, nil)} class="px-2 py-1 bg-red-200 rounded-md">
-          <%= Map.get(@card, :target, "") %>
-        </span>
-      </div>
       <div class="h-3"></div>
-      <span>pass to:</span>
+      <div class="flex flex-row gap-4">
+        <span>Pass to:</span>
 
-      <div class="flex flex-row gap-x-2">
-        <div :for={player <- @card.pass_to} }>
+        <div class="flex flex-row gap-2">
+          <div :for={player <- @card.pass_to} }>
+            <button
+              phx-click="pass_to"
+              value={
+                Jason.encode!(%{
+                  from_id: @from,
+                  to_id: player.id,
+                  card: %{id: @card.id, veracity: @card.veracity}
+                })
+              }
+              class=" py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
+            >
+              <%= player.name %>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="mt-2 flex flex-row gap-2">
+        <div class="">
           <button
-            phx-click="pass_to"
+            phx-click="keep"
             value={
               Jason.encode!(%{
                 from_id: @from,
-                to_id: player.id,
-                card: %{id: @card.id, veracity: @card.veracity}
+                card: %{
+                  id: @card.id,
+                  veracity: @card.veracity
+                }
               })
             }
-            class=" py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
+            class="py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
           >
-            <%= player.name %>
+            Keep
           </button>
         </div>
-      </div>
-      <div class="mt-6">
-        <button
-          phx-click="keep"
-          value={
-            Jason.encode!(%{
-              from_id: @from,
-              card: %{
-                id: @card.id,
-                veracity: @card.veracity
-              }
-            })
-          }
-          class="py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
-        >
-          Keep
-        </button>
-      </div>
-      <div class="mt-4">
-        <button
-          phx-click="discard"
-          value={
-            Jason.encode!(%{
-              from_id: @from,
-              card: %{
-                id: @card.id,
-                veracity: @card.veracity
-              }
-            })
-          }
-          class="py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
-        >
-          Discard
-        </button>
+        <div>
+          <button
+            phx-click="discard"
+            value={
+              Jason.encode!(%{
+                from_id: @from,
+                card: %{
+                  id: @card.id,
+                  veracity: @card.veracity
+                }
+              })
+            }
+            class="py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
+          >
+            Discard
+          </button>
+        </div>
       </div>
 
       <div :if={@card.source == nil} class="mt-4">
         <button
-          phx-click="view_source"
-          value={
-            Jason.encode!(%{
-              from_id: @from,
-              card: %{
-                id: @card.id,
-                veracity: @card.veracity
-              }
-            })
+          phx-click={
+            JS.push("view_source",
+              value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
+            )
+            |> show_modal("source-modal")
           }
           class="py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
         >
@@ -107,15 +111,10 @@ defmodule ViralSpiralWeb.Atoms do
 
       <div :if={@card.source != nil} class="mt-4">
         <button
-          phx-click="hide_source"
-          value={
-            Jason.encode!(%{
-              from_id: @from,
-              card: %{
-                id: @card.id,
-                veracity: @card.veracity
-              }
-            })
+          phx-click={
+            JS.push("hide_source",
+              value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
+            )
           }
           class="py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
         >
@@ -123,14 +122,23 @@ defmodule ViralSpiralWeb.Atoms do
         </button>
       </div>
 
-      <div :if={@card.source != nil} class="bg-zinc-100 p-2 mt-2">
-        <p class="font-light text-gray-800">Author</p>
-        <p class="font-normal"><%= @card.source.author %></p>
-        <p class="font-light text-gray-800">Headline</p>
-        <p class="font-normal"><%= @card.source.headline %></p>
-        <p class="font-light text-gray-800">Content</p>
-        <p class="font-normal"><%= @card.source.content %></p>
-      </div>
+      <.modal
+        id="source-modal"
+        on_cancel={
+          JS.push("hide_source",
+            value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
+          )
+        }
+      >
+        <div :if={@card.source != nil} class="bg-zinc-100 p-2 mt-2">
+          <p class="font-light text-gray-800">Author</p>
+          <p class="font-normal"><%= @card.source.author %></p>
+          <p class="font-light text-gray-800">Headline</p>
+          <p class="font-normal"><%= @card.source.headline %></p>
+          <p class="font-light text-gray-800">Content</p>
+          <p class="font-normal"><%= @card.source.content %></p>
+        </div>
+      </.modal>
 
       <div :if={@card.can_mark_as_fake} class="mt-4">
         <button
@@ -167,6 +175,16 @@ defmodule ViralSpiralWeb.Atoms do
           Turn Fake
         </button>
       </div>
+    </div>
+    """
+  end
+
+  attr :card, :map, required: true
+
+  def hand_card(assigns) do
+    ~H"""
+    <div>
+      <img src={card_url(@card.image)} />
     </div>
     """
   end

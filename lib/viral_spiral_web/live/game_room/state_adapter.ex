@@ -49,6 +49,16 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
                   can_mark_as_fake: can_mark_as_fake?(state.turn),
                   can_turn_fake: card.veracity == true
                 }
+              end),
+            hand:
+              player.hand
+              |> Enum.map(&state.deck.store[&1])
+              |> Enum.map(fn card ->
+                %{
+                  id: card.id,
+                  image: card.image,
+                  headline: maybe_patch_headline(card, state.dynamic_card)
+                }
               end)
           }
         )

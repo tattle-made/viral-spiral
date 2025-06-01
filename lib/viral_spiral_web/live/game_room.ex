@@ -69,7 +69,7 @@ defmodule ViralSpiralWeb.GameRoom do
   end
 
   def handle_event("view_source", params, %{assigns: %{room_gen: room_gen}} = socket) do
-    action = Actions.view_source(Actions.string_to_map(params))
+    action = Actions.view_source(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.game_room(gen_state)
     socket = assign(socket, :state, room_state)
@@ -77,7 +77,7 @@ defmodule ViralSpiralWeb.GameRoom do
   end
 
   def handle_event("hide_source", params, %{assigns: %{room_gen: room_gen}} = socket) do
-    action = Actions.hide_source(Actions.string_to_map(params))
+    action = Actions.hide_source(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.game_room(gen_state)
     socket = assign(socket, :state, room_state)
