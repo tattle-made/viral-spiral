@@ -32,4 +32,12 @@ defmodule ViralSpiral.Entity.Room.Changes do
 
     @type t :: %__MODULE__{}
   end
+
+  defmodule OffsetChaos do
+    defstruct [:offset]
+
+    @type t :: %__MODULE__{
+            offset: integer()
+          }
+  end
 end

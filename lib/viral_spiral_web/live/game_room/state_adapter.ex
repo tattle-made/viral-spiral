@@ -17,7 +17,7 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
     %{
       room: %{
         name: state.room.name,
-        chaos_counter: state.room.chaos_counter
+        chaos_counter: state.room.chaos_counter - state.room.chaos
       },
       players:
         for(

@@ -64,6 +64,7 @@ defmodule ViralSpiral.Entity.Room do
       name: room_name,
       state: :uninitialized,
       chaos_counter: engine_config.chaos_counter,
+      chaos: 0,
       volatality: engine_config.volatility,
       cancel_threshold: engine_config.cancel_threshold
     }
@@ -121,6 +122,7 @@ defmodule ViralSpiral.Entity.Room do
         affinities: room_affinities,
         communities: room_communities,
         chaos_counter: engine_config.chaos_counter,
+        chaos: 0,
         volatality: engine_config.volatility
     }
   end
@@ -189,7 +191,10 @@ defmodule ViralSpiral.Entity.Room do
       "zebra"
     ]
 
-    Enum.random(adjectives) <> "-" <> Enum.random(nouns)
+    Enum.random(adjectives) <>
+      "-" <>
+      Enum.random(nouns) <>
+      "-" <> for(_ <- 1..5, into: "", do: <<Enum.random(~c"0123456789abcdef")>>)
   end
 
   def join(%Room{} = room, player_name) do
@@ -204,6 +209,8 @@ defmodule ViralSpiral.Entity.Room do
     @moduledoc """
     Change properties of a Room
     """
+    alias ViralSpiral.Entity.Room.Changes.OffsetChaos
+    alias ViralSpiral.Entity.Room.Changes.OffsetCountdown
     alias ViralSpiral.Entity.Room.Exceptions.JoinBeforeReserving
     alias ViralSpiral.Entity.Room.Exceptions.IllegalReservation
     alias ViralSpiral.Entity.Change.UndefinedChange
@@ -248,8 +255,8 @@ defmodule ViralSpiral.Entity.Room do
       room |> Room.start()
     end
 
-    def change(%Room{} = room, %ChangeCountdown{} = change) do
-      Map.put(room, :chaos, room.chaos_counter + change.offset)
+    def change(%Room{} = room, %OffsetChaos{} = change) do
+      Map.put(room, :chaos, room.chaos + change.offset)
     end
 
     def change(%Room{} = room, %ResetUnjoinedPlayers{} = _change) do

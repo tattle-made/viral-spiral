@@ -78,7 +78,8 @@ defmodule ViralSpiral.Room.StateTransformation do
   def draw_card(%State{} = state, {type, veracity, target}) do
     card_sets = state.deck.available_cards
     set_key = CardSet.key(type, veracity, target)
+    # todo fix tgb to be dynamic and not static 4
     cardset_member = Canon.draw_card_from_deck(card_sets, set_key, 4)
-    Sparse.new(cardset_member.id, true)
+    Sparse.new(cardset_member.id, veracity)
   end
 end
