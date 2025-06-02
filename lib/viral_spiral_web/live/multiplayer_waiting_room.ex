@@ -1,4 +1,6 @@
 defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
+  alias ViralSpiral.Room.Actions
+  alias ElixirLS.LanguageServer.Providers.Completion.Reducer
   alias ViralSpiralWeb.MultiplayerWaitingRoom.StateAdapter
   alias ViralSpiral.Room
   use ViralSpiralWeb, :live_view
@@ -43,9 +45,17 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
     end
   end
 
-  def handle_info({:new_player}, %{assigns: %{room_gen: room_gen}} = socket) do
-    IO.inspect("new player has joined")
+  def handle_event("start_game", _uri, %{assigns: %{room_gen: room_gen}} = socket) do
+    with action <- Actions.start_game(),
+         gen_state <- GenServer.call(room_gen, action),
+         game_state <- :sys.get_state(room_gen),
+         ui_state <- StateAdapter.make_game_room(game_state),
+         room_name <- ui_state.room.name do
+      {:noreply, push_navigate(socket, to: "/multiplayer/room/:#{room_name}")}
+    end
+  end
 
+  def handle_info({:new_player}, %{assigns: %{room_gen: room_gen}} = socket) do
     with game_state <- :sys.get_state(room_gen),
          ui_state <- StateAdapter.make_game_room(game_state) do
       {:noreply, assign(socket, :state, ui_state)}

@@ -5,6 +5,7 @@ defmodule ViralSpiral.Room.GameEngine do
   All player actions are sent to this genserver, which returns or broadcasts the changes made to the game State.
   """
   require IEx
+  alias ViralSpiral.Room.Actions.Player.StartGame
   alias ViralSpiral.Room.State.Templates.MultiplayerRoom
   alias ViralSpiral.Room.Actions.Player.ReserveRoom
   alias ViralSpiral.Room.Actions.Player.JoinRoom
@@ -56,6 +57,12 @@ defmodule ViralSpiral.Room.GameEngine do
 
   @impl true
   def handle_call(%JoinRoom{} = action, _from, state) do
+    new_state = Reducer.reduce(state, action)
+    {:reply, :ok, new_state}
+  end
+
+  @impl true
+  def handle_call(%StartGame{} = action, _from, state) do
     new_state = Reducer.reduce(state, action)
     {:reply, :ok, new_state}
   end
