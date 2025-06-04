@@ -1,6 +1,6 @@
 import { Application, Assets, Container, Sprite } from 'pixi.js';
 import { HTMLText } from 'pixi.js';
-import '@pixi/layout';
+// import '@pixi/layout';
 
 const html = (label) => new HTMLText({
     text: label,

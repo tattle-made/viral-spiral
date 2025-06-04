@@ -80,6 +80,8 @@ defmodule ViralSpiral.Room do
     |> Repo.insert()
   end
 
+  # todo : can probably reduce 2 trips to db by constructing a GameSave struct with
+  # just room_key, which is stored in the game state already
   def update_game_save(room_name, data) do
     get_game_save(room_name)
     |> GameSave.changeset_update_data(%{data: data})

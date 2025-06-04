@@ -1,5 +1,6 @@
 defmodule ViralSpiralWeb.Multiplayer do
   require IEx
+  alias ViralSpiral.Room.State
   alias Phoenix.PubSub
   alias ViralSpiral.Room.Actions
   alias ViralSpiral.Room
@@ -9,22 +10,16 @@ defmodule ViralSpiralWeb.Multiplayer do
   def render(assigns) do
     ~H"""
     <h1>Multiplayer Room</h1>
-    <div class="flex flex-row gap-12 flex-wrap">
+    <div
+      id="multiplayer-room-create"
+      class="flex flex-row gap-12 flex-wrap"
+      phx-hook="HookMultiplayerHome"
+    >
       <div class="w-80 border-orange-100 border-2 p-4 rounded-md">
         <.simple_form for={@form} phx-submit="create_new_room">
           <.input field={@form[:player_name]} label="Username" />
           <:actions>
             <.button class="w-full">Create a new Room</.button>
-          </:actions>
-        </.simple_form>
-      </div>
-
-      <div class="w-80 border-green-100 border-2 p-4 rounded-md">
-        <.simple_form for={@form} phx-submit="join_room">
-          <.input field={@form[:room_name]} label="Room Name" />
-          <.input field={@form[:player_name]} label="Username" />
-          <:actions>
-            <.button class="w-full">Join Room</.button>
           </:actions>
         </.simple_form>
       </div>
@@ -49,11 +44,19 @@ defmodule ViralSpiralWeb.Multiplayer do
 
     with %{name: reserved_room_name} <- Room.reserve(room_name, :multiplayer),
          {:ok, room_gen} <- Room.room_gen!(reserved_room_name),
-         :ok <- GenServer.call(room_gen, Actions.reserve_room(params)) do
-      {:noreply,
-       push_navigate(socket, to: "/multiplayer/room/waiting-room/#{reserved_room_name}")}
+         %State{} <- GenServer.call(room_gen, Actions.reserve_room(params)) do
+      path = "/multiplayer/room/waiting-room/#{reserved_room_name}"
+
+      socket =
+        socket
+        |> push_event("vs:mp_room:create_room", %{room_name: room_name})
+
+      # |> push_navigate(to: path)
+
+      {:noreply, socket}
     else
-      _ ->
+      err ->
+        IO.inspect(err)
         {:noreply, put_flash(socket, :error, "Could not create a new room")}
     end
   end
