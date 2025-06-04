@@ -80,6 +80,12 @@ defmodule ViralSpiral.Room do
     |> Repo.insert()
   end
 
+  def update_game_save(room_name, data) do
+    get_game_save(room_name)
+    |> GameSave.changeset_update_data(%{data: data})
+    |> Repo.update()
+  end
+
   def get_game_save(room_name) do
     Repo.get_by(GameSave, room_name: room_name)
   end

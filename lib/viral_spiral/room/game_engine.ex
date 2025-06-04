@@ -39,86 +39,118 @@ defmodule ViralSpiral.Room.GameEngine do
 
   @impl true
   def init({room_name, room_type}) do
-    state =
-      case room_type do
-        :designer -> DesignerRoom.make(room_name)
-        :multiplayer -> MultiplayerRoom.make(room_name)
-        :debug -> Debug.make(room_name)
-      end
+    case Room.get_game_save(room_name) do
+      %GameSave{data: state} ->
+        {:ok, state}
 
-    {:ok, state}
+      nil ->
+        state =
+          case room_type do
+            :designer -> DesignerRoom.make(room_name)
+            :multiplayer -> MultiplayerRoom.make(room_name)
+            :debug -> Debug.make(room_name)
+          end
+
+        room = state.room
+        {:ok, _game_save} = Room.create_game_save(room.name, room.id, state, 1)
+        {:ok, state}
+    end
   end
 
   @impl true
   def handle_call(%ReserveRoom{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, :ok, new_state}
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true
   def handle_call(%JoinRoom{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, :ok, new_state}
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true
   def handle_call(%StartGame{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, :ok, new_state}
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true
   def handle_call(%PassCard{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, new_state, new_state}
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true
   def handle_call(%KeepCard{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, new_state, new_state}
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true
   def handle_call(%DiscardCard{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, new_state, new_state}
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true
   def handle_call(%ViewSource{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, new_state, new_state}
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true
   def handle_call(%HideSource{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, new_state, new_state}
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true
   def handle_call(%TurnToFake{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, new_state, new_state}
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true
   def handle_call(%MarkAsFake{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, new_state, new_state}
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true
   def handle_call(%CancelPlayerInitiate{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, new_state, new_state}
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true
   def handle_call(%CancelPlayerVote{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, new_state, new_state}
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true

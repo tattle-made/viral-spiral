@@ -5,7 +5,7 @@ defmodule ViralSpiral.Room.GameSave do
 
   @primary_key false
   schema "game_saves" do
-    field :room_name, :string
+    field :room_name, :string, primary_key: true
     field :room_id, UXID
     field :data, ErlangBinaryType
     field :version, :integer
@@ -17,5 +17,11 @@ defmodule ViralSpiral.Room.GameSave do
     game_saves
     |> cast(attrs, [:room_name, :room_id, :data, :version])
     |> validate_required([:room_name, :data, :version])
+  end
+
+  def changeset_update_data(game_save, attrs \\ %{}) do
+    game_save
+    |> cast(attrs, [:data])
+    |> validate_required([:data])
   end
 end
