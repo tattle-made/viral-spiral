@@ -85,7 +85,9 @@ defmodule ViralSpiral.Canon.Card do
   end
 
   defp parse_file() do
-    File.stream!(Path.join([File.cwd!(), "priv", "canon", @card_master_sheet]))
+    path = Application.app_dir(:viral_spiral, "priv/canon/#{@card_master_sheet}")
+
+    File.stream!(path)
     |> CSV.decode()
   end
 

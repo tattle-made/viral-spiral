@@ -21,7 +21,7 @@ defmodule ViralSpiral.Canon.Encyclopedia do
   def load_articles() do
     @filenames
     |> Enum.map(fn filename ->
-      File.stream!(Path.join([File.cwd!(), "priv", "canon", filename]))
+      File.stream!(Application.app_dir(:viral_spiral, "priv/canon/#{filename}"))
       |> CSV.decode()
       |> Enum.drop(1)
       |> Enum.drop(1)
