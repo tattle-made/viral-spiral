@@ -56,7 +56,8 @@ defmodule ViralSpiral.Room do
         {:error, {:already_started, pid}} ->
           pid
 
-        _ ->
+        err ->
+          IO.inspect(err)
           raise CouldNotReserveRoom
       end
 
