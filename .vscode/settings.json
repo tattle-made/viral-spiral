@@ -4,5 +4,8 @@
         "editor.formatOnSave": true
     },
     "editor.fontFamily": "Fira Code",
-    "editor.fontLigatures": true
+    "editor.fontLigatures": true,
+    "emmet.includeLanguages": {
+        "phoenix-heex": "html"
+    }
 }
