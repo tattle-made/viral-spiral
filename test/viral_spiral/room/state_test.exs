@@ -39,7 +39,8 @@ defmodule ViralSpiral.Room.StateTest do
              other_community: :yellow,
              oppressed_community: :red,
              unpopular_affinity: :sock,
-             popular_affinity: :houseboat
+             popular_affinity: :houseboat,
+             player_community: :red
            } = stats
   end
 end
