@@ -1,4 +1,5 @@
 defmodule ViralSpiral.Entity.RoomTest do
+  alias ViralSpiral.Entity.Room.Changes.OffsetChaos
   alias ViralSpiral.Entity.Room.Changes.ResetUnjoinedPlayers
   alias ViralSpiral.Entity.Room.Changes.StartGame
   alias ViralSpiral.Entity.Change.UndefinedChange
@@ -57,11 +58,11 @@ defmodule ViralSpiral.Entity.RoomTest do
     end
 
     test "change countdown", %{room: room} do
-      room = Change.change(room, %ChangeCountdown{offset: -2})
-      assert room.chaos == 8
+      room = Change.change(room, %OffsetChaos{offset: +2})
+      assert room.chaos == 2
 
       assert_raise ArithmeticError, fn ->
-        Change.change(room, %ChangeCountdown{offset: "hello"})
+        Change.change(room, %OffsetChaos{offset: "hello"})
       end
     end
 
