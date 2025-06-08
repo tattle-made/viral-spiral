@@ -1,11 +1,17 @@
-<div id="multiplayer-room-container" phx-hook={"HookMultiplayerRoom"}>
-<h1>Multiplayer Room</h1>
- 
- <div :if={@state}>
- <div id={"room-description-#{@state.room.id}"}>
- <p>room</p>
- </div>
- </div>
+<div 
+    id="multiplayer-room-container" 
+    phx-hook={"HookMultiplayerRoom"}
+    class="bg-zinc-600 p-2 h-full"
+    >
+    <div id="container-others" class="h-1/5 bg-zinc-200 p-2">
+        others
+    </div>
 
+    <div id="container-cards" class="h-3/5 bg-zinc-300 p-2">
+        card
+    </div>
 
+    <div id="container-me" class="h-1/5 bg-zinc-400 p-2">
+        me
+    </div>
 </div>

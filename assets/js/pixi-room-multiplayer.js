@@ -31,20 +31,20 @@ const HookPixiRoomMultiplayer = {
         // .querySelector("#pixi-room-multiplayer")
         // .appendChild(app.canvas);
 
-        document.body.appendChild(app.canvas);
+        // document.body.appendChild(app.canvas);
 
-        app.stage.layout = {
-            width: app.screen.width,
-            height: app.screen.height,
-            justifyContent: 'center',
-            alignItems: 'center',
-        }
+        // app.stage.layout = {
+        //     width: app.screen.width,
+        //     height: app.screen.height,
+        //     justifyContent: 'center',
+        //     alignItems: 'center',
+        // }
 
-        app.stage.addChild(html("Hello"));
+        // app.stage.addChild(html("Hello"));
         
         
-        const state_str = element.dataset.state
-        state = JSON.parse(state_str)
+        // const state_str = element.dataset.state
+        // state = JSON.parse(state_str)
         
         // app.stage.addChild(html(state.msg));
         })()

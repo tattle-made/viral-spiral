@@ -9,6 +9,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
 
   def handle_params(params, uri, socket) do
     IO.inspect(params)
+    IO.inspect(self())
     room_name = params["room_name"]
 
     {:ok, pid} = Room.room_gen!(room_name)
@@ -37,6 +38,12 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     #   |> assign(:state, StateAdapter.make_game_room(state))
 
     # {:noreply, socket}
+  end
+
+  def handle_event("healthcheck", params, socket) do
+    IO.inspect(params)
+    IO.inspect(socket)
+    {:noreply, socket}
   end
 
   def handle_info({}, socket) do
