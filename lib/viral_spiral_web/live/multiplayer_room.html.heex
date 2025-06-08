@@ -11,7 +11,10 @@
                     
                 </div>
                 <div>
-                    <p> <%= other.name %> </p>
+                    <div class="flex flex-row flex-wrap gap-4">
+                        <p> <%= other.name %> </p>
+                        <p> <%= other.clout %> </p>
+                    </div>
                     <div class="flex flex-row gap-4">
                         <div :for={{bias, value} <- other.biases}> 
                             <span> <%= Bias.label(bias)  %> </span>
@@ -42,7 +45,10 @@
                 
             </div>
             <div>
-                <p> <%= @state.me.name %> </p>
+                <div class="flex flex-row flex-wrap gap-4">
+                    <p> <%= @state.me.name %> </p>
+                    <p> <%= @state.me.clout %> </p>
+                </div>
                 <div class="flex flex-row gap-4">
                     <div :for={{bias, value} <- @state.me.biases}> 
                         <span> <%= Bias.label(bias)  %> </span>
