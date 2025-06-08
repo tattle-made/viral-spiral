@@ -1,5 +1,6 @@
 defmodule ViralSpiralWeb.Multiplayer do
   require IEx
+  alias ViralSpiral.Room.Actions.Player.ReserveRoom
   alias ViralSpiral.Room.State
   alias Phoenix.PubSub
   alias ViralSpiral.Room.Actions
@@ -23,6 +24,16 @@ defmodule ViralSpiralWeb.Multiplayer do
           </:actions>
         </.simple_form>
       </div>
+
+      <div class="w-80 border-green-100 border-2 p-4 rounded-md">
+        <.simple_form for={@form} phx-submit="join_room">
+          <.input field={@form[:room_name]} label="Room Name" />
+          <.input field={@form[:player_name]} id="player_name_join" label="Username" />
+          <:actions>
+            <.button class="w-full">Join Room</.button>
+          </:actions>
+        </.simple_form>
+      </div>
     </div>
     """
   end
@@ -41,17 +52,20 @@ defmodule ViralSpiralWeb.Multiplayer do
 
   def handle_event("create_new_room", params, socket) do
     room_name = EntityRoom.name()
+    action = Actions.reserve_room(params)
 
     with %{name: reserved_room_name} <- Room.reserve(room_name, :multiplayer),
          {:ok, room_gen} <- Room.room_gen!(reserved_room_name),
-         %State{} <- GenServer.call(room_gen, Actions.reserve_room(params)) do
+         %State{} <- GenServer.call(room_gen, action) do
       path = "/multiplayer/room/waiting-room/#{reserved_room_name}"
 
       socket =
         socket
-        |> push_event("vs:mp_room:create_room", %{room_name: room_name})
-
-      # |> push_navigate(to: path)
+        |> push_event("vs:mp_room:create_room", %{
+          room_name: room_name,
+          player_name: action.player_name
+        })
+        |> push_navigate(to: path)
 
       {:noreply, socket}
     else
@@ -67,12 +81,23 @@ defmodule ViralSpiralWeb.Multiplayer do
     player_name = params["player_name"]
 
     with {:ok, room_gen} <- Room.room_gen!(room_name),
-         :ok <- GenServer.call(room_gen, Actions.join_room(%{player_name: player_name})),
+         _state <- GenServer.call(room_gen, Actions.join_room(%{player_name: player_name})),
          path <- "/multiplayer/room/waiting-room/" <> params["room_name"] do
       PubSub.broadcast(ViralSpiral.PubSub, "waiting-room:#{room_name}", {:new_player})
-      {:noreply, push_navigate(socket, to: path)}
+
+      socket =
+        socket
+        |> push_event("vs:mp_room:join_room", %{
+          room_name: room_name,
+          player_name: player_name
+        })
+        |> push_navigate(to: path)
+
+      {:noreply, socket}
     else
-      _ -> {:noreply, put_flash(socket, :error, "Could not join room")}
+      err ->
+        IO.inspect(err, label: "error is here")
+        {:noreply, put_flash(socket, :error, "Could not join room")}
     end
   end
 end

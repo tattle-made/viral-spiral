@@ -45,6 +45,17 @@ defmodule ViralSpiral.Entity.Player.Map do
     |> Enum.reduce(%{}, &Map.put(&2, &1, players[&1]))
   end
 
+  def me(players, player_name) when is_map(players) and is_bitstring(player_name) do
+    Enum.filter(players, fn {id, player} -> player.name == player_name end)
+    |> hd
+    |> elem(1)
+  end
+
+  def other_than_me(players, player_name) when is_map(players) and is_bitstring(player_name) do
+    Enum.filter(players, fn {id, player} -> player.name != player_name end)
+    |> Enum.map(&elem(&1, 1))
+  end
+
   @doc """
   Convert a list of `Player` into Map suitable for `PlayerMap`.
 

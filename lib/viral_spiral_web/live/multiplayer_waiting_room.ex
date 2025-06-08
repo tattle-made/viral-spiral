@@ -47,11 +47,12 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
 
   def handle_event("start_game", _uri, %{assigns: %{room_gen: room_gen}} = socket) do
     with action <- Actions.start_game(),
-         gen_state <- GenServer.call(room_gen, action),
-         game_state <- :sys.get_state(room_gen),
+         game_state <- GenServer.call(room_gen, action),
+         game_state <- GenServer.call(room_gen, Actions.draw_card()),
+         #  game_state <- :sys.get_state(room_gen),
          ui_state <- StateAdapter.make_game_room(game_state),
          room_name <- ui_state.room.name do
-      {:noreply, push_navigate(socket, to: "/multiplayer/room/:#{room_name}")}
+      {:noreply, push_navigate(socket, to: "/multiplayer/room/#{room_name}")}
     end
   end
 

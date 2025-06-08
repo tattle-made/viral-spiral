@@ -1,2 +1,11 @@
+<div id="multiplayer-room-container" phx-hook={"HookMultiplayerRoom"}>
 <h1>Multiplayer Room</h1>
  
+ <div :if={@state}>
+ <div id={"room-description-#{@state.room.id}"}>
+ <p>room</p>
+ </div>
+ </div>
+
+
+</div>

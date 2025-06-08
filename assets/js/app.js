@@ -24,6 +24,7 @@ import topbar from "../vendor/topbar";
 import { CalendarElem, CalendarHook } from "../calendar";
 // import PixiRoomMultiplayer from "./pixi-room-multiplayer";
 import { HookMultiplayerHome } from "./multiplayer-home";
+import { HookMultiplayerRoom } from "./multiplayer-room";
 import { LocalDB } from "./dexie";
 
 
@@ -31,7 +32,8 @@ import { LocalDB } from "./dexie";
 let Hooks = {
   CalendarHook,
   // PixiRoomMultiplayer,
-  HookMultiplayerHome
+  HookMultiplayerHome,
+  HookMultiplayerRoom
 };
 
 let csrfToken = document
@@ -45,17 +47,21 @@ let liveSocket = new LiveSocket("/live", Socket, {
 // dexie db
 const db = LocalDB.init()
 
+window.localDB = db;
+
 // Show progress bar on live navigation and form submits
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
-window.addEventListener("phx:vs:mp_room:create_room", async (e)=>{
-  payload = e.detail
-  await LocalDB.save_room_name_and_player_name(payload.room_name, payload.player_name)
+window.addEventListener("phx:vs:mp_room:create_room", async ({detail})=>{
+  await LocalDB.save_room_name_and_player_name(db, detail.room_name, detail.player_name)
 })
-window.addEventListener("phx:vs:mp_room:join_room", (e)=>{console.log(e)})
-// window.addEventListener("phx:vs:mp_waiting_room:start", (e)=>{console.log(e)})
+window.addEventListener("phx:vs:mp_room:join_room", async ({detail})=>{
+  await LocalDB.save_room_name_and_player_name(db, detail.room_name, detail.player_name)
+})
+
+
 
 // Define web components
 window.customElements.define("vs-calendar", CalendarElem);

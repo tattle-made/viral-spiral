@@ -27,6 +27,10 @@ const LocalDB = {
         await db.mutltiplayer_room.update(room_name, {
             player_name: player_name
         })
+    },
+    get_room_by_room_name: async(db, room_name) => {
+        // await db.mutltiplayer_room.where('room_name').equals(room_name)
+        return db.mutltiplayer_room.get(room_name)
     }
 }
 
