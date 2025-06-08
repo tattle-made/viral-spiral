@@ -1,4 +1,5 @@
 defmodule ViralSpiralWeb.MultiplayerRoom do
+  import ViralSpiralWeb.Molecules
   alias ViralSpiral.Room
   alias ViralSpiral.{Affinity, Bias}
   alias ViralSpiralWeb.MultiplayerRoom.StateAdapter

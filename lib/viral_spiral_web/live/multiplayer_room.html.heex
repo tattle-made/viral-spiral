@@ -1,12 +1,12 @@
 <div 
     id="multiplayer-room-container" 
     phx-hook={"HookMultiplayerRoom"}
-    class="bg-zinc-600 p-2 h-full"
-    >
+    class="h-full"
+    >    
     <div :if={@state && @state.others} id="container-others" 
-        class="h-1/5 bg-zinc-400 p-2 flex flex-row">
+        class="h-fit flex flex-row flex-wrap gap-2">
         <div :for={other <- @state.others}>
-            <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2">
+            <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2 rounded-md">
                 <div class="h-12 w-12 bg-red-200">
                     
                 </div>
@@ -30,12 +30,14 @@
         
     </div>
 
-    <div id="container-cards" class="h-3/5 bg-zinc-300 p-2">
-        card
+    <div :if={@state && @state.current_cards} id="container-cards" class="h-3/5 mt-2">
+        <div :for={card <- @state.current_cards}>
+            <.card card={card} from={"abc"} />
+        </div>
     </div>
 
-    <div :if={@state && @state.me} id="container-me" class="h-1/5 bg-zinc-400 p-2">
-        <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2">
+    <div :if={@state && @state.me} id="container-me" class="h-fit">
+        <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2 rounded-md">
             <div class="h-12 w-12 bg-red-200">
                 
             </div>
