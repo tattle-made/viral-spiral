@@ -19,3 +19,15 @@ defmodule Debug do
   def multiplayer_state(room_name) do
   end
 end
+
+defmodule DebugMultiPlayerRoom do
+  alias ViralSpiralWeb.MultiplayerRoom.StateAdapter
+
+  def state(room_name, player_name) do
+    {:ok, pid} = Room.room_gen!(room_name)
+    state = :sys.get_state(pid)
+    ui_state = StateAdapter.game_room(state, player_name)
+
+    {state, ui_state}
+  end
+end
