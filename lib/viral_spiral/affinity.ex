@@ -7,7 +7,7 @@ defmodule ViralSpiral.Affinity do
   @labels %{
     cat: "Cat",
     sock: "Sock",
-    high_five: "High Five",
+    highfive: "High Five",
     houseboat: "Houseboat",
     skub: "Skub"
   }

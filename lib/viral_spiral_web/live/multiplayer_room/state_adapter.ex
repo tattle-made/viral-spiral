@@ -23,6 +23,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
     %{
       id: player.id,
       name: player.name,
+      identity: player.identity,
       clout: player.clout,
       biases: player.biases,
       affinities: player.affinities
@@ -48,6 +49,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
       %{
         id: player.id,
         name: player.name,
+        identity: player.identity,
         clout: player.clout,
         biases: player.biases,
         affinities: player.affinities

@@ -1,6 +1,7 @@
 defmodule ViralSpiralWeb.MultiplayerRoom do
   alias ViralSpiral.Room
-  alias ViralSpiralWeb.MultiplayerWaitingRoom.StateAdapter
+  alias ViralSpiral.{Affinity, Bias}
+  alias ViralSpiralWeb.MultiplayerRoom.StateAdapter
   use ViralSpiralWeb, :live_view
 
   def mount(params, session, socket) do
@@ -17,6 +18,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     socket =
       socket
       |> assign(:room_gen, pid)
+      |> assign(:state, nil)
       |> push_event("vs:mp_room:view_mounted", %{room_name: room_name})
 
     {:noreply, socket}

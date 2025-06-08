@@ -3,15 +3,57 @@
     phx-hook={"HookMultiplayerRoom"}
     class="bg-zinc-600 p-2 h-full"
     >
-    <div id="container-others" class="h-1/5 bg-zinc-200 p-2">
-        others
+    <div :if={@state && @state.others} id="container-others" 
+        class="h-1/5 bg-zinc-400 p-2 flex flex-row">
+        <div :for={other <- @state.others}>
+            <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2">
+                <div class="h-12 w-12 bg-red-200">
+                    
+                </div>
+                <div>
+                    <p> <%= other.name %> </p>
+                    <div class="flex flex-row gap-4">
+                        <div :for={{bias, value} <- other.biases}> 
+                            <span> <%= Bias.label(bias)  %> </span>
+                            <span> <%= value %> </span>
+                        </div>
+                    </div>
+                    <div class="flex flex-row gap-4">
+                        <div :for={{affinity, value} <- other.affinities}> 
+                            <span> <%= Affinity.label(affinity)  %> </span>
+                            <span> <%= value %> </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     </div>
 
     <div id="container-cards" class="h-3/5 bg-zinc-300 p-2">
         card
     </div>
 
-    <div id="container-me" class="h-1/5 bg-zinc-400 p-2">
-        me
+    <div :if={@state && @state.me} id="container-me" class="h-1/5 bg-zinc-400 p-2">
+        <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2">
+            <div class="h-12 w-12 bg-red-200">
+                
+            </div>
+            <div>
+                <p> <%= @state.me.name %> </p>
+                <div class="flex flex-row gap-4">
+                    <div :for={{bias, value} <- @state.me.biases}> 
+                        <span> <%= Bias.label(bias)  %> </span>
+                        <span> <%= value %> </span>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-4">
+                    <div :for={{affinity, value} <- @state.me.affinities}> 
+                        <span> <%= Affinity.label(affinity)  %> </span>
+                        <span> <%= value %> </span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
