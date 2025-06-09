@@ -87,7 +87,7 @@ defmodule ViralSpiralWeb.Molecules do
       <div class="border border-dashed border-zinc-400 mt-2 mb-2" />
 
       <div class="flex flex-row flex-wrap gap-2 px-2">
-        <div class="mt-4">
+        <div class="">
           <button
             phx-click={
               JS.push("view_source",
@@ -128,6 +128,29 @@ defmodule ViralSpiralWeb.Molecules do
       </.modal>
 
       <div class="mb-2" />
+    </div>
+    """
+  end
+
+  def hand_card(assigns) do
+    ~H"""
+    <div>
+      <img src={card_url(@card.image)} />
+    </div>
+    """
+  end
+
+  def card_preview(assigns) do
+    ~H"""
+    <div class="border-2 border-solid border-zinc-600 w-48 rounded-md">
+      <div class="relative w-full">
+        <div class="p-2">
+          <img src={card_url(@card.image)} />
+        </div>
+        <p class="absolute mx-2 z-4 bottom-2 p-2 text-sm/4 bg-zinc-200 bg-opacity-75 rounded-sm">
+          <%= @card.headline %>
+        </p>
+      </div>
     </div>
     """
   end

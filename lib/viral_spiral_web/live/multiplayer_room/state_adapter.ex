@@ -18,6 +18,16 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
       },
       me: make_me(state, player_me),
       current_cards: make_current_cards(state, player_me),
+      hand:
+        player_me.hand
+        |> Enum.map(&state.deck.store[&1])
+        |> Enum.map(fn card ->
+          %{
+            id: card.id,
+            image: card.image,
+            headline: maybe_patch_headline(card, state.dynamic_card)
+          }
+        end),
       others: make_others(state, other_players)
     }
   end
