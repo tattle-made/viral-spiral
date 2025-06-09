@@ -91,6 +91,12 @@ defmodule ViralSpiral.Room.GameEngine do
   end
 
   @impl true
+  def handle_call(%DrawCard{} = action, _from, state) do
+    new_state = Reducer.reduce(state, action)
+    {:reply, :ok, new_state}
+  end
+
+  @impl true
   def handle_call(%PassCard{} = action, _from, state) do
     with new_state <- Reducer.reduce(state, action),
          {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do

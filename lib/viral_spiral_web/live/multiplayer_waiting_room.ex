@@ -45,6 +45,7 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
     end
   end
 
+  # todo : fix static player name
   def handle_event("start_game", _uri, %{assigns: %{room_gen: room_gen}} = socket) do
     with action <- Actions.start_game(),
          game_state <- GenServer.call(room_gen, action),
