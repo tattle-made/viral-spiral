@@ -162,7 +162,6 @@ defmodule ViralSpiral.Room.Reducer do
       Playable.discard(card, state, from_id) ++
         [
           {state.players[from_id], %RemoveActiveCard{card: sparse_card}},
-          {state.players[from_id], %AddToHand{card: sparse_card}},
           {state.round, %NextRound{}}
         ]
 
