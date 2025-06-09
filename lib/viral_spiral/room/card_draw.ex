@@ -12,9 +12,9 @@ defmodule ViralSpiral.Room.CardDraw do
   [type: :bias, veracity: false, target: :yellow, tgb: 0] and so on
 
   deprecated : [
-    {:conflated, false},
-    {:topical, false},
-    {:topical, true},
+    {:conflated, false, nil},
+    {:topical, false, nil},
+    {:topical, true, nil},
     {:affinity, false, :cat},
     {:affinity, false, :sock},
     {:affinity, true, :cat},
