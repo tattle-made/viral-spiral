@@ -9,7 +9,8 @@ module.exports = {
   content: [
     "./js/**/*.js",
     "../lib/viral_spiral_web.ex",
-    "../lib/viral_spiral_web/**/*.*ex"
+    "../lib/viral_spiral_web/**/*.*ex",
+    './node_modules/flowbite/**/*.js'
   ],
   theme: {
     extend: {
@@ -63,6 +64,7 @@ module.exports = {
           }
         }
       }, {values})
-    })
+    }),
+    require('flowbite/plugin')
   ]
 }

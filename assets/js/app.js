@@ -26,7 +26,7 @@ import { CalendarElem, CalendarHook } from "../calendar";
 import { HookMultiplayerHome } from "./multiplayer-home";
 import { HookMultiplayerRoom } from "./multiplayer-room";
 import { LocalDB } from "./dexie";
-
+import "flowbite/dist/flowbite.phoenix.js";
 
 
 let Hooks = {
