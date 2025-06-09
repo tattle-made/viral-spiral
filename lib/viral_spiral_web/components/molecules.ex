@@ -32,13 +32,14 @@ defmodule ViralSpiralWeb.Molecules do
         <div class="flex flex-row flex-wrap gap-2">
           <div :for={player <- @card.pass_to} }>
             <button
-              phx-click="pass_to"
-              value={
-                Jason.encode!(%{
-                  from_id: @from,
-                  to_id: player.id,
-                  card: %{id: @card.id, veracity: @card.veracity}
-                })
+              phx-click={
+                JS.push("pass_to",
+                  value: %{
+                    from_id: @from,
+                    to_id: player.id,
+                    card: %{id: @card.id, veracity: @card.veracity}
+                  }
+                )
               }
               class=" py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
             >
@@ -53,15 +54,13 @@ defmodule ViralSpiralWeb.Molecules do
       <div class="mt-2 flex flex-row gap-2 flex-wrap px-2">
         <div class="">
           <button
-            phx-click="keep"
-            value={
-              Jason.encode!(%{
-                from_id: @from,
-                card: %{
-                  id: @card.id,
-                  veracity: @card.veracity
+            phx-click={
+              JS.push("keep",
+                value: %{
+                  from_id: @from,
+                  card: %{id: @card.id, veracity: @card.veracity}
                 }
-              })
+              )
             }
             class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
           >
@@ -70,15 +69,13 @@ defmodule ViralSpiralWeb.Molecules do
         </div>
         <div>
           <button
-            phx-click="discard"
-            value={
-              Jason.encode!(%{
-                from_id: @from,
-                card: %{
-                  id: @card.id,
-                  veracity: @card.veracity
+            phx-click={
+              JS.push("discard",
+                value: %{
+                  from_id: @from,
+                  card: %{id: @card.id, veracity: @card.veracity}
                 }
-              })
+              )
             }
             class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
           >

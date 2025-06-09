@@ -35,7 +35,7 @@
 
     <div :if={@state && @state.current_cards} id="container-cards" class="h-3/5 mt-2">
         <div :for={card <- @state.current_cards}>
-            <.card card={card} from={"abc"} />
+            <.card card={card} from={@state.me.id} />
         </div>
     </div>
 
