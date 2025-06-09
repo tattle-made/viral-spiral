@@ -87,9 +87,20 @@ defmodule ViralSpiralWeb.Molecules do
       <div class="border border-dashed border-zinc-400 mt-2 mb-2" />
 
       <div class="flex flex-row flex-wrap gap-2 px-2">
-        <button class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900">
-          View Source
-        </button>
+        <div class="mt-4">
+          <button
+            phx-click={
+              JS.push("view_source",
+                value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
+              )
+              |> show_modal("source-modal")
+            }
+            class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
+            disabled={@card.source != nil}
+          >
+            View Source
+          </button>
+        </div>
         <button class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900">
           Mark as Fake
         </button>
@@ -97,6 +108,24 @@ defmodule ViralSpiralWeb.Molecules do
           Turn to Fake
         </button>
       </div>
+
+      <.modal
+        id="source-modal"
+        on_cancel={
+          JS.push("hide_source",
+            value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
+          )
+        }
+      >
+        <div :if={@card.source != nil} class="bg-zinc-100 p-2 mt-2">
+          <p class="font-light text-gray-800">Author</p>
+          <p class="font-normal"><%= @card.source.author %></p>
+          <p class="font-light text-gray-800">Headline</p>
+          <p class="font-normal"><%= @card.source.headline %></p>
+          <p class="font-light text-gray-800">Content</p>
+          <p class="font-normal"><%= @card.source.content %></p>
+        </div>
+      </.modal>
 
       <div class="mb-2" />
     </div>

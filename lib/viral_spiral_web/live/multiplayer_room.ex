@@ -82,6 +82,26 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     {:noreply, socket}
   end
 
+  def handle_event("view_source", params, socket) do
+    %{room_gen: room_gen, player_name: player_name, room_name: room_name} = socket.assigns
+    action = Actions.view_source(params)
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.make_game_room(gen_state, player_name)
+    socket = assign(socket, :state, room_state)
+    PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+    {:noreply, socket}
+  end
+
+  def handle_event("hide_source", params, socket) do
+    %{room_gen: room_gen, player_name: player_name, room_name: room_name} = socket.assigns
+    action = Actions.hide_source(params)
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.make_game_room(gen_state, player_name)
+    socket = assign(socket, :state, room_state)
+    PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+    {:noreply, socket}
+  end
+
   def handle_event("healthcheck", params, socket) do
     {:noreply, socket}
   end
