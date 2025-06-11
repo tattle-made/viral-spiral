@@ -3,10 +3,11 @@ defmodule ViralSpiral.Canon.Card.Conflated do
             tgb: nil,
             type: :conflated,
             veracity: false,
-            polarity: :neutral,
             headline: nil,
             image: nil,
-            article_id: nil
+            article_id: nil,
+            affinity: nil,
+            bias: nil
 
   @type t :: %__MODULE__{
           id: String.t(),
