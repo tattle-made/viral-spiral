@@ -5,25 +5,28 @@ defmodule ViralSpiral.Room.Reducer do
   require IEx
   alias ViralSpiral.Entity.PowerCancelPlayer.Changes.ResetCancel
   alias ViralSpiral.Entity.DynamicCard.Changes.AddIdentityStats
-  alias ViralSpiral.Room.Actions.Player.TurnToFake
-  alias ViralSpiral.Room.Actions.Player.HideSource
+
   alias ViralSpiral.Entity.Turn.Change.NewTurn
-  alias ViralSpiral.Entity.Player.Changes.AddToHand
+  alias ViralSpiral.Entity.Turn.Change.NextTurn
+
   alias ViralSpiral.Entity.Round.Changes.NextRound
-  alias ViralSpiral.Entity.Room.{Changes.ReserveRoom, Changes.JoinRoom, Changes.StartGame}
   alias ViralSpiral.Entity.Round.Changes.SkipRound
+  alias ViralSpiral.Entity.Room.{Changes.ReserveRoom, Changes.JoinRoom, Changes.StartGame}
   alias ViralSpiral.Entity.PowerCancelPlayer.Changes.VoteCancel
   alias ViralSpiral.Entity.PowerCancelPlayer.Changes.InitiateCancel
   alias ViralSpiral.Canon.DynamicCard
+
+  alias ViralSpiral.Entity.Player.Changes.AddToHand
   alias ViralSpiral.Entity.Player.Changes.MakeActiveCardFake
   alias ViralSpiral.Entity.Player.Changes.CloseArticle
   alias ViralSpiral.Entity.Player.Changes.ViewArticle
   alias ViralSpiral.Entity.Player.Changes.Affinity
-  alias ViralSpiral.Entity.Turn.Change.NextTurn
   alias ViralSpiral.Entity.Player.Changes.RemoveActiveCard
   alias ViralSpiral.Entity.Player.Changes.Clout
+
   alias ViralSpiral.Room.Playable
   alias ViralSpiral.Room.CardDraw
+
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Entity.Player.Changes.AddActiveCard
   alias ViralSpiral.Entity.Deck.Changes.RemoveCard
@@ -40,7 +43,9 @@ defmodule ViralSpiral.Room.Reducer do
     MarkAsFake,
     ViewSource,
     CancelPlayerInitiate,
-    CancelPlayerVote
+    CancelPlayerVote,
+    TurnToFake,
+    HideSource
   }
 
   alias ViralSpiral.Room.Actions.Engine.{DrawCard}

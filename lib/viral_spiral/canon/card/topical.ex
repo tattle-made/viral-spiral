@@ -6,7 +6,8 @@ defmodule ViralSpiral.Canon.Card.Topical do
             polarity: :neutral,
             headline: nil,
             image: nil,
-            article_id: nil
+            article_id: nil,
+            bias: nil
 
   @type t :: %__MODULE__{
           id: String.t(),
