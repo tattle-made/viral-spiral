@@ -5,18 +5,16 @@ defmodule ViralSpiral.Entity.PowerViralSpiralTest do
   alias ViralSpiral.Entity.PowerViralSpiral
   use ExUnit.Case
 
-  @tag :skip
   describe "entity" do
     setup do
       power = %PowerViralSpiral{
+        card: %Sparse{id: "card_pqr", veracity: true},
         turns: [
           %Turn{
-            card: %Sparse{id: "card_pqr", veracity: true},
             current: "player_abc",
             pass_to: ["player_def", "player_ghi"]
           },
           %Turn{
-            card: %Sparse{id: "card_pqr", veracity: true},
             current: "player_jkl",
             pass_to: ["player_def", "player_ghi"]
           }

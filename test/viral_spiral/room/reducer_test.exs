@@ -484,7 +484,6 @@ defmodule ViralSpiral.Room.ReducerTest do
       %{state: state, players: players}
     end
 
-    @tag timeout: :infinity
     test "successful cancellation flow", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
@@ -533,62 +532,68 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
   end
 
-  # @tag timeout: :infinity
-  # describe "viral spiral" do
-  #   import Fixtures
+  describe "power viral spiral" do
+    setup do
+      :rand.seed(:exsss, {123, 899, 254})
+      {state, players} = StateFixtures.new_game_with_four_players()
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
-  #   setup do
-  #     # Setup a room with affinities :sock and :skub
-  #     # and communities :red, :yellow and :blue
-  #     # current player is named farah
-  #     :rand.seed(:exsss, {12356, 123_534, 345_345})
+      state =
+        state
+        |> StateTransformation.update_player(adhiraj, %{
+          identity: :yellow,
+          biases: %{red: 5, blue: 0}
+        })
+        |> StateTransformation.update_player(aman, %{
+          identity: :red,
+          biases: %{yellow: 5, blue: 5}
+        })
+        |> StateTransformation.update_player(farah, %{
+          identity: :blue,
+          biases: %{red: 3, yellow: 4}
+        })
+        |> StateTransformation.update_player(krys, %{
+          identity: :red,
+          biases: %{blue: 2, yellow: 1}
+        })
+        |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
 
-  #     state = StateFixtures.new_state()
-  #     players = StateFixtures.player_by_names(state)
-  #     %{adhiraj: adhiraj} = players
+      card_sets = state.deck.available_cards
+      set_key = CardSet.key(:bias, true, :red)
+      cardset_member = Deck.draw_card(card_sets, set_key, 4)
+      sparse_card = Sparse.new(cardset_member.id, true)
 
-  #     state =
-  #       state
-  #       |> add_active_card(adhiraj.id, %{id: "card_129231083", veracity: true, tgb: 2})
+      state =
+        state
+        |> StateTransformation.update_player(adhiraj, %{active_cards: [sparse_card]})
 
-  #     %{state: state}
-  #   end
+      %{state: state, players: players}
+    end
 
-  #   test "pass to two players", %{state: state} do
-  #     # %{adhiraj: adhiraj, krys: krys} = players
+    @tag timeout: :infinity
+    test "happy path", %{state: state, players: players} do
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
-  #     # IO.inspect(adhiraj.identity)
-  #     # IO.inspect(adhiraj.affinities)
-  #     # IO.inspect(adhiraj.biases)
-  #     # IO.inspect(adhiraj.active_cards)
-  #     # # IO.inspect(state)
-  #     # current_player = State.current_turn_player(state)
+      sparse_card = StateTransformation.active_card(state, adhiraj, 0)
 
-  #     # IO.inspect(current_player)
+      IO.inspect(state)
+      # adhiraj initiates viral spiral and sends his card to farah and aman
+      initiate_attrs = %{
+        from_id: adhiraj,
+        to: [farah, aman],
+        card: %{
+          id: sparse_card.id,
+          veracity: sparse_card.veracity
+        },
+        bias: :red
+      }
 
-  #     # others = PlayerMap.others(state.players, current_player.id)
+      action = Actions.initiate_viralspiral(initiate_attrs)
+      state = Reducer.reduce(state, action)
+      # farah passes the card to krys
 
-  #     # requirements = Factory.draw_type(state)
-  #     # draw_type = Deck.draw_type(requirements)
-  #     # new_state = Reducer.reduce(state, Actions.draw_card(draw_type))
-
-  #     # IO.inspect(new_state.players[current_player.id])
-
-  #     # test if the action creates power_viral_spiral struct
-  #     # test if further passes modify the power_viral_spiral struct
-  #     # test score(?)
-
-  #     # IO.inspect(new_state.round)
-  #     # IO.inspect(new_state.turn)
-  #     # IO.inspect(new_state.players)
-
-  #     # IO.inspect(state.players[krys.id], label: "before")
-
-  #     # krys = %{state.players[krys.id] | clout: 4, affinities: %{sock: 2, houseboat: 5}}
-  #     # new_state = %{state | players: %{state.players | krys.id => krys}}
-  #     # IO.inspect(new_state.players, label: "new state")
-
-  #     # IO.inspect(krys, label: "after")
-  #   end
-  # end
+      # assert viral spiral power has ended
+    end
+  end
 end

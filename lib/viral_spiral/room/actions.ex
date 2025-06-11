@@ -3,6 +3,8 @@ defmodule ViralSpiral.Room.Actions do
   Instances of Action triggered by a Player or Game Engine .
   """
 
+  alias ViralSpiral.Room.Actions.Player.ViralSpiralInitiate
+
   alias ViralSpiral.Room.Actions.Player.{
     ReserveRoom,
     JoinRoom,
@@ -130,6 +132,15 @@ defmodule ViralSpiral.Room.Actions do
 
   def vote_to_cancel(attrs) do
     changeset = %CancelPlayerVote{} |> CancelPlayerVote.changeset(attrs)
+
+    case changeset.valid? do
+      true -> apply_changes(changeset)
+      false -> raise "Invalid attributes"
+    end
+  end
+
+  def initiate_viralspiral(attrs) do
+    changeset = %ViralSpiralInitiate{} |> ViralSpiralInitiate.changeset(attrs)
 
     case changeset.valid? do
       true -> apply_changes(changeset)

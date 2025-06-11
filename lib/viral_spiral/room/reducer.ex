@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Room.Actions.Player.ViralSpiralInitiate
   alias ViralSpiral.Entity.PowerCancelPlayer.Changes.ResetCancel
   alias ViralSpiral.Entity.DynamicCard.Changes.AddIdentityStats
   alias ViralSpiral.Room.Actions.Player.TurnToFake
@@ -303,18 +304,15 @@ defmodule ViralSpiral.Room.Reducer do
     end
   end
 
-  # def reduce(%State{} = state, %{type: :viral_spiral_pass, to: players} = action)
-  #     when is_list(players) do
-  #   card = action.card
+  def reduce(%State{} = state, %ViralSpiralInitiate{} = action) do
+    %{from_id: from_id, to: to, card: card} = action
+    all_players_ids = state.players |> Enum.map(fn {k, _v} -> k end)
+    pass_to = (all_players_ids -- to) -- [from_id]
+    IEx.pry()
 
-  #   changes = [
-  #     {%PowerViralSpiral{}, ChangeDescriptions.PowerViralSpiral.set(players, card)}
-  #   ]
-
-  #   State.apply_changes(state, changes)
-  # end
-
-  # def reduce(%State{} = state, %{type: :viral_spiral_pass, to: player})
-  #     when is_bitstring(player) do
-  # end
+    # changes = [
+    #   {state.power_viralspiral, %}
+    # ]
+    state
+  end
 end

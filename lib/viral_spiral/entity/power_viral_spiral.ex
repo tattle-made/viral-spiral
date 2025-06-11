@@ -5,15 +5,19 @@ defmodule ViralSpiral.Entity.PowerViralSpiral do
   When a user uses the power of viral spiral, they can pass a card from their hand to multiple players. This is a very special case of the game where a player can hold multiple cards and pass to other players.
   """
 
+  alias ViralSpiral.Bias
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Entity.PowerViralSpiral
   alias ViralSpiral.Entity.Turn
-  defstruct turns: nil
+  defstruct [:turns, :card, :from, :bias]
 
   @type t :: %__MODULE__{
-          turns: list(Turn.t())
+          card: Sparse.t(),
+          turns: list(Turn.t()),
+          from: UXID.uxid_string(),
+          bias: Bias.t()
         }
 
   def new(%Sparse{} = card, players) when is_list(players) do
@@ -66,7 +70,18 @@ defmodule ViralSpiral.Entity.PowerViralSpiral do
   end
 
   defimpl Change do
-    alias ViralSpiral.Canon.Card.Sparse
+    alias ViralSpiral.Entity.PowerViralSpiral.Changes.InitiateViralSpiral
+
+    def change(power, %InitiateViralSpiral{} = change) do
+      %PowerViralSpiral{
+        card: change.card,
+        from: change.from_id,
+        bias: change.bias
+        # turns: Enum.reduce(change.to, %{}, fn to_id, acc ->
+        #   Map.put(acc, to_id, %Turn{current: to_id, pass_to: } )
+        # end)
+      }
+    end
 
     # def apply_change(state, change_desc) do
     #   case change_desc[:type] do
