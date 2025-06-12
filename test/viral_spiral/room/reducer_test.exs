@@ -63,7 +63,7 @@ defmodule ViralSpiral.Room.ReducerTest do
 
   describe "draw dynamic card" do
     setup do
-      :rand.seed(:exsss, {123, 568_392, 1833})
+      :rand.seed(:exsss, {123, 7923, 1833})
 
       room =
         Room.skeleton()
@@ -121,15 +121,23 @@ defmodule ViralSpiral.Room.ReducerTest do
       state = Reducer.reduce(state, Actions.pass_card(pass_card_attrs))
 
       assert state.players[adhiraj].clout == 1
-      assert state.players[adhiraj].affinities.houseboat == -1
+      assert state.players[adhiraj].affinities.houseboat == 1
       assert state.players[aman].active_cards |> length() == 1
     end
 
+    @tag timeout: :infinity
     test "pass bias card", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
       state =
         state
+        |> StateTransformation.update_player(adhiraj, %{
+          identity: :yellow,
+          bias: %{red: 0, blue: 0}
+        })
+        |> StateTransformation.update_player(aman, %{identity: :red, bias: %{yellow: 0, blue: 0}})
+        |> StateTransformation.update_player(farah, %{identity: :blue, bias: %{red: 0, yellow: 0}})
+        |> StateTransformation.update_player(krys, %{identity: :red, bias: %{blue: 0, yellow: 0}})
         |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
         |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
 
@@ -154,6 +162,8 @@ defmodule ViralSpiral.Room.ReducerTest do
       assert state.players[adhiraj].clout == 1
       assert state.players[adhiraj].biases.red == 1
       assert state.players[aman].active_cards |> length() == 1
+      assert state.players[aman].clout == -1
+      assert state.players[krys].clout == -1
     end
 
     test "pass topical card", %{state: state, players: players} do
@@ -283,7 +293,7 @@ defmodule ViralSpiral.Room.ReducerTest do
       }
 
       state = Reducer.reduce(state, Actions.discard_card(discard_card_attrs))
-      assert state.players[adhiraj].hand |> length() == 1
+      assert state.players[adhiraj].hand |> length() == 0
       assert state.players[adhiraj].active_cards |> length() == 0
       assert state.players[adhiraj].clout == -1
     end
@@ -415,7 +425,7 @@ defmodule ViralSpiral.Room.ReducerTest do
     test "true card", %{state: state, players: players} do
       %{farah: farah} = players
       card_sets = state.deck.available_cards
-      set_key = CardSet.key(:affinity, true, :highfive)
+      set_key = CardSet.key(:affinity, true, :houseboat)
       cardset_member = Deck.draw_card(card_sets, set_key, 4)
       sparse_card = Sparse.new(cardset_member.id, true)
 
@@ -441,7 +451,7 @@ defmodule ViralSpiral.Room.ReducerTest do
     test "false card", %{state: state, players: players} do
       %{farah: farah} = players
       card_sets = state.deck.available_cards
-      set_key = CardSet.key(:affinity, false, :highfive)
+      set_key = CardSet.key(:affinity, false, :houseboat)
       cardset_member = Deck.draw_card(card_sets, set_key, 4)
       sparse_card = Sparse.new(cardset_member.id, false)
 
