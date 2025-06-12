@@ -89,7 +89,8 @@ defmodule ViralSpiral.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:uxid, "~> 0.2"},
       {:ex_doc, "~> 0.31", only: :dev, runtime: false},
-      {:csv, "~> 3.2"}
+      {:csv, "~> 3.2"},
+      {:benchee, "~> 1.0", only: :dev}
     ]
   end
 
