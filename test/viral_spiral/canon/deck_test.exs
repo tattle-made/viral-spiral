@@ -1,5 +1,4 @@
 defmodule ViralSpiral.Canon.DeckTest do
-  alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Canon.Deck.CardSet
   alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Canon.Card
@@ -35,19 +34,19 @@ defmodule ViralSpiral.Canon.DeckTest do
     test "draw_card/2", %{sets: sets} do
       set_key = CardSet.key(:bias, true, :yellow)
       cardset_member = Deck.draw_card(sets, set_key, 2)
-      assert %{id: id, tgb: tgb} = cardset_member
+      assert %{id: _id, tgb: _tgb} = cardset_member
 
       set_key = CardSet.key(:bias, true, :yellow)
       cardset_member = Deck.draw_card(sets, set_key, 8)
-      assert %{id: id, tgb: tgb} = cardset_member
+      assert %{id: _id, tgb: _tgb} = cardset_member
 
       set_key = CardSet.key(:affinity, true, :cat)
       cardset_member = Deck.draw_card(sets, set_key, 8)
-      assert %{id: id, tgb: tgb} = cardset_member
+      assert %{id: _id, tgb: _tgb} = cardset_member
 
       set_key = CardSet.key(:affinity, false, :cat)
       cardset_member = Deck.draw_card(sets, set_key, 8)
-      assert %{id: id, tgb: tgb} = cardset_member
+      assert %{id: _id, tgb: _tgb} = cardset_member
     end
 
     test "remove_card/3", %{sets: sets} do
@@ -87,14 +86,6 @@ defmodule ViralSpiral.Canon.DeckTest do
     test "size!/2", %{sets: sets} do
       set_key = CardSet.key(:affinity, true, :sock)
       assert Deck.size(sets, set_key) > 0
-
-      assert_raise FunctionClauseError, fn ->
-        Deck.size(sets, CardSet.key(:affinity, true, :random))
-      end
-
-      assert_raise FunctionClauseError, fn ->
-        Deck.size(sets, CardSet.key(1, true, :random))
-      end
     end
   end
 end

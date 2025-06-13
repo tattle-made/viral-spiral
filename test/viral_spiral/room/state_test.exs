@@ -10,6 +10,7 @@ defmodule ViralSpiral.Room.StateTest do
 
     state =
       state
+      |> StateTransformation.update_room(%{affinities: [:sock, :houseboat]})
       |> StateTransformation.update_player(adhiraj, %{
         clout: 5,
         biases: %{blue: 3, red: 1},
@@ -36,7 +37,7 @@ defmodule ViralSpiral.Room.StateTest do
 
     assert %{
              dominant_community: :yellow,
-             other_community: :yellow,
+             other_community: :blue,
              oppressed_community: :red,
              unpopular_affinity: :sock,
              popular_affinity: :houseboat,

@@ -1,5 +1,5 @@
 defmodule ViralSpiral.Canon.CardTest do
-  alias ViralSpiral.Canon.Card.{Topical, Bias, Affinity, Conflated, Sparse}
+  alias ViralSpiral.Canon.Card.{Topical, Bias, Affinity, Sparse}
   alias ViralSpiral.Canon.Card
   use ExUnit.Case
 

@@ -2,7 +2,6 @@ defmodule ViralSpiral.Canon.DeckEncyclopediaTest do
   use ExUnit.Case
   alias ViralSpiral.Canon
   alias ViralSpiral.Canon.Card.Sparse
-  alias ViralSpiral.Canon.DrawTypeRequirements
 
   describe "canon" do
     setup do

@@ -7,8 +7,6 @@ defmodule ViralSpiral.Entity.RoomTest do
   alias ViralSpiral.Entity.Room.Changes.ReserveRoom
   alias ViralSpiral.Entity.Room.Exceptions.IllegalReservation
   alias ViralSpiral.Entity.Room.Changes.JoinRoom
-  alias ViralSpiral.Entity.Room.Changes.ChangeCountdown
-  alias ViralSpiral.Room.EngineConfig
   alias ViralSpiral.Entity.Change
   alias ViralSpiral.Entity.Room
   use ExUnit.Case

@@ -28,7 +28,6 @@ defmodule ViralSpiral.Room.Reducer do
   alias ViralSpiral.Entity.Player.Changes.AddActiveCard
   alias ViralSpiral.Entity.Deck.Changes.RemoveCard
   alias ViralSpiral.Canon
-  alias ViralSpiral.Room.Action
   alias ViralSpiral.Room.State
 
   alias ViralSpiral.Room.Actions.Player.{

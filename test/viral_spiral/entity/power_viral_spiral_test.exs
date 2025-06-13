@@ -1,11 +1,9 @@
 defmodule ViralSpiral.Entity.PowerViralSpiralTest do
-  alias ViralSpiral.Entity.Change
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Entity.PowerViralSpiral
   use ExUnit.Case
 
-  @tag :skip
   describe "entity" do
     setup do
       power = %PowerViralSpiral{
@@ -26,6 +24,7 @@ defmodule ViralSpiral.Entity.PowerViralSpiralTest do
       %{power: power}
     end
 
+    @tag :skip
     test "new", %{power: power} do
       assert power.turns |> length() == 2
       assert PowerViralSpiral.get_turn(power, "player_jkl").current == "player_jkl"
