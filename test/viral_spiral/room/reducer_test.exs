@@ -60,7 +60,7 @@ defmodule ViralSpiral.Room.ReducerTest do
 
   describe "draw dynamic card" do
     setup do
-      :rand.seed(:exsss, {123, 7923, 1833})
+      :rand.seed(:exsss, {74455, 8374, 7333})
 
       room =
         Room.skeleton()
@@ -78,7 +78,7 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
 
     test "dynamic card", %{state: state} do
-      state = state |> StateTransformation.update_room(%{chaos: 0})
+      state = state |> StateTransformation.update_room(%{chaos: 8})
       state = Reducer.reduce(state, Actions.draw_card())
       assert Map.keys(state.dynamic_card.identity_stats) |> length() == 1
     end
