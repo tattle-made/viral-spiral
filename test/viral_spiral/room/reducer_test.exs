@@ -204,21 +204,56 @@ defmodule ViralSpiral.Room.ReducerTest do
 
   describe "pass dynamic card" do
     setup do
-      :rand.seed(:exsss, {123, 135, 254})
+      :rand.seed(:exsss, {123, 849, 254})
       {state, players} = StateFixtures.new_game_with_four_players()
       %{state: state, players: players}
     end
 
-    @tag timeout: :infinity
-    test "affinity card", %{state: state, players: players} do
+    test "topical card", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
-      card_sets = state.deck.available_cards
-      set_key = CardSet.key(:affinity, false, :houseboat)
-      cardset_member = Deck.draw_card(card_sets, set_key, 4)
-      sparse_card = Sparse.new(cardset_member.id, false)
+      state =
+        state
+        |> StateTransformation.update_player(adhiraj, %{
+          identity: :yellow,
+          clout: 5,
+          biases: %{red: 2, blue: 5}
+        })
+        |> StateTransformation.update_player(aman, %{
+          identity: :red,
+          clout: 5,
+          biases: %{yellow: 0, blue: 4}
+        })
+        |> StateTransformation.update_player(farah, %{
+          identity: :blue,
+          clout: 5,
+          biases: %{red: 1, yellow: 5}
+        })
+        |> StateTransformation.update_player(krys, %{
+          identity: :blue,
+          clout: 5,
+          biases: %{red: 3, yellow: 3}
+        })
+        |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
+        |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
 
-      state = state |> StateTransformation.update_player(adhiraj, %{active_cards: [sparse_card]})
+      # card id corresponds to a known topical card in deck
+      sparse_card = Sparse.new("card_80978491", false)
+
+      state = state |> Reducer.reduce(Actions.draw_card(%{card: sparse_card}))
+
+      pass_attrs = %{
+        from_id: adhiraj,
+        to_id: aman,
+        card: %{
+          id: "card_80978491",
+          veracity: false
+        }
+      }
+
+      state = state |> Reducer.reduce(Actions.pass_card(pass_attrs))
+      new_adhiraj = state.players[adhiraj]
+      assert new_adhiraj.clout == 6
 
       IO.inspect("hi")
     end
