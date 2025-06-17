@@ -374,7 +374,6 @@ defmodule ViralSpiral.Canon.Card do
         tgb: tgb,
         type: :conflated,
         veracity: false,
-        polarity: :neutral,
         headline: Enum.at(row, @columns.conflated),
         image: Enum.at(row, @columns.conflated_image)
       }

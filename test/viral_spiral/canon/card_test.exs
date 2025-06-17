@@ -10,7 +10,7 @@ defmodule ViralSpiral.Canon.CardTest do
     # assert card types
     [topical_true, topical_false] = Enum.slice(cards, 0..1)
     assert %Topical{} = topical_true
-    assert %Conflated{} = topical_false
+    assert %Topical{} = topical_false
 
     [bias_red_true, bias_red_false] = Enum.slice(cards, 2..3)
     assert %Bias{} = bias_red_true
@@ -26,11 +26,11 @@ defmodule ViralSpiral.Canon.CardTest do
 
     [pro_cat_true, pro_cat_false] = Enum.slice(cards, 8..9)
     assert %Affinity{} = pro_cat_true
-    assert %Conflated{} = pro_cat_false
+    assert %Affinity{} = pro_cat_false
 
     [anti_cat_true, anti_cat_false] = Enum.slice(cards, 10..11)
     assert %Affinity{} = anti_cat_true
-    assert %Conflated{} = anti_cat_false
+    assert %Affinity{} = anti_cat_false
   end
 
   test "create_store/1" do
