@@ -7,7 +7,6 @@ defmodule ViralSpiral.Entity.TurnTest do
   alias ViralSpiral.Entity.Round
   use ExUnit.Case
 
-  @tag :skip
   describe "struct" do
     test "pass card" do
       players = [
@@ -65,7 +64,7 @@ defmodule ViralSpiral.Entity.TurnTest do
 
       turn = Turn.new(round)
 
-      current_player = Enum.at(round.order, 0)
+      _current_player = Enum.at(round.order, 0)
       to_pass_player = Enum.at(round.order, 2)
       %{turn: turn, target: to_pass_player}
     end

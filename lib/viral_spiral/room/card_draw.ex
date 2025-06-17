@@ -26,7 +26,7 @@ defmodule ViralSpiral.Room.CardDraw do
   ]
 
   requirements = %DrawTypeRequirements{
-    tgb: 4,
+    chaos: 4,
     total_tgb: 10,
     biases: [:red, :blue],
     affinities: [:cat, :sock],
@@ -45,7 +45,7 @@ defmodule ViralSpiral.Room.CardDraw do
 
     veracity =
       case :rand.uniform() do
-        a when a > 1 + requirements.chaos / requirements.total_tgb -> true
+        a when a < 1 - requirements.chaos / requirements.total_tgb -> true
         _ -> false
       end
 

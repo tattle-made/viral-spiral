@@ -2,7 +2,6 @@ defmodule ViralSpiral.Room.Actions.Player.PassCardTest do
   require IEx
   alias ViralSpiral.Room.Actions.Player.PassCard
   use ExUnit.Case
-  import Ecto.Changeset
 
   @valid_attrs %{
     "from_id" => "player_abc",

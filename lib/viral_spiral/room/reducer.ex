@@ -31,7 +31,6 @@ defmodule ViralSpiral.Room.Reducer do
   alias ViralSpiral.Entity.Player.Changes.AddActiveCard
   alias ViralSpiral.Entity.Deck.Changes.RemoveCard
   alias ViralSpiral.Canon
-  alias ViralSpiral.Room.Action
   alias ViralSpiral.Room.State
 
   alias ViralSpiral.Room.Actions.Player.{
@@ -84,6 +83,35 @@ defmodule ViralSpiral.Room.Reducer do
 
     state = State.apply_changes(state, changes)
     state |> State.setup()
+  end
+
+  @doc """
+  This is used for testing when we want to explicitly draw a specific card
+  """
+  def reduce(%State{} = state, %DrawCard{card: card}) do
+    card_store = state.deck.store
+    current_player = State.current_round_player(state)
+    full_card = card_store[card]
+    identity_stats = State.identity_stats(state)
+
+    dynamic_card_change =
+      case DynamicCard.find_placeholders(full_card.headline) do
+        [] ->
+          []
+
+        _ ->
+          [
+            {state.dynamic_card, %AddIdentityStats{card: card, identity_stats: identity_stats}}
+          ]
+      end
+
+    changes = [
+      {state.deck, %RemoveCard{card_sets: card_sets, card_type: card_type, card: card}},
+      {state.players[current_player.id], %AddActiveCard{card: sparse_card}}
+    ]
+
+    all_changes = dynamic_card_change ++ changes
+    State.apply_changes(state, all_changes)
   end
 
   def reduce(%State{} = state, %DrawCard{}) do

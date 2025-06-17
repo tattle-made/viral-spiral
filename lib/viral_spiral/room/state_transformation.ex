@@ -72,6 +72,7 @@ defmodule ViralSpiral.Room.StateTransformation do
   def update_room(%State{} = state, attrs) do
     chaos = Map.get(attrs, :chaos, 0)
     state = put_in(state.room.chaos, chaos)
+    state = put_in(state.room.affinities, attrs[:affinities] || state.room.affinities)
     state
   end
 

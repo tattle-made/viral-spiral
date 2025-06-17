@@ -112,6 +112,7 @@ defmodule ViralSpiral.Entity.Player do
   end
 
   defimpl ViralSpiral.Entity.Change do
+    require IEx
     alias ViralSpiral.Entity.Player.Changes.CloseArticle
     alias ViralSpiral.Entity.Change.UndefinedChange
     alias ViralSpiral.Canon.Card.Sparse

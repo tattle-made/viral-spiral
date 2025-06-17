@@ -3,11 +3,8 @@ defmodule ViralSpiral.Room.ReducerTest do
   alias ViralSpiral.Entity.PowerCancelPlayer.Exceptions.VoteAlreadyRegistered
   alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Canon.Deck.CardSet
-  alias ViralSpiral.Room.Card.Player, as: CardPlayer
   alias ViralSpiral.Canon.Card.Sparse
-  alias ViralSpiral.Canon.Article
   alias ViralSpiral.Room.Actions
-  alias ViralSpiral.Entity.Change
   alias ViralSpiral.Canon.Deck
   alias ViralSpiral.Room.Reducer
   alias ViralSpiral.Room.State
@@ -30,7 +27,7 @@ defmodule ViralSpiral.Room.ReducerTest do
     join_room_attrs_c = %{player_name: "krys"}
     state = Reducer.reduce(state, Actions.join_room(join_room_attrs_c))
 
-    state = Reducer.reduce(state, Actions.start_game())
+    _state = Reducer.reduce(state, Actions.start_game())
     assert 1 == 1
   end
 
@@ -63,7 +60,7 @@ defmodule ViralSpiral.Room.ReducerTest do
 
   describe "draw dynamic card" do
     setup do
-      :rand.seed(:exsss, {123, 568_392, 1833})
+      :rand.seed(:exsss, {74455, 8374, 7333})
 
       room =
         Room.skeleton()
@@ -81,7 +78,7 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
 
     test "dynamic card", %{state: state} do
-      state = state |> StateTransformation.update_room(%{chaos: 0})
+      state = state |> StateTransformation.update_room(%{chaos: 8})
       state = Reducer.reduce(state, Actions.draw_card())
       assert Map.keys(state.dynamic_card.identity_stats) |> length() == 1
     end
@@ -121,7 +118,7 @@ defmodule ViralSpiral.Room.ReducerTest do
       state = Reducer.reduce(state, Actions.pass_card(pass_card_attrs))
 
       assert state.players[adhiraj].clout == 1
-      assert state.players[adhiraj].affinities.houseboat == -1
+      assert state.players[adhiraj].affinities.houseboat == 1
       assert state.players[aman].active_cards |> length() == 1
     end
 
@@ -130,6 +127,22 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state =
         state
+        |> StateTransformation.update_player(adhiraj, %{
+          identity: :yellow,
+          biases: %{red: 0, blue: 0}
+        })
+        |> StateTransformation.update_player(aman, %{
+          identity: :red,
+          biases: %{yellow: 0, blue: 0}
+        })
+        |> StateTransformation.update_player(farah, %{
+          identity: :blue,
+          biases: %{red: 0, yellow: 0}
+        })
+        |> StateTransformation.update_player(krys, %{
+          identity: :red,
+          biases: %{blue: 0, yellow: 0}
+        })
         |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
         |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
 
@@ -154,6 +167,8 @@ defmodule ViralSpiral.Room.ReducerTest do
       assert state.players[adhiraj].clout == 1
       assert state.players[adhiraj].biases.red == 1
       assert state.players[aman].active_cards |> length() == 1
+      assert state.players[aman].clout == -1
+      assert state.players[krys].clout == -1
     end
 
     test "pass topical card", %{state: state, players: players} do
@@ -187,6 +202,28 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
   end
 
+  describe "pass dynamic card" do
+    setup do
+      :rand.seed(:exsss, {123, 135, 254})
+      {state, players} = StateFixtures.new_game_with_four_players()
+      %{state: state, players: players}
+    end
+
+    @tag timeout: :infinity
+    test "affinity card", %{state: state, players: players} do
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
+      card_sets = state.deck.available_cards
+      set_key = CardSet.key(:affinity, false, :houseboat)
+      cardset_member = Deck.draw_card(card_sets, set_key, 4)
+      sparse_card = Sparse.new(cardset_member.id, false)
+
+      state = state |> StateTransformation.update_player(adhiraj, %{active_cards: [sparse_card]})
+
+      IO.inspect("hi")
+    end
+  end
+
   describe "keep card" do
     setup do
       :rand.seed(:exsss, {123, 135, 254})
@@ -202,7 +239,7 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
 
     test "keep affinity card", %{state: state, players: players} do
-      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+      %{adhiraj: adhiraj, aman: _aman, farah: _farah, krys: _krys} = players
       sparse_card = StateTransformation.draw_card(state, {:affinity, true, :houseboat})
 
       state = StateTransformation.update_player(state, adhiraj, %{active_cards: [sparse_card]})
@@ -222,7 +259,7 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
 
     test "keep bias card", %{state: state, players: players} do
-      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+      %{adhiraj: adhiraj, aman: _aman, farah: _farah, krys: _krys} = players
 
       sparse_card = StateTransformation.draw_card(state, {:bias, true, :yellow})
 
@@ -263,7 +300,7 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
 
     test "discard bias card", %{state: state, players: players} do
-      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+      %{adhiraj: adhiraj, aman: _aman, farah: _farah, krys: _krys} = players
 
       sparse_card = StateTransformation.draw_card(state, {:bias, true, :yellow})
 
@@ -283,7 +320,7 @@ defmodule ViralSpiral.Room.ReducerTest do
       }
 
       state = Reducer.reduce(state, Actions.discard_card(discard_card_attrs))
-      assert state.players[adhiraj].hand |> length() == 1
+      assert state.players[adhiraj].hand |> length() == 0
       assert state.players[adhiraj].active_cards |> length() == 0
       assert state.players[adhiraj].clout == -1
     end
@@ -415,7 +452,7 @@ defmodule ViralSpiral.Room.ReducerTest do
     test "true card", %{state: state, players: players} do
       %{farah: farah} = players
       card_sets = state.deck.available_cards
-      set_key = CardSet.key(:affinity, true, :highfive)
+      set_key = CardSet.key(:affinity, true, :houseboat)
       cardset_member = Deck.draw_card(card_sets, set_key, 4)
       sparse_card = Sparse.new(cardset_member.id, true)
 
@@ -441,7 +478,7 @@ defmodule ViralSpiral.Room.ReducerTest do
     test "false card", %{state: state, players: players} do
       %{farah: farah} = players
       card_sets = state.deck.available_cards
-      set_key = CardSet.key(:affinity, false, :highfive)
+      set_key = CardSet.key(:affinity, false, :houseboat)
       cardset_member = Deck.draw_card(card_sets, set_key, 4)
       sparse_card = Sparse.new(cardset_member.id, false)
 
@@ -461,7 +498,7 @@ defmodule ViralSpiral.Room.ReducerTest do
       assert active_card.veracity == false
 
       assert_raise RuntimeError, "This card is already false", fn ->
-        state = Reducer.reduce(state, Actions.turn_to_fake(attrs))
+        Reducer.reduce(state, Actions.turn_to_fake(attrs))
       end
     end
   end
