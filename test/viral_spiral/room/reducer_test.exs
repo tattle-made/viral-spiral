@@ -122,7 +122,6 @@ defmodule ViralSpiral.Room.ReducerTest do
       assert state.players[aman].active_cards |> length() == 1
     end
 
-    @tag timeout: :infinity
     test "pass bias card", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
@@ -200,6 +199,28 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       assert state.players[adhiraj].clout == 1
       assert state.players[aman].active_cards |> length() == 1
+    end
+  end
+
+  describe "pass dynamic card" do
+    setup do
+      :rand.seed(:exsss, {123, 135, 254})
+      {state, players} = StateFixtures.new_game_with_four_players()
+      %{state: state, players: players}
+    end
+
+    @tag timeout: :infinity
+    test "affinity card", %{state: state, players: players} do
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
+      card_sets = state.deck.available_cards
+      set_key = CardSet.key(:affinity, false, :houseboat)
+      cardset_member = Deck.draw_card(card_sets, set_key, 4)
+      sparse_card = Sparse.new(cardset_member.id, false)
+
+      state = state |> StateTransformation.update_player(adhiraj, %{active_cards: [sparse_card]})
+
+      IO.inspect("hi")
     end
   end
 

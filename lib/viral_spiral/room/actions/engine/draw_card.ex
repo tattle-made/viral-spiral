@@ -1,4 +1,8 @@
 defmodule ViralSpiral.Room.Actions.Engine.DrawCard do
-  @type t :: %__MODULE__{}
-  defstruct []
+  alias ViralSpiral.Canon.Card.Sparse
+
+  @type t :: %__MODULE__{
+          card: Sparse.t()
+        }
+  defstruct [:card]
 end
