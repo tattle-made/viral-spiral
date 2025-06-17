@@ -52,6 +52,10 @@ defmodule ViralSpiral.Room.Actions do
     %DrawCard{}
   end
 
+  def draw_card(attrs) do
+    %DrawCard{card: attrs.card}
+  end
+
   def pass_card(attrs) do
     changeset = %PassCard{} |> PassCard.changeset(attrs)
 

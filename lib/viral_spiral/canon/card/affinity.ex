@@ -7,7 +7,8 @@ defmodule ViralSpiral.Canon.Card.Affinity do
             polarity: nil,
             headline: nil,
             image: nil,
-            article_id: nil
+            article_id: nil,
+            bias: nil
 
   @type t :: %__MODULE__{
           id: String.t(),

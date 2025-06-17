@@ -109,10 +109,12 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
 end
 
 defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
+  alias ViralSpiral.Entity.Player.Changes.Bias
   alias ViralSpiral.Room.State
   alias ViralSpiral.Entity.Player.Changes.Clout
+  alias ViralSpiral.Entity.Player.Map, as: PlayerMap
 
-  def pass(_card, %State{} = state, from_id, _to_id) do
+  def pass(card, %State{} = state, from_id, _to_id) do
     current_round_player_id = State.current_round_player(state).id
 
     current_round_player_changes =
@@ -121,9 +123,20 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
         false -> [{state.players[current_round_player_id], %Clout{offset: 1}}]
       end
 
+    conflation_changes =
+      case card.bias do
+        nil -> []
+        _ -> [{state.players[from_id], %Bias{offset: 1, target: card.bias.target}}]
+      end
+
+    change_clout_of_card_target =
+      PlayerMap.of_identity(state.players, card.bias.target)
+      |> Enum.map(&{state.players[&1], %Clout{offset: -1}})
+
     sender_changes = [{state.players[from_id], %Clout{offset: 1}}]
 
-    current_round_player_changes ++ sender_changes
+    current_round_player_changes ++
+      sender_changes ++ conflation_changes ++ change_clout_of_card_target
   end
 
   def keep(_card, _state, _from) do

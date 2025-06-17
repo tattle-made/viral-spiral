@@ -111,9 +111,17 @@ defmodule ViralSpiral.Canon.DynamicCard do
   @doc """
   TODO : return a Card. Because this will need to update bias, affinity etc as well.
   """
-  def patch(headline, identity_Stats) do
+  def patch(headline, identity_Stats) when is_bitstring(headline) do
     matches = find_placeholders(headline)
 
     replace_text(headline, matches, identity_Stats)
+  end
+
+  def patch(card, identity_stats) do
+    # todo what happens when card headline has multiple placeholders
+    match = find_placeholders(card.headline) |> hd
+    bias_target = identity_stats[match]
+
+    Map.put(card, :bias, %{target: bias_target})
   end
 end
