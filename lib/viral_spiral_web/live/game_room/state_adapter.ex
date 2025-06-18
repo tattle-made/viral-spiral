@@ -107,7 +107,7 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
 
     can_cancel =
       Map.values(affinities)
-      |> Enum.filter(&(&1 >= cancel_threshold))
+      |> Enum.filter(&(abs(&1) >= cancel_threshold))
       |> length() > 0
 
     options = make_options(affinities, cancel_threshold)
