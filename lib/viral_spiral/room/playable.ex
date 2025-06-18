@@ -69,9 +69,11 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
 end
 
 defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
+  alias ViralSpiral.Entity.Player.Changes.Bias
   alias ViralSpiral.Canon.Card.Affinity, as: AffinityCard
   alias ViralSpiral.Entity.Player.Changes.{Clout, Affinity}
   alias ViralSpiral.Room.State
+  alias ViralSpiral.Entity.Player.Map, as: PlayerMap
 
   # Increase the player's affinity by 1
   # Increase player's clout by 1
@@ -90,12 +92,29 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
         :negative -> -1
       end
 
+    conflation_changes =
+      case card.bias do
+        nil -> []
+        _ -> [{state.players[from_id], %Bias{offset: 1, target: card.bias.target}}]
+      end
+
+    change_clout_of_card_target =
+      case card.bias do
+        nil ->
+          []
+
+        _ ->
+          PlayerMap.of_identity(state.players, card.bias.target)
+          |> Enum.map(&{state.players[&1], %Clout{offset: -1}})
+      end
+
     sender_changes = [
       {state.players[from_id], %Clout{offset: 1}},
       {state.players[from_id], %Affinity{offset: affinity_offset, target: card.target}}
     ]
 
-    current_round_player_changes ++ sender_changes
+    current_round_player_changes ++
+      sender_changes ++ conflation_changes ++ change_clout_of_card_target
   end
 
   def keep(_card, _state, _from) do
