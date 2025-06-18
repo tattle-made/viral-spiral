@@ -67,7 +67,9 @@ config :viral_spiral, EngineConfig,
   communities: [:red, :yellow, :blue],
   chaos_counter: 10,
   volatility: :medium,
-  cancel_threshold: 4
+  cancel_threshold: 2,
+  turn_fake_threshold: 4,
+  viral_spiral_threshold: 5
 
 config :viral_spiral, CardConfig, card_types: [:affinity, :bias, :topical, :conflated]
 
