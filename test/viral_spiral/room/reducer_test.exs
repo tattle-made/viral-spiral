@@ -206,10 +206,6 @@ defmodule ViralSpiral.Room.ReducerTest do
     setup do
       :rand.seed(:exsss, {123, 849, 254})
       {state, players} = StateFixtures.new_game_with_four_players()
-      %{state: state, players: players}
-    end
-
-    test "topical card", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
       state =
@@ -237,7 +233,14 @@ defmodule ViralSpiral.Room.ReducerTest do
         |> StateTransformation.update_round(%{order: [adhiraj, aman, krys, farah]})
         |> StateTransformation.update_turn(%{current: adhiraj, pass_to: [aman, krys, farah]})
 
+      %{state: state, players: players}
+    end
+
+    test "topical card", %{state: state, players: players} do
+      %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
       # card id corresponds to a known topical card in deck
+      # given the player biases, after dynamic patching, this card should have an anti red bias
       sparse_card = Sparse.new("card_80978491", false)
 
       state = state |> Reducer.reduce(Actions.draw_card(%{card: sparse_card}))
@@ -253,9 +256,12 @@ defmodule ViralSpiral.Room.ReducerTest do
 
       state = state |> Reducer.reduce(Actions.pass_card(pass_attrs))
       new_adhiraj = state.players[adhiraj]
+      new_aman = state.players[aman]
+      new_krys = state.players[krys]
+      new_farah = state.players[farah]
       assert new_adhiraj.clout == 6
-
-      IO.inspect("hi")
+      assert new_adhiraj.biases.red == 3
+      assert new_aman.clout == 4
     end
   end
 
