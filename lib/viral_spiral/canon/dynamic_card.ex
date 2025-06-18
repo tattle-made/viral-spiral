@@ -118,10 +118,15 @@ defmodule ViralSpiral.Canon.DynamicCard do
   end
 
   def patch(card, identity_stats) do
-    # todo what happens when card headline has multiple placeholders
-    match = find_placeholders(card.headline) |> hd
-    bias_target = identity_stats[match]
+    case find_placeholders(card.headline) do
+      [] ->
+        card
 
-    Map.put(card, :bias, %{target: bias_target})
+      matches ->
+        # todo what happens when card headline has multiple placeholders
+        match = matches |> hd
+        bias_target = identity_stats[match]
+        Map.put(card, :bias, %{target: bias_target})
+    end
   end
 end

@@ -91,7 +91,7 @@ defmodule ViralSpiral.Room.ReducerTest do
       %{state: state, players: players}
     end
 
-    test "pass affinity card", %{state: state, players: players} do
+    test "affinity card", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
       state =
@@ -122,7 +122,7 @@ defmodule ViralSpiral.Room.ReducerTest do
       assert state.players[aman].active_cards |> length() == 1
     end
 
-    test "pass bias card", %{state: state, players: players} do
+    test "bias card", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
       state =
@@ -171,7 +171,7 @@ defmodule ViralSpiral.Room.ReducerTest do
       assert state.players[krys].clout == -1
     end
 
-    test "pass topical card", %{state: state, players: players} do
+    test "topical card", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
       state =

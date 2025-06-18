@@ -4,5 +4,5 @@ defmodule ViralSpiral.Room.Actions.Engine.DrawCard do
   @type t :: %__MODULE__{
           card: Sparse.t()
         }
-  defstruct [:card]
+  defstruct card: nil
 end

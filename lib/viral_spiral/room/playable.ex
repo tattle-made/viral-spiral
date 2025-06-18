@@ -130,8 +130,14 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
       end
 
     change_clout_of_card_target =
-      PlayerMap.of_identity(state.players, card.bias.target)
-      |> Enum.map(&{state.players[&1], %Clout{offset: -1}})
+      case card.bias do
+        nil ->
+          []
+
+        _ ->
+          PlayerMap.of_identity(state.players, card.bias.target)
+          |> Enum.map(&{state.players[&1], %Clout{offset: -1}})
+      end
 
     sender_changes = [{state.players[from_id], %Clout{offset: 1}}]
 

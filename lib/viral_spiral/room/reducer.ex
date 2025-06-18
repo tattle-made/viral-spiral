@@ -85,39 +85,7 @@ defmodule ViralSpiral.Room.Reducer do
     state |> State.setup()
   end
 
-  @doc """
-  This is used for testing when we want to explicitly draw a specific card
-  """
-  def reduce(%State{} = state, %DrawCard{card: card}) do
-    %{deck: deck} = state
-    card_sets = deck.available_cards
-    card_store = deck.store
-    current_player = State.current_round_player(state)
-    full_card = card_store[card]
-    identity_stats = State.identity_stats(state)
-    card_type = {full_card.type, full_card.veracity, Map.get(full_card, :target)}
-
-    dynamic_card_change =
-      case DynamicCard.find_placeholders(full_card.headline) do
-        [] ->
-          []
-
-        _ ->
-          [
-            {state.dynamic_card, %AddIdentityStats{card: card, identity_stats: identity_stats}}
-          ]
-      end
-
-    changes = [
-      {state.deck, %RemoveCard{card_sets: card_sets, card_type: card_type, card: card}},
-      {state.players[current_player.id], %AddActiveCard{card: card}}
-    ]
-
-    all_changes = dynamic_card_change ++ changes
-    State.apply_changes(state, all_changes)
-  end
-
-  def reduce(%State{} = state, %DrawCard{}) do
+  def reduce(%State{} = state, %DrawCard{card: nil}) do
     %{deck: deck} = state
     card_sets = deck.available_cards
     card_store = deck.store
@@ -146,6 +114,38 @@ defmodule ViralSpiral.Room.Reducer do
     changes = [
       {state.deck, %RemoveCard{card_sets: card_sets, card_type: card_type, card: card}},
       {state.players[current_player.id], %AddActiveCard{card: sparse_card}}
+    ]
+
+    all_changes = dynamic_card_change ++ changes
+    State.apply_changes(state, all_changes)
+  end
+
+  @doc """
+  This is used for testing when we want to explicitly draw a specific card
+  """
+  def reduce(%State{} = state, %DrawCard{card: card}) do
+    %{deck: deck} = state
+    card_sets = deck.available_cards
+    card_store = deck.store
+    current_player = State.current_round_player(state)
+    full_card = card_store[card]
+    identity_stats = State.identity_stats(state)
+    card_type = {full_card.type, full_card.veracity, Map.get(full_card, :target)}
+
+    dynamic_card_change =
+      case DynamicCard.find_placeholders(full_card.headline) do
+        [] ->
+          []
+
+        _ ->
+          [
+            {state.dynamic_card, %AddIdentityStats{card: card, identity_stats: identity_stats}}
+          ]
+      end
+
+    changes = [
+      {state.deck, %RemoveCard{card_sets: card_sets, card_type: card_type, card: card}},
+      {state.players[current_player.id], %AddActiveCard{card: card}}
     ]
 
     all_changes = dynamic_card_change ++ changes
