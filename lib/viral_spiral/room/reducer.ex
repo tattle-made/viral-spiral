@@ -297,8 +297,11 @@ defmodule ViralSpiral.Room.Reducer do
     %{from_id: from_id, target_id: target_id, affinity: affinity} =
       action
 
-    # todo dynamically compute this
-    polarity = :positive
+    polarity =
+      case state.players[from_id].affinities[affinity] > 0 do
+        true -> :positive
+        false -> :negative
+      end
 
     allowed_voters =
       Map.keys(state.players)
