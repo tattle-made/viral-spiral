@@ -160,9 +160,15 @@ defmodule ViralSpiral.Entity.Player do
     end
 
     def change(%Player{} = player, %Bias{} = change) do
-      current_bias = player.biases[change.target]
-      new_biases = Map.put(player.biases, change.target, current_bias + change.offset)
-      %{player | biases: new_biases}
+      case Map.get(player.biases, change.target) do
+        nil ->
+          # If a player passes a card with a bias against their own identity, do nothing
+          player
+
+        current_bias ->
+          new_biases = Map.put(player.biases, change.target, current_bias + change.offset)
+          %{player | biases: new_biases}
+      end
     end
 
     def change(%Player{} = player, %AddToHand{} = change) do
