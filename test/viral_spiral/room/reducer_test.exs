@@ -562,7 +562,6 @@ defmodule ViralSpiral.Room.ReducerTest do
       %{state: state, players: players}
     end
 
-    @tag timeout: :infinity
     test "successful cancellation flow", %{state: state, players: players} do
       %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
 
