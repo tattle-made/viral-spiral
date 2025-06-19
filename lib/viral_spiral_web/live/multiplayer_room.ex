@@ -20,7 +20,17 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
       PubSub.subscribe(ViralSpiral.PubSub, "multiplayer-room:#{room_name}")
     end
 
-    {:ok, pid} = Room.room_gen!(room_name)
+    # {:ok, pid} = Room.room_gen!(room_name)
+    pid =
+      case Room.room_gen!(room_name) do
+        {:ok, pid} ->
+          pid
+
+        {:error, :not_found} ->
+          room_reserved = Room.reserve(room_name, :designer)
+          {:ok, pid} = Room.room_gen!(room_reserved.name)
+          pid
+      end
 
     socket =
       socket
@@ -95,6 +105,26 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
   def handle_event("hide_source", params, socket) do
     %{room_gen: room_gen, player_name: player_name, room_name: room_name} = socket.assigns
     action = Actions.hide_source(params)
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.make_game_room(gen_state, player_name)
+    socket = assign(socket, :state, room_state)
+    PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+    {:noreply, socket}
+  end
+
+  def handle_event("initiate_cancel", params, socket) do
+    %{room_gen: room_gen, player_name: player_name, room_name: room_name} = socket.assigns
+    action = Actions.initiate_cancel(params)
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.make_game_room(gen_state, player_name)
+    socket = assign(socket, :state, room_state)
+    PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+    {:noreply, socket}
+  end
+
+  def handle_event("cancel_vote", params, socket) do
+    %{room_gen: room_gen, player_name: player_name, room_name: room_name} = socket.assigns
+    action = Actions.vote_to_cancel(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
     socket = assign(socket, :state, room_state)

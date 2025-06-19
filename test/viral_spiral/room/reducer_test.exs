@@ -553,6 +553,9 @@ defmodule ViralSpiral.Room.ReducerTest do
       state =
         state
         |> StateTransformation.update_player(adhiraj, %{affinities: %{sock: 5, skub: 0}})
+        |> StateTransformation.update_player(adhiraj, %{
+          active_cards: [Sparse.new("card_30181728", true)]
+        })
         |> StateTransformation.update_player(aman, %{affinities: %{sock: 2, skub: 0}})
         |> StateTransformation.update_player(farah, %{affinities: %{sock: 2, skub: 0}})
         |> StateTransformation.update_player(krys, %{affinities: %{sock: -1, skub: 4}})
@@ -568,39 +571,27 @@ defmodule ViralSpiral.Room.ReducerTest do
       initiate_cancel_attrs = %{
         from_id: adhiraj,
         target_id: krys,
-        affinity: :sock,
-        polarity: :positive
+        affinity: :sock
       }
 
       state = Reducer.reduce(state, Actions.initiate_cancel(initiate_cancel_attrs))
       assert state.power_cancel_player.state == :waiting
-      assert state.power_cancel_player.from != nil
-      assert state.power_cancel_player.target != nil
+      assert state.power_cancel_player.from == adhiraj
+      assert state.power_cancel_player.target == krys
       assert state.power_cancel_player.affinity == :sock
       assert state.power_cancel_player.allowed_voters |> length() == 3
       assert state.players[adhiraj].affinities.sock == 4
 
-      illegal_vote_cancel_attrs = %{
-        from_id: adhiraj,
-        vote: true
-      }
+      illegal_vote_cancel_attrs = %{from_id: adhiraj, vote: true}
 
       assert_raise VoteAlreadyRegistered, fn ->
         Reducer.reduce(state, Actions.vote_to_cancel(illegal_vote_cancel_attrs))
       end
 
-      vote_cancel_attrs_a = %{
-        from_id: aman,
-        vote: true
-      }
-
+      vote_cancel_attrs_a = %{from_id: aman, vote: true}
       state = Reducer.reduce(state, Actions.vote_to_cancel(vote_cancel_attrs_a))
 
-      vote_cancel_attrs_b = %{
-        from_id: farah,
-        vote: true
-      }
-
+      vote_cancel_attrs_b = %{from_id: farah, vote: true}
       state = Reducer.reduce(state, Actions.vote_to_cancel(vote_cancel_attrs_b))
 
       assert state.round.skip != nil

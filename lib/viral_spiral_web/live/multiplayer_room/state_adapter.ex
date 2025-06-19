@@ -1,4 +1,6 @@
 defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
+  alias ViralSpiral.Affinity
+  alias Phoenix.HTML.FormData
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Entity.DynamicCard
   alias ViralSpiral.Entity.Turn
@@ -17,6 +19,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
         chaos: state.room.chaos
       },
       me: make_me(state, player_me),
+      power_cancel: make_cancel(state, player_me_id),
       current_cards: make_current_cards(state, player_me),
       hand:
         player_me.hand
@@ -110,5 +113,90 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
       nil -> headline
       stats -> DynamicCard.patch(headline, stats)
     end
+  end
+
+  def make_cancel(state, current_player_id) do
+    cancel_threshold = state.room.cancel_threshold
+
+    player = state.players[current_player_id]
+    affinities = player.affinities
+
+    crosses_cancel_threshold =
+      Map.values(affinities)
+      |> Enum.filter(&(abs(&1) >= cancel_threshold))
+      |> length() > 0
+
+    is_current_player = State.current_turn_player(state).id == current_player_id
+
+    can_cancel = crosses_cancel_threshold && is_current_player
+
+    options = make_options(affinities, cancel_threshold)
+
+    affinity_options =
+      options
+      |> Enum.reduce([], &Keyword.put(&2, String.to_atom(Affinity.label(&1.type)), &1.type))
+
+    target_options =
+      PlayerMap.others(state.players, current_player_id)
+      |> Enum.into([])
+      |> Enum.map(&elem(&1, 1))
+      |> Enum.map(&{&1.id, &1.name})
+      |> Enum.reduce([], &Keyword.put(&2, String.to_atom(elem(&1, 1)), elem(&1, 0)))
+
+    can_vote_cond =
+      get_in(state.power_cancel_player.state) == :waiting &&
+        current_player_id in get_in(state.power_cancel_player.allowed_voters) &&
+        Enum.find(state.power_cancel_player.votes, &(&1.id == current_player_id)) == nil
+
+    can_vote =
+      case can_vote_cond do
+        false ->
+          nil
+
+        true ->
+          target_id = get_in(state.power_cancel_player.target)
+          target_player = state.players[target_id]
+          %{id: target_id, name: target_player.name}
+      end
+
+    %{
+      can_cancel: can_cancel,
+      options: options,
+      form: %{
+        data:
+          FormData.to_form(
+            %{
+              "target_id" => nil,
+              "affinity" => nil
+            },
+            id: "cancel_form"
+          ),
+        values: %{
+          affinity: %{
+            options: affinity_options,
+            value: ""
+          },
+          targets: %{
+            options: target_options,
+            value: ""
+          }
+        }
+      },
+      can_vote: can_vote
+    }
+  end
+
+  def make_options(affinities, cancel_threshold) do
+    Enum.map(affinities, fn {k, v} ->
+      polarity = if v > 0, do: :positive, else: :negative
+
+      %{
+        type: k,
+        polarity: polarity,
+        can_cancel: abs(v) >= cancel_threshold
+      }
+    end)
+    |> Enum.filter(& &1.can_cancel)
+    |> Enum.map(&Map.delete(&1, :can_cancel))
   end
 end
