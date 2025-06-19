@@ -93,13 +93,13 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
       end
 
     conflation_changes =
-      case card.bias do
+      case Map.get(card, :bias, nil) do
         nil -> []
         _ -> [{state.players[from_id], %Bias{offset: 1, target: card.bias.target}}]
       end
 
     change_clout_of_card_target =
-      case card.bias do
+      case Map.get(card, :bias, nil) do
         nil ->
           []
 
