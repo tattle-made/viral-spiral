@@ -35,18 +35,36 @@ defmodule ViralSpiral.Room.CardDraw do
     }
   }
   """
+
+  @veracity_threshold 4
+
   def draw_type(%DrawConstraints{} = requirements) do
+    # dynamic bias probability increase's from 0.2 to 0.7 as chaos goes from 0 to 10
+    bias_prob = 0.2 + 0.05 * requirements.chaos
+    remaining_prob = 1 - bias_prob
+
     type =
       case :rand.uniform() do
-        a when a < 0.2 -> :bias
-        a when a >= 0.2 and a < 0.6 -> :topical
-        a when a >= 0.6 and a <= 1 -> :affinity
+        a when a < bias_prob ->
+          :bias
+
+        a when a < bias_prob + remaining_prob / 2 ->
+          :topical
+
+        _ ->
+          :affinity
       end
 
     veracity =
-      case :rand.uniform() do
-        a when a < 1 - requirements.chaos / requirements.total_tgb -> true
-        _ -> false
+      case requirements.chaos do
+        chaos when chaos <= @veracity_threshold ->
+          true
+
+        _ ->
+          case :rand.uniform() do
+            a when a < 1 - requirements.chaos / requirements.total_tgb -> true
+            _ -> false
+          end
       end
 
     target =
