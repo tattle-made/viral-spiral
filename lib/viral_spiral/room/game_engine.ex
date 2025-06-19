@@ -5,6 +5,7 @@ defmodule ViralSpiral.Room.GameEngine do
   All player actions are sent to this genserver, which returns or broadcasts the changes made to the game State.
   """
   require IEx
+  alias ViralSpiral.Room.Actions.Engine.OverwriteState
   alias ViralSpiral.Room.Actions.Engine.DrawCard
   alias ViralSpiral.Room.Actions.Player.StartGame
   alias ViralSpiral.Room.State.Templates.MultiplayerRoom
@@ -166,6 +167,11 @@ defmodule ViralSpiral.Room.GameEngine do
          {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
       {:reply, new_state, new_state}
     end
+  end
+
+  def handle_call(%OverwriteState{} = action, from, state) do
+    new_state = action.new_state
+    {:reply, new_state, new_state}
   end
 
   @impl true
