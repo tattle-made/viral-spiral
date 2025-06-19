@@ -4,6 +4,9 @@ alias ViralSpiral.Canon.Card
 alias ViralSpiral.Entity.{Room, Player, Round, Turn}
 alias ViralSpiral.Room.State
 
+alias ViralSpiral.Room.StateTransformation
+alias ViralSpiral.Room.Actions.Engine.OverwriteState
+
 defmodule Debug do
   alias ViralSpiralWeb.GameRoom.StateAdapter
   alias ViralSpiral.Room
@@ -17,6 +20,18 @@ defmodule Debug do
   end
 
   def multiplayer_state(room_name) do
+  end
+
+  def set_state(room_name, new_state) do
+    {:ok, pid} = Room.room_gen!(room_name)
+    GenServer.call(pid, %OverwriteState{new_state: new_state})
+    Room.update_game_save(room_name, new_state)
+  end
+
+  def get_state(room_name) do
+    {:ok, pid} = Room.room_gen!(room_name)
+    state = :sys.get_state(pid)
+    state
   end
 end
 
