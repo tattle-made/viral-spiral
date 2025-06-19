@@ -59,4 +59,99 @@ defmodule ViralSpiral.Room.CardDrawTest do
 
     assert high_veracity_ratio < low_veracity_ratio
   end
+
+  test "bias type card probability increases with chaos" do
+    chaos_1 = %{@constraints | chaos: 1}
+    chaos_3 = %{@constraints | chaos: 3}
+    chaos_7 = %{@constraints | chaos: 7}
+    chaos_9 = %{@constraints | chaos: 9}
+
+    bias_ratio_1 =
+      Enum.count(Enum.map(1..1000, fn _ -> CardDraw.draw_type(chaos_1) end), fn {type, _, _} ->
+        type == :bias
+      end) / 1000
+
+    bias_ratio_3 =
+      Enum.count(Enum.map(1..1000, fn _ -> CardDraw.draw_type(chaos_3) end), fn {type, _, _} ->
+        type == :bias
+      end) / 1000
+
+    bias_ratio_7 =
+      Enum.count(Enum.map(1..1000, fn _ -> CardDraw.draw_type(chaos_7) end), fn {type, _, _} ->
+        type == :bias
+      end) / 1000
+
+    bias_ratio_9 =
+      Enum.count(Enum.map(1..1000, fn _ -> CardDraw.draw_type(chaos_9) end), fn {type, _, _} ->
+        type == :bias
+      end) / 1000
+
+    # Assert increasing order
+    assert bias_ratio_1 < bias_ratio_3
+    assert bias_ratio_3 < bias_ratio_7
+    assert bias_ratio_7 < bias_ratio_9
+
+    # With chaos=1, bias should be around 25% (0.2 + 0.05 * 1 = 0.25)
+    assert bias_ratio_1 > 0.2
+    assert bias_ratio_1 < 0.35
+
+    # With chaos=3, bias should be around 35% (0.2 + 0.05 * 3 = 0.35)
+    assert bias_ratio_3 > 0.3
+    assert bias_ratio_3 < 0.45
+
+    # With chaos=7, bias should be around 55% (0.2 + 0.05 * 7 = 0.55)
+    assert bias_ratio_7 > 0.5
+    assert bias_ratio_7 < 0.65
+
+    # With chaos=9, bias should be around 65% (0.2 + 0.05 * 9 = 0.65)
+    assert bias_ratio_9 > 0.6
+    assert bias_ratio_9 < 0.75
+  end
+
+  test "veracity is always true when chaos <= 4" do
+    for chaos <- 0..4 do
+      constraints = %{@constraints | chaos: chaos}
+
+      results = Enum.map(1..100, fn _ -> CardDraw.draw_type(constraints) end)
+
+      assert Enum.all?(results, fn {_, veracity, _} -> veracity == true end)
+    end
+  end
+
+  test "veracity follows chaos/total_tgb logic when chaos > 4" do
+    high_chaos = %{@constraints | chaos: 7}
+    medium_chaos = %{@constraints | chaos: 5}
+
+    # For chaos=7, total_tgb=10: probability of true = 1 - 7/10 = 0.3
+    high_veracity_ratio =
+      Enum.count(Enum.map(1..1000, fn _ -> CardDraw.draw_type(high_chaos) end), fn {_, v, _} ->
+        v == true
+      end) / 1000
+
+    # For chaos=5, total_tgb=10: probability of true = 1 - 5/10 = 0.5
+    medium_veracity_ratio =
+      Enum.count(Enum.map(1..1000, fn _ -> CardDraw.draw_type(medium_chaos) end), fn {_, v, _} ->
+        v == true
+      end) / 1000
+
+    assert medium_veracity_ratio > high_veracity_ratio
+    assert_in_delta medium_veracity_ratio, 0.5, 0.1
+    assert_in_delta high_veracity_ratio, 0.3, 0.1
+  end
+
+  test "veracity threshold boundary at chaos=4 vs chaos=5" do
+    chaos_4 = %{@constraints | chaos: 4}
+    chaos_5 = %{@constraints | chaos: 5}
+
+    # chaos=4 should always be true
+    results_4 = Enum.map(1..100, fn _ -> CardDraw.draw_type(chaos_4) end)
+    assert Enum.all?(results_4, fn {_, veracity, _} -> veracity == true end)
+
+    veracity_ratio_5 =
+      Enum.count(Enum.map(1..1000, fn _ -> CardDraw.draw_type(chaos_5) end), fn {_, v, _} ->
+        v == true
+      end) / 1000
+
+    assert_in_delta veracity_ratio_5, 0.5, 0.1
+  end
 end
