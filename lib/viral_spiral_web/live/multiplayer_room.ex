@@ -147,4 +147,13 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
   def handle_info({}, socket) do
     {:noreply, socket}
   end
+
+  def chaos(chaos) do
+    case chaos do
+      nil -> "01"
+      0 -> "01"
+      1 -> "02"
+      _ -> "02"
+    end
+  end
 end
