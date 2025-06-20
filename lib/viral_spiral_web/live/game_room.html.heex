@@ -69,7 +69,7 @@
         <div class="mt-4"></div>
 
         <div :for={card <- player.cards} :if={player.is_active}>
-          <.card card={card} from={player.id}/>
+          <.card card={card} from={player.id} can_turn_fake={player.power_turn_fake.enabled}/>
         </div>
 
         <div class="mt-2 mb-2 h-0.5 bg-zinc-400"></div>

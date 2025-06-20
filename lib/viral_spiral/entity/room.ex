@@ -19,7 +19,9 @@ defmodule ViralSpiral.Entity.Room do
             chaos_counter: nil,
             chaos: nil,
             volatality: :medium,
-            cancel_threshold: 0
+            cancel_threshold: 0,
+            turn_fake_threshold: 0,
+            viral_spiral_threshold: 0
 
   @states [:uninitialized, :reserved, :waiting_for_players, :running, :paused]
 
@@ -33,7 +35,9 @@ defmodule ViralSpiral.Entity.Room do
           communities: list(Bias.target()),
           chaos_counter: integer(),
           volatality: EngineConfig.volatility(),
-          cancel_threshold: integer()
+          cancel_threshold: integer(),
+          turn_fake_threshold: integer(),
+          viral_spiral_threshold: integer()
         }
 
   def new() do
@@ -46,7 +50,9 @@ defmodule ViralSpiral.Entity.Room do
       state: :uninitialized,
       chaos_counter: engine_config.chaos_counter,
       volatality: engine_config.volatility,
-      cancel_threshold: engine_config.cancel_threshold
+      cancel_threshold: engine_config.cancel_threshold,
+      turn_fake_threshold: engine_config.turn_fake_threshold,
+      viral_spiral_threshold: engine_config.viral_spiral_threshold
     }
   end
 
@@ -66,7 +72,9 @@ defmodule ViralSpiral.Entity.Room do
       chaos_counter: engine_config.chaos_counter,
       chaos: 0,
       volatality: engine_config.volatility,
-      cancel_threshold: engine_config.cancel_threshold
+      cancel_threshold: engine_config.cancel_threshold,
+      turn_fake_threshold: engine_config.turn_fake_threshold,
+      viral_spiral_threshold: engine_config.viral_spiral_threshold
     }
   end
 

@@ -26,7 +26,11 @@ defmodule ViralSpiral.Room.EngineConfig do
             chaos_counter: Application.compile_env(:viral_spiral, EngineConfig)[:chaos_counter],
             volatility: Application.compile_env(:viral_spiral, EngineConfig)[:volatility],
             cancel_threshold:
-              Application.compile_env(:viral_spiral, EngineConfig)[:cancel_threshold]
+              Application.compile_env(:viral_spiral, EngineConfig)[:cancel_threshold],
+            turn_fake_threshold:
+              Application.compile_env(:viral_spiral, EngineConfig)[:turn_fake_threshold],
+            viral_spiral_threshold:
+              Application.compile_env(:viral_spiral, EngineConfig)[:viral_spiral_threshold]
 end
 
 defmodule ViralSpiral.Room.EngineConfig.Guards do

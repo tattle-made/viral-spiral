@@ -13,6 +13,7 @@ defmodule ViralSpiralWeb.Atoms do
 
   attr :card, :map, required: true
   attr :from, :string, required: true
+  attr :can_turn_fake, :boolean, required: true
 
   def card(assigns) do
     ~H"""
@@ -158,7 +159,7 @@ defmodule ViralSpiralWeb.Atoms do
         </button>
       </div>
 
-      <div :if={@card.can_turn_fake} class="mt-4">
+      <div :if={@card.can_turn_fake && @can_turn_fake} class="mt-4">
         <button
           phx-click="turn_fake"
           value={

@@ -22,7 +22,7 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
       },
       players:
         for(
-          {id, player} <- state.players,
+          {_id, player} <- state.players,
           do: %{
             id: player.id,
             identity: Bias.label(player.identity),
@@ -32,6 +32,7 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
             biases: player.biases,
             is_active: state.turn.current == player.id,
             power_cancel: make_cancel(state, player.id),
+            power_turn_fake: make_power_turn_fake(state, player.id),
             cards:
               player.active_cards
               |> Enum.map(&Canon.get_card_from_store(&1))
@@ -179,5 +180,19 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
     end)
     |> Enum.filter(& &1.can_cancel)
     |> Enum.map(&Map.delete(&1, :can_cancel))
+  end
+
+  def make_power_turn_fake(state, player_id) do
+    threshold = state.room.turn_fake_threshold
+    player = state.players[player_id]
+
+    enabled =
+      Map.values(player.biases)
+      |> Enum.filter(&(abs(&1) >= threshold))
+      |> length() > 0
+
+    %{
+      enabled: enabled
+    }
   end
 end
