@@ -55,7 +55,9 @@ defmodule ViralSpiral.Canon.Deck do
   end
 
   defp choose_one(list) do
-    ix = :rand.uniform(list |> Enum.to_list() |> length) - 1
+    length = list |> Enum.to_list() |> length
+    length = if length == 0, do: 1, else: length
+    ix = :rand.uniform(length) - 1
     list |> Enum.at(ix)
   end
 

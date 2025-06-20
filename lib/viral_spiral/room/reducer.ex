@@ -321,6 +321,8 @@ defmodule ViralSpiral.Room.Reducer do
          allowed_voters: allowed_voters
        }},
       {state.power_cancel_player, %VoteCancel{from_id: from_id, vote: true}},
+      # todo : affinity offset needs to account for affinitie's polarity
+      # atman's idea - take absolute and then add offset
       {state.players[from_id], %Affinity{target: affinity, offset: -1}}
     ]
 

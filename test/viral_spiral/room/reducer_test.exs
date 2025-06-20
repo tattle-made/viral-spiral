@@ -601,6 +601,16 @@ defmodule ViralSpiral.Room.ReducerTest do
     end
   end
 
+  # we noticed 2 times consequetively that after a cancellation round
+  # keep and discard were not behaving correctly.
+  test "card action after cancellation" do
+    :rand.seed(:exsss, {123, 899, 254})
+    {state, players} = StateFixtures.new_game_with_four_players()
+    %{adhiraj: adhiraj, aman: aman, farah: farah, krys: krys} = players
+
+    %{state: state, players: players}
+  end
+
   # @tag timeout: :infinity
   # describe "viral spiral" do
   #   import Fixtures
