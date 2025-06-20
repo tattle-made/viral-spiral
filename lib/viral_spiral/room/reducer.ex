@@ -312,6 +312,12 @@ defmodule ViralSpiral.Room.Reducer do
         end
       end)
 
+    affinity_offset =
+      case state.players[from_id].affinities[affinity] > 0 do
+        true -> -1
+        false -> 1
+      end
+
     changes = [
       {state.power_cancel_player,
        %InitiateCancel{
@@ -323,7 +329,7 @@ defmodule ViralSpiral.Room.Reducer do
       {state.power_cancel_player, %VoteCancel{from_id: from_id, vote: true}},
       # todo : affinity offset needs to account for affinitie's polarity
       # atman's idea - take absolute and then add offset
-      {state.players[from_id], %Affinity{target: affinity, offset: -1}}
+      {state.players[from_id], %Affinity{target: affinity, offset: affinity_offset}}
     ]
 
     State.apply_changes(state, changes)
