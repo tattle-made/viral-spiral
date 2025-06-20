@@ -1,4 +1,5 @@
 defmodule ViralSpiralWeb.MultiplayerWaitingRoom.StateAdapter do
+  alias ViralSpiral.Canon
   alias ViralSpiral.Entity.Player.Map, as: PlayerMap
   alias ViralSpiral.Room.State
 
@@ -39,7 +40,7 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom.StateAdapter do
 
   def make_current_cards(%State{} = state, player) do
     player.active_cards
-    |> Enum.map(&state.deck.store[&1])
+    |> Enum.map(&Canon.get_card_from_store(&1))
     |> Enum.map(
       &%{
         id: &1.id,

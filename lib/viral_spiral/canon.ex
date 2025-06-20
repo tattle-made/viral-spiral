@@ -66,11 +66,15 @@ defmodule ViralSpiral.Canon do
   ```
   Read documentation of `draw_card` to see more examples of the responses.
   """
+  alias ViralSpiral.Canon
   alias ViralSpiral.Canon.{Card, Deck, Encyclopedia}
   alias ViralSpiral.Canon.Card.{Sparse}
   import ViralSpiral.Canon.Card.Guards
 
   @card_attrs_default [affinities: [:cat, :sock], biases: [:red, :yellow]]
+
+  @card_store Card.load() |> Card.create_store()
+  @article_store Encyclopedia.load_articles() |> Encyclopedia.create_store()
 
   def setup(card_attrs \\ @card_attrs_default) do
     cards = Card.load()
@@ -130,5 +134,17 @@ defmodule ViralSpiral.Canon do
         KeyError -> card
       end
     end)
+  end
+
+  def get_card_store(), do: @card_store
+
+  def get_article_store(), do: @article_store
+
+  def get_card_from_store(%Sparse{} = sparse_card) do
+    @card_store[sparse_card]
+  end
+
+  def get_article_from_store(%Sparse{} = sparse_card) do
+    Encyclopedia.get_article_by_card(@article_store, sparse_card)
   end
 end

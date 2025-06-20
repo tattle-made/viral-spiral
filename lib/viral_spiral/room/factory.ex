@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Factory do
   Create entities for a Game Room
   """
 
+  alias ViralSpiral.Canon
   alias ViralSpiral.Room.DrawConstraints
 
   alias ViralSpiral.Room.Reducer
@@ -109,7 +110,7 @@ defmodule ViralSpiral.Room.Factory do
             is_active: state.turn.current == player.id,
             cards:
               player.active_cards
-              |> Enum.map(&state.deck.store[&1])
+              |> Enum.map(&Canon.get_card_from_store(&1))
               |> Enum.map(
                 &%{
                   id: &1.id,

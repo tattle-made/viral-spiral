@@ -1,6 +1,7 @@
 defmodule ViralSpiralWeb.GameRoom.StateAdapter do
   require IEx
 
+  alias ViralSpiral.Canon
   alias ViralSpiral.Bias
   alias ViralSpiral.Entity.Player.Map, as: PlayerMap
   alias ViralSpiral.Affinity
@@ -33,7 +34,7 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
             power_cancel: make_cancel(state, player.id),
             cards:
               player.active_cards
-              |> Enum.map(&state.deck.store[&1])
+              |> Enum.map(&Canon.get_card_from_store(&1))
               |> Enum.map(fn card ->
                 %{
                   id: card.id,
@@ -52,7 +53,7 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
               end),
             hand:
               player.hand
-              |> Enum.map(&state.deck.store[&1])
+              |> Enum.map(&Canon.get_card_from_store(&1))
               |> Enum.map(fn card ->
                 %{
                   id: card.id,

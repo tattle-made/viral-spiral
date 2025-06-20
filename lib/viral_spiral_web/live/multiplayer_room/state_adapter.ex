@@ -1,4 +1,5 @@
 defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
+  alias ViralSpiral.Canon
   alias ViralSpiral.Affinity
   alias Phoenix.HTML.FormData
   alias ViralSpiral.Canon.Card.Sparse
@@ -23,7 +24,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
       current_cards: make_current_cards(state, player_me),
       hand:
         player_me.hand
-        |> Enum.map(&state.deck.store[&1])
+        |> Enum.map(&Canon.get_card_from_store(&1))
         |> Enum.map(fn card ->
           %{
             id: card.id,
@@ -48,7 +49,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
 
   def make_current_cards(%State{} = state, player) do
     player.active_cards
-    |> Enum.map(&state.deck.store[&1])
+    |> Enum.map(&Canon.get_card_from_store(&1))
     |> Enum.map(
       &%{
         id: &1.id,

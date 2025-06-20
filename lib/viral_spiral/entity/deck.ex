@@ -32,24 +32,20 @@ defmodule ViralSpiral.Entity.Deck do
   end
 
   def new() do
-    {card_store, card_sets, _, article_store} = Canon.setup()
+    {_card_store, card_sets, _, _article_store} = Canon.setup()
 
     %Deck{
       available_cards: card_sets,
-      dealt_cards: %{},
-      store: card_store,
-      article_store: article_store
+      dealt_cards: %{}
     }
   end
 
   def skeleton(card_attrs \\ @card_attrs_default) do
-    {card_store, card_sets, _, article_store} = Canon.setup(card_attrs)
+    {_card_store, card_sets, _, _article_store} = Canon.setup(card_attrs)
 
     %Deck{
       available_cards: card_sets,
-      dealt_cards: %{},
-      store: card_store,
-      article_store: article_store
+      dealt_cards: %{}
     }
   end
 

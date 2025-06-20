@@ -88,7 +88,7 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %DrawCard{card: nil}) do
     %{deck: deck} = state
     card_sets = deck.available_cards
-    card_store = deck.store
+    card_store = Canon.get_card_store()
     current_player = State.current_round_player(state)
     draw_constraints = State.draw_constraints(state)
     card_type = CardDraw.draw_type(draw_constraints)
@@ -126,7 +126,7 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %DrawCard{card: card}) do
     %{deck: deck} = state
     card_sets = deck.available_cards
-    card_store = deck.store
+    card_store = Canon.get_card_store()
     current_player = State.current_round_player(state)
     full_card = card_store[card]
     identity_stats = State.identity_stats(state)
@@ -155,7 +155,7 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %PassCard{} = action) do
     %{card: card, from_id: from_id, to_id: to_id} = action
     sparse_card = Sparse.new(card.id, card.veracity)
-    card = state.deck.store[sparse_card]
+    card = Canon.get_card_from_store(sparse_card)
 
     identity_stats = State.identity_stats(state)
     card = DynamicCard.patch(card, identity_stats)
@@ -174,7 +174,7 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %KeepCard{} = action) do
     %{from_id: from_id, card: card} = action
     sparse_card = Sparse.new(card.id, card.veracity)
-    card = state.deck.store[sparse_card]
+    card = Canon.get_card_from_store(sparse_card)
 
     changes =
       Playable.keep(card, state, from_id) ++
@@ -195,7 +195,7 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %DiscardCard{} = action) do
     %{from_id: from_id, card: card} = action
     sparse_card = Sparse.new(card.id, card.veracity)
-    card = state.deck.store[sparse_card]
+    card = Canon.get_card_from_store(sparse_card)
 
     changes =
       Playable.discard(card, state, from_id) ++
@@ -236,7 +236,7 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %ViewSource{} = action) do
     %{from_id: from_id, card: card} = action
     sparse_card = Sparse.new(card.id, card.veracity)
-    article = Canon.get_article(state.deck.article_store, sparse_card)
+    article = Canon.get_article_from_store(sparse_card)
 
     changes = [
       {state.players[from_id], %ViewArticle{card: sparse_card, article: article}}
@@ -262,7 +262,7 @@ defmodule ViralSpiral.Room.Reducer do
     # todo : only turn to fake if not already fake
     case card.veracity do
       true ->
-        fake_card = state.deck.store[Sparse.new(card.id, false)]
+        fake_card = Canon.get_card_from_store(Sparse.new(card.id, false))
         sparse_card = Sparse.new(fake_card.id, fake_card.veracity)
         identity_stats = State.identity_stats(state)
 
