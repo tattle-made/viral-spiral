@@ -148,8 +148,10 @@ defmodule ViralSpiral.Entity.Player do
 
     @spec change(Player.t(), change_types()) :: Player.t()
     def change(%Player{} = player, %Clout{} = change) do
-      new_clout = player.clout + change.offset
-      %{player | clout: new_clout}
+      case player.clout + change.offset do
+        invalid_clout when invalid_clout < 0 -> player
+        new_valid_clout -> %{player | clout: new_valid_clout}
+      end
     end
 
     def change(%Player{} = player, %Affinity{} = change) do
