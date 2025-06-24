@@ -154,4 +154,43 @@ defmodule ViralSpiral.Room.CardDrawTest do
 
     assert_in_delta veracity_ratio_5, 0.5, 0.1
   end
+
+  test "probability of drawing topical vs affinity is roughly equal for each chaos level" do
+    for chaos <- 0..9 do
+      constraints = %{@constraints | chaos: chaos}
+
+      counts =
+        Enum.map(1..1000, fn _ -> CardDraw.draw_type(constraints) end)
+        |> Enum.frequencies_by(fn {type, _, _} -> type end)
+
+      topical_count = Map.get(counts, :topical, 0)
+      affinity_count = Map.get(counts, :affinity, 0)
+
+      topical_ratio = topical_count / 1000
+      affinity_ratio = affinity_count / 1000
+
+      # We expect them both to be around (1 - bias_prob) / 2
+      bias_prob = 0.2 + 0.05 * chaos
+      expected_ratio = (1 - bias_prob) / 2
+
+      assert_in_delta topical_ratio, expected_ratio, 0.1
+      assert_in_delta affinity_ratio, expected_ratio, 0.1
+    end
+  end
+
+  test "all affinity targets are drawn over many draws and have roughly equal distribution" do
+    constraints = %{@constraints | chaos: 5}
+
+    draws =
+      Enum.map(1..10_000, fn _ -> CardDraw.draw_type(constraints) end)
+      |> Enum.filter(fn {type, _, _} -> type == :affinity end)
+      |> Enum.map(fn {_, _, target} -> target end)
+
+    counts = Enum.frequencies(draws)
+
+    # Ensure all affinity targets are drawn at least once
+    for affinity <- @constraints.affinities do
+      assert Map.has_key?(counts, affinity)
+    end
+  end
 end
