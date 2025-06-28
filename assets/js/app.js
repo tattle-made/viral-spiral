@@ -27,13 +27,15 @@ import { HookMultiplayerHome } from "./multiplayer-home";
 import { HookMultiplayerRoom } from "./multiplayer-room";
 import { LocalDB } from "./dexie";
 import "flowbite/dist/flowbite.phoenix.js";
+import { HookCounter } from "./counter";
 
 
 let Hooks = {
   CalendarHook,
   // PixiRoomMultiplayer,
   HookMultiplayerHome,
-  HookMultiplayerRoom
+  HookMultiplayerRoom,
+  HookCounter
 };
 
 let csrfToken = document

@@ -1,3 +1,16 @@
 <h1>Viral Spiral</h1>
 
 <.button phx-click="create_room" class="ml-2">Create a new Room!</.button>
+
+<div class="m-10"/>
+
+<.button phx-click={"increment_counter"}>Increment</.button>
+
+<div class="m-10"/>
+
+<div id="counter-container" class="w-fit h-8 bg-red-400 flex flex-row justify-center items-center" phx-hook={"HookCounter"}>
+    <p class="w-fit h-8 bg-red-200  flex flex-row justify-center items-center" id="counter-label">
+        <%= @count %>
+    </p>
+    
+</div>

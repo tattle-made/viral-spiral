@@ -4,6 +4,8 @@ defmodule ViralSpiralWeb.Home do
   use ViralSpiralWeb, :live_view
 
   def mount(_params, _session, socket) do
+    socket = assign(socket, :count, 12)
+
     {:ok, socket}
   end
 
@@ -23,5 +25,12 @@ defmodule ViralSpiralWeb.Home do
 
     # {:noreply, push_navigate(socket, to: "/waiting-room/#{name}")}
     {:noreply, push_navigate(socket, to: "/room/#{room_name}")}
+  end
+
+  def handle_event("increment_counter", _params, socket) do
+    new_count = socket.assigns.count + 1
+    socket = socket |> assign(:count, new_count)
+
+    {:noreply, socket}
   end
 end
