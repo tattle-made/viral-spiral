@@ -1,4 +1,6 @@
 import {animate, createTimeline} from 'animejs'
+import * as Tone from "tone";
+const synth = new Tone.Synth().toDestination();
 
 const BackgroundHook = {
     mounted(){
@@ -22,9 +24,11 @@ const BackgroundHook = {
         console.log("before update")
     },
     updated(){
+        
         console.log('after update')
         let image_id = this.el.dataset.imageId
         console.log(image_id)
+        // synth.triggerAttackRelease(`C${Number.parseInt(image_id)+3}`, "8n");
         const imgUrl = `http://localhost:8081/bg_${image_id}.png`
      
         const container_bg = this.el.querySelector("#container-bg-stage")
@@ -41,7 +45,7 @@ const BackgroundHook = {
             animate(container_bg_backstage, {opacity: {from: 0, to: 1, duration: 5000}})
 
             setTimeout(()=>{
-                
+
             })
             
         };
