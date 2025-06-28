@@ -28,6 +28,7 @@ import { HookMultiplayerRoom } from "./multiplayer-room";
 import { LocalDB } from "./dexie";
 import "flowbite/dist/flowbite.phoenix.js";
 import { HookCounter } from "./counter";
+import { BackgroundHook } from "./background";
 
 
 let Hooks = {
@@ -35,7 +36,8 @@ let Hooks = {
   // PixiRoomMultiplayer,
   HookMultiplayerHome,
   HookMultiplayerRoom,
-  HookCounter
+  HookCounter,
+  BackgroundHook
 };
 
 let csrfToken = document

@@ -4,7 +4,10 @@
 
 <div class="m-10"/>
 
-<.button phx-click={"increment_counter"}>Increment</.button>
+<div class="flex flex-row gap-4">
+    <.button phx-click={"increment_counter"}>Increment</.button>
+    <.button phx-click={"change_background"}>background</.button>
+</div>
 
 <div class="m-10"/>
 
@@ -12,5 +15,13 @@
     <p class="w-fit h-8 bg-red-200  flex flex-row justify-center items-center" id="counter-label">
         <%= @count %>
     </p>
-    
+</div>
+
+
+<div class="m-10"/>
+
+
+<div id="container-bg" data-image-id={@image_id} class="flex flex-row gap-2" phx-hook={"BackgroundHook"} phx-update={"ignore"}>
+    <img id="container-bg-stage" class="w-80 h-80  object-contain opacity-0" /> 
+    <img id="container-bg-backstage" class="w-80 h-80  object-contain opacity-0" /> 
 </div>

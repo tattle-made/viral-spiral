@@ -4,7 +4,10 @@ defmodule ViralSpiralWeb.Home do
   use ViralSpiralWeb, :live_view
 
   def mount(_params, _session, socket) do
-    socket = assign(socket, :count, 12)
+    socket =
+      socket
+      |> assign(:count, 12)
+      |> assign(:image_id, 0)
 
     {:ok, socket}
   end
@@ -30,6 +33,15 @@ defmodule ViralSpiralWeb.Home do
   def handle_event("increment_counter", _params, socket) do
     new_count = socket.assigns.count + 1
     socket = socket |> assign(:count, new_count)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("change_background", _params, socket) do
+    new_image_id = rem(socket.assigns.image_id + 1, 5)
+    socket = socket |> assign(:image_id, new_image_id)
+
+    IO.inspect(new_image_id)
 
     {:noreply, socket}
   end
