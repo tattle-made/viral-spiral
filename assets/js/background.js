@@ -2,14 +2,9 @@ import {animate} from 'animejs'
 
 let activeIndex = 0;
 
-function makeImageUrl(image_id) {
-    return `http://localhost:8081/bg_${image_id}.png`
-}
-
 const BackgroundHook = {
     mounted(){
-        let imageId = this.el.dataset.imageId
-        const imgUrl = makeImageUrl(imageId)
+        let imgUrl = this.el.dataset.imageUrl
         let activeContainerIndex = activeIndex
 
         containers = this.el.querySelectorAll('img')
@@ -24,11 +19,10 @@ const BackgroundHook = {
     },
     updated(){
         let el = this.el
-        let imageId = el.dataset.imageId
         let activeContainerIndex  = activeIndex
 
         containers = el.querySelectorAll('img')        
-        const imgUrl = `http://localhost:8081/bg_${imageId}.png`
+        let imgUrl = this.el.dataset.imageUrl
 
         const image = new Image();
         image.src = imgUrl;

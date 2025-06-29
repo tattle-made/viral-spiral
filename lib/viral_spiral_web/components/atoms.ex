@@ -191,13 +191,13 @@ defmodule ViralSpiralWeb.Atoms do
   end
 
   attr :id, :string, required: true
-  attr :image_name, :string, required: true
+  attr :image, :string, required: true
 
   @doc """
   Renders a new image while transitioninig smoothly from the already displayed image.
 
   ## Examples
-    <.background id={"container-bg"} image_name={@image_id} />
+    <.background id={"container-bg"} image={@image_url} />
   """
 
   def background(assigns) do
@@ -205,7 +205,7 @@ defmodule ViralSpiralWeb.Atoms do
     <div class="w-full h-full">
       <div
         id={@id}
-        data-image-id={@image_name}
+        data-image-url={@image}
         class="relative bg-red-200"
         phx-hook="BackgroundHook"
         phx-update="ignore"
