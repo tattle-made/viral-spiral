@@ -1,5 +1,6 @@
 defmodule ViralSpiralWeb.MultiplayerRoom do
   import ViralSpiralWeb.Molecules
+  alias ViralSpiralWeb.Atoms
   alias ViralSpiral.Room.Actions
   alias ViralSpiral.Room
   alias ViralSpiral.{Affinity, Bias}

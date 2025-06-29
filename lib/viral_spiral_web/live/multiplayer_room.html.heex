@@ -1,17 +1,16 @@
 <div 
     id="multiplayer-room-container" 
     phx-hook={"HookMultiplayerRoom"}
-    class="h-full"
+    class="h-full relative"
     data-chaos={chaos(get_in(@state.room.chaos))}
     >
-    <!--    
-    <div class="absolute h-24 w-24 bg-red-200 z-0" id="bg-image">
-    </div>
-    -->
+        <div class="absolute w-full h-full">
+            <Atoms.background id={"container-bg"} image={"http://localhost:8081/bg_0.png"} />
+        </div>
     
     
         <div :if={@state && @state.others} id="container-others" 
-            class="h-fit flex flex-row flex-wrap gap-2">
+            class="h-fit flex flex-row flex-wrap gap-2 absolute w-full h-full">
             <div :for={other <- @state.others}>
                 <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2 rounded-md">
                     <div class="h-12 w-12 bg-red-200">
