@@ -1,6 +1,7 @@
 defmodule ViralSpiralWeb.Home do
   alias ViralSpiral.Room
   alias ViralSpiral.Entity.Room, as: EntityRoom
+  import ViralSpiralWeb.Atoms
   use ViralSpiralWeb, :live_view
 
   def mount(_params, _session, socket) do

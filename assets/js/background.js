@@ -1,55 +1,49 @@
-import {animate, createTimeline} from 'animejs'
-import * as Tone from "tone";
-const synth = new Tone.Synth().toDestination();
+import {animate} from 'animejs'
+
+let activeIndex = 0;
+
+function makeImageUrl(image_id) {
+    return `http://localhost:8081/bg_${image_id}.png`
+}
 
 const BackgroundHook = {
     mounted(){
-        console.log('on mount')
-        let image_id = this.el.dataset.imageId
-        const imgUrl = `http://localhost:8081/bg_${image_id}.png`
+        let imageId = this.el.dataset.imageId
+        const imgUrl = makeImageUrl(imageId)
+        let activeContainerIndex = activeIndex
 
-        const container_bg = this.el.querySelector("#container-bg-stage")
-        const container_bg_backstage = this.el.querySelector("#container-bg-backstage")
+        containers = this.el.querySelectorAll('img')
 
-        const tempImage = new Image()
-        tempImage.onload = ()=>{
-            container_bg.src = tempImage.src;
-            animate(container_bg, {opacity: {from: 0, to: 1, duration: 5000}})
+        const image = new Image()
+        image.src = imgUrl
+        image.onload = ()=>{
+            activeContainer = containers[activeContainerIndex]
+            activeContainer.src = image.src;
+            animate(activeContainer, {opacity: {from: 0, to: 1, duration: 250}})
         }
-        tempImage.src = imgUrl
-        
-        // container_bg.src = imgUrl
-    },
-    beforeUpdated(){
-        console.log("before update")
     },
     updated(){
-        
-        console.log('after update')
-        let image_id = this.el.dataset.imageId
-        console.log(image_id)
-        // synth.triggerAttackRelease(`C${Number.parseInt(image_id)+3}`, "8n");
-        const imgUrl = `http://localhost:8081/bg_${image_id}.png`
-     
-        const container_bg = this.el.querySelector("#container-bg-stage")
-        const container_bg_backstage = this.el.querySelector("#container-bg-backstage")
+        let el = this.el
+        let imageId = el.dataset.imageId
+        let activeContainerIndex  = activeIndex
 
-       
+        containers = el.querySelectorAll('img')        
+        const imgUrl = `http://localhost:8081/bg_${imageId}.png`
 
-        const tempImage = new Image();
-        tempImage.onload = function () {
-            const tl = createTimeline({})
-            container_bg_backstage.src = tempImage.src;
+        const image = new Image();
+        image.src = imgUrl;
+        image.onload = function () {
+            var activeContainer = containers[activeContainerIndex]
+            var otherContainerIndex = (activeContainerIndex + 1) % 2
+            var otherContainer = containers[otherContainerIndex]
 
-            animate(container_bg, {opacity: {from: 1, to: 0, duration: 5000}})
-            animate(container_bg_backstage, {opacity: {from: 0, to: 1, duration: 5000}})
+            otherContainer.src = image.src
 
-            setTimeout(()=>{
-
-            })
-            
-        };
-        tempImage.src = imgUrl;
+            animate(activeContainer, {opacity: {from: 1, to: 0, duration: 2000, ease: 'inOut'}})
+            animate(otherContainer, {opacity: {from: 0, to: 1, duration: 2000, ease: 'out'}})  
+                      
+            activeIndex = otherContainerIndex
+        }; 
     }
 }
 

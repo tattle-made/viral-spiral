@@ -189,4 +189,31 @@ defmodule ViralSpiralWeb.Atoms do
     </div>
     """
   end
+
+  attr :id, :string, required: true
+  attr :image_name, :string, required: true
+
+  @doc """
+  Renders a new image while transitioninig smoothly from the already displayed image.
+
+  ## Examples
+    <.background id={"container-bg"} image_name={@image_id} />
+  """
+
+  def background(assigns) do
+    ~H"""
+    <div class="w-full h-full bg-red-400">
+      <div
+        id={@id}
+        data-image-id={@image_name}
+        class="relative bg-red-200"
+        phx-hook="BackgroundHook"
+        phx-update="ignore"
+      >
+        <img id="container-bg-stage" class="absolute w-full w-full  object-cover opacity-0" />
+        <img id="container-bg-backstage" class="absolute w-full w-full  object-cover opacity-0" />
+      </div>
+    </div>
+    """
+  end
 end
