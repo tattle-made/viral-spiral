@@ -202,7 +202,7 @@ defmodule ViralSpiralWeb.Atoms do
 
   def background(assigns) do
     ~H"""
-    <div class="w-full h-full bg-red-400">
+    <div class="w-full h-full">
       <div
         id={@id}
         data-image-id={@image_name}
