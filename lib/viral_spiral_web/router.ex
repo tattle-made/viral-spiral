@@ -27,6 +27,7 @@ defmodule ViralSpiralWeb.Router do
     pipe_through :browser
 
     live "/", Multiplayer
+    live "/join/:room_name", MultiplayerJoinRoom
     live "/room/waiting-room/:room_name", MultiplayerWaitingRoom
     live "/room/:room_name", MultiplayerRoom
   end

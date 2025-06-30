@@ -1,6 +1,5 @@
 defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
   alias ViralSpiral.Room.Actions
-  alias ElixirLS.LanguageServer.Providers.Completion.Reducer
   alias ViralSpiralWeb.MultiplayerWaitingRoom.StateAdapter
   alias ViralSpiral.Room
   use ViralSpiralWeb, :live_view
@@ -8,16 +7,28 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
 
   def render(assigns) do
     ~H"""
-    <div>
-      <h1>Waiting Room</h1>
-      <div>
-        <p :for={player <- @state.room.players}>
-          <%= "#{player} has joined" %>
+    <div class="h-full justify-center flex">
+      <div class="self-center">
+        <p class="text-md mb-4">
+          Share the
+          <a class="underline text-lg text-fuchsia-900" href={"/multiplayer/join/#{@room_name}"}>
+            Room Link
+          </a>
+          with other players
         </p>
+
+        <div class="mb-16">
+          <p :for={player <- @state.room.players}>
+            <%= "#{player} has joined" %>
+          </p>
+        </div>
+        <button
+          class="w-full bg-fuchsia-800 hover:bg-fuchsia-500 px-4 py-2 rounded-md text-slate-50"
+          phx-click="start_game"
+        >
+          Start Game
+        </button>
       </div>
-      <button class="mt-4 bg-zinc-500 hover:bg-zinc-400 px-2 py-1" phx-click="start_game">
-        Start Game
-      </button>
     </div>
     """
   end
@@ -36,6 +47,7 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
          ui_state <- StateAdapter.make_game_room(game_state, "adhiraj") do
       socket =
         socket
+        |> assign(:room_name, room_name)
         |> assign(:room_gen, pid)
         |> assign(:state, ui_state)
 

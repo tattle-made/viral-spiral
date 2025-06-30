@@ -30,7 +30,7 @@ defmodule ViralSpiralWeb.Multiplayer do
           <.input field={@form[:room_name]} label="Room Name" />
           <.input field={@form[:player_name]} id="player_name_join" label="Username" />
           <:actions>
-            <.button class="w-full">Join Room</.button>
+            <.button class="w-full ">Join Room</.button>
           </:actions>
         </.simple_form>
       </div>
