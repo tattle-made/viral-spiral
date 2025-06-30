@@ -202,17 +202,15 @@ defmodule ViralSpiralWeb.Atoms do
 
   def background(assigns) do
     ~H"""
-    <div class="w-full h-full">
-      <div
-        id={@id}
-        data-image-url={@image}
-        class="relative bg-red-200"
-        phx-hook="BackgroundHook"
-        phx-update="ignore"
-      >
-        <img id="container-bg-stage" class="absolute w-full w-full  object-cover opacity-0" />
-        <img id="container-bg-backstage" class="absolute w-full w-full  object-cover opacity-0" />
-      </div>
+    <div
+      id={@id}
+      data-image-url={@image}
+      class="bg-green-400 h-full w-full relative"
+      phx-hook="BackgroundHook"
+      phx-update="ignore"
+    >
+      <img id="container-bg-stage" class="absolute w-full h-full  object-cover opacity-0" />
+      <img id="container-bg-backstage" class="absolute w-full h-full  object-cover opacity-0" />
     </div>
     """
   end
