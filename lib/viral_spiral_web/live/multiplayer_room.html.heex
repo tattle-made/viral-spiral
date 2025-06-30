@@ -8,9 +8,17 @@
         </div>
     
     
-        <div class="absolute w-full h-full">
+        <div class="absolute w-full h-full flex flex-col">
+            <div :if={@state && @state.room}
+                class="p-2 flex flex-row mb mt"
+            >
+                <p class="bg-fuchsia-950 p-2 rounded-xl text-fuchsia-100"><%= @state.room.name %></p>
+                <p class="flex-1"></p>
+                <p class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100"><%= 10-@state.room.chaos %></p>
+            </div>
+
             <div :if={@state && @state.others} id="container-others" 
-                class="h-fit flex flex-row flex-wrap gap-2">
+                class="h-fit flex flex-row flex-wrap gap-2 p-2">
                 <div :for={other <- @state.others}>
                     <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2 rounded-md bg-slate-50">
                         <div class="h-12 w-12 bg-red-200">
@@ -39,7 +47,7 @@
                 
             </div>
 
-            <div :if={@state && @state.current_cards} id="container-cards" class="h-3/5 mt-2">
+            <div :if={@state && @state.current_cards} id="container-cards" class="flex-1 mt-2">
                 <div :for={card <- @state.current_cards}>
                     <.card card={card} from={@state.me.id} />
                 </div>

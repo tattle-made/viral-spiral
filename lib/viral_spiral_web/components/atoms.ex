@@ -205,7 +205,7 @@ defmodule ViralSpiralWeb.Atoms do
     <div
       id={@id}
       data-image-url={@image}
-      class="bg-green-400 h-full w-full relative"
+      class="h-full w-full relative"
       phx-hook="BackgroundHook"
       phx-update="ignore"
     >

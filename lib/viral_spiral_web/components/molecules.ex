@@ -16,8 +16,8 @@ defmodule ViralSpiralWeb.Molecules do
 
   def card(assigns) do
     ~H"""
-    <div class="border-2 border-solid border-zinc-600 w-48 rounded-md bg-slate-50">
-      <div class="relative w-full">
+    <div class="border-2 border-solid border-zinc-600 w-fit rounded-md bg-slate-50 flex flex-row gap-2 m-2">
+      <div class="relative w-24 md:w-32 lg:w-48">
         <div class="p-2">
           <img src={card_url(@card.image)} />
         </div>
@@ -25,88 +25,91 @@ defmodule ViralSpiralWeb.Molecules do
           <%= @card.headline %>
         </p>
       </div>
-      <div class="border border-dashed border-zinc-400 mb" />
-      <div class="px-2">
-        <span class="text-sm mb-1">Pass to</span>
 
-        <div class="flex flex-row flex-wrap gap-2">
-          <div :for={player <- @card.pass_to} }>
+      <div class="border border-dashed border-zinc-400 mb" />
+      <div class="flex flex-col py-2">
+        <div class="px-2">
+          <span class="text-sm mb-1">Pass to</span>
+
+          <div class="flex flex-row flex-wrap gap-2">
+            <div :for={player <- @card.pass_to} }>
+              <button
+                phx-click={
+                  JS.push("pass_to",
+                    value: %{
+                      from_id: @from,
+                      to_id: player.id,
+                      card: %{id: @card.id, veracity: @card.veracity}
+                    }
+                  )
+                }
+                class=" py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
+              >
+                <%= player.name %>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="border border-dashed border-zinc-400 mt-2 mb-2" />
+
+        <div class="mt-2 flex flex-row gap-2 flex-wrap px-2">
+          <div class="">
             <button
               phx-click={
-                JS.push("pass_to",
+                JS.push("keep",
                   value: %{
                     from_id: @from,
-                    to_id: player.id,
                     card: %{id: @card.id, veracity: @card.veracity}
                   }
                 )
               }
-              class=" py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
+              class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
             >
-              <%= player.name %>
+              Keep
+            </button>
+          </div>
+          <div>
+            <button
+              phx-click={
+                JS.push("discard",
+                  value: %{
+                    from_id: @from,
+                    card: %{id: @card.id, veracity: @card.veracity}
+                  }
+                )
+              }
+              class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
+            >
+              Discard
             </button>
           </div>
         </div>
-      </div>
 
-      <div class="border border-dashed border-zinc-400 mt-2 mb-2" />
+        <div class="border border-dashed border-zinc-400 mt-2 mb-2" />
 
-      <div class="mt-2 flex flex-row gap-2 flex-wrap px-2">
-        <div class="">
-          <button
-            phx-click={
-              JS.push("keep",
-                value: %{
-                  from_id: @from,
-                  card: %{id: @card.id, veracity: @card.veracity}
-                }
-              )
-            }
-            class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
-          >
-            Keep
+        <div class="flex flex-row flex-wrap gap-2 px-2">
+          <div class="">
+            <button
+              phx-click={
+                JS.push("view_source",
+                  value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
+                )
+                |> show_modal("source-modal")
+              }
+              class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
+              disabled={@card.source != nil}
+            >
+              View Source
+            </button>
+          </div>
+          <button class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900">
+            Mark as Fake
+          </button>
+          <button class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900">
+            Turn to Fake
           </button>
         </div>
-        <div>
-          <button
-            phx-click={
-              JS.push("discard",
-                value: %{
-                  from_id: @from,
-                  card: %{id: @card.id, veracity: @card.veracity}
-                }
-              )
-            }
-            class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
-          >
-            Discard
-          </button>
-        </div>
-      </div>
-
-      <div class="border border-dashed border-zinc-400 mt-2 mb-2" />
-
-      <div class="flex flex-row flex-wrap gap-2 px-2">
-        <div class="">
-          <button
-            phx-click={
-              JS.push("view_source",
-                value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
-              )
-              |> show_modal("source-modal")
-            }
-            class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
-            disabled={@card.source != nil}
-          >
-            View Source
-          </button>
-        </div>
-        <button class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900">
-          Mark as Fake
-        </button>
-        <button class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900">
-          Turn to Fake
-        </button>
       </div>
 
       <.modal
