@@ -222,6 +222,7 @@ defmodule ViralSpiral.Room.Reducer do
         else: {state.players[from_id], %Clout{offset: -1}}
 
     State.apply_changes(state, [clout_penalty_change])
+    |> reduce(%DiscardCard{from_id: from_id, card: card})
   end
 
   def reduce(%State{} = state, %{type: :create_room}) do
