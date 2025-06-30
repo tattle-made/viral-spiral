@@ -1,4 +1,6 @@
 defmodule ViralSpiralWeb.Molecules do
+  alias ViralSpiral.Affinity
+  alias ViralSpiral.Bias
   use ViralSpiralWeb, :html
 
   defp card_url(file_name) do
@@ -154,6 +156,79 @@ defmodule ViralSpiralWeb.Molecules do
           <%= @card.headline %>
         </p>
       </div>
+    </div>
+    """
+  end
+
+  attr :player, :map, required: true
+
+  def player_score_card(assigns) do
+    ~H"""
+    <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2 rounded-md bg-slate-50">
+      <div class="h-12 w-12 bg-red-200"></div>
+      <div>
+        <div class="flex flex-row flex-wrap gap-4">
+          <p><%= @player.name %></p>
+          <p><%= @player.clout %></p>
+        </div>
+        <div class="flex flex-row gap-4">
+          <div :for={{bias, value} <- @player.biases}>
+            <span><%= Bias.label(bias) %></span>
+            <span><%= value %></span>
+          </div>
+        </div>
+        <div class="flex flex-row gap-4">
+          <div :for={{affinity, value} <- @player.affinities}>
+            <span><%= Affinity.label(affinity) %></span>
+            <span><%= value %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  attr :players, :list, required: true
+
+  def carousel_score_card(assigns) do
+    ~H"""
+    <div class="relative w-full" data-carousel="static" data-carousel="slide">
+      <!-- Carousel Wrapper -->
+      <div class="relative h-48 overflow-hidden md:hidden">
+        <div
+          :for={player <- @players}
+          class="absolute block w-full h-full flex justify-center items-center md:w-56"
+          data-carousel-item
+        >
+          <.player_score_card player={player} />
+        </div>
+      </div>
+
+      <div class="md:flex md:flex-row gap-2 hidden md:block md:visible justify-center">
+        <div :for={player <- @players} class="w-fit h-48 flex justify-center items-center md:w-56">
+          <.player_score_card player={player} />
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="absolute top-0 start-0 z-30 flex items-center h-full cursor-pointer md:invisible"
+        data-carousel-prev
+      >
+        <div class="h-10 w-10 p-2 bg-slate-100 hover:bg-slate-200 rounded-full inline-flex items-center justify-center">
+          <.icon name="hero-arrow-left-solid" class="h-full w-full" />
+        </div>
+      </button>
+
+      <button
+        type="button"
+        class="absolute top-0 end-0 z-30 flex items-center h-full cursor-pointer md:invisible"
+        data-carousel-next
+      >
+        <div class="h-10 w-10 p-2 bg-slate-100 hover:bg-slate-200 rounded-full inline-flex items-center justify-center">
+          <.icon name="hero-arrow-right-solid" class="h-full w-full" />
+        </div>
+      </button>
     </div>
     """
   end

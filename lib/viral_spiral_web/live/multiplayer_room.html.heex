@@ -17,35 +17,14 @@
                 <p class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100"><%= 10-@state.room.chaos %></p>
             </div>
 
-            <div :if={@state && @state.others} id="container-others" 
-                class="h-fit flex flex-row flex-wrap gap-2 p-2">
-                <div :for={other <- @state.others}>
-                    <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2 rounded-md bg-slate-50">
-                        <div class="h-12 w-12 bg-red-200">
-                            
-                        </div>
-                        <div>
-                            <div class="flex flex-row flex-wrap gap-4">
-                                <p> <%= other.name %> </p>
-                                <p> <%= other.clout %> </p>
-                            </div>
-                            <div class="flex flex-row gap-4">
-                                <div :for={{bias, value} <- other.biases}> 
-                                    <span> <%= Bias.label(bias)  %> </span>
-                                    <span> <%= value %> </span>
-                                </div>
-                            </div>
-                            <div class="flex flex-row gap-4">
-                                <div :for={{affinity, value} <- other.affinities}> 
-                                    <span> <%= Affinity.label(affinity)  %> </span>
-                                    <span> <%= value %> </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
+            <div 
+                id="container-others"
+                :if={@state && @state.others}
+                >
+                    <.carousel_score_card players={@state.others} />
             </div>
+
+            
 
             <div :if={@state && @state.current_cards} id="container-cards" class="flex-1 mt-2">
                 <div :for={card <- @state.current_cards}>

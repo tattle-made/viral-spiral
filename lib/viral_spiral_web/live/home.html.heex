@@ -1,7 +1,8 @@
+<!--
 <div class="relative h-full">
-    <!--<div class="absolute w-full h-full">
+    <div class="absolute w-full h-full">
         <.background id={"container-bg"} image={"http://localhost:8081/bg_#{@image_id}.png"} />
-    </div>-->
+    </div>
     <div class="absolute w-full full">
         <h1>Viral Spiral</h1>
 
@@ -24,8 +25,57 @@
 
 
         <div class="m-10"/>
+
+        
     </div>
+
+   
 
     
 </div>
 
+-->
+
+<p> hi </p>
+
+<div class="relative w-full" data-carousel="static" data-carousel="slide">
+    <!-- Carousel Wrapper -->
+    <div class="relative h-56 bg-red-200 overflow-hidden md:hidden">
+        <div class="absolute block w-full h-full bg-red-400  flex justify-center items-center md:w-56" data-carousel-item>
+            <p>1</p>
+        </div>
+        <div class="absolute block w-full h-full bg-red-400  flex justify-center items-center md:w-56"  data-carousel-item>
+            <p>2</p>
+        </div>
+        <div class="absolute block w-full h-full bg-red-400  flex justify-center items-center md:w-56"  data-carousel-item>
+            <p>3</p>
+        </div>
+    </div>
+
+    <div class="md:flex md:flex-row gap-2 hidden md:block md:visible justify-center">
+        <div class="w-48 bg-red-400 h-56 flex justify-center items-center md:w-56">
+            <p>1</p>
+        </div>
+        <div class="w-48 bg-red-400 h-56 flex justify-center items-center md:w-56">
+            <p>2</p>
+        </div>
+        <div class="w-48 bg-red-400 h-56 flex justify-center items-center md:w-56">
+            <p>3</p>
+        </div>
+    </div>
+
+    
+    <button type="button" class="absolute top-0 start-0 z-30 flex items-center h-full cursor-pointer md:invisible" data-carousel-prev>
+        <div class="h-10 w-10 p-2 bg-slate-100 hover:bg-slate-200 rounded-full inline-flex items-center justify-center">
+            <.icon name="hero-arrow-left-solid" class="h-full w-full" />
+        </div>
+    </button>
+ 
+    <button type="button" class="absolute top-0 end-0 z-30 flex items-center h-full cursor-pointer md:invisible" data-carousel-next>
+        <div class="h-10 w-10 p-2 bg-slate-100 hover:bg-slate-200 rounded-full inline-flex items-center justify-center">
+            <.icon name="hero-arrow-right-solid" class="h-full w-full" />
+        </div>
+    </button>
+   
+</div>
+<p>hi</p>
