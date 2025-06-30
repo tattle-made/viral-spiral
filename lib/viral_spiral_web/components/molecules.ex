@@ -16,7 +16,7 @@ defmodule ViralSpiralWeb.Molecules do
 
   def card(assigns) do
     ~H"""
-    <div class="border-2 border-solid border-zinc-600 w-48 rounded-md">
+    <div class="border-2 border-solid border-zinc-600 w-48 rounded-md bg-slate-50">
       <div class="relative w-full">
         <div class="p-2">
           <img src={card_url(@card.image)} />

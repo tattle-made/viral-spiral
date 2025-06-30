@@ -1,5 +1,6 @@
 defmodule ViralSpiralWeb.MultiplayerRoom do
   import ViralSpiralWeb.Molecules
+  alias ViralSpiral.S3
   alias ViralSpiralWeb.Atoms
   alias ViralSpiral.Room.Actions
   alias ViralSpiral.Room
@@ -149,12 +150,15 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     {:noreply, socket}
   end
 
-  def chaos(chaos) do
+  def bg_image(chaos) do
     case chaos do
-      nil -> "01"
-      0 -> "01"
-      1 -> "02"
-      _ -> "02"
+      nil -> S3.bg("bg_0.png")
+      x when x >= 0 and x <= 2 -> S3.bg("bg_0.png")
+      x when x > 2 and x <= 4 -> S3.bg("bg_1.png")
+      x when x > 4 and x <= 6 -> S3.bg("bg_2.png")
+      x when x > 6 and x <= 8 -> S3.bg("bg_3.png")
+      x when x > 8 and x <= 10 -> S3.bg("bg_4.png")
+      _ -> S3.bg("bg_0.png")
     end
   end
 end
