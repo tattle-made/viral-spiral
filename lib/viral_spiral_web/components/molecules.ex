@@ -30,10 +30,10 @@ defmodule ViralSpiralWeb.Molecules do
 
       <div class="border border-dashed border-zinc-400 mb" />
       <div class="flex flex-col py-2">
-        <div class="px-2">
-          <span class="text-sm mb-1">Pass to</span>
+        <div class="px-2 flex flex-row gap-2 align-center">
+          <span class="text-sm mb-1 self-center">Pass to</span>
 
-          <div class="flex flex-row flex-wrap gap-2">
+          <div class="flex flex-row flex-wrap gap-2 self-center">
             <div :for={player <- @card.pass_to} }>
               <button
                 phx-click={

@@ -26,7 +26,7 @@
 
             
 
-            <div :if={@state && @state.current_cards} id="container-cards" class="flex-1 mt-2">
+            <div :if={@state && @state.current_cards} id="container-cards" class="flex-1 mt-2 flex justify-center">
                 <div :for={card <- @state.current_cards}>
                     <.card card={card} from={@state.me.id} />
                 </div>
@@ -83,35 +83,14 @@
                 
             </div>
 
-            <div class="flex flex-row gap-2 flex-wrap"> 
+            <div class="flex flex-row gap-2 flex-wrap justify-center"> 
 
-                <div :if={@state && @state.me} id="container-me" class="h-fit bg-zinc-200">
-                    <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2 rounded-md">
-                        <div class="h-12 w-12 bg-slate-50">
-                            
-                        </div>
-                        <div>
-                            <div class="flex flex-row flex-wrap gap-4">
-                                <p> <%= @state.me.name %> </p>
-                                <p> <%= @state.me.clout %> </p>
-                            </div>
-                            <div class="flex flex-row gap-4">
-                                <div :for={{bias, value} <- @state.me.biases}> 
-                                    <span> <%= Bias.label(bias)  %> </span>
-                                    <span> <%= value %> </span>
-                                </div>
-                            </div>
-                            <div class="flex flex-row gap-4">
-                                <div :for={{affinity, value} <- @state.me.affinities}> 
-                                    <span> <%= Affinity.label(affinity)  %> </span>
-                                    <span> <%= value %> </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div :if={@state && @state.me} id="container-me" class="h-fit ">
+                    <.player_score_card player={@state.me} />
+                    
                 </div>
 
-                <div :if={@state && @state.hand} id="container-hand" class="h-fit border border-px-2 rounded-md p-2">
+                <div :if={@state && @state.hand} id="container-hand" class="h-fit border border-px-2 rounded-md p-2 bg-slate-200">
                     <div class="flex flex-row gap-1">
                     <div class=" overflow-scroll p-1 w-8 h-auto"
                         :for={card<- @state.hand}
