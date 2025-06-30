@@ -39,7 +39,6 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
       end
 
     sender_changes = [
-      {state.players[from_id], %Clout{offset: 1}},
       {state.players[from_id], %Bias{offset: 1, target: card.target}}
     ]
 
@@ -109,7 +108,6 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
       end
 
     sender_changes = [
-      {state.players[from_id], %Clout{offset: 1}},
       {state.players[from_id], %Affinity{offset: affinity_offset, target: card.target}}
     ]
 
@@ -158,10 +156,8 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
           |> Enum.map(&{state.players[&1], %Clout{offset: -1}})
       end
 
-    sender_changes = [{state.players[from_id], %Clout{offset: 1}}]
-
     current_round_player_changes ++
-      sender_changes ++ conflation_changes ++ change_clout_of_card_target
+      conflation_changes ++ change_clout_of_card_target
   end
 
   def keep(_card, _state, _from) do
