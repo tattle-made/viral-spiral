@@ -65,6 +65,7 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
          #  game_state <- :sys.get_state(room_gen),
          ui_state <- StateAdapter.make_game_room(game_state, "adhiraj"),
          room_name <- ui_state.room.name do
+      PubSub.broadcast(ViralSpiral.PubSub, "waiting-room:#{room_name}", {:start_game})
       {:noreply, push_navigate(socket, to: "/multiplayer/room/#{room_name}")}
     end
   end
@@ -74,5 +75,9 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
          ui_state <- StateAdapter.make_game_room(game_state, "adhiraj") do
       {:noreply, assign(socket, :state, ui_state)}
     end
+  end
+
+  def handle_info({:start_game}, %{assigns: %{room_name: room_name}} = socket) do
+    {:noreply, push_navigate(socket, to: "/multiplayer/room/#{room_name}")}
   end
 end
