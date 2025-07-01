@@ -105,16 +105,18 @@ defmodule ViralSpiralWeb.Molecules do
               View Source
             </button>
           </div>
-          <button
-            class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
-            phx-click={
-              JS.push("mark_as_fake",
-                value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
-              )
-            }
-          >
-            Mark as Fake
-          </button>
+          <div :if={@card.can_mark_as_fake}>
+            <button
+              class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
+              phx-click={
+                JS.push("mark_as_fake",
+                  value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
+                )
+              }
+            >
+              Mark as Fake
+            </button>
+          </div>
           <button
             class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
             phx-click={
@@ -206,7 +208,7 @@ defmodule ViralSpiralWeb.Molecules do
 
   def carousel_score_card(assigns) do
     ~H"""
-    <div class="relative w-full" data-carousel="static" data-carousel="slide">
+    <div class="relative w-full" data-carousel="static">
       <!-- Carousel Wrapper -->
       <div class="relative h-48 overflow-hidden md:hidden">
         <div
