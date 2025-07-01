@@ -32,11 +32,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
   def pass(card, state, from_id, _to) do
     current_round_player_id = State.current_round_player(state).id
 
-    current_round_player_changes =
-      case current_round_player_id == from_id do
-        true -> []
-        false -> [{state.players[current_round_player_id], %Clout{offset: 1}}]
-      end
+    current_round_player_changes = [{state.players[current_round_player_id], %Clout{offset: 1}}]
 
     sender_changes = [
       {state.players[from_id], %Bias{offset: 1, target: card.target}}
@@ -79,11 +75,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
   def pass(%AffinityCard{} = card, %State{} = state, from_id, _to) do
     current_round_player_id = State.current_round_player(state).id
 
-    current_round_player_changes =
-      case current_round_player_id == from_id do
-        true -> []
-        false -> [{state.players[current_round_player_id], %Clout{offset: 1}}]
-      end
+    current_round_player_changes = [{state.players[current_round_player_id], %Clout{offset: 1}}]
 
     affinity_offset =
       case card.polarity do
@@ -134,11 +126,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
   def pass(card, %State{} = state, from_id, _to_id) do
     current_round_player_id = State.current_round_player(state).id
 
-    current_round_player_changes =
-      case current_round_player_id == from_id do
-        true -> []
-        false -> [{state.players[current_round_player_id], %Clout{offset: 1}}]
-      end
+    current_round_player_changes = [{state.players[current_round_player_id], %Clout{offset: 1}}]
 
     conflation_changes =
       case card.bias do
