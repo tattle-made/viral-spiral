@@ -62,6 +62,7 @@ window.addEventListener("phx:vs:mp_room:create_room", async ({detail})=>{
   await LocalDB.save_room_name_and_player_name(db, detail.room_name, detail.player_name)
 })
 window.addEventListener("phx:vs:mp_room:join_room", async ({detail})=>{
+  console.log("here", detail)
   await LocalDB.save_room_name_and_player_name(db, detail.room_name, detail.player_name)
 })
 

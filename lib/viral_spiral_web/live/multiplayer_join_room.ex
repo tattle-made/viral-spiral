@@ -9,7 +9,7 @@ defmodule ViralSpiralWeb.MultiplayerJoinRoom do
     <div class="h-full justify-center flex">
       <div class="w-80 border-green-100 border-2 p-4 rounded-md self-center">
         <.simple_form for={@form} phx-submit="join_room">
-          <.input field={@form[:room_name]} disabled label="Room Name" />
+          <.input field={@form[:room_name]} label="Room Name" />
           <.input field={@form[:player_name]} id="player_name_join" label="Username" />
           <:actions>
             <.button class="w-full bg-fuchsia-800 hover:bg-fuchsia-500">Join Room</.button>
@@ -31,6 +31,7 @@ defmodule ViralSpiralWeb.MultiplayerJoinRoom do
   end
 
   def handle_event("join_room", params, socket) do
+    IO.inspect(params)
     # todo fix : room_name is not available. is it because its disabled in the form?
     room_name = params["room_name"]
     player_name = params["player_name"]
@@ -42,10 +43,7 @@ defmodule ViralSpiralWeb.MultiplayerJoinRoom do
 
       socket =
         socket
-        |> push_event("vs:mp_room:join_room", %{
-          room_name: room_name,
-          player_name: player_name
-        })
+        |> push_event("vs:mp_room:join_room", %{room_name: room_name, player_name: player_name})
         |> push_navigate(to: path)
 
       {:noreply, socket}
@@ -54,7 +52,5 @@ defmodule ViralSpiralWeb.MultiplayerJoinRoom do
         IO.inspect(err, label: "error is here")
         {:noreply, put_flash(socket, :error, "Could not join room")}
     end
-
-    {:noreply, socket}
   end
 end

@@ -10,29 +10,28 @@ defmodule ViralSpiralWeb.Multiplayer do
 
   def render(assigns) do
     ~H"""
-    <h1>Multiplayer Room</h1>
-    <div
-      id="multiplayer-room-create"
-      class="flex flex-row gap-12 flex-wrap"
-      phx-hook="HookMultiplayerHome"
-    >
-      <div class="w-80 border-orange-100 border-2 p-4 rounded-md">
-        <.simple_form for={@form} phx-submit="create_new_room">
-          <.input field={@form[:player_name]} label="Username" />
-          <:actions>
-            <.button class="w-full">Create a new Room</.button>
-          </:actions>
-        </.simple_form>
-      </div>
+    <div class="h-full justify-center flex">
+      <div class="self-center">
+        <div id="multiplayer-room-create" class="flex flex-row gap-12 flex-wrap">
+          <div class="w-80 border-orange-100 border-2 p-4 rounded-md">
+            <.simple_form for={@form} phx-submit="create_new_room">
+              <.input field={@form[:player_name]} label="Username" />
+              <:actions>
+                <.button class="w-full">Create a new Room</.button>
+              </:actions>
+            </.simple_form>
+          </div>
 
-      <div class="w-80 border-green-100 border-2 p-4 rounded-md">
-        <.simple_form for={@form} phx-submit="join_room">
-          <.input field={@form[:room_name]} label="Room Name" />
-          <.input field={@form[:player_name]} id="player_name_join" label="Username" />
-          <:actions>
-            <.button class="w-full ">Join Room</.button>
-          </:actions>
-        </.simple_form>
+          <div class="w-80 border-green-100 border-2 p-4 rounded-md">
+            <.simple_form for={@form} phx-submit="join_room">
+              <.input field={@form[:room_name]} label="Room Name" />
+              <.input field={@form[:player_name]} id="player_name_join" label="Username" />
+              <:actions>
+                <.button class="w-full ">Join Room</.button>
+              </:actions>
+            </.simple_form>
+          </div>
+        </div>
       </div>
     </div>
     """
@@ -82,15 +81,12 @@ defmodule ViralSpiralWeb.Multiplayer do
 
     with {:ok, room_gen} <- Room.room_gen!(room_name),
          _state <- GenServer.call(room_gen, Actions.join_room(%{player_name: player_name})),
-         path <- "/multiplayer/room/waiting-room/" <> params["room_name"] do
+         path <- "/multiplayer/room/waiting-room/#{room_name}" do
       PubSub.broadcast(ViralSpiral.PubSub, "waiting-room:#{room_name}", {:new_player})
 
       socket =
         socket
-        |> push_event("vs:mp_room:join_room", %{
-          room_name: room_name,
-          player_name: player_name
-        })
+        |> push_event("vs:mp_room:join_room", %{room_name: room_name, player_name: player_name})
         |> push_navigate(to: path)
 
       {:noreply, socket}

@@ -114,6 +114,26 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     {:noreply, socket}
   end
 
+  def handle_event("mark_as_fake", params, %{assigns: %{room_gen: room_gen}} = socket) do
+    %{room_gen: room_gen, player_name: player_name, room_name: room_name} = socket.assigns
+    action = Actions.mark_card_as_fake(params)
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.make_game_room(gen_state, player_name)
+    socket = assign(socket, :state, room_state)
+    PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+    {:noreply, socket}
+  end
+
+  def handle_event("turn_fake", params, %{assigns: %{room_gen: room_gen}} = socket) do
+    %{room_gen: room_gen, player_name: player_name, room_name: room_name} = socket.assigns
+    action = Actions.turn_to_fake(params)
+    gen_state = GenServer.call(room_gen, action)
+    room_state = StateAdapter.make_game_room(gen_state, player_name)
+    socket = assign(socket, :state, room_state)
+    PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+    {:noreply, socket}
+  end
+
   def handle_event("initiate_cancel", params, socket) do
     %{room_gen: room_gen, player_name: player_name, room_name: room_name} = socket.assigns
     action = Actions.initiate_cancel(params)
