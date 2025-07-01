@@ -28,7 +28,7 @@
 
             <div :if={@state && @state.current_cards} id="container-cards" class="flex-1 mt-2 flex justify-center">
                 <div :for={card <- @state.current_cards}>
-                    <.card card={card} from={@state.me.id} />
+                    <.card card={card} from={@state.me.id} can_turn_fake={@state.power_turn_fake.enabled} />
                 </div>
             </div>
 

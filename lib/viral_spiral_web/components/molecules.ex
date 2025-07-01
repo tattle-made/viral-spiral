@@ -117,16 +117,18 @@ defmodule ViralSpiralWeb.Molecules do
               Mark as Fake
             </button>
           </div>
-          <button
-            class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
-            phx-click={
-              JS.push("turn_fake",
-                value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
-              )
-            }
-          >
-            Turn to Fake
-          </button>
+          <div :if={@card.can_turn_fake && @can_turn_fake}>
+            <button
+              class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
+              phx-click={
+                JS.push("turn_fake",
+                  value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
+                )
+              }
+            >
+              Turn to Fake
+            </button>
+          </div>
         </div>
       </div>
 
