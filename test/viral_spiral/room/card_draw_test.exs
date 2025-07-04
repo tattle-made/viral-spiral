@@ -194,7 +194,7 @@ defmodule ViralSpiral.Room.CardDrawTest do
     end
   end
 
-  @identities ["red", "blue", "yellow"]
+  @identities [:red, :blue, :yellow]
   test "assign_player_identity" do
     for _ <- 1..500 do
       for n <- 3..12 do
@@ -214,9 +214,9 @@ defmodule ViralSpiral.Room.CardDrawTest do
         assert Enum.all?(identities, &(&1 in @identities))
 
         # At least one of each identity is used
-        assert Enum.any?(identities, &(&1 == "red"))
-        assert Enum.any?(identities, &(&1 == "blue"))
-        assert Enum.any?(identities, &(&1 == "yellow"))
+        assert Enum.any?(identities, &(&1 == :red))
+        assert Enum.any?(identities, &(&1 == :blue))
+        assert Enum.any?(identities, &(&1 == :yellow))
 
         # Check that no identity appears more than ceil(n / 3) + 1 times
         max_allowed = div(n, 3) + 1
