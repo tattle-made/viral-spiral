@@ -91,4 +91,11 @@ defmodule ViralSpiral.Room.CardDraw do
     ix = :rand.uniform(length(list)) - 1
     Enum.at(list, ix)
   end
+
+  @identities ["red", "blue", "yellow"]
+  def assign_player_identity(names) do
+    base_distribution = Enum.take(Stream.cycle(@identities), length(names))
+    shuffled_distribution = Enum.shuffle(base_distribution)
+    Enum.zip(names, shuffled_distribution)
+  end
 end
