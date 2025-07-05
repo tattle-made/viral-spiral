@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Factory do
   Create entities for a Game Room
   """
 
+  alias ViralSpiral.Bias
   alias ViralSpiral.Canon
   alias ViralSpiral.Room.DrawConstraints
 
@@ -37,10 +38,8 @@ defmodule ViralSpiral.Room.Factory do
   @doc """
   Create a new player whose properties conform with the Room settings.
   """
-  @spec new_player_for_room(Room.t()) :: Player.t()
-  def new_player_for_room(%Room{} = room) do
-    identity = Enum.shuffle(room.communities) |> Enum.at(0)
-
+  @spec new_player_for_room(Room.t(), Bias.target()) :: Player.t()
+  def new_player_for_room(%Room{} = room, identity) do
     bias_list = Enum.filter(room.communities, &(&1 != identity))
     bias_map = Enum.reduce(bias_list, %{}, fn x, acc -> Map.put(acc, x, 0) end)
 

@@ -12,6 +12,7 @@ defmodule ViralSpiral.Room.State do
   """
 
   require IEx
+  alias ViralSpiral.Room.CardDraw
   alias ViralSpiral.Entity.DynamicCard
   alias ViralSpiral.Room.DrawConstraints
   alias ViralSpiral.Entity.PowerCancelPlayer
@@ -68,8 +69,9 @@ defmodule ViralSpiral.Room.State do
 
     players =
       room.unjoined_players
-      |> Enum.map(fn player_name ->
-        Factory.new_player_for_room(room) |> Player.set_name(player_name)
+      |> CardDraw.assign_player_identity()
+      |> Enum.map(fn {name, identity} ->
+        Factory.new_player_for_room(room, identity) |> Player.set_name(name)
       end)
       |> Enum.reduce(%{}, fn player, acc -> Map.put(acc, player.id, player) end)
 
