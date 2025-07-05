@@ -671,4 +671,19 @@ defmodule ViralSpiralWeb.CoreComponents do
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
+
+  def banner(assigns) do
+    ~H"""
+    <div id="popup" phx-hook="HookPopup" class="fixed top-[100vh] left-0 z-50 w-full h-full">
+      <div class="absolute top-0 left-0 w-full h-full bg-slate-400 opacity-25  flex flex-col justify-center">
+      </div>
+      <div class="absolute top-0 left-0 w-full h-full flex flex-col justify-center -mb-48">
+        <div class="w-3/4 md:w-1/2  mb-80 h-fit bg-slate-50 p-8 border rounded-md border-slate-200 self-center flex flex-col gap-4">
+          <h1 class="text-2xl text-slate-900 text-center">Game Over</h1>
+          <p id="message" class="text-lg"></p>
+        </div>
+      </div>
+    </div>
+    """
+  end
 end

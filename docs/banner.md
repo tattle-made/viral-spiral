@@ -1,0 +1,2 @@
+# Banners
+We've added a `put_banner/2` util that allows setting a UI banner on the client side from a live_view handler. unlike `put_flash` that shows a popup in the upper right corner that disappears.

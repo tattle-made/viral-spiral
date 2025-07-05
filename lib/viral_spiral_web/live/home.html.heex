@@ -1,4 +1,4 @@
-<!--
+
 <div class="relative h-full">
     <div class="absolute w-full h-full">
         <.background id={"container-bg"} image={"http://localhost:8081/bg_#{@image_id}.png"} />
@@ -22,22 +22,21 @@
                 <%= @count %>
             </p>
         </div>
-
-
         <div class="m-10"/>
-
-        
-    </div>
-
-   
-
-    
+    </div>    
 </div>
 
+
+<!--
+<Molecules.carousel_score_card players={[
+    %{id: "player_abc", name: "denny", identity: :red, clout: 2, affinities: %{skub: 2, houseboat: 5}, biases: %{red: 2, blue: 4}}, 
+    %{id: "player_def", name: "adhiraj", identity: :yellow, clout: 3, affinities: %{skub: 5, houseboat: 9}, biases: %{red: 2, blue: 4}},
+    %{id: "player_ghi", name: "krys", identity: :blue, clout: 9, affinities: %{skub: -2, houseboat: 4}, biases: %{red: 8, blue: 2}}
+]} />
 -->
 
-<Molecules.carousel_score_card players={[
-    %{name: "denny", clout: 2, affinities: %{skub: 2, houseboat: 5}, biases: %{red: 2, blue: 4}}, 
-    %{name: "adhiraj", clout: 3, affinities: %{skub: 5, houseboat: 9}, biases: %{red: 2, blue: 4}},
-    %{name: "krys", clout: 9, affinities: %{skub: -2, houseboat: 4}, biases: %{red: 8, blue: 2}}
-]} />
+<!--
+<.button phx-click="show_popup"> Show</.button>
+
+<.banner />
+-->

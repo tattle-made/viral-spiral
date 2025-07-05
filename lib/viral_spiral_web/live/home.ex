@@ -10,6 +10,7 @@ defmodule ViralSpiralWeb.Home do
       socket
       |> assign(:count, 12)
       |> assign(:image_id, 0)
+      |> assign(:game_state, :running)
 
     {:ok, socket}
   end
@@ -45,6 +46,11 @@ defmodule ViralSpiralWeb.Home do
 
     IO.inspect(new_image_id)
 
+    {:noreply, socket}
+  end
+
+  def handle_event("show_popup", _params, socket) do
+    socket = socket |> put_banner("Too doo Loo")
     {:noreply, socket}
   end
 end

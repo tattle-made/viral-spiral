@@ -86,6 +86,7 @@ defmodule ViralSpiralWeb do
       # Core UI components and translation
       import ViralSpiralWeb.CoreComponents
       import ViralSpiralWeb.Gettext
+      import ViralSpiralWeb.Utils
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

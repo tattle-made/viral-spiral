@@ -29,6 +29,7 @@ import { LocalDB } from "./dexie";
 import "flowbite/dist/flowbite.phoenix.js";
 import { HookCounter } from "./counter";
 import { BackgroundHook } from "./background";
+import { HookPopup } from "./popup";
 
 
 let Hooks = {
@@ -37,7 +38,8 @@ let Hooks = {
   HookMultiplayerHome,
   HookMultiplayerRoom,
   HookCounter,
-  BackgroundHook
+  BackgroundHook,
+  HookPopup
 };
 
 let csrfToken = document

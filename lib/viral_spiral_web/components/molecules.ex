@@ -18,14 +18,23 @@ defmodule ViralSpiralWeb.Molecules do
 
   def card(assigns) do
     ~H"""
-    <div class="border-2 border-solid border-zinc-600 w-fit rounded-md bg-slate-50 flex flex-row gap-2 m-2">
-      <div class="relative w-24 md:w-32 lg:w-48">
+    <div class="border-2 border-solid border-zinc-600 w-fit rounded-md bg-slate-50 flex flex-col md:flex-row gap-2 m-2">
+      <div class="hidden relative w-24 md:w-32 lg:w-48">
         <div class="p-2">
           <img src={card_url(@card.image)} />
         </div>
         <p class="absolute mx-2 z-4 bottom-2 p-2 text-sm/4 bg-zinc-200 bg-opacity-75 rounded-sm">
           <%= @card.headline %>
         </p>
+      </div>
+      <!-- For Mobile -->
+      <div class="flex-1">
+        <div class="w-12 h-12 flex flex-col gap-2">
+          <div class="">
+            <img class="w-12 h-12 object-contain" src={card_url(@card.image)} />
+          </div>
+          <p class="text-xs/1"><%= @card.headline %></p>
+        </div>
       </div>
 
       <div class="border border-dashed border-zinc-400 mb" />
@@ -52,8 +61,6 @@ defmodule ViralSpiralWeb.Molecules do
             </div>
           </div>
         </div>
-
-        <div class="border border-dashed border-zinc-400 mt-2 mb-2" />
 
         <div class="mt-2 flex flex-row gap-2 flex-wrap px-2">
           <div class="">
@@ -149,8 +156,6 @@ defmodule ViralSpiralWeb.Molecules do
           <p class="font-normal"><%= @card.source.content %></p>
         </div>
       </.modal>
-
-      <div class="mb-2" />
     </div>
     """
   end
@@ -223,7 +228,7 @@ defmodule ViralSpiralWeb.Molecules do
     ~H"""
     <div class="relative w-full" data-carousel="static">
       <!-- Carousel Wrapper -->
-      <div class="relative h-48 overflow-hidden md:hidden">
+      <div class="relative h-28 overflow-hidden md:hidden">
         <div
           :for={player <- @players}
           class="absolute block w-full h-full flex justify-center items-center md:w-56"
@@ -234,14 +239,14 @@ defmodule ViralSpiralWeb.Molecules do
       </div>
 
       <div class="md:flex md:flex-row gap-2 hidden md:block md:visible justify-center">
-        <div :for={player <- @players} class="w-fit h-48 flex justify-center items-center md:w-56">
+        <div :for={player <- @players} class="w-fit h-28 flex justify-center items-center md:w-56">
           <.player_score_card player={player} />
         </div>
       </div>
 
       <button
         type="button"
-        class="absolute top-0 start-0 z-30 flex items-center h-full cursor-pointer md:invisible"
+        class="absolute top-0 start-0 z-30 flex items-center h-full cursor-pointer md:invisible px-2"
         data-carousel-prev
       >
         <div class="h-10 w-10 p-2 bg-slate-100 hover:bg-slate-200 rounded-full inline-flex items-center justify-center">
@@ -251,7 +256,7 @@ defmodule ViralSpiralWeb.Molecules do
 
       <button
         type="button"
-        class="absolute top-0 end-0 z-30 flex items-center h-full cursor-pointer md:invisible"
+        class="absolute top-0 end-0 z-30 flex items-center h-full cursor-pointer md:invisible px-2"
         data-carousel-next
       >
         <div class="h-10 w-10 p-2 bg-slate-100 hover:bg-slate-200 rounded-full inline-flex items-center justify-center">
