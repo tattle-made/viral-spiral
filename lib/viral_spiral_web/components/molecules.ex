@@ -20,26 +20,19 @@ defmodule ViralSpiralWeb.Molecules do
 
   def card(assigns) do
     ~H"""
-    <div class="border-2 border-solid border-zinc-600 w-fit rounded-md bg-slate-50 flex flex-col md:flex-row gap-2 m-2">
-      <div class="hidden relative w-24 md:w-32 lg:w-48">
-        <div class="p-2">
-          <img src={card_url(@card.image)} />
-        </div>
-        <p class="absolute mx-2 z-4 bottom-2 p-2 text-sm/4 bg-zinc-200 bg-opacity-75 rounded-sm">
-          <%= @card.headline %>
-        </p>
-      </div>
+    <div class="border-2 border-solid border-zinc-600 w-fit rounded-md bg-slate-50 flex flex-col gap-2 m-2">
       <!-- For Mobile -->
       <div class="flex-1">
-        <div class="w-12 h-12 flex flex-col gap-2">
-          <div class="">
-            <img class="w-12 h-12 object-contain" src={card_url(@card.image)} />
+        <div class="relative w-full h-80 flex flex-col gap-2">
+          <div class="mt-2">
+            <img class="w-full h-80 object-contain" src={card_url(@card.image)} />
           </div>
-          <p class="text-xs/1"><%= @card.headline %></p>
+          <p class="absolute z-4 bottom-0 px-2 py-2 mx-4 text-sm/4 bg-zinc-200 bg-opacity-95 rounded-md text-xs/1">
+            <%= @card.headline %>
+          </p>
         </div>
       </div>
 
-      <div class="border border-dashed border-zinc-400 mb" />
       <div class="flex flex-col py-2">
         <div class="px-2 flex flex-row gap-2 align-center">
           <span class="text-sm mb-1 self-center">Pass to</span>

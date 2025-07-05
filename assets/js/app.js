@@ -30,6 +30,7 @@ import "flowbite/dist/flowbite.phoenix.js";
 import { HookCounter } from "./counter";
 import { BackgroundHook } from "./background";
 import { HookPopup } from "./popup";
+import Player from "./player";
 
 
 let Hooks = {
@@ -54,6 +55,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
 const db = LocalDB.init()
 
 window.localDB = db;
+window.player = new Player()
 
 // Show progress bar on live navigation and form submits
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
@@ -66,6 +68,9 @@ window.addEventListener("phx:vs:mp_room:create_room", async ({detail})=>{
 window.addEventListener("phx:vs:mp_room:join_room", async ({detail})=>{
   console.log("here", detail)
   await LocalDB.save_room_name_and_player_name(db, detail.room_name, detail.player_name)
+})
+window.addEventListener("audio:enable", async (event)=>{
+  await window.player.setup()
 })
 
 
