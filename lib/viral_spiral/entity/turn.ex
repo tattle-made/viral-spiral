@@ -6,6 +6,10 @@ defmodule ViralSpiral.Entity.Turn do
   This also evaluates who are they allowed to pass the card to.
 
   todo : could the field be actions and not tied to every concrete thing like pass, discard etc.
+
+  ## Turn fields
+    * `path` - helps keep track a card's history
+    * `power` - helps enforce a one-power-per-turn constraint
   """
   alias ViralSpiral.Entity.Turn.Exception.IllegalPass
   alias ViralSpiral.Canon.Card.Sparse
@@ -17,13 +21,15 @@ defmodule ViralSpiral.Entity.Turn do
             current: nil,
             pass_to: [],
             # track the order in which this card has been passed around
-            path: []
+            path: [],
+            power: false
 
   @type t :: %__MODULE__{
           card: Sparse.t(),
           current: String.t() | nil,
           pass_to: list(String.t()),
-          path: list(String.t())
+          path: list(String.t()),
+          power: boolean()
         }
 
   @spec new() :: Turn.t()
@@ -83,6 +89,7 @@ defmodule ViralSpiral.Entity.Turn do
   end
 
   defimpl Change do
+    alias ViralSpiral.Entity.Turn.Change.SetPowerTrue
     alias ViralSpiral.Entity.Turn.Change.{NewTurn, NextTurn}
 
     @type changes :: NewTurn.t() | NextTurn.t()
@@ -94,6 +101,10 @@ defmodule ViralSpiral.Entity.Turn do
 
     def change(%Turn{} = turn, %NextTurn{} = change) do
       Turn.next(turn, change.target)
+    end
+
+    def change(%Turn{} = turn, %SetPowerTrue{} = _change) do
+      %{turn | power: true}
     end
   end
 end

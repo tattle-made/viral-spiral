@@ -15,6 +15,8 @@ defmodule ViralSpiralWeb.Molecules do
 
   attr :card, :map, required: true
   attr :from, :string, required: true
+  attr :can_turn_fake, :boolean, required: true
+  attr :can_use_power, :boolean, required: true
 
   def card(assigns) do
     ~H"""
@@ -112,7 +114,7 @@ defmodule ViralSpiralWeb.Molecules do
               View Source
             </button>
           </div>
-          <div :if={@card.can_mark_as_fake}>
+          <div :if={@can_use_power && @card.can_mark_as_fake}>
             <button
               class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
               phx-click={
@@ -124,7 +126,7 @@ defmodule ViralSpiralWeb.Molecules do
               Mark as Fake
             </button>
           </div>
-          <div :if={@card.can_turn_fake && @can_turn_fake}>
+          <div :if={@can_use_power && @can_turn_fake && @card.can_turn_fake}>
             <button
               class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
               phx-click={

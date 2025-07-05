@@ -1,4 +1,5 @@
 defmodule ViralSpiral.Entity.TurnTest do
+  alias ViralSpiral.Entity.Turn.Change.SetPowerTrue
   alias ViralSpiral.Entity.Turn.Exception.IllegalPass
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Entity.Turn.Change.NextTurn
@@ -72,6 +73,12 @@ defmodule ViralSpiral.Entity.TurnTest do
     test "move to next turn", %{turn: turn, target: target} do
       turn = Change.change(turn, %NextTurn{target: "player_ghi"})
       assert turn.current == target
+    end
+
+    test "power", %{turn: turn} do
+      assert turn.power == false
+      turn = Change.change(turn, %SetPowerTrue{})
+      assert turn.power == true
     end
   end
 end

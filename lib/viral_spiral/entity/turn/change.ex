@@ -15,4 +15,8 @@ defmodule ViralSpiral.Entity.Turn.Change do
             target: UXID.uxid_string()
           }
   end
+
+  defmodule SetPowerTrue do
+    defstruct []
+  end
 end

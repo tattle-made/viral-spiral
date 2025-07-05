@@ -9,6 +9,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   alias ViralSpiral.Entity.Turn.Change.NewTurn
   alias ViralSpiral.Entity.Turn.Change.NextTurn
+  alias ViralSpiral.Entity.Turn.Change.SetPowerTrue
 
   alias ViralSpiral.Entity.Round.Changes.NextRound
   alias ViralSpiral.Entity.Round.Changes.SkipRound
@@ -220,10 +221,14 @@ defmodule ViralSpiral.Room.Reducer do
 
     clout_penalty_change =
       if card.veracity == false,
-        do: {state.players[Enum.at(turn.path, -1)], %Clout{offset: -1}},
-        else: {state.players[from_id], %Clout{offset: -1}}
+        do: [{state.players[Enum.at(turn.path, -1)], %Clout{offset: -1}}],
+        else: [{state.players[from_id], %Clout{offset: -1}}]
 
-    State.apply_changes(state, [clout_penalty_change])
+    set_power_change = [{state.turn, %SetPowerTrue{}}]
+
+    all_changes = clout_penalty_change ++ set_power_change
+
+    State.apply_changes(state, all_changes)
     |> reduce(%DiscardCard{from_id: from_id, card: card})
   end
 
@@ -276,7 +281,9 @@ defmodule ViralSpiral.Room.Reducer do
               ]
           end
 
-        all_changes = changes ++ dynamic_card_change
+        set_power_change = [{state.turn, %SetPowerTrue{}}]
+
+        all_changes = changes ++ dynamic_card_change ++ set_power_change
 
         State.apply_changes(state, all_changes)
 
@@ -326,7 +333,11 @@ defmodule ViralSpiral.Room.Reducer do
       {state.players[from_id], %Affinity{target: affinity, offset: affinity_offset}}
     ]
 
-    State.apply_changes(state, changes)
+    set_power_change = [{state.turn, %SetPowerTrue{}}]
+
+    all_changes = changes ++ set_power_change
+
+    State.apply_changes(state, all_changes)
   end
 
   def reduce(%State{} = state, %CancelPlayerVote{} = action) do

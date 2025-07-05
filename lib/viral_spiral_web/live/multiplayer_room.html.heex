@@ -24,16 +24,19 @@
                     <.carousel_score_card players={@state.others} />
             </div>
 
-            
-
             <div :if={@state && @state.current_cards} id="container-cards" class="flex-1 mt-2 flex justify-center">
                 <div :for={card <- @state.current_cards}>
-                    <.card card={card} from={@state.me.id} can_turn_fake={@state.power_turn_fake.enabled} />
+                    <.card 
+                        card={card} 
+                        from={@state.me.id} 
+                        can_turn_fake={@state.power_turn_fake.enabled} 
+                        can_use_power={@state.can_use_power}
+                        />
                 </div>
             </div>
 
             <div class="container-powers mb-2">
-                <div :if={@state && @state.power_cancel.can_cancel} phx-click={show_modal("cancel-initiate-modal")}>
+                <div :if={@state && @state.can_use_power && @state.power_cancel.can_cancel} phx-click={show_modal("cancel-initiate-modal")}>
                     <button class="py-1 px-2 bg-violet-950 hover:bg-violet-300 text-slate-50 hover:text-slate-800 text-xs rounded-md border border-zinc-900" >Cancel Player</button>
                     <.modal id={"cancel-initiate-modal"} class="justify-center">
                         <div>

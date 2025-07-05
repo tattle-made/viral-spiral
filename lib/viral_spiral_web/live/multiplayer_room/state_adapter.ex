@@ -21,6 +21,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
         state: state.room.state
       },
       me: make_me(state, player_me),
+      can_use_power: !state.turn.power,
       power_cancel: make_cancel(state, player_me_id),
       power_turn_fake: make_power_turn_fake(state, player_me_id),
       current_cards: make_current_cards(state, player_me),
