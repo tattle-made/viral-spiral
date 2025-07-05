@@ -15,6 +15,8 @@ defmodule ViralSpiral.Room do
   """
 
   use Supervisor
+  alias ViralSpiral.Entity
+  alias ViralSpiral.Room.State
   alias ViralSpiral.Repo
   alias ViralSpiral.Room.GameSave
   alias ViralSpiral.Room.GameEngine.Exceptions.CouldNotReserveRoom
@@ -91,6 +93,14 @@ defmodule ViralSpiral.Room do
 
   def get_game_save(room_name) do
     Repo.get_by(GameSave, room_name: room_name)
+  end
+
+  def game_end_change(%State{} = state) do
+    change =
+      State.game_over_status(state)
+      |> Entity.make_game_end_change()
+
+    [{state.room, change}]
   end
 end
 

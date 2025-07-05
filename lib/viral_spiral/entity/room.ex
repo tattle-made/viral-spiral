@@ -4,6 +4,9 @@ defmodule ViralSpiral.Entity.Room do
 
   ## Room States
   - :reserved : When a player has expressed an interest to play the game but their friends haven't joined the room yet or the player hasn't explicitly told us to start the game.
+
+  chaos starts at 0 and goes up. Max value is 10 for now.
+  state
   """
   alias ViralSpiral.Bias
   alias ViralSpiral.Affinity
@@ -25,7 +28,7 @@ defmodule ViralSpiral.Entity.Room do
 
   @states [:uninitialized, :reserved, :waiting_for_players, :running, :paused]
 
-  @type states :: :reserved | :uninitialized | :waiting_for_players | :running | :paused
+  @type states :: :reserved | :uninitialized | :waiting_for_players | :running | :paused | :over
   @type t :: %__MODULE__{
           id: String.t(),
           name: String.t(),
@@ -217,6 +220,7 @@ defmodule ViralSpiral.Entity.Room do
     @moduledoc """
     Change properties of a Room
     """
+    alias ViralSpiral.Entity.Room.Changes.EndGame
     alias ViralSpiral.Entity.Room.Changes.OffsetChaos
     alias ViralSpiral.Entity.Room.Changes.OffsetCountdown
     alias ViralSpiral.Entity.Room.Exceptions.JoinBeforeReserving
@@ -269,6 +273,13 @@ defmodule ViralSpiral.Entity.Room do
 
     def change(%Room{} = room, %ResetUnjoinedPlayers{} = _change) do
       Room.reset_unjoined_players(room)
+    end
+
+    def change(%Room{} = room, %EndGame{reason: reason} = _change) do
+      case reason do
+        nil -> room
+        _ -> %{room | state: :over}
+      end
     end
 
     def change(%Room{} = _room, _change) do

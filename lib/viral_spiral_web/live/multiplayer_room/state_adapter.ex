@@ -17,7 +17,8 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
       room: %{
         id: state.room.id,
         name: state.room.name,
-        chaos: state.room.chaos
+        chaos: state.room.chaos,
+        state: state.room.state
       },
       me: make_me(state, player_me),
       power_cancel: make_cancel(state, player_me_id),

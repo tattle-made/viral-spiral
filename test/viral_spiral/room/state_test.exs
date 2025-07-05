@@ -44,4 +44,28 @@ defmodule ViralSpiral.Room.StateTest do
              player_community: :red
            } = stats
   end
+
+  describe "game_over_status/1" do
+    setup do
+      :rand.seed(:exsss, {123, 80, 96})
+      {state, players} = StateFixtures.new_game_with_four_players()
+      %{state: state, players: players}
+    end
+
+    test "no_over", %{state: state} do
+      assert {:no_over} = State.game_over_status(state)
+    end
+
+    test "world collapse", %{state: state} do
+      state = state |> StateTransformation.update_room(%{chaos: 10})
+      assert {:over, :world} == State.game_over_status(state)
+    end
+
+    test "player win", %{state: state, players: players} do
+      %{adhiraj: adhiraj} = StateTransformation.player_id_by_names(state)
+
+      state = state |> StateTransformation.update_player(adhiraj, %{clout: 10})
+      assert {:over, :player, adhiraj} == State.game_over_status(state)
+    end
+  end
 end

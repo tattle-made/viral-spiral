@@ -40,4 +40,13 @@ defmodule ViralSpiral.Entity.Room.Changes do
             offset: integer()
           }
   end
+
+  defmodule EndGame do
+    defstruct reason: nil, winner_id: nil
+
+    @type t :: %__MODULE__{
+            reason: atom(),
+            winner_id: UXID.uxid_string()
+          }
+  end
 end

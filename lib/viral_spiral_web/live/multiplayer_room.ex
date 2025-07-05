@@ -69,7 +69,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.pass_card(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-    socket = assign(socket, :state, room_state)
+    socket = socket |> assign(:state, room_state) |> maybe_put_end_banner(room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
     {:noreply, socket}
   end
@@ -79,7 +79,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.keep_card(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-    socket = assign(socket, :state, room_state)
+    socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
     {:noreply, socket}
   end
@@ -89,7 +89,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.discard_card(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-    socket = assign(socket, :state, room_state)
+    socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
     {:noreply, socket}
   end
@@ -99,7 +99,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.view_source(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-    socket = assign(socket, :state, room_state)
+    socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
     {:noreply, socket}
   end
@@ -109,7 +109,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.hide_source(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-    socket = assign(socket, :state, room_state)
+    socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
     {:noreply, socket}
   end
@@ -119,7 +119,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.mark_card_as_fake(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-    socket = assign(socket, :state, room_state)
+    socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
     {:noreply, socket}
   end
@@ -129,7 +129,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.turn_to_fake(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-    socket = assign(socket, :state, room_state)
+    socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
     {:noreply, socket}
   end
@@ -139,7 +139,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.initiate_cancel(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-    socket = assign(socket, :state, room_state)
+    socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
     {:noreply, socket}
   end
@@ -149,7 +149,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.vote_to_cancel(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-    socket = assign(socket, :state, room_state)
+    socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
     {:noreply, socket}
   end
@@ -162,7 +162,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     %{room_gen: room_gen, player_name: player_name} = socket.assigns
     gen_state = :sys.get_state(room_gen)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-    socket = assign(socket, :state, room_state)
+    socket = socket |> assign(:state, room_state) |> maybe_put_end_banner(room_state)
     {:noreply, socket}
   end
 

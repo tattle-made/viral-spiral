@@ -301,6 +301,41 @@ defmodule ViralSpiral.Room.State do
     }
   end
 
+  @doc """
+  Checks if the game is over and returns status
+
+  Returns the following values
+    - {:no_over} if the game is not over yet
+    - {:over, :player, "player_id"} if a player has won
+    - {:over, :world} if the world has collapsed
+  """
+  def game_over_status(%State{} = state) do
+    chaos_threshold_crossed? = if state.room.chaos >= 10, do: true, else: false
+
+    winners =
+      state.players
+      |> Enum.filter(fn {_id, player} -> player.clout >= 10 end)
+
+    # todo check for illegal state of >1 condition
+    player_won? =
+      case winners |> length() do
+        0 -> false
+        1 -> true
+      end
+
+    winner_id =
+      case player_won? do
+        true -> winners |> hd |> elem(1) |> Map.get(:id)
+        false -> nil
+      end
+
+    cond do
+      chaos_threshold_crossed? -> {:over, :world}
+      player_won? -> {:over, :player, winner_id}
+      true -> {:no_over}
+    end
+  end
+
   # defimpl Inspect do
   #   import Inspect.Algebra
   #   alias Inspect.Opts

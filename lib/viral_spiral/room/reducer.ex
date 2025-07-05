@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Room
   alias ViralSpiral.Entity.PowerCancelPlayer.Changes.ResetCancel
   alias ViralSpiral.Entity.DynamicCard.Changes.AddIdentityStats
 
@@ -168,7 +169,8 @@ defmodule ViralSpiral.Room.Reducer do
           {state.turn, %NextTurn{target: to_id}}
         ]
 
-    State.apply_changes(state, changes)
+    state = State.apply_changes(state, changes)
+    State.apply_changes(state, Room.game_end_change(state))
   end
 
   def reduce(%State{} = state, %KeepCard{} = action) do
@@ -223,15 +225,6 @@ defmodule ViralSpiral.Room.Reducer do
 
     State.apply_changes(state, [clout_penalty_change])
     |> reduce(%DiscardCard{from_id: from_id, card: card})
-  end
-
-  def reduce(%State{} = state, %{type: :create_room}) do
-  end
-
-  def reduce(%State{} = state, %{type: :join_room}) do
-  end
-
-  def reduce(%State{} = state, %{type: :start_game}) do
   end
 
   def reduce(%State{} = state, %ViewSource{} = action) do
