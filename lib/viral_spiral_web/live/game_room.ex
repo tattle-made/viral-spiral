@@ -46,11 +46,7 @@ defmodule ViralSpiralWeb.GameRoom do
     action = Actions.pass_card(Actions.string_to_map(params))
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.game_room(gen_state)
-
-    socket =
-      assign(socket, :state, room_state)
-      |> put_banner("Testing this ")
-
+    socket = assign(socket, :state, room_state)
     {:noreply, socket}
   end
 
