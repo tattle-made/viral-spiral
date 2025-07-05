@@ -22,6 +22,8 @@
   <div class="mx-auto w-full h-full">
     <.flash_group flash={@flash} />
     <%= @inner_content %>
-    <.banner />
+    <.banner>
+      <.link navigate={"/multiplayer"}>Play Again </.link>
+    </.banner>
   </div>
 </main>

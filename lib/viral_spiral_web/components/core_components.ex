@@ -681,6 +681,8 @@ defmodule ViralSpiralWeb.CoreComponents do
         <div class="w-3/4 md:w-1/2  mb-80 h-fit bg-slate-50 p-8 border rounded-md border-slate-200 self-center flex flex-col gap-4">
           <h1 class="text-2xl text-slate-900 text-center">Game Over</h1>
           <p id="message" class="text-lg"></p>
+          <div class="m-8"></div>
+          <%= render_slot(@inner_block) %>
         </div>
       </div>
     </div>
