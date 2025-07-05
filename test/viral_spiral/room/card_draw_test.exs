@@ -193,4 +193,39 @@ defmodule ViralSpiral.Room.CardDrawTest do
       assert Map.has_key?(counts, affinity)
     end
   end
+
+  @identities [:red, :blue, :yellow]
+  test "assign_player_identity" do
+    for _ <- 1..500 do
+      for n <- 3..12 do
+        # Generate dummy names
+        names = Enum.map(1..n, &"player_#{&1}")
+
+        result = CardDraw.assign_player_identity(names)
+
+        assert length(result) == length(names)
+
+        # All names are present
+        result_names = Enum.map(result, &elem(&1, 0))
+        assert Enum.sort(result_names) == Enum.sort(names)
+
+        # Only valid identities used
+        identities = Enum.map(result, &elem(&1, 1))
+        assert Enum.all?(identities, &(&1 in @identities))
+
+        # At least one of each identity is used
+        assert Enum.any?(identities, &(&1 == :red))
+        assert Enum.any?(identities, &(&1 == :blue))
+        assert Enum.any?(identities, &(&1 == :yellow))
+
+        # Check that no identity appears more than ceil(n / 3) + 1 times
+        max_allowed = div(n, 3) + 1
+        identity_counts = Enum.frequencies(identities)
+
+        for {color, count} <- identity_counts do
+          assert count <= max_allowed
+        end
+      end
+    end
+  end
 end
