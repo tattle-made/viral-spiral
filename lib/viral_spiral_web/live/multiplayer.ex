@@ -56,7 +56,7 @@ defmodule ViralSpiralWeb.Multiplayer do
     with %{name: reserved_room_name} <- Room.reserve(room_name, :multiplayer),
          {:ok, room_gen} <- Room.room_gen!(reserved_room_name),
          %State{} <- GenServer.call(room_gen, action) do
-      path = "/multiplayer/room/waiting-room/#{reserved_room_name}"
+      path = "/room/waiting-room/#{reserved_room_name}"
 
       socket =
         socket
@@ -81,7 +81,7 @@ defmodule ViralSpiralWeb.Multiplayer do
 
     with {:ok, room_gen} <- Room.room_gen!(room_name),
          _state <- GenServer.call(room_gen, Actions.join_room(%{player_name: player_name})),
-         path <- "/multiplayer/room/waiting-room/#{room_name}" do
+         path <- "/room/waiting-room/#{room_name}" do
       PubSub.broadcast(ViralSpiral.PubSub, "waiting-room:#{room_name}", {:new_player})
 
       socket =

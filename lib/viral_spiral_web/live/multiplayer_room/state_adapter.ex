@@ -178,11 +178,11 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
         values: %{
           affinity: %{
             options: affinity_options,
-            value: ""
+            value: nil
           },
           targets: %{
             options: target_options,
-            value: ""
+            value: nil
           }
         }
       },

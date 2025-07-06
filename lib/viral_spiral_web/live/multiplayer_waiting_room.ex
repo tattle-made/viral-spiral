@@ -11,7 +11,7 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
       <div class="self-center">
         <p class="text-md mb-4">
           Share the
-          <a class="underline text-lg text-fuchsia-900" href={"/multiplayer/join/#{@room_name}"}>
+          <a class="underline text-lg text-fuchsia-900" href={"/join/#{@room_name}"}>
             Room Link
           </a>
           with other players
@@ -66,7 +66,7 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
          ui_state <- StateAdapter.make_game_room(game_state, "adhiraj"),
          room_name <- ui_state.room.name do
       PubSub.broadcast(ViralSpiral.PubSub, "waiting-room:#{room_name}", {:start_game})
-      {:noreply, push_navigate(socket, to: "/multiplayer/room/#{room_name}")}
+      {:noreply, push_navigate(socket, to: "/room/#{room_name}")}
     end
   end
 
@@ -78,6 +78,6 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
   end
 
   def handle_info({:start_game}, %{assigns: %{room_name: room_name}} = socket) do
-    {:noreply, push_navigate(socket, to: "/multiplayer/room/#{room_name}")}
+    {:noreply, push_navigate(socket, to: "/room/#{room_name}")}
   end
 end

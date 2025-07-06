@@ -35,9 +35,9 @@
                 </div>
             </div>
 
-            <div class="container-powers mb-2">
+            <div class="container-powers mb-2 flex justify-center">
                 <div :if={@state && @state.can_use_power && @state.power_cancel.can_cancel} phx-click={show_modal("cancel-initiate-modal")}>
-                    <button class="py-1 px-2 bg-violet-950 hover:bg-violet-300 text-slate-50 hover:text-slate-800 text-xs rounded-md border border-zinc-900" >Cancel Player</button>
+                    <button class="py-1 px-2 bg-violet-300 hover:bg-violet-950 text-slate-800 hover:text-slate-50 text-xs rounded-md border border-zinc-900 self-center" >Cancel Player</button>
                     <.modal id={"cancel-initiate-modal"} class="justify-center">
                         <div>
 
@@ -101,8 +101,8 @@
                         <button phx-click={show_modal("hand-card-modal-#{card.id}")}>
                             <.hand_card card={card}  />
                         </button>
-                        <.modal id={"hand-card-modal-#{card.id}"} class="justify-center">
-                            <div :if={card != nil} >
+                        <.modal id={"hand-card-modal-#{card.id}"} class="flex justify-center">
+                            <div :if={card != nil} class="self-center" >
                                 <.card_preview card={card} />
                             </div>
                         </.modal>
