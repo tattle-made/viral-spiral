@@ -1,6 +1,4 @@
 import * as Tone from "tone";
-// const synth = new Tone.Synth().toDestination();
-// synth.triggerAttackRelease(`C${Number.parseInt(image_id)+3}`, "8n");
 
 class Player{
     constructor(){}
@@ -10,22 +8,30 @@ class Player{
 
         this.keys =  new Tone.Players({
 				urls: {
-					0: "A1.mp3",
-					1: "Cs2.mp3",
-					2: "E2.mp3",
-					3: "Fs2.mp3",
+					"A": "A1.mp3",
+					"B": "Cs2.mp3",
+					"C": "E2.mp3",
+					"D": "Fs2.mp3",
 				},
 				fadeOut: "64n",
 				baseUrl: "https://tonejs.github.io/audio/casio/",
 			}).toDestination();
+
+            const seq = new Tone.Sequence((time, note) => {
+                // this.keys.player(note).start
+                this.synth.triggerAttackRelease(note, "32n");
+            }, ["C2", ["Eb2", "F2", "Eb2"], "Ab2", ["Bb2", "Ab2"]]).start(0);
+
+            // const seq2 = new Tone.Sequence((time, note) => {
+            //     // this.keys.player(note).start
+            //     this.synth.triggerAttackRelease(note, "8n");
+            // }, ["C4", "C4", "Ab2", "Ab2"]).start(1);
+
+            Tone.getTransport().bpm.value = 44
+            Tone.getTransport().start();
     } 
     test(){
-        const seq = new Tone.Sequence((time, note) => {
-            // this.synth.triggerAttackRelease(note, 0.1, time);
-            this.keys.player(note).start
-        }, [0, [1, 2, 1], 2, [3, 4]]).start(0);
-        // Tone.getTransport().bpm.value = 80
-        Tone.getTransport().start();
+        
     }
     mute(){}
     uh_oh(){}
@@ -43,10 +49,10 @@ class Player{
         }
     }
     slow_down(){
-
+        Tone.getTransport().bpm.rampTo(44,"4n")
     }
     speed_up(){
-
+        Tone.getTransport().bpm.rampTo(60,"4n")
     }
     turn_sad(){
 
