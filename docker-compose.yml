@@ -16,7 +16,7 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-      - ~/data/dau/postgres:/var/lib/postgresql/data
+      - ~/data/viral-spiral/postgres:/var/lib/postgresql/data
     ports:
       - 5432:5432
 
