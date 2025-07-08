@@ -36,12 +36,12 @@ defmodule ViralSpiral.Room.StateTest do
     stats = State.identity_stats(state)
 
     assert %{
-             dominant_community: :yellow,
-             other_community: :blue,
+             dominant_community: :blue,
+             other_community: :red,
              oppressed_community: :red,
              unpopular_affinity: :sock,
              popular_affinity: :houseboat,
-             player_community: :red
+             player_community: :blue
            } = stats
   end
 
