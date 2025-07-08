@@ -345,7 +345,10 @@ defmodule ViralSpiral.Room.State do
           state.players
           |> Enum.max_by(fn {_id, player} -> player.clout end, fn -> {nil, nil} end)
 
-        %{winner: player.name}
+        %{
+          winner: player.name,
+          winner_message: "The world has collapsed in chaos, #{player.name} has won the game!"
+        }
 
       _ ->
         %{error: "Game is not finished yet"}
