@@ -338,6 +338,14 @@ defmodule ViralSpiral.Room.State do
     end
   end
 
+  def generate_game_over_message(%State{} = state) do
+    {_id, player} =
+      state.players
+      |> Enum.max_by(fn {_id, player} -> player.clout end, fn -> {nil, nil} end)
+
+    %{winner: player.name}
+  end
+
   # defimpl Inspect do
   #   import Inspect.Algebra
   #   alias Inspect.Opts
