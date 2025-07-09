@@ -18,7 +18,7 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
         </p>
 
         <div class="mb-16">
-          <p :for={player <- @state.room.players} class="text-lg">
+          <p :for={player <- @state.room.players} class="text-xl">
             <span class="text-[#C3268A] font-bold"><%= player %></span>
             <span class="text-textcolor-light"> has joined</span>
           </p>

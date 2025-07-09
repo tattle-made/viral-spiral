@@ -6,15 +6,21 @@ defmodule ViralSpiralWeb.MultiplayerJoinRoom do
 
   def render(assigns) do
     ~H"""
-    <div class="h-full justify-center flex">
-      <div class="w-80 border-green-100 border-2 p-4 rounded-md self-center">
-        <.simple_form for={@form} phx-submit="join_room">
+    <div class="min-h-screen bg-[url('/images/bg-gray.jpg')] bg-cover bg-center bg-no-repeat px-4 flex items-center justify-center">
+      <div class="w-full max-w-md text-center border border-4 border-[#3E6FF2] rounded-md p-8 bg-transparent">
+        <h2 class="text-2xl font-semibold text-textcolor-light mb-6">
+          Join a Room
+        </h2>
+
+        <.simple_form_home for={@form} phx-submit="join_room">
           <.input field={@form[:room_name]} label="Room Name" />
           <.input field={@form[:player_name]} id="player_name_join" label="Username" />
           <:actions>
-            <.button class="w-full bg-fuchsia-800 hover:bg-fuchsia-500">Join Room</.button>
+            <.button class="w-full mt-4 bg-fuchsia-800 hover:bg-fuchsia-500 text-slate-50 px-4 py-2 rounded-md">
+              Join Room
+            </.button>
           </:actions>
-        </.simple_form>
+        </.simple_form_home>
       </div>
     </div>
     """
