@@ -1,0 +1,32 @@
+<div class="min-h-screen flex flex-col bg-[url('/images/bg-gray.jpg')] bg-cover bg-center bg-no-repeat px-4 pt-2">
+  <!-- Logo and tagline at the top -->
+  <div class="flex flex-col items-center mb-4 pt-8">
+    <img src="/images/vs-logo-badge.png" alt="Viral Spiral Logo" class="w-52 object-contain mb-4" />
+    <p class="text-textcolor-light text-center text-2xl">
+      a multiplayer card game about sharing news on the internet
+    </p>
+  </div>
+  <!-- Room creation / join forms centered -->
+  <div class="flex-grow-0 flex items-center justify-center mt-2">
+    <div id="multiplayer-room-create" class="flex flex-row gap-12 flex-wrap">
+      <div class="w-80 border-orange-100 border-2 p-4 rounded-md bg-white/80 backdrop-blur-sm">
+        <.simple_form for={@form} phx-submit="create_new_room">
+          <.input field={@form[:player_name]} label="Username" />
+          <:actions>
+            <.button class="w-full">Create a new Room</.button>
+          </:actions>
+        </.simple_form>
+      </div>
+
+      <div class="w-80 border-green-100 border-2 p-4 rounded-md bg-white/80 backdrop-blur-sm">
+        <.simple_form for={@form} phx-submit="join_room">
+          <.input field={@form[:room_name]} label="Room Name" />
+          <.input field={@form[:player_name]} id="player_name_join" label="Username" />
+          <:actions>
+            <.button class="w-full">Join Room</.button>
+          </:actions>
+        </.simple_form>
+      </div>
+    </div>
+  </div>
+</div>

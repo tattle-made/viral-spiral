@@ -8,35 +8,6 @@ defmodule ViralSpiralWeb.Multiplayer do
   alias ViralSpiral.Entity.Room, as: EntityRoom
   use ViralSpiralWeb, :live_view
 
-  def render(assigns) do
-    ~H"""
-    <div class="h-full justify-center flex">
-      <div class="self-center">
-        <div id="multiplayer-room-create" class="flex flex-row gap-12 flex-wrap">
-          <div class="w-80 border-orange-100 border-2 p-4 rounded-md">
-            <.simple_form for={@form} phx-submit="create_new_room">
-              <.input field={@form[:player_name]} label="Username" />
-              <:actions>
-                <.button class="w-full">Create a new Room</.button>
-              </:actions>
-            </.simple_form>
-          </div>
-
-          <div class="w-80 border-green-100 border-2 p-4 rounded-md">
-            <.simple_form for={@form} phx-submit="join_room">
-              <.input field={@form[:room_name]} label="Room Name" />
-              <.input field={@form[:player_name]} id="player_name_join" label="Username" />
-              <:actions>
-                <.button class="w-full ">Join Room</.button>
-              </:actions>
-            </.simple_form>
-          </div>
-        </div>
-      </div>
-    </div>
-    """
-  end
-
   def mount(_params, _session, socket) do
     form = to_form(%{"player_name" => ""})
     join_room_form = to_form(%{"room_name" => "", "player_name" => ""})
