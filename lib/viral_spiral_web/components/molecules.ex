@@ -182,8 +182,13 @@ defmodule ViralSpiralWeb.Molecules do
     "https://s3.ap-south-1.amazonaws.com/media.viralspiral.net/avatar/dp_0#{:erlang.phash2(player_id, 7) + 1}.png"
   end
 
-  def bg_color(identity) do
-    "#{Atom.to_string(identity)}-500"
+  def bg_class(identity) do
+    case identity do
+      :red -> "bg-red-500 border-red-500"
+      :blue -> "bg-blue-500 border-blue-500"
+      :yellow -> "bg-yellow-500 border-yellow-500"
+      _ -> "bg-gray-200 border-gray-200"
+    end
   end
 
   attr :player, :map, required: true
@@ -191,7 +196,7 @@ defmodule ViralSpiralWeb.Molecules do
   def player_score_card(assigns) do
     ~H"""
     <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2 rounded-md bg-slate-50">
-      <div class={"h-12 w-12 bg-#{bg_color(@player.identity)} border border-2 border-#{bg_color(@player.identity)} rounded-md overflow-hidden"}>
+      <div class={"h-12 w-12 #{bg_class(@player.identity)} border border-2 rounded-md overflow-hidden"}>
         <img class=" h-12 w-12 object-fit" src={dp_url(@player.id)} />
       </div>
 
