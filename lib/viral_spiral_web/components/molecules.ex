@@ -191,30 +191,68 @@ defmodule ViralSpiralWeb.Molecules do
     end
   end
 
+  def bias_color_class(bias) do
+    case Bias.label(bias) do
+      "Red" -> "bg-red-dark"
+      "Blue" -> "bg-blue-dark"
+      "Yellow" -> "bg-yellow-dark"
+      _ -> "bg-gray-400"
+    end
+  end
+
+  def affinity_image_filename(affinity) do
+    case Affinity.label(affinity) do
+      "Cat" -> "cat"
+      "Sock" -> "sock"
+      "High Five" -> "high-five"
+      "Houseboat" -> "boat"
+      "Skub" -> "skub"
+      _ -> "default"
+    end
+  end
+
   attr :player, :map, required: true
 
   def player_score_card(assigns) do
     ~H"""
-    <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-px-2 rounded-md bg-slate-50">
-      <div class={"h-12 w-12 #{bg_class(@player.identity)} border border-2 rounded-md overflow-hidden"}>
-        <img class=" h-12 w-12 object-fit" src={dp_url(@player.id)} />
+    <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-gray-400 rounded-md bg-neutral-3">
+      <div class="flex flex-col justify-between gap-1">
+        <div class={"h-12 w-12 #{bg_class(@player.identity)} border border-2 rounded-md overflow-hidden"}>
+          <img class="h-12 w-12 object-fit" src={dp_url(@player.id)} />
+        </div>
+        <div class="text-textcolor-light font-extrabold text-2xl leading-none ml-2 mb-3">
+          <%= @player.clout %>
+        </div>
       </div>
-
       <div>
         <div class="flex flex-row flex-wrap gap-4">
-          <p><%= @player.name %></p>
-          <p><%= @player.clout %></p>
+          <p class="text-textcolor-light font-extrabold text-lg"><%= @player.name %></p>
         </div>
         <div class="flex flex-row gap-4">
-          <div :for={{bias, value} <- @player.biases}>
-            <span><%= Bias.label(bias) %></span>
-            <span><%= value %></span>
+          <div class="flex flex-row items-center gap-2">
+            <p class="text-sm font-semibold text-textcolor-light">Biases</p>
+            <%= for {bias, value} <- @player.biases do %>
+              <div class={"w-8 h-8 rounded-full flex items-center justify-center text-s text-textcolor-light #{bias_color_class(bias)}"}>
+                <%= value %>
+              </div>
+            <% end %>
           </div>
         </div>
-        <div class="flex flex-row gap-4">
-          <div :for={{affinity, value} <- @player.affinities}>
-            <span><%= Affinity.label(affinity) %></span>
-            <span><%= value %></span>
+        <div class="flex flex-row items-center gap-2 mt-2">
+          <p class="text-sm font-semibold text-textcolor-light">Affinities</p>
+          <div class="flex flex-row gap-2 items-center">
+            <%= for {affinity, value} <- @player.affinities do %>
+              <div class="relative w-9 h-9">
+                <img
+                  class="w-full h-full object-contain -rotate-12"
+                  src={"/images/affinity-#{affinity_image_filename(affinity)}.png"}
+                  alt={Affinity.label(affinity)}
+                />
+                <div class="absolute -top-1 -right-1 bg-accent-1 text-neutral-3 text-s w-5 h-5 rounded-full flex items-center justify-center shadow">
+                  <%= value %>
+                </div>
+              </div>
+            <% end %>
           </div>
         </div>
       </div>
@@ -238,7 +276,7 @@ defmodule ViralSpiralWeb.Molecules do
         </div>
       </div>
 
-      <div class="md:flex md:flex-row gap-2 hidden md:block md:visible justify-center">
+      <div class="md:flex md:flex-row gap-6 hidden md:block md:visible justify-center">
         <div :for={player <- @players} class="w-fit h-28 flex justify-center items-center md:w-56">
           <.player_score_card player={player} />
         </div>
