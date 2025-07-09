@@ -196,7 +196,7 @@ defmodule ViralSpiral.Room.CardDrawTest do
 
   @identities [:red, :blue, :yellow]
   test "assign_player_identity" do
-    for _ <- 1..500 do
+    for _ <- 1..1000 do
       for n <- 3..12 do
         # Generate dummy names
         names = Enum.map(1..n, &"player_#{&1}")

@@ -94,8 +94,31 @@ defmodule ViralSpiral.Room.CardDraw do
 
   @identities [:red, :blue, :yellow]
   def assign_player_identity(names) do
-    base_distribution = Enum.take(Stream.cycle(@identities), length(names))
-    shuffled_distribution = Enum.shuffle(base_distribution)
-    Enum.zip(names, shuffled_distribution)
+    total = length(names)
+    identity_count = length(@identities)
+
+    final_identities =
+      case total do
+        ^identity_count ->
+          Enum.shuffle(@identities)
+
+        _ ->
+          base_count = div(total, identity_count)
+          remainder = rem(total, identity_count)
+
+          evenly_dist =
+            @identities |> Enum.flat_map(fn color -> List.duplicate(color, base_count) end)
+
+          extra_dist =
+            if remainder > 0 do
+              Enum.shuffle(@identities) |> Enum.take(remainder)
+            else
+              []
+            end
+
+          Enum.shuffle(evenly_dist ++ extra_dist)
+      end
+
+    Enum.zip(names, final_identities)
   end
 end
