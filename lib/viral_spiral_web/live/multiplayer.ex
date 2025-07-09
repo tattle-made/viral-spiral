@@ -16,8 +16,31 @@ defmodule ViralSpiralWeb.Multiplayer do
       socket
       |> assign(:form, form)
       |> assign(:join_room_form, join_room_form)
+      |> assign(:show_create_form, false)
+      |> assign(:show_join_form, false)
 
     {:ok, socket}
+  end
+
+  # New event handlers for toggling panels
+  def handle_event("toggle_create_panel", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_create_form, !socket.assigns.show_create_form)
+     # Close join form when create is opened
+     |> assign(:show_join_form, false)}
+  end
+
+  def handle_event("toggle_join_panel", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_join_form, !socket.assigns.show_join_form)
+     # Close create form when join is opened
+     |> assign(:show_create_form, false)}
+  end
+
+  def handle_event("stop_propagation", _params, socket) do
+    {:noreply, socket}
   end
 
   def handle_event("create_new_room", params, socket) do
