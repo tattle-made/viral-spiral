@@ -15,10 +15,10 @@
         <div class={[
           "absolute inset-0 rounded-md border-2 border-orange-100 bg-cover bg-center bg-no-repeat transition-opacity duration-300 ease-in-out",
           "bg-[url('/images/bg-landing-01.png')]",
-          (@show_create_form && "opacity-0") || "opacity-100"
+          @show_create_form && "opacity-0 hidden",
+          !@show_create_form && "opacity-100 block"
         ]}>
           <div class="absolute inset-0 bg-transparent rounded-md"></div>
-
           <div class="relative z-10 h-full w-full">
             <h3 class="absolute top-6 left-6 text-textcolor-light text-2xl font-bold">
               Create Room
@@ -27,13 +27,12 @@
         </div>
         <div class={[
           "absolute inset-0 rounded-md border-2 border-orange-100 bg-transparent transition-opacity duration-300 ease-in-out",
-          (@show_create_form && "opacity-100") || "opacity-0 pointer-events-none"
+          @show_create_form && "opacity-100 block",
+          !@show_create_form && "opacity-0 hidden"
         ]}>
           <div class="p-6 h-full" phx-click="stop_propagation">
             <div class="mb-6">
-              <h3 class="text-textcolor-light text-2xl font-bold">
-                Create Room
-              </h3>
+              <h3 class="text-textcolor-light text-2xl font-bold">Create Room</h3>
             </div>
 
             <.simple_form_home for={@form} phx-submit="create_new_room">
@@ -50,11 +49,11 @@
         phx-click="toggle_join_panel"
         id="join-room-panel"
       >
-        <!-- Image Panel -->
         <div class={[
           "absolute inset-0 rounded-md border-2 border-green-100 bg-cover bg-center bg-no-repeat transition-opacity duration-300 ease-in-out",
           "bg-[url('/images/bg-landing-02.png')]",
-          (@show_join_form && "opacity-0") || "opacity-100"
+          @show_join_form && "opacity-0 hidden",
+          !@show_join_form && "opacity-100 block"
         ]}>
           <div class="absolute inset-0 bg-transparent rounded-md"></div>
           <div class="relative z-10 h-full w-full">
@@ -63,10 +62,10 @@
             </h3>
           </div>
         </div>
-        <!-- Form Panel -->
         <div class={[
           "absolute inset-0 rounded-md border-2 border-green-100 bg-transparent transition-opacity duration-300 ease-in-out",
-          (@show_join_form && "opacity-100") || "opacity-0 pointer-events-none"
+          @show_join_form && "opacity-100 block",
+          !@show_join_form && "opacity-0 hidden"
         ]}>
           <div class="p-6 h-full" phx-click="stop_propagation">
             <div class="mb-8">
