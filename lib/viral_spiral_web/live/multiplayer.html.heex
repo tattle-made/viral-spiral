@@ -1,0 +1,92 @@
+<div class="min-h-screen flex flex-col bg-[url('/images/bg-gray.jpg')] bg-cover bg-center bg-no-repeat px-4 pt-2">
+  <div class="flex flex-col items-center mb-8 pt-8">
+    <img src="/images/vs-logo-badge.png" alt="Viral Spiral Logo" class="w-60 object-contain mb-8" />
+    <p class="text-textcolor-light text-center text-2xl">
+      a multiplayer card game about sharing news on the internet
+    </p>
+  </div>
+  <div class="flex-grow-0 flex items-center justify-center mt-4">
+    <div id="multiplayer-room-create" class="flex flex-row gap-12 flex-wrap">
+      <div
+        class="relative w-80 h-96 group cursor-pointer border border-4 border-[#3E6FF2]"
+        phx-click="toggle_create_panel"
+        id="create-room-panel"
+      >
+        <div class={[
+          "absolute inset-0 rounded-md border-2 border-orange-100 bg-cover bg-center bg-no-repeat transition-opacity duration-300 ease-in-out",
+          "bg-[url('/images/bg-landing-01.png')]",
+          (@show_create_form && "opacity-0") || "opacity-100"
+        ]}>
+          <div class="absolute inset-0 bg-transparent rounded-md"></div>
+
+          <div class="relative z-10 h-full w-full">
+            <h3 class="absolute top-6 left-6 text-textcolor-light text-2xl font-bold">
+              Create Room
+            </h3>
+          </div>
+        </div>
+        <div class={[
+          "absolute inset-0 rounded-md border-2 border-orange-100 bg-transparent transition-opacity duration-300 ease-in-out",
+          (@show_create_form && "opacity-100") || "opacity-0 pointer-events-none"
+        ]}>
+          <div class="p-6 h-full" phx-click="stop_propagation">
+            <div class="mb-6">
+              <h3 class="text-textcolor-light text-2xl font-bold">
+                Create Room
+              </h3>
+            </div>
+
+            <.simple_form_home for={@form} phx-submit="create_new_room">
+              <.input field={@form[:player_name]} label="Username" />
+              <:actions>
+                <.button class="w-full mt-4">Create a new Room</.button>
+              </:actions>
+            </.simple_form_home>
+          </div>
+        </div>
+      </div>
+      <div
+        class="relative w-80 h-96 group cursor-pointer border border-4 border-[#3E6FF2]"
+        phx-click="toggle_join_panel"
+        id="join-room-panel"
+      >
+        <!-- Image Panel -->
+        <div class={[
+          "absolute inset-0 rounded-md border-2 border-green-100 bg-cover bg-center bg-no-repeat transition-opacity duration-300 ease-in-out",
+          "bg-[url('/images/bg-landing-02.png')]",
+          (@show_join_form && "opacity-0") || "opacity-100"
+        ]}>
+          <div class="absolute inset-0 bg-transparent rounded-md"></div>
+          <div class="relative z-10 h-full w-full">
+            <h3 class="absolute top-6 left-6 text-textcolor-light text-2xl font-bold">
+              Join Room
+            </h3>
+          </div>
+        </div>
+        <!-- Form Panel -->
+        <div class={[
+          "absolute inset-0 rounded-md border-2 border-green-100 bg-transparent transition-opacity duration-300 ease-in-out",
+          (@show_join_form && "opacity-100") || "opacity-0 pointer-events-none"
+        ]}>
+          <div class="p-6 h-full" phx-click="stop_propagation">
+            <div class="mb-8">
+              <h3 class="text-textcolor-light text-2xl font-bold">Join Room</h3>
+            </div>
+
+            <.simple_form_home for={@join_room_form} phx-submit="join_room">
+              <.input field={@join_room_form[:room_name]} label="Room Name" />
+              <.input
+                field={@join_room_form[:player_name]}
+                id="player_name_join"
+                label="Username"
+              />
+              <:actions>
+                <.button class="w-full mt-4">Join Room</.button>
+              </:actions>
+            </.simple_form_home>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

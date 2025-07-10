@@ -7,9 +7,9 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
 
   def render(assigns) do
     ~H"""
-    <div class="h-full justify-center flex">
-      <div class="self-center">
-        <p class="text-md mb-4">
+    <div class="min-h-screen bg-[url('/images/bg-gray.jpg')] bg-cover bg-center bg-no-repeat px-4 flex items-center justify-center">
+      <div class="self-center text-center border border-4 border-[#3E6FF2] rounded-md p-8">
+        <p class="text-md mb-4 text-textcolor-light text-xl font-semibold flex items-center justify-center gap-2">
           Share the
           <a class="underline text-lg text-fuchsia-900" href={"/join/#{@room_name}"}>
             Room Link
@@ -18,10 +18,12 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
         </p>
 
         <div class="mb-16">
-          <p :for={player <- @state.room.players}>
-            <%= "#{player} has joined" %>
+          <p :for={player <- @state.room.players} class="text-xl">
+            <span class="text-[#C3268A] font-bold"><%= player %></span>
+            <span class="text-textcolor-light"> has joined</span>
           </p>
         </div>
+
         <button
           class="w-full bg-fuchsia-800 hover:bg-fuchsia-500 px-4 py-2 rounded-md text-slate-50"
           phx-click="start_game"

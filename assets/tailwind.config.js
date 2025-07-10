@@ -16,7 +16,36 @@ module.exports = {
     extend: {
       colors: {
         brand: "#FD4F00",
-      }
+        blue: {
+          dark: "#5fa8db",
+          light: "#a3ccea",
+        },
+        red: {
+          dark: "#ff7783",
+          light: "#ffb19b",
+        },
+        yellow: {
+          dark: "#ff9d00",
+          light: "#ffd082",
+        },
+        background: "#ffffff",
+        placeholder: "#C3268A",
+        accent: {
+          1: "#514E80",
+          2: "#7F7AB0",
+          3: "#252653",
+        },
+        neutral: {
+          1: "#E68BBA",
+          2: "#856993",
+          3: "#EDC9C4",
+          4: "#70234B",
+        },
+        textcolor: {
+          dark: "#edc9c4",
+          light: "#293241",
+        }
+      },
     },
   },
   plugins: [
