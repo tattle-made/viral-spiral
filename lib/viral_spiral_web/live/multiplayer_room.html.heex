@@ -93,20 +93,20 @@
                     
                 </div>
 
-                <div :if={@state && @state.hand} id="container-hand" class="h-fit border border-px-2 rounded-md p-2 bg-slate-200">
-                    <div class="flex flex-row gap-1">
-                    <div class=" overflow-scroll p-1 w-8 h-auto"
-                        :for={card<- @state.hand}
-                    >
-                        <button phx-click={show_modal("hand-card-modal-#{card.id}")}>
-                            <.hand_card card={card}  />
-                        </button>
-                        <.modal id={"hand-card-modal-#{card.id}"} class="flex justify-center">
-                            <div :if={card != nil} class="self-center" >
-                                <.card_preview card={card} />
-                            </div>
-                        </.modal>
-                    </div>
+                <div :if={@state && @state.hand} id="container-hand" class="h-fit border border-px-2 rounded-md p-2 bg-slate-200 max-w-full ">
+                    <div class="flex flex-row gap-1 overflow-x-auto flex-nowrap w-full max-w-full">
+                        <div class="p-1 w-8 h-auto shrink-0"
+                            :for={card <- @state.hand}
+                        >
+                            <button phx-click={show_modal("hand-card-modal-#{card.id}")}>
+                                <.hand_card card={card}  />
+                            </button>
+                            <.modal id={"hand-card-modal-#{card.id}"} class="flex justify-center">
+                                <div :if={card != nil} class="self-center" >
+                                    <.card_preview card={card} />
+                                </div>
+                            </.modal>
+                        </div>
                     </div>
                 </div>
             </div>
