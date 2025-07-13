@@ -264,7 +264,12 @@ defmodule ViralSpiralWeb.Molecules do
 
   def carousel_score_card(assigns) do
     ~H"""
-    <div class="relative w-full" data-carousel="static">
+    <div
+      id="carousel-score-card"
+      class="relative w-full"
+      data-carousel="static"
+      phx-hook="CarouselHook"
+    >
       <!-- Carousel Wrapper -->
       <div class="relative h-28 overflow-hidden md:hidden">
         <div

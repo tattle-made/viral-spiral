@@ -31,6 +31,7 @@ import { HookCounter } from "./counter";
 import { BackgroundHook } from "./background";
 import { HookPopup } from "./popup";
 import Player from "./player";
+import { CarouselHook } from "./carousel";
 
 
 let Hooks = {
@@ -40,7 +41,8 @@ let Hooks = {
   HookMultiplayerRoom,
   HookCounter,
   BackgroundHook,
-  HookPopup
+  HookPopup,
+  CarouselHook
 };
 
 let csrfToken = document
