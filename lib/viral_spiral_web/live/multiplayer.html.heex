@@ -34,7 +34,6 @@
             <div class="mb-6">
               <h3 class="text-textcolor-light text-2xl font-bold">Create Room</h3>
             </div>
-
             <.simple_form_home for={@form} phx-submit="create_new_room">
               <.input field={@form[:player_name]} label="Username" />
               <:actions>
@@ -71,7 +70,6 @@
             <div class="mb-8">
               <h3 class="text-textcolor-light text-2xl font-bold">Join Room</h3>
             </div>
-
             <.simple_form_home for={@join_room_form} phx-submit="join_room">
               <.input field={@join_room_form[:room_name]} label="Room Name" />
               <.input
@@ -85,6 +83,120 @@
             </.simple_form_home>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="bg-white py-12 px-4">
+  <div class="max-w-4xl mx-auto mb-8">
+    <h2 class="text-textcolor-light text-3xl font-bold mb-8">Rules</h2>
+    <div class="mb-8">
+      <div class="flex flex-col items-start mb-6">
+        <img src="/images/player-card.png" alt="Sample Score Card" class="w-96 object-contain" />
+        <p class="text-gray-700 text-base max-w-md">
+          A sample score card from the game. They belong to the red community (A), have a clout point (B) of 5 and an anti blue bias (C) of 3. They have an affinity of -2 for socks (D) and +4 for houseboats (E).
+        </p>
+      </div>
+    </div>
+    <div class="space-y-6">
+      <%= for {rule, index} <- Enum.with_index(@rules, 1) do %>
+        <div class="flex items-start gap-4">
+          <span class="text-lg font-bold text-textcolor-light"><%= index %></span>
+          <p class="text-gray-700"><%= rule %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="max-w-4xl mx-auto mb-8">
+    <h2 class="text-textcolor-light text-3xl font-bold mb-8">Walkthrough</h2>
+    <div class="relative w-full" style="padding-bottom: 56.25%;">
+      <iframe
+        class="absolute top-0 left-0 w-full h-full"
+        src="https://www.youtube.com/embed/REopj8A9Y7o"
+        title="Viral Spiral v0.2.0 walkthrough"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+      >
+      </iframe>
+    </div>
+  </div>
+  <div class="max-w-4xl mx-auto mb-8">
+    <h2 class="text-textcolor-light text-3xl font-bold mb-8">Get Involved</h2>
+
+    <div class="space-y-6 text-textcolor-light text-base">
+      <div>
+        <h3 class="text-xl font-medium text-textcolor-light mb-1">Sign up for playtests</h3>
+        <p>
+          We're hosting game nights to walk new players through the game and get feedback.
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSeqA61r5WQLz0G0XQGO58AnkRqLfBOB6liSDBaD6r-u_h74Kg/viewform"
+            class="text-[#E76D67] underline"
+          >
+            Sign up here
+          </a>
+          to get an invite.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-xl font-medium text-textcolor-light mb-1">Building in public</h3>
+        <p>
+          Track the project's progress as we build this in public <a
+            href="https://github.com/tattle-made/viral-spiral"
+            class="text-[#E76D67] underline"
+          >here</a>.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-xl font-medium text-textcolor-light mb-1">Sponsor the project</h3>
+        <p>
+          You can support the development of the project by becoming a sponsor <a
+            href="https://github.com/sponsors/tattle-made"
+            class="text-[#E76D67] underline"
+          >here</a>, or email us at <a
+            href="mailto:denny@tattle.co.in"
+            class="text-blue-600 underline"
+          >denny@tattle.co.in</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-textcolor-light text-3xl font-bold mb-8">Team</h2>
+    <div class="divide-y divide-gray-200">
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Adhiraj Singh</span>
+        <span class="text-gray-700">Game Designer</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Aman Jotwani</span>
+        <span class="text-gray-700">Senior Game Writer</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Farah Ahmad</span>
+        <span class="text-gray-700">Art Director</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Rishav Thaker</span>
+        <span class="text-gray-700">Senior Fullstack Engineer</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Tarunima Prabhakar</span>
+        <span class="text-gray-700">Researcher</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Denny George</span>
+        <span class="text-gray-700">Product Engineer</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Krys Martis</span>
+        <span class="text-gray-700">Game Writer</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Mitali Panganti</span>
+        <span class="text-gray-700">Illustrator</span>
       </div>
     </div>
   </div>
