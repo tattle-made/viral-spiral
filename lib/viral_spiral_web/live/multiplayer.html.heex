@@ -34,7 +34,6 @@
             <div class="mb-6">
               <h3 class="text-textcolor-light text-2xl font-bold">Create Room</h3>
             </div>
-
             <.simple_form_home for={@form} phx-submit="create_new_room">
               <.input field={@form[:player_name]} label="Username" />
               <:actions>
@@ -71,7 +70,6 @@
             <div class="mb-8">
               <h3 class="text-textcolor-light text-2xl font-bold">Join Room</h3>
             </div>
-
             <.simple_form_home for={@join_room_form} phx-submit="join_room">
               <.input field={@join_room_form[:room_name]} label="Room Name" />
               <.input
@@ -86,6 +84,177 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+<div class="bg-white py-12 px-4">
+  <div class="max-w-4xl mx-auto mb-8">
+    <h2 class="text-textcolor-light text-3xl font-bold mb-8">Rules</h2>
+    <div class="mb-8">
+      <div class="flex flex-col items-start mb-6">
+        <img src="/images/player-card.png" alt="Sample Score Card" class="w-96 object-contain" />
+        <p class="text-gray-700 text-lg max-w-md">
+          A sample score card from the game. They belong to the red community (A), have a clout point (B) of 5 and an anti blue bias (C) of 3. They have an affinity of -2 for socks (D) and +4 for houseboats (E).
+        </p>
+      </div>
+    </div>
+    <div class="space-y-6">
+      <%= for {rule, index} <- Enum.with_index(@rules, 1) do %>
+        <div class="flex items-start gap-4">
+          <span class="text-xl font-bold text-textcolor-light"><%= index %></span>
+          <p class="text-xl text-gray-700"><%= rule %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="max-w-4xl mx-auto mb-8">
+    <h2 class="text-textcolor-light text-3xl font-bold mb-8">Walkthrough</h2>
+    <div class="relative w-full" style="padding-bottom: 56.25%;">
+      <iframe
+        class="absolute top-0 left-0 w-full h-full"
+        src="https://www.youtube.com/embed/REopj8A9Y7o"
+        title="Viral Spiral v0.2.0 walkthrough"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+      >
+      </iframe>
+    </div>
+  </div>
+  <div class="max-w-4xl mx-auto mb-8">
+    <h2 class="text-textcolor-light text-3xl font-bold mb-8">Get Involved</h2>
+
+    <div class="space-y-6 text-textcolor-light text-base">
+      <div>
+        <h3 class="text-2xl font-medium text-textcolor-light mb-1">Sign up for playtests</h3>
+        <p class="text-xl">
+          We're hosting game nights to walk new players through the game and get feedback.
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSeqA61r5WQLz0G0XQGO58AnkRqLfBOB6liSDBaD6r-u_h74Kg/viewform"
+            class="text-[#E76D67] underline"
+          >
+            Sign up here
+          </a>
+          to get an invite.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-2xl font-medium text-textcolor-light mb-1">Building in public</h3>
+        <p class="text-xl">
+          Track the project's progress as we build this in public <a
+            href="https://github.com/tattle-made/viral-spiral"
+            class="text-[#E76D67] underline"
+          >here</a>.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-2xl font-medium text-textcolor-light mb-1">Sponsor the project</h3>
+        <p class="text-xl">
+          You can support the development of the project by becoming a sponsor <a
+            href="https://github.com/sponsors/tattle-made"
+            class="text-[#E76D67] underline"
+          >here</a>, or email us at <a
+            href="mailto:denny@tattle.co.in"
+            class="text-blue-600 underline"
+          >denny@tattle.co.in</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-textcolor-light text-3xl font-bold mb-8">Team</h2>
+    <div class="divide-y divide-gray-200 text-xl">
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Adhiraj Singh</span>
+        <span class="text-gray-700">Game Designer</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Aman Jotwani</span>
+        <span class="text-gray-700">Senior Game Writer</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Farah Ahmad</span>
+        <span class="text-gray-700">Art Director</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Rishav Thaker</span>
+        <span class="text-gray-700">Senior Fullstack Engineer</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Tarunima Prabhakar</span>
+        <span class="text-gray-700">Researcher</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Denny George</span>
+        <span class="text-gray-700">Product Engineer</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Krys Martis</span>
+        <span class="text-gray-700">Game Writer</span>
+      </div>
+      <div class="flex justify-between py-3">
+        <span class="font-semibold text-textcolor-light">Mitali Panganti</span>
+        <span class="text-gray-700">Illustrator</span>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-4xl mx-auto border-t border-gray-200 pt-12 mt-12">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <a href="https://tattle.co.in" target="_blank" rel="noopener noreferrer">
+        <svg
+          width="150"
+          height="49"
+          viewBox="0 0 150 49"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g clip-path="url(#clip0)">
+            <path
+              d="M78.784 12.8H63.16C62.584 12.8 62.08 13.304 62.08 13.88C62.08 14.528 62.584 14.996 63.16 14.996H69.748V36.848C69.748 37.532 70.288 38.144 71.008 38.144C71.692 38.144 72.232 37.532 72.232 36.848V14.996H78.784C79.36 14.996 79.9 14.528 79.9 13.88C79.9 13.304 79.36 12.8 78.784 12.8ZM87.3641 19.064C83.3321 19.064 78.4361 22.232 78.4361 28.64C78.4361 35.12 83.3321 38.252 87.3641 38.252C90.3881 38.252 93.0161 36.524 94.0601 33.932V36.956C94.0601 37.604 94.6361 38.216 95.2841 38.216C95.9681 38.216 96.5441 37.604 96.5441 36.956V20.432C96.5441 19.748 96.0041 19.172 95.2841 19.172C94.6361 19.172 94.0601 19.748 94.0601 20.432V23.06C92.8361 20.432 90.1361 19.064 87.3641 19.064ZM87.6161 36.092C84.5561 36.092 80.8841 33.716 80.8841 28.64C80.8841 23.6 84.5561 21.224 87.6161 21.224C90.6761 21.224 94.2041 23.456 94.2041 28.64C94.2041 33.716 90.6761 36.092 87.6161 36.092ZM107.544 35.804C107.148 35.912 106.68 36.056 106.104 36.056C105.168 36.056 104.664 35.624 104.664 34.472V21.368H107.688C108.3 21.368 108.768 20.972 108.768 20.324C108.768 19.676 108.3 19.28 107.688 19.28H104.664V16.004C104.664 15.32 104.124 14.78 103.439 14.78C102.756 14.78 102.216 15.32 102.216 16.004V19.28H100.452C99.8395 19.28 99.4075 19.676 99.4075 20.324C99.4075 20.972 99.8395 21.368 100.452 21.368H102.216V34.616C102.216 37.532 103.872 38.18 105.6 38.18C106.968 38.18 108.768 37.82 108.768 36.632C108.768 36.02 108.228 35.588 107.544 35.804ZM118.688 35.804C118.292 35.912 117.824 36.056 117.248 36.056C116.312 36.056 115.808 35.624 115.808 34.472V21.368H118.832C119.444 21.368 119.912 20.972 119.912 20.324C119.912 19.676 119.444 19.28 118.832 19.28H115.808V16.004C115.808 15.32 115.268 14.78 114.584 14.78C113.9 14.78 113.36 15.32 113.36 16.004V19.28H111.596C110.984 19.28 110.552 19.676 110.552 20.324C110.552 20.972 110.984 21.368 111.596 21.368H113.36V34.616C113.36 37.532 115.016 38.18 116.744 38.18C118.112 38.18 119.912 37.82 119.912 36.632C119.912 36.02 119.372 35.588 118.688 35.804ZM125.585 36.92V13.52C125.585 12.872 125.045 12.296 124.361 12.296C123.677 12.296 123.137 12.872 123.137 13.52V36.92C123.137 37.568 123.677 38.18 124.361 38.18C125.045 38.18 125.585 37.568 125.585 36.92ZM138.346 19.064C134.242 19.064 129.202 22.232 129.202 28.64C129.202 35.12 134.098 38.18 138.634 38.18C140.902 38.18 143.098 37.496 144.61 36.128C145.15 35.624 145.294 35.3 145.294 34.976C145.294 34.436 144.934 34.004 144.322 34.004C143.998 34.004 143.71 34.184 143.242 34.544C142.018 35.552 140.434 36.092 138.706 36.092C135.43 36.092 132.01 34.04 131.722 29.612H145.762C146.77 29.612 147.346 29.144 147.346 28.208C147.346 22.268 142.45 19.064 138.346 19.064ZM138.346 21.224C141.262 21.224 144.682 23.24 144.97 27.632H131.722C132.046 23.24 135.466 21.224 138.346 21.224Z"
+              fill="#514e80"
+            >
+            </path>
+            )
+            <path
+              d="M24.5432 0.000155254C10.9609 -0.0862636 0 10.9033 0 24.4999C0 37.7652 10.5576 48.582 23.7222 48.9996V35.7055C13.4095 35.4607 5.73251 31.8599 5.73251 27.1213C5.73251 24.7448 7.69136 22.5267 11.2058 20.9711C11.3642 20.8847 11.4506 20.8847 11.6091 20.8127C12.2572 20.5678 12.9198 20.8127 13.251 21.4752C13.4959 22.1378 13.251 22.7859 12.6029 23.1172L12.2716 23.2756C9.73663 24.4279 8.26749 25.8106 8.26749 27.1213C8.26749 29.9875 15.1379 33.2714 24.9465 33.2714C34.7551 33.2714 41.6255 29.9875 41.6255 27.1213C41.6255 25.8106 40.1564 24.4135 37.6214 23.2756C36.9733 23.0308 36.7284 22.2962 36.9733 21.6337C37.2181 20.9711 37.9527 20.7263 38.6152 20.9711C42.1296 22.5267 44.0885 24.7448 44.0885 27.1213C44.0165 31.7735 36.6708 35.3311 26.5885 35.6911V48.9132C39.1049 47.8474 49 37.3619 49 24.4999C49 10.9753 38.0391 0.000155254 24.5432 0.000155254ZM29.93 22.4547L24.6152 27.611C24.4568 27.8558 24.1255 28.0143 23.7942 28.0143C23.463 28.0143 23.1461 27.9278 22.9012 27.683L20.3663 25.148C19.8765 24.6583 19.8765 23.9238 20.3663 23.4341C20.856 22.9444 21.5905 22.9444 22.0802 23.4341L23.7942 25.148L28.216 20.7263C28.7058 20.2366 29.4403 20.2366 29.93 20.7263C30.4198 21.216 30.4198 21.9505 29.93 22.4547ZM35.1728 27.9423C35.1728 28.6768 34.6831 29.1665 33.9486 29.1665C33.3004 29.1665 32.7243 28.5904 32.7243 27.9423V19.9917C32.7243 15.8148 29.2819 12.3725 25.1193 12.3725C20.9568 12.3725 17.5144 15.8148 17.5144 19.9917V27.9423C17.5144 28.6048 16.9383 29.1665 16.2901 29.1665C15.642 29.1665 15.0658 28.5904 15.0658 27.9423V19.9917C15.0658 14.4177 19.5597 9.90952 25.1193 9.90952C30.679 9.90952 35.1728 14.5041 35.1728 19.9917V27.9423Z"
+              fill="#514e80"
+            >
+            </path>
+          </g>
+          <defs>
+            <clipPath id="clip0">
+              <rect width="150" height="49" fill="white"></rect>
+            </clipPath>
+          </defs>
+        </svg>
+      </a>
+
+      <div class="flex items-center space-x-6">
+        <a href="https://github.com/tattle-made" target="_blank" rel="noopener noreferrer">
+          <svg class="w-6 h-6" fill="#514e80" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.373 0 12a12 12 0 008.207 11.387c.6.112.793-.262.793-.582v-2.257c-3.338.726-4.033-1.415-4.033-1.415a3.177 3.177 0 00-1.335-1.754c-1.092-.747.082-.732.082-.732a2.518 2.518 0 011.837 1.238 2.548 2.548 0 003.48.996 2.548 2.548 0 01.761-1.604c-2.665-.304-5.467-1.332-5.467-5.932a4.64 4.64 0 011.238-3.212 4.3 4.3 0 01.117-3.17s1.008-.322 3.3 1.23a11.418 11.418 0 016 0c2.292-1.552 3.3-1.23 3.3-1.23.492 1.305.417 2.691.117 3.17a4.64 4.64 0 011.238 3.212c0 4.61-2.807 5.625-5.48 5.922.431.371.81 1.102.81 2.222v3.293c0 .32.192.694.801.577A12.005 12.005 0 0024 12c0-6.627-5.373-12-12-12z" />
+          </svg>
+        </a>
+        <a href="https://twitter.com/tattlemade" target="_blank" rel="noopener noreferrer">
+          <svg class="w-6 h-6" fill="#514e80" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0022.4.36a9.86 9.86 0 01-2.83 1.08A4.92 4.92 0 0016.11 0c-2.61 0-4.72 2.12-4.72 4.73 0 .37.04.73.12 1.07C7.69 5.64 4.07 3.75 1.64.78a4.71 4.71 0 00-.64 2.38c0 1.64.83 3.1 2.09 3.94A4.93 4.93 0 01.96 6v.06c0 2.28 1.6 4.18 3.75 4.61a4.93 4.93 0 01-2.13.08c.6 1.88 2.34 3.25 4.4 3.29A9.87 9.87 0 010 19.54a13.94 13.94 0 007.55 2.21c9.05 0 14-7.5 14-14 0-.21 0-.43-.02-.64A10.13 10.13 0 0024 4.59a9.8 9.8 0 01-2.82.78 5.07 5.07 0 002.2-2.8z" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-6 text-lg text-center text-textcolor-light">
+      The initial funding for this project came through the
+      <a
+        href="https://www.mercatus.org/announcements/mercatus-program-pluralism-civil-exchange-announces-first-cohort-grant-recipients"
+        class="text-[#E76D67] underline ml-1"
+        target="_blank"
+      >
+        Pluralism and Civic Exchange grant
+      </a>
+      from the Mercatus Center.
     </div>
   </div>
 </div>
