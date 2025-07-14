@@ -339,20 +339,15 @@ defmodule ViralSpiral.Room.State do
   end
 
   def generate_game_over_message(%State{} = state) do
-    case state.room.state do
-      :over ->
-        {_id, player} =
-          state.players
-          |> Enum.max_by(fn {_id, player} -> player.clout end, fn -> {nil, nil} end)
+    {_id, player} =
+      state.players
+      |> Enum.max_by(fn {_id, player} -> player.clout end, fn -> {nil, nil} end)
 
-        %{
-          winner: player.name,
-          winner_message: "The world has collapsed in chaos, #{player.name} has won the game!"
-        }
-
-      _ ->
-        %{error: "Game is not finished yet"}
-    end
+    %{
+      winner: player.name,
+      winner_message:
+        "The world has collapsed in chaos, #{player.name} has won the game with clout #{player.clout}!"
+    }
   end
 
   # defimpl Inspect do
