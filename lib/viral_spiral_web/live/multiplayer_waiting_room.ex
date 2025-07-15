@@ -11,11 +11,14 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
       <div class="self-center text-center border-4 border-[#3E6FF2] rounded-md p-8">
         <p class="text-md mb-4 text-textcolor-light text-xl font-semibold flex items-center justify-center gap-2">
           Share the Room Link with other players
-          <div class="w-full ">
+          <div
+            id="room-link-copy-clipboard-container"
+            class="w-full"
+            phx-hook="RoomLinkCopyClipboardHook"
+          >
             <div class="relative">
-              <label for="npm-install-copy-button" class="sr-only">Label</label>
               <input
-                id="npm-install-copy-button"
+                id="display-join-link"
                 type="text"
                 class="col-span-6 bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg block w-full p-2.5 "
                 value={"#{@full_host}/join/#{@room_name}"}
@@ -23,8 +26,8 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
                 readonly
               />
               <button
-                data-copy-to-clipboard-target="npm-install-copy-button"
-                data-tooltip-target="tooltip-copy-npm-install-copy-button"
+                data-copy-to-clipboard-target="display-join-link"
+                data-tooltip-target="tooltip-copy-display-join-link"
                 class="absolute end-2 top-1/2 -translate-y-1/2  hover:bg-gray-100 rounded-lg p-2 inline-flex items-center justify-center"
               >
                 <span id="default-icon">
@@ -49,7 +52,7 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
                 </span>
               </button>
               <div
-                id="tooltip-copy-npm-install-copy-button"
+                id="tooltip-copy-display-join-link"
                 role="tooltip"
                 class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip "
               >
