@@ -15,7 +15,7 @@ defmodule ViralSpiralWeb.Multiplayer do
     "Sharing prejudice cards also counts towards the global CHAOS counter. Counting down from 10, once it reaches 0, the game ends and every player loses instantly.",
     "Crossing certain thresholds in your opinion or prejudice counters unlock certain powers - having +2 or -2 opinion lets you CANCEL other players, if you can get players with the same opinion as you to vote it into play. +/-3 prejudice lets you MANUFACTURE fake news, by adding prejudice to any card you might have in your hand.",
     "Crossing +/-5 on any opinion or prejudice unlocks the VIRAL SPIRAL power - that lets you share 1 unique card from your hand to every player in the same turn - often a game-changing, game-ending move.",
-    "When the game ends the player with most CLOUT, wins! OR the first player to reach 10 CLOUT without letting CHAOS hit 0, wins!"
+    "The first player to reach 10 CLOUT without letting CHAOS hit 0, wins!"
   ]
 
   def mount(_params, _session, socket) do
