@@ -18,7 +18,7 @@ config :viral_spiral, ViralSpiralWeb.Endpoint,
   adapter: Phoenix.Endpoint.Cowboy2Adapter,
   render_errors: [
     formats: [html: ViralSpiralWeb.ErrorHTML, json: ViralSpiralWeb.ErrorJSON],
-    layout: false
+    layout: {ViralSpiralWeb.Layouts, :root}
   ],
   pubsub_server: ViralSpiral.PubSub,
   live_view: [signing_salt: "VHV321XJ"]
