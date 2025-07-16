@@ -20,6 +20,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
         chaos: state.room.chaos,
         state: state.room.state
       },
+      end_game_message: generate_end_game_message(state),
       me: make_me(state, player_me),
       can_use_power: !state.turn.power,
       power_cancel: make_cancel(state, player_me_id),
@@ -216,5 +217,17 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
     %{
       enabled: enabled
     }
+  end
+
+  def generate_end_game_message(%State{} = state) do
+    case state.room.state do
+      :over ->
+        state
+        |> State.game_over_status()
+        |> State.generate_game_over_message()
+
+      _ ->
+        nil
+    end
   end
 end

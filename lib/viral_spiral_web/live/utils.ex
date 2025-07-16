@@ -6,8 +6,18 @@ defmodule ViralSpiralWeb.Utils do
 
   def maybe_put_end_banner(socket, room_state) do
     case room_state.room.state do
-      :over -> put_banner(socket, "todo: add Game End Message")
-      _ -> socket
+      :over ->
+        case room_state.end_game_message do
+          %{winner_message: winner_message, summary: summary} ->
+            full_message = [winner_message, summary] |> Enum.join(" ")
+            put_banner(socket, full_message)
+
+          _ ->
+            put_banner(socket, "Game over")
+        end
+
+      _ ->
+        socket
     end
   end
 end

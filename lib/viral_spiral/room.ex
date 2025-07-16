@@ -96,10 +96,16 @@ defmodule ViralSpiral.Room do
   end
 
   def game_end_change(%State{} = state) do
-    change =
-      State.game_over_status(state)
-      |> Entity.make_game_end_change()
+    game_status = State.game_over_status(state)
 
+    simple_status =
+      case game_status do
+        {:over, :world, _data} -> {:over, :world}
+        {:over, :player, winner_id, _data} -> {:over, :player, winner_id}
+        {:no_over} -> {:no_over}
+      end
+
+    change = Entity.make_game_end_change(simple_status)
     [{state.room, change}]
   end
 end

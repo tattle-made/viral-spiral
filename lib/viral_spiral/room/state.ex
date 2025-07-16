@@ -331,21 +331,8 @@ defmodule ViralSpiral.Room.State do
         false -> nil
       end
 
-    cond do
-      chaos_threshold_crossed? -> {:over, :world}
-      player_won? -> {:over, :player, winner_id}
-      true -> {:no_over}
-    end
-  end
-
-  def generate_game_over_message(%State{} = state) do
+    # bias and affinity data
     players = state.players |> Map.values()
-
-    # Sort players by clout descending
-    sorted = Enum.sort_by(players, & &1.clout, :desc)
-    [winner | rest] = sorted
-    runner_up = Enum.at(sorted, 1)
-    margin = if runner_up, do: winner.clout - runner_up.clout, else: winner.clout
 
     # Find most biased players (sum of bias values)
     bias_sums = Enum.map(players, fn p -> {p, Enum.reduce(Map.values(p.biases), 0, &+/2)} end)
@@ -369,70 +356,134 @@ defmodule ViralSpiral.Room.State do
       |> Enum.filter(fn {_p, sum} -> sum == max_affinity and max_affinity > 0 end)
       |> Enum.map(fn {p, _sum} -> p end)
 
-    margin_line =
-      cond do
-        margin >= 5 ->
-          "What a landslide! #{winner.name} left everyone in the dust."
-
-        margin >= 2 ->
-          "A solid win for #{winner.name}, but #{runner_up && runner_up.name} kept it interesting."
-
-        margin > 0 ->
-          "That was close! #{winner.name} just edged out #{runner_up && runner_up.name}."
-
-        true ->
-          "A bizarre finish!"
-      end
-
-    bias_line =
-      cond do
-        most_biased_players == [] ->
-          "No one showed much bias this game."
-
-        length(most_biased_players) == 1 ->
-          "#{hd(most_biased_players).name} had the most bias (#{max_bias}). Hope you sleep well tonight, #{hd(most_biased_players).name}!"
-
-        true ->
-          names = most_biased_players |> Enum.map(& &1.name) |> Enum.join(", ")
-
-          "It was a bias fest! #{names} all tied for most bias. Hope you all sleep well tonight!"
-      end
-
-    affinity_line =
-      cond do
-        most_affinity_players == [] ->
-          "No one really leaned into their affinities."
-
-        length(most_affinity_players) == 1 ->
-          "#{hd(most_affinity_players).name} was all about those affinities!"
-
-        true ->
-          names = most_affinity_players |> Enum.map(& &1.name) |> Enum.join(", ")
-          "Affinity overload! #{names} all tied for most affinity!"
-      end
-
-    runner_up_line =
-      if runner_up do
-        "#{runner_up.name} came in second place with clout #{runner_up.clout}."
-      else
-        "No runner-up this time."
-      end
-
-    %{
-      winner: winner.name,
-      winner_message:
-        "The world has collapsed in chaos, #{winner.name} has won the game with clout #{winner.clout}!",
-      summary:
-        Enum.join(
-          [
-            margin_line,
-            runner_up_line,
-            bias_line,
-            affinity_line
-          ],
-          " "
-        )
+    bias_data = %{
+      most_biased_players: most_biased_players,
+      max_bias: max_bias
     }
+
+    affinity_data = %{
+      most_affinity_players: most_affinity_players,
+      max_affinity: max_affinity
+    }
+
+    cond do
+      chaos_threshold_crossed? ->
+        {:over, :world,
+         %{
+           bias_data: bias_data,
+           affinity_data: affinity_data
+         }}
+
+      player_won? ->
+        # Sort players by clout descending
+        sorted = Enum.sort_by(players, & &1.clout, :desc)
+        [winner | rest] = sorted
+        runner_up = Enum.at(sorted, 1)
+        margin = if runner_up, do: winner.clout - runner_up.clout, else: winner.clout
+
+        {:over, :player, winner_id,
+         %{
+           winner: winner,
+           runner_up: runner_up,
+           margin: margin,
+           bias_data: bias_data,
+           affinity_data: affinity_data
+         }}
+
+      true ->
+        {:no_over}
+    end
+  end
+
+  def generate_game_over_message(game_status) do
+    case game_status do
+      {:over, :world, %{bias_data: bias_data, affinity_data: affinity_data}} ->
+        bias_line = generate_bias_line(bias_data)
+        affinity_line = generate_affinity_line(affinity_data)
+
+        %{
+          winner_message: "The world has collapsed into chaos!",
+          summary: Enum.join([bias_line, affinity_line], " ")
+        }
+
+      {:over, :player, _winner_id,
+       %{
+         winner: winner,
+         runner_up: runner_up,
+         margin: margin,
+         bias_data: bias_data,
+         affinity_data: affinity_data
+       }} ->
+        margin_line = generate_margin_line(winner, runner_up, margin)
+        runner_up_line = generate_runner_up_line(runner_up)
+        bias_line = generate_bias_line(bias_data)
+        affinity_line = generate_affinity_line(affinity_data)
+
+        %{
+          winner_message:
+            "The world has collapsed into chaos! #{winner.name} has won the game with clout #{winner.clout}!",
+          summary: Enum.join([margin_line, runner_up_line, bias_line, affinity_line], " ")
+        }
+
+      {:no_over} ->
+        %{message: "Game is still ongoing"}
+    end
+  end
+
+  # Helper functions to generate text lines
+  defp generate_margin_line(winner, runner_up, margin) do
+    cond do
+      margin >= 5 ->
+        "What a landslide! #{winner.name} left everyone in the dust."
+
+      margin >= 2 ->
+        "A solid win for #{winner.name}, but #{runner_up && runner_up.name} kept it interesting."
+
+      margin > 0 ->
+        "That was close! #{winner.name} just edged out #{runner_up && runner_up.name}."
+
+      true ->
+        "A bizarre finish!"
+    end
+  end
+
+  defp generate_runner_up_line(runner_up) do
+    if runner_up do
+      "#{runner_up.name} came in second place with clout #{runner_up.clout}."
+    else
+      "No runner-up this time."
+    end
+  end
+
+  defp generate_bias_line(%{most_biased_players: most_biased_players, max_bias: max_bias}) do
+    cond do
+      most_biased_players == [] ->
+        "No one showed much bias this game."
+
+      length(most_biased_players) == 1 ->
+        "#{hd(most_biased_players).name} had the most bias. Hope you sleep well tonight, #{hd(most_biased_players).name}!"
+
+      true ->
+        names = most_biased_players |> Enum.map(& &1.name) |> Enum.join(", ")
+        "It was a bias fest! #{names} all tied for most bias. Hope you all sleep well tonight!"
+    end
+  end
+
+  defp generate_affinity_line(%{
+         most_affinity_players: most_affinity_players,
+         max_affinity: max_affinity
+       }) do
+    cond do
+      most_affinity_players == [] ->
+        "No one really leaned into their affinities."
+
+      length(most_affinity_players) == 1 ->
+        "#{hd(most_affinity_players).name} was all about those affinities!"
+
+      true ->
+        names = most_affinity_players |> Enum.map(& &1.name) |> Enum.join(", ")
+        "Affinity overload! #{names} all tied for most affinity!"
+    end
   end
 
   # defimpl Inspect do

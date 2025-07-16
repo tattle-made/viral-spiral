@@ -58,14 +58,33 @@ defmodule ViralSpiral.Room.StateTest do
 
     test "world collapse", %{state: state} do
       state = state |> StateTransformation.update_room(%{chaos: 10})
-      assert {:over, :world} == State.game_over_status(state)
+
+      assert {:over, :world, %{bias_data: bias_data, affinity_data: affinity_data}} =
+               State.game_over_status(state)
+
+      assert %{most_biased_players: _, max_bias: _} = bias_data
+      assert %{most_affinity_players: _, max_affinity: _} = affinity_data
     end
 
     test "player win", %{state: state, players: players} do
       %{adhiraj: adhiraj} = StateTransformation.player_id_by_names(state)
 
       state = state |> StateTransformation.update_player(adhiraj, %{clout: 10})
-      assert {:over, :player, adhiraj} == State.game_over_status(state)
+
+      assert {:over, :player, ^adhiraj,
+              %{
+                winner: winner,
+                runner_up: runner_up,
+                margin: margin,
+                bias_data: bias_data,
+                affinity_data: affinity_data
+              }} = State.game_over_status(state)
+
+      assert winner.id == adhiraj
+      assert winner.clout == 10
+      assert is_integer(margin)
+      assert %{most_biased_players: _, max_bias: _} = bias_data
+      assert %{most_affinity_players: _, max_affinity: _} = affinity_data
     end
   end
 
@@ -100,18 +119,39 @@ defmodule ViralSpiral.Room.StateTest do
           affinities: %{sock: 0, houseboat: 0}
         })
 
-      state = put_in(state.room.state, :over)
-      IO.inspect(state, label: "STATEEEE")
-      %{state: state}
+      %{state: state, players: players}
     end
 
-    test "returns winner's name when game is over", %{state: state} do
-      result = State.generate_game_over_message(state)
+    test "returns world collapse message when chaos >= 10", %{state: state} do
+      state = state |> StateTransformation.update_room(%{chaos: 10})
 
-      assert result == %{
-               winner: "adhiraj",
-               winner_message: "The world has collapsed in chaos, adhiraj has won the game!"
-             }
+      game_status = State.game_over_status(state)
+      result = State.generate_game_over_message(game_status)
+
+      assert %{
+               winner_message: "The world has collapsed into chaos!",
+               summary: summary
+             } = result
+
+      assert is_binary(summary)
+      assert String.length(summary) > 0
+    end
+
+    test "returns winner message when player wins", %{state: state, players: players} do
+      %{adhiraj: adhiraj} = StateTransformation.player_id_by_names(state)
+      state = state |> StateTransformation.update_player(adhiraj, %{clout: 10})
+
+      game_status = State.game_over_status(state)
+      result = State.generate_game_over_message(game_status)
+
+      assert %{
+               winner_message: "adhiraj has won the game with clout 10!",
+               summary: summary
+             } = result
+
+      assert is_binary(summary)
+      assert String.length(summary) > 0
+      assert String.contains?(summary, "adhiraj")
     end
   end
 end
