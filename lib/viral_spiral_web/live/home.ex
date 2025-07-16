@@ -30,7 +30,7 @@ defmodule ViralSpiralWeb.Home do
       end
 
     # {:noreply, push_navigate(socket, to: "/waiting-room/#{name}")}
-    {:noreply, push_navigate(socket, to: "/room/#{room_name}")}
+    {:noreply, push_navigate(socket, to: "/designer/room/#{room_name}")}
   end
 
   def handle_event("increment_counter", _params, socket) do

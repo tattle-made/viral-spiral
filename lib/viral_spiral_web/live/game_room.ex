@@ -25,6 +25,8 @@ defmodule ViralSpiralWeb.GameRoom do
           pid
       end
 
+    IO.inspect("hi")
+
     genserver_state = :sys.get_state(pid)
     # IO.inspect(genserver_state)
     room_state = StateAdapter.game_room(genserver_state)
