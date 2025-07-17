@@ -8,10 +8,13 @@
         <%= Application.spec(:viral_spiral, :vsn) %>
       </p>
     </div>
-    
+
     <div class="flex items-center gap-4 font-semibold leading-6 text-zinc-900">
       <div class="w-8 h-8 rounded-full">
-        <.button  phx-click={JS.dispatch("audio:enable")} class="w-8 h-8 flex flex-col justify-center items-center">
+        <.button
+          phx-click={JS.dispatch("audio:enable")}
+          class="w-8 h-8 flex flex-col justify-center items-center"
+        >
           <.icon name="hero-musical-note-solid" class="w-4 h-4" />
         </.button>
       </div>
@@ -28,8 +31,6 @@
   <div class="mx-auto w-full h-full">
     <.flash_group flash={@flash} />
     <%= @inner_content %>
-    <.banner>
-      <.link navigate={"/"}>Play Again </.link>
-    </.banner>
+    <.banner />
   </div>
 </main>
