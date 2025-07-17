@@ -7,6 +7,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Entity.Player.Map, as: PlayerMap
   alias ViralSpiral.Room.State
+  alias ViralSpiral.Room.Template
 
   def make_game_room(%State{} = state, player_name) do
     player_me = PlayerMap.me(state.players, player_name)
@@ -222,9 +223,13 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
   def generate_end_game_message(%State{} = state) do
     case state.room.state do
       :over ->
-        state
-        |> State.game_over_status()
-        |> State.generate_game_over_message()
+        case State.game_over_status(state) do
+          {:over, :world, data} ->
+            Template.generate_game_over_message(data)
+
+          {:over, :player, _winner_id, data} ->
+            Template.generate_game_over_message(data)
+        end
 
       _ ->
         nil
