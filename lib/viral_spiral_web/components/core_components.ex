@@ -681,12 +681,6 @@ defmodule ViralSpiralWeb.CoreComponents do
           <p id="message" class="text-lg text-center text-zinc-800 font-medium"></p>
           <div class="m-4"></div>
           <%= if assigns[:inner_block], do: render_slot(@inner_block) %>
-          <.link
-            navigate="/"
-            class="mt-4 px-6 py-2 bg-fuchsia-700 hover:bg-fuchsia-900 text-white font-semibold rounded-lg shadow text-lg transition-all duration-150 text-center"
-          >
-            Play Again
-          </.link>
         </div>
       </div>
     </div>

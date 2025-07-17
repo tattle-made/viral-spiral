@@ -31,6 +31,13 @@
   <div class="mx-auto w-full h-full">
     <.flash_group flash={@flash} />
     <%= @inner_content %>
-    <.banner />
+    <.banner>
+      <.link
+        navigate="/"
+        class="px-6 py-2 bg-fuchsia-700 hover:bg-fuchsia-900 text-white font-semibold rounded-lg shadow text-lg transition-all duration-150 text-center"
+      >
+        Play Again
+      </.link>
+    </.banner>
   </div>
 </main>
