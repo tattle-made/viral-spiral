@@ -67,7 +67,7 @@ defmodule ViralSpiral.Room.StateTest do
     end
 
     test "player win", %{state: state, players: players} do
-      %{adhiraj: adhiraj} = StateTransformation.player_id_by_names(state)
+      %{adhiraj: adhiraj} = players
 
       state = state |> StateTransformation.update_player(adhiraj, %{clout: 10})
 
@@ -145,7 +145,8 @@ defmodule ViralSpiral.Room.StateTest do
       result = State.generate_game_over_message(game_status)
 
       assert %{
-               winner_message: "adhiraj has won the game with clout 10!",
+               winner_message:
+                 "The world has collapsed into chaos! adhiraj has won the game with clout 10!",
                summary: summary
              } = result
 
