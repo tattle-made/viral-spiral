@@ -108,7 +108,8 @@
                         JS.push("initiate_viral_spiral",
                           value: %{
                             from_id: @state.me.id,
-                            card_id: card.id
+                            card: %{id: card.id, veracity: card.veracity},
+                            to_id: @state.others |> Enum.map(&Map.get(&1, :id))
                           }
                         ),
                       else: nil

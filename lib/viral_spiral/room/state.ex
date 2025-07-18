@@ -154,6 +154,7 @@ defmodule ViralSpiral.Room.State do
   end
 
   defp get_target(%State{} = state, %PowerViralSpiral{} = power) do
+    state.power_viralspiral
   end
 
   defp get_target(%State{} = state, %CheckSource{} = _check_source) do

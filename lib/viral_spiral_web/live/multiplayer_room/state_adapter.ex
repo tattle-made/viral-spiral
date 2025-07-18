@@ -33,7 +33,8 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
           %{
             id: card.id,
             image: card.image,
-            headline: maybe_patch_headline(card, state.dynamic_card)
+            headline: maybe_patch_headline(card, state.dynamic_card),
+            veracity: card.veracity
           }
         end),
       others: make_others(state, other_players)
