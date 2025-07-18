@@ -2,6 +2,7 @@ defmodule ViralSpiral.Room.StateTest do
   use ExUnit.Case
   alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Room.State
+  alias ViralSpiral.Room.Template
 
   test "identity_stats/0" do
     :rand.seed(:exsss, {123, 80, 96})
@@ -36,12 +37,12 @@ defmodule ViralSpiral.Room.StateTest do
     stats = State.identity_stats(state)
 
     assert %{
-             dominant_community: :yellow,
-             other_community: :blue,
+             dominant_community: :blue,
+             other_community: :red,
              oppressed_community: :red,
              unpopular_affinity: :sock,
              popular_affinity: :houseboat,
-             player_community: :red
+             player_community: :blue
            } = stats
   end
 
@@ -58,14 +59,34 @@ defmodule ViralSpiral.Room.StateTest do
 
     test "world collapse", %{state: state} do
       state = state |> StateTransformation.update_room(%{chaos: 10})
-      assert {:over, :world} == State.game_over_status(state)
+
+      assert {:over, :world,
+              %Template.WorldEndTemplateData{bias_data: bias_data, affinity_data: affinity_data}} =
+               State.game_over_status(state)
+
+      assert %{most_biased_players: _, max_bias: _} = bias_data
+      assert %{most_affinity_players: _, max_affinity: _} = affinity_data
     end
 
     test "player win", %{state: state, players: players} do
-      %{adhiraj: adhiraj} = StateTransformation.player_id_by_names(state)
+      %{adhiraj: adhiraj} = players
 
       state = state |> StateTransformation.update_player(adhiraj, %{clout: 10})
-      assert {:over, :player, adhiraj} == State.game_over_status(state)
+
+      assert {:over, :player, ^adhiraj,
+              %Template.PlayerWinTemplateData{
+                winner: winner,
+                runner_up: runner_up,
+                margin: margin,
+                bias_data: bias_data,
+                affinity_data: affinity_data
+              }} = State.game_over_status(state)
+
+      assert winner.id == adhiraj
+      assert winner.clout == 10
+      assert is_integer(margin)
+      assert %{most_biased_players: _, max_bias: _} = bias_data
+      assert %{most_affinity_players: _, max_affinity: _} = affinity_data
     end
   end
 end
