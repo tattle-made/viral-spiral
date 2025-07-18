@@ -17,8 +17,8 @@ defmodule ViralSpiral.Room.Actions.Player.ViralSpiralInitiate do
 
   def changeset(action, attrs \\ %{}) do
     action
-    |> cast(attrs, [:from_id])
-    |> validate_required([:from_id])
+    |> cast(attrs, [:from_id, :to_id])
+    |> validate_required([:from_id, :to_id])
     |> cast_embed(:card, with: &card_changeset/2)
   end
 

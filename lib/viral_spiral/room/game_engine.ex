@@ -5,6 +5,7 @@ defmodule ViralSpiral.Room.GameEngine do
   All player actions are sent to this genserver, which returns or broadcasts the changes made to the game State.
   """
   require IEx
+  alias ViralSpiral.Room.Actions.Player.ViralSpiralInitiate
   alias ViralSpiral.Room.Actions.Engine.OverwriteState
   alias ViralSpiral.Room.Actions.Engine.DrawCard
   alias ViralSpiral.Room.Actions.Player.StartGame
@@ -163,6 +164,14 @@ defmodule ViralSpiral.Room.GameEngine do
 
   @impl true
   def handle_call(%CancelPlayerVote{} = action, _from, state) do
+    with new_state <- Reducer.reduce(state, action),
+         {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
+      {:reply, new_state, new_state}
+    end
+  end
+
+  @impl true
+  def handle_call(%ViralSpiralInitiate{} = action, _from, state) do
     with new_state <- Reducer.reduce(state, action),
          {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
       {:reply, new_state, new_state}
