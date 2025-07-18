@@ -56,12 +56,14 @@ defmodule ViralSpiralWeb.Multiplayer do
 
   def handle_event("create_new_room", params, socket) do
     room_name = EntityRoom.name()
+    IO.inspect(params, label: "PARAMS ARE: ")
     action = Actions.reserve_room(params)
 
     with %{name: reserved_room_name} <- Room.reserve(room_name, :multiplayer),
          {:ok, room_gen} <- Room.room_gen!(reserved_room_name),
          %State{} <- GenServer.call(room_gen, action) do
       path = "/room/waiting-room/#{reserved_room_name}"
+      query_string = URI.encode_query(socket.assigns[:params] || %{})
 
       socket =
         socket
@@ -69,7 +71,7 @@ defmodule ViralSpiralWeb.Multiplayer do
           room_name: room_name,
           player_name: action.player_name
         })
-        |> push_navigate(to: path)
+        |> push_navigate(to: proxy_path(socket, path) <> query_string)
 
       {:noreply, socket}
     else
@@ -83,6 +85,7 @@ defmodule ViralSpiralWeb.Multiplayer do
     IO.inspect(params)
     room_name = params["room_name"]
     player_name = params["player_name"]
+    query_string = URI.encode_query(socket.assigns[:params] || %{})
 
     with {:ok, room_gen} <- Room.room_gen!(room_name),
          _state <- GenServer.call(room_gen, Actions.join_room(%{player_name: player_name})),
@@ -92,7 +95,7 @@ defmodule ViralSpiralWeb.Multiplayer do
       socket =
         socket
         |> push_event("vs:mp_room:join_room", %{room_name: room_name, player_name: player_name})
-        |> push_navigate(to: path)
+        |> push_navigate(to: proxy_path(socket, path) <> query_string)
 
       {:noreply, socket}
     else

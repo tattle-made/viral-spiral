@@ -47,5 +47,10 @@ defmodule ViralSpiralWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+  plug :delete_x_frame_options
   plug ViralSpiralWeb.Router
+
+  defp delete_x_frame_options(conn, _opts) do
+    Plug.Conn.delete_resp_header(conn, "x-frame-options")
+  end
 end

@@ -8,6 +8,8 @@ defmodule ViralSpiralWeb.Router do
     plug :put_root_layout, html: {ViralSpiralWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :delete_resp_header, "x-frame-options"
+    plug ViralSpiralWeb.Plugs.DiscordProxy
   end
 
   pipeline :api do

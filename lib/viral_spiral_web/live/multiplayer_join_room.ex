@@ -47,10 +47,12 @@ defmodule ViralSpiralWeb.MultiplayerJoinRoom do
          path <- "/room/waiting-room/" <> params["room_name"] do
       PubSub.broadcast(ViralSpiral.PubSub, "waiting-room:#{room_name}", {:new_player})
 
+      query_string = URI.encode_query(socket.assigns[:params] || %{})
+
       socket =
         socket
         |> push_event("vs:mp_room:join_room", %{room_name: room_name, player_name: player_name})
-        |> push_navigate(to: path)
+        |> push_navigate(to: proxy_path(socket, path) <> "?" <> query_string)
 
       {:noreply, socket}
     else

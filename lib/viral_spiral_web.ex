@@ -44,6 +44,7 @@ defmodule ViralSpiralWeb do
 
       import Plug.Conn
       import ViralSpiralWeb.Gettext
+      import ViralSpiralWeb.ProxyHelper
 
       unquote(verified_routes())
     end
@@ -54,6 +55,7 @@ defmodule ViralSpiralWeb do
       use Phoenix.LiveView,
         layout: {ViralSpiralWeb.Layouts, :app}
 
+      import ViralSpiralWeb.ProxyHelper
       unquote(html_helpers())
     end
   end
@@ -87,6 +89,7 @@ defmodule ViralSpiralWeb do
       import ViralSpiralWeb.CoreComponents
       import ViralSpiralWeb.Gettext
       import ViralSpiralWeb.Utils
+      import ViralSpiralWeb.ProxyHelper
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
