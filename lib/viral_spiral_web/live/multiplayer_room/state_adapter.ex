@@ -227,7 +227,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
           {:over, :world, data} ->
             Template.generate_game_over_message(data)
 
-          {:over, :player, _winner_id, data} ->
+          {:over, :player, data} ->
             Template.generate_game_over_message(data)
         end
 

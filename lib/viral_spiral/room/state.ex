@@ -369,11 +369,12 @@ defmodule ViralSpiral.Room.State do
 
     cond do
       chaos_threshold_crossed? ->
-        {:over, :world,
-         %WorldEndTemplateData{
-           bias_data: bias_data,
-           affinity_data: affinity_data
-         }}
+        data = %WorldEndTemplateData{
+          bias_data: bias_data,
+          affinity_data: affinity_data
+        }
+
+        {:over, :world, data}
 
       player_won? ->
         # Sort players by clout descending
@@ -382,14 +383,15 @@ defmodule ViralSpiral.Room.State do
         runner_up = Enum.at(sorted, 1)
         margin = if runner_up, do: winner.clout - runner_up.clout, else: winner.clout
 
-        {:over, :player, winner_id,
-         %PlayerWinTemplateData{
-           winner: winner,
-           runner_up: runner_up,
-           margin: margin,
-           bias_data: bias_data,
-           affinity_data: affinity_data
-         }}
+        data = %PlayerWinTemplateData{
+          winner: winner,
+          runner_up: runner_up,
+          margin: margin,
+          bias_data: bias_data,
+          affinity_data: affinity_data
+        }
+
+        {:over, :player, data}
 
       true ->
         {:no_over}

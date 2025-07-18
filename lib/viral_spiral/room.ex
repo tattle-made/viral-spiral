@@ -101,7 +101,7 @@ defmodule ViralSpiral.Room do
     simple_status =
       case game_status do
         {:over, :world, _data} -> {:over, :world}
-        {:over, :player, winner_id, _data} -> {:over, :player, winner_id}
+        {:over, :player, _data} -> {:over, :player}
         {:no_over} -> {:no_over}
       end
 
