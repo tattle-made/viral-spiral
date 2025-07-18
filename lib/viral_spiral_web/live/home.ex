@@ -29,8 +29,12 @@ defmodule ViralSpiralWeb.Home do
           pid
       end
 
+    query_string = URI.encode_query(socket.assigns[:params] || %{})
     # {:noreply, push_navigate(socket, to: "/waiting-room/#{name}")}
-    {:noreply, push_navigate(socket, to: "/designer/room/#{room_name}")}
+    {:noreply,
+     push_navigate(socket,
+       to: proxy_path(socket, "/designer/room/#{room_name}") <> "?" <> query_string
+     )}
   end
 
   def handle_event("increment_counter", _params, socket) do

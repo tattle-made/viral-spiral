@@ -120,6 +120,8 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
 
   # todo : fix static player name
   def handle_event("start_game", _uri, %{assigns: %{room_gen: room_gen}} = socket) do
+    query_string = URI.encode_query(socket.assigns[:params] || %{})
+
     with action <- Actions.start_game(),
          game_state <- GenServer.call(room_gen, action),
          game_state <- GenServer.call(room_gen, Actions.draw_card()),
@@ -127,7 +129,9 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
          ui_state <- StateAdapter.make_game_room(game_state, "adhiraj"),
          room_name <- ui_state.room.name do
       PubSub.broadcast(ViralSpiral.PubSub, "waiting-room:#{room_name}", {:start_game})
-      {:noreply, push_navigate(socket, to: "/room/#{room_name}")}
+
+      {:noreply,
+       push_navigate(socket, to: proxy_path(socket, "/room/#{room_name}") <> query_string)}
     end
   end
 
@@ -139,6 +143,9 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
   end
 
   def handle_info({:start_game}, %{assigns: %{room_name: room_name}} = socket) do
-    {:noreply, push_navigate(socket, to: "/room/#{room_name}")}
+    query_string = URI.encode_query(socket.assigns[:params] || %{})
+
+    {:noreply,
+     push_navigate(socket, to: proxy_path(socket, "/room/#{room_name}") <> query_string)}
   end
 end
