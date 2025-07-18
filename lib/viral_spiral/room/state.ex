@@ -38,7 +38,7 @@ defmodule ViralSpiral.Room.State do
             turns: %{},
             deck: nil,
             articles: %{},
-            power_viralspiral: nil,
+            power_viralspiral: PowerViralSpiral.skeleton(),
             power_check_source: CheckSource.new(),
             power_cancel_player: %PowerCancelPlayer{},
             dynamic_card: DynamicCard.skeleton()
