@@ -273,8 +273,8 @@ defmodule ViralSpiralWeb.Molecules do
       <!-- Carousel Wrapper -->
       <div class="relative h-28 overflow-hidden md:hidden">
         <div
-          :for={player <- @players}
-          class="absolute block w-full h-full flex justify-center items-center md:w-56"
+          :for={{player, index} <- Enum.with_index(@players)}
+          class={"absolute inset-0 #{if index == 0, do: "translate-x-0", else: "translate-x-full"} block w-full h-full flex justify-center items-center"}
           data-carousel-item
         >
           <.player_score_card player={player} />
