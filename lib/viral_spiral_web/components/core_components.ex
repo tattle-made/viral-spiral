@@ -675,14 +675,12 @@ defmodule ViralSpiralWeb.CoreComponents do
   def banner(assigns) do
     ~H"""
     <div id="popup" phx-hook="HookPopup" class="fixed top-[100vh] left-0 z-50 w-full h-full">
-      <div class="absolute top-0 left-0 w-full h-full bg-slate-400 opacity-25  flex flex-col justify-center">
-      </div>
-      <div class="absolute top-0 left-0 w-full h-full flex flex-col justify-center -mb-48">
-        <div class="w-3/4 md:w-1/2  mb-80 h-fit bg-slate-50 p-8 border rounded-md border-slate-200 self-center flex flex-col gap-4">
-          <h1 class="text-2xl text-slate-900 text-center">Game Over</h1>
-          <p id="message" class="text-lg"></p>
-          <div class="m-8"></div>
-          <%= render_slot(@inner_block) %>
+      <div class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center">
+        <div class="w-11/12 md:w-2/5 lg:w-1/3 xl:w-1/4 mb-80 h-fit bg-white/95 p-10 border-2 border-fuchsia-800 rounded-2xl shadow-2xl flex flex-col gap-6 items-center">
+          <h1 class="text-3xl font-bold text-fuchsia-900 text-center">Game Over</h1>
+          <p id="message" class="text-lg text-center text-zinc-800 font-medium"></p>
+          <div class="m-4"></div>
+          <%= if assigns[:inner_block], do: render_slot(@inner_block) %>
         </div>
       </div>
     </div>
