@@ -32,6 +32,7 @@ import { BackgroundHook } from "./background";
 import { HookPopup } from "./popup";
 import Player from "./player";
 import { CarouselHook } from "./carousel";
+import { RoomLinkCopyClipboardHook } from "./room-link-copy-clipboard";
 
 
 let Hooks = {
@@ -42,7 +43,8 @@ let Hooks = {
   HookCounter,
   BackgroundHook,
   HookPopup,
-  CarouselHook
+  CarouselHook,
+  RoomLinkCopyClipboardHook
 };
 
 let csrfToken = document
@@ -74,8 +76,6 @@ window.addEventListener("phx:vs:mp_room:join_room", async ({detail})=>{
 window.addEventListener("audio:enable", async (event)=>{
   await window.player.setup()
 })
-
-
 
 // Define web components
 window.customElements.define("vs-calendar", CalendarElem);

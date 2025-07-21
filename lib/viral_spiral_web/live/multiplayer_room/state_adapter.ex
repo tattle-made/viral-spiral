@@ -7,6 +7,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Entity.Player.Map, as: PlayerMap
   alias ViralSpiral.Room.State
+  alias ViralSpiral.Room.Template
 
   def make_game_room(%State{} = state, player_name) do
     player_me = PlayerMap.me(state.players, player_name)
@@ -20,6 +21,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
         chaos: state.room.chaos,
         state: state.room.state
       },
+      end_game_message: generate_end_game_message(state),
       me: make_me(state, player_me),
       can_use_power: !state.turn.power,
       power_cancel: make_cancel(state, player_me_id),
@@ -216,5 +218,21 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
     %{
       enabled: enabled
     }
+  end
+
+  def generate_end_game_message(%State{} = state) do
+    case state.room.state do
+      :over ->
+        case State.game_over_status(state) do
+          {:over, :world, data} ->
+            Template.generate_game_over_message(data)
+
+          {:over, :player, data} ->
+            Template.generate_game_over_message(data)
+        end
+
+      _ ->
+        nil
+    end
   end
 end

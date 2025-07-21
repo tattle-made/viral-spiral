@@ -3,6 +3,8 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.PowerViralSpiral.Changes.InitiateViralSpiral
+  alias ViralSpiral.Room.Actions.Player.ViralSpiralInitiate
   alias ViralSpiral.Room
   alias ViralSpiral.Entity.PowerCancelPlayer.Changes.ResetCancel
   alias ViralSpiral.Entity.DynamicCard.Changes.AddIdentityStats
@@ -358,18 +360,24 @@ defmodule ViralSpiral.Room.Reducer do
     end
   end
 
-  # def reduce(%State{} = state, %{type: :viral_spiral_pass, to: players} = action)
-  #     when is_list(players) do
-  #   card = action.card
+  def reduce(%State{} = state, %ViralSpiralInitiate{} = action) do
+    %{from_id: from_id, to_id: to_id, card: %Sparse{} = card} = action
 
-  #   changes = [
-  #     {%PowerViralSpiral{}, ChangeDescriptions.PowerViralSpiral.set(players, card)}
-  #   ]
+    power_change = [
+      state.power_viralspiral,
+      %InitiateViralSpiral{from_id: from_id, to_id: to_id, card: card}
+    ]
 
-  #   State.apply_changes(state, changes)
-  # end
+    card_pass_changes =
+      to_id
+      |> Enum.map(&Playable.pass(card, state, from_id, &1))
 
-  # def reduce(%State{} = state, %{type: :viral_spiral_pass, to: player})
-  #     when is_bitstring(player) do
-  # end
+    hand_changes =
+      to_id
+      |> Enum.map(&{state.players[&1], %AddToHand{card: card}})
+
+    all_changes = power_change ++ card_pass_changes ++ hand_changes
+
+    State.apply_changes(state, all_changes)
+  end
 end

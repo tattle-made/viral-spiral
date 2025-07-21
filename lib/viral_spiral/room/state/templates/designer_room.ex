@@ -1,4 +1,5 @@
 defmodule ViralSpiral.Room.State.Templates.DesignerRoom do
+  alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Room.Actions
   alias ViralSpiral.Room.Reducer
   alias ViralSpiral.Room.State

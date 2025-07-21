@@ -1,115 +1,115 @@
-<div 
-    id="multiplayer-room-container" 
-    phx-hook={"HookMultiplayerRoom"}
-    class="h-full relative"
+<div id="multiplayer-room-container" phx-hook="HookMultiplayerRoom" class="relative">
+  <div class="w-full">
+    <Atoms.background id="container-bg" image={bg_image(get_in(@state.room.chaos))} />
+  </div>
+
+  <div class="relative w-full min-h-[calc(100vh-56px)] flex flex-col">
+    <div :if={@state && @state.room} class="p-2 flex flex-row mb mt ">
+      <p class="bg-fuchsia-950 p-2 rounded-xl text-fuchsia-100"><%= @state.room.name %></p>
+      <p class="flex-1"></p>
+      <p class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100"><%= 10 - @state.room.chaos %></p>
+    </div>
+
+    <div :if={@state && @state.others} id="container-others">
+      <.carousel_score_card players={@state.others} />
+    </div>
+
+    <div
+      :if={@state && @state.current_cards}
+      id="container-cards"
+      class="flex-1 mt-2 flex justify-center"
     >
-        <div class="absolute w-full h-full">
-            <Atoms.background id={"container-bg"} image={bg_image(get_in(@state.room.chaos))} />
+      <div :for={card <- @state.current_cards}>
+        <.card
+          card={card}
+          from={@state.me.id}
+          can_turn_fake={@state.power_turn_fake.enabled}
+          can_use_power={@state.can_use_power}
+        />
+      </div>
+    </div>
+
+    <div class="container-powers mb-2 flex justify-center">
+      <div
+        :if={@state && @state.can_use_power && @state.power_cancel.can_cancel}
+        phx-click={show_modal("cancel-initiate-modal")}
+      >
+        <button class="py-1 px-2 bg-violet-300 hover:bg-violet-950 text-slate-800 hover:text-slate-50 text-xs rounded-md border border-zinc-900 self-center">
+          Cancel Player
+        </button>
+        <.modal id="cancel-initiate-modal" class="justify-center">
+          <div>
+            <.simple_form for={@state.power_cancel.form.data} phx-submit="initiate_cancel">
+              <.input
+                type="select"
+                field={@state.power_cancel.form.data[:target_id]}
+                label="Player"
+                options={@state.power_cancel.form.values.targets.options}
+                value={@state.power_cancel.form.values.targets.value}
+              />
+
+              <.input
+                type="select"
+                field={@state.power_cancel.form.data[:affinity]}
+                options={@state.power_cancel.form.values.affinity.options}
+                value={@state.power_cancel.form.values.affinity.value}
+                label="Affinities"
+              />
+
+              <.input type="hidden" name="from_id" value={@state.me.id} />
+              <:actions>
+                <.button>Save</.button>
+              </:actions>
+            </.simple_form>
+          </div>
+        </.modal>
+      </div>
+
+      <div :if={@state && @state.power_cancel.can_vote}>
+        <.modal id="cancel-vote-modal" show={true}>
+          <button
+            phx-click={JS.push("cancel_vote", value: %{vote: true, from_id: @state.me.id})}
+            class=" py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
+          >
+            Yes
+          </button>
+
+          <button
+            phx-click={JS.push("cancel_vote", value: %{vote: true, from_id: @state.me.id})}
+            class=" py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
+          >
+            No
+          </button>
+        </.modal>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap mx-auto gap-2 mb-4 justify-center">
+      <div
+        :if={@state && @state.me}
+        id="container-me"
+        class=" flex justify-center"
+      >
+        <.player_score_card player={@state.me} />
+      </div>
+      <div
+        :if={@state && @state.hand}
+        id="container-hand"
+        class="h-fit border border-px-2 rounded-md p-2 bg-slate-200 max-w-full "
+      >
+        <div class="flex flex-row gap-1 overflow-x-auto flex-nowrap w-full max-w-full">
+          <div :for={card <- @state.hand} class="p-1 w-8 h-auto shrink-0">
+            <button phx-click={show_modal("hand-card-modal-#{card.id}")}>
+              <.hand_card card={card} />
+            </button>
+            <.modal id={"hand-card-modal-#{card.id}"} class="flex justify-center">
+              <div :if={card != nil} class="self-center">
+                <.card_preview card={card} />
+              </div>
+            </.modal>
+          </div>
         </div>
-    
-    
-        <div class="absolute w-full h-full flex flex-col">
-            <div :if={@state && @state.room}
-                class="p-2 flex flex-row mb mt"
-            >
-                <p class="bg-fuchsia-950 p-2 rounded-xl text-fuchsia-100"><%= @state.room.name %></p>
-                <p class="flex-1"></p>
-                <p class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100"><%= 10-@state.room.chaos %></p>
-            </div>
-
-            <div 
-                id="container-others"
-                :if={@state && @state.others}
-                >
-                    <.carousel_score_card players={@state.others} />
-            </div>
-
-            <div :if={@state && @state.current_cards} id="container-cards" class="flex-1 mt-2 flex justify-center">
-                <div :for={card <- @state.current_cards}>
-                    <.card 
-                        card={card} 
-                        from={@state.me.id} 
-                        can_turn_fake={@state.power_turn_fake.enabled} 
-                        can_use_power={@state.can_use_power}
-                        />
-                </div>
-            </div>
-
-            <div class="container-powers mb-2 flex justify-center">
-                <div :if={@state && @state.can_use_power && @state.power_cancel.can_cancel} phx-click={show_modal("cancel-initiate-modal")}>
-                    <button class="py-1 px-2 bg-violet-300 hover:bg-violet-950 text-slate-800 hover:text-slate-50 text-xs rounded-md border border-zinc-900 self-center" >Cancel Player</button>
-                    <.modal id={"cancel-initiate-modal"} class="justify-center">
-                        <div>
-
-                        <.simple_form for={@state.power_cancel.form.data} phx-submit="initiate_cancel">
-                            <.input type="select" 
-                            field={@state.power_cancel.form.data[:target_id]} 
-                            label="Player" 
-                            options={@state.power_cancel.form.values.targets.options} 
-                            value={@state.power_cancel.form.values.targets.value}  
-                            />
-                            
-                            <.input type="select" field={@state.power_cancel.form.data[:affinity]} 
-                            options={@state.power_cancel.form.values.affinity.options} 
-                            value={@state.power_cancel.form.values.affinity.value} 
-                            label="Affinities"
-                            />
-
-                            <.input type="hidden" name="from_id" value={@state.me.id}/>
-                            <:actions>
-                            <.button>Save</.button>
-                            </:actions>
-                        </.simple_form>
-                            
-                        </div>
-                    </.modal>
-                </div>
-
-                <div :if={@state && @state.power_cancel.can_vote}>
-                    <.modal id={"cancel-vote-modal"} show={true}>
-                        <button
-                            phx-click={JS.push("cancel_vote", value: %{vote: true, from_id: @state.me.id})}
-                            class=" py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
-                        >
-                            Yes
-                        </button>
-
-                        <button
-                            phx-click={JS.push("cancel_vote", value: %{vote: true, from_id: @state.me.id})}
-                            class=" py-1 px-2 bg-[#015058] hover:bg-[#21802B] text-white rounded"
-                        >
-                            No
-                        </button>
-                        
-                    </.modal>
-                </div>
-                
-            </div>
-
-            <div class="flex flex-row gap-2 flex-wrap justify-center mb-4"> 
-
-                <div :if={@state && @state.me} id="container-me" class="h-fit ">
-                    <.player_score_card player={@state.me} />
-                    
-                </div>
-
-                <div :if={@state && @state.hand} id="container-hand" class="h-fit border border-px-2 rounded-md p-2 bg-slate-200">
-                    <div class="flex flex-row gap-1">
-                    <div class=" overflow-scroll p-1 w-8 h-auto"
-                        :for={card<- @state.hand}
-                    >
-                        <button phx-click={show_modal("hand-card-modal-#{card.id}")}>
-                            <.hand_card card={card}  />
-                        </button>
-                        <.modal id={"hand-card-modal-#{card.id}"} class="flex justify-center">
-                            <div :if={card != nil} class="self-center" >
-                                <.card_preview card={card} />
-                            </div>
-                        </.modal>
-                    </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
+      </div>
+    </div>
+  </div>
 </div>

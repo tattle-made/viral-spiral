@@ -29,6 +29,7 @@ defmodule ViralSpiral.Room.State do
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Room.State
   alias ViralSpiral.Entity.Change
+  alias ViralSpiral.Room.Template.{WorldEndTemplateData, PlayerWinTemplateData}
 
   @derive {Inspect, limit: 2}
   defstruct room: nil,
@@ -38,7 +39,7 @@ defmodule ViralSpiral.Room.State do
             turns: %{},
             deck: nil,
             articles: %{},
-            power_viralspiral: nil,
+            power_viralspiral: PowerViralSpiral.skeleton(),
             power_check_source: CheckSource.new(),
             power_cancel_player: %PowerCancelPlayer{},
             dynamic_card: DynamicCard.skeleton()
@@ -308,8 +309,8 @@ defmodule ViralSpiral.Room.State do
 
   Returns the following values
     - {:no_over} if the game is not over yet
-    - {:over, :player, "player_id"} if a player has won
-    - {:over, :world} if the world has collapsed
+    - {:over, :world, %WorldEndTemplateData{}} if the world has collapsed (chaos threshold crossed)
+    - {:over, :player, winner_id, %PlayerWinTemplateData{}} if a player has won
   """
   def game_over_status(%State{} = state) do
     chaos_threshold_crossed? = if state.room.chaos >= 10, do: true, else: false
@@ -331,10 +332,69 @@ defmodule ViralSpiral.Room.State do
         false -> nil
       end
 
+    # bias and affinity data
+    players = state.players |> Map.values()
+
+    # Find most biased players (sum of bias values)
+    bias_sums = Enum.map(players, fn p -> {p, Enum.reduce(Map.values(p.biases), 0, &+/2)} end)
+    max_bias = bias_sums |> Enum.map(fn {_p, sum} -> sum end) |> Enum.max(fn -> 0 end)
+
+    most_biased_players =
+      bias_sums
+      |> Enum.filter(fn {_p, sum} -> sum == max_bias and max_bias > 0 end)
+      |> Enum.map(fn {p, _sum} -> p end)
+
+    # Find most affinity players (sum of abs affinity values)
+    affinity_sums =
+      Enum.map(players, fn p ->
+        {p, Enum.reduce(Map.values(p.affinities), 0, fn v, acc -> acc + abs(v) end)}
+      end)
+
+    max_affinity = affinity_sums |> Enum.map(fn {_p, sum} -> sum end) |> Enum.max(fn -> 0 end)
+
+    most_affinity_players =
+      affinity_sums
+      |> Enum.filter(fn {_p, sum} -> sum == max_affinity and max_affinity > 0 end)
+      |> Enum.map(fn {p, _sum} -> p end)
+
+    bias_data = %{
+      most_biased_players: most_biased_players,
+      max_bias: max_bias
+    }
+
+    affinity_data = %{
+      most_affinity_players: most_affinity_players,
+      max_affinity: max_affinity
+    }
+
     cond do
-      chaos_threshold_crossed? -> {:over, :world}
-      player_won? -> {:over, :player, winner_id}
-      true -> {:no_over}
+      chaos_threshold_crossed? ->
+        data = %WorldEndTemplateData{
+          bias_data: bias_data,
+          affinity_data: affinity_data
+        }
+
+        {:over, :world, data}
+
+      player_won? ->
+        # Sort players by clout descending
+        sorted = Enum.sort_by(players, & &1.clout, :desc)
+        [winner | rest] = sorted
+        runner_up = Enum.at(sorted, 1)
+        margin = if runner_up, do: winner.clout - runner_up.clout, else: winner.clout
+
+        data = %PlayerWinTemplateData{
+          winner: winner,
+          runner_up: runner_up,
+          margin: margin,
+          bias_data: bias_data,
+          affinity_data: affinity_data
+        }
+
+        {:over, :player, data}
+
+      true ->
+        {:no_over}
     end
   end
 
