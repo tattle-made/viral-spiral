@@ -11,6 +11,7 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Canon.Card.Sparse
   alias ViralSpiral.Room.State
+  alias ViralSpiral.Room.Template
 
   def game_room(%State{} = state) do
     %{id: current_player_id} = State.current_turn_player(state)
@@ -21,6 +22,7 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
         chaos_counter: state.room.chaos_counter - state.room.chaos,
         state: state.room.state
       },
+      end_game_message: generate_end_game_message(state),
       players:
         for(
           {_id, player} <- state.players,
@@ -195,5 +197,21 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
     %{
       enabled: enabled
     }
+  end
+
+  def generate_end_game_message(%State{} = state) do
+    case state.room.state do
+      :over ->
+        case State.game_over_status(state) do
+          {:over, :world, data} ->
+            Template.generate_game_over_message(data)
+
+          {:over, :player, data} ->
+            Template.generate_game_over_message(data)
+        end
+
+      _ ->
+        nil
+    end
   end
 end
