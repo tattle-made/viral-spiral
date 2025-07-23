@@ -37,7 +37,8 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
             headline: maybe_patch_headline(card, state.dynamic_card)
           }
         end),
-      others: make_others(state, other_players)
+      others: make_others(state, other_players),
+      current_holder_name: make_current_holder_text(state)
     }
   end
 
@@ -233,6 +234,13 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
 
       _ ->
         nil
+    end
+  end
+
+  def make_current_holder_text(%State{turn: %{current: current_id}, players: players}) do
+    case Map.get(players, current_id) do
+      nil -> nil
+      player -> "🎴 It's #{player.name}'s turn now."
     end
   end
 end
