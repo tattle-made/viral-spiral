@@ -31,6 +31,7 @@ import { HookCounter } from "./counter";
 import { BackgroundHook } from "./background";
 import { HookPopup } from "./popup";
 import Player from "./player";
+import { CarouselHook } from "./carousel";
 import { RoomLinkCopyClipboardHook } from "./room-link-copy-clipboard";
 
 
@@ -42,6 +43,7 @@ let Hooks = {
   HookCounter,
   BackgroundHook,
   HookPopup,
+  CarouselHook,
   RoomLinkCopyClipboardHook
 };
 

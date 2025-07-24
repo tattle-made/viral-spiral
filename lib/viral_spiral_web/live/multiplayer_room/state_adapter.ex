@@ -7,6 +7,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Entity.Player.Map, as: PlayerMap
   alias ViralSpiral.Room.State
+  alias ViralSpiral.Room.Template
 
   def make_game_room(%State{} = state, player_name) do
     player_me = PlayerMap.me(state.players, player_name)
@@ -20,6 +21,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
         chaos: state.room.chaos,
         state: state.room.state
       },
+      end_game_message: generate_end_game_message(state),
       me: make_me(state, player_me),
       can_use_power: !state.turn.power,
       power_cancel: make_cancel(state, player_me_id),
@@ -37,7 +39,8 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
             veracity: card.veracity
           }
         end),
-      others: make_others(state, other_players)
+      others: make_others(state, other_players),
+      current_holder_name: make_current_holder_text(state)
     }
   end
 
@@ -220,6 +223,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
     }
   end
 
+
   def make_power_viral_spiral(state, player_id) do
     threshold = state.room.viral_spiral_threshold
     player = state.players[player_id]
@@ -231,5 +235,27 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
         !state.turn.power
 
     %{enabled: enabled}
+
+  def generate_end_game_message(%State{} = state) do
+    case state.room.state do
+      :over ->
+        case State.game_over_status(state) do
+          {:over, :world, data} ->
+            Template.generate_game_over_message(data)
+
+          {:over, :player, data} ->
+            Template.generate_game_over_message(data)
+        end
+
+      _ ->
+        nil
+    end
+  end
+
+  def make_current_holder_text(%State{turn: %{current: current_id}, players: players}) do
+    case Map.get(players, current_id) do
+      nil -> nil
+      player -> "🎴 It's #{player.name}'s turn now."
+    end
   end
 end
