@@ -223,7 +223,6 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
     }
   end
 
-
   def make_power_viral_spiral(state, player_id) do
     threshold = state.room.viral_spiral_threshold
     player = state.players[player_id]
@@ -235,6 +234,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
         !state.turn.power
 
     %{enabled: enabled}
+  end
 
   def generate_end_game_message(%State{} = state) do
     case state.room.state do
