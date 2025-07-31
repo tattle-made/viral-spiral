@@ -97,7 +97,7 @@
         </.modal>
       </div>
 
-      <div :if={@state && @state.power_viral_spiral.enabled}>
+      <div :if={@state &&  @state.can_use_power && @state.power_viral_spiral.enabled}>
         <button
           class="py-1 px-2 bg-violet-300 hover:bg-violet-950 text-slate-800 hover:text-slate-50 text-xs rounded-md border border-zinc-900 self-center"
           phx-click={
@@ -117,16 +117,14 @@
               <div class="flex flex-row gap-2 overflow-x-auto">
                 <div :for={card <- @state.hand} class="p-1 w-24 h-auto shrink-0">
                   <button phx-click={
-                    if @state && @state.me,
-                      do:
-                        JS.push("initiate_viral_spiral",
-                          value: %{
-                            from_id: @state.me.id,
-                            card: %{id: card.id, veracity: card.veracity},
-                            to_id: @state.others |> Enum.map(&Map.get(&1, :id))
-                          }
-                        ),
-                      else: nil
+                    JS.push("initiate_viral_spiral",
+                      value: %{
+                        from_id: @state.me.id,
+                        card: %{id: card.id, veracity: card.veracity},
+                        to_id: @state.others |> Enum.map(&Map.get(&1, :id))
+                      }
+                    )
+                    |> hide_modal("viral-spiral-hand-modal")
                   }>
                     <.hand_card card={card} />
                   </button>

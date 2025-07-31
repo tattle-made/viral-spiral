@@ -177,9 +177,8 @@ defmodule ViralSpiral.Entity.Player do
       Map.put(player, :hand, player.hand ++ [change.card])
     end
 
-    # TODO: fix this
-    def change(%Player{} = player, %RemoveFromHand{} = _change) do
-      player
+    def change(%Player{} = player, %RemoveFromHand{} = change) do
+      Map.put(player, :hand, List.delete(player.hand, change.card))
     end
 
     def change(%Player{} = player, %AddActiveCard{} = change) do

@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.Player.Changes.RemoveFromHand
   alias ViralSpiral.Entity.PowerViralSpiral.Changes.InitiateViralSpiral
   alias ViralSpiral.Room.Actions.Player.ViralSpiralInitiate
   alias ViralSpiral.Room
@@ -382,10 +383,11 @@ defmodule ViralSpiral.Room.Reducer do
       |> Enum.map(&{state.players[&1], %AddToHand{card: sparse_card}})
       |> List.flatten()
 
-    # TODO: fix this
-    # sender_hand_changes = [{state.players[from_id], %RemoveActiveCard{card: sparse_card}}]
+    sender_hand_change = [
+      {state.players[from_id], %RemoveFromHand{card: sparse_card}}
+    ]
 
-    all_changes = power_change ++ card_pass_changes ++ hand_changes
+    all_changes = power_change ++ card_pass_changes ++ sender_hand_change ++ hand_changes
 
     State.apply_changes(state, all_changes)
   end
