@@ -1,4 +1,5 @@
 defmodule ViralSpiral.Game.PlayerTest do
+  alias ViralSpiral.Entity.Player.Changes.RemoveFromHand
   alias ViralSpiral.Entity.Player.Changes.CloseArticle
   alias ViralSpiral.Entity.Player.Changes.ViewArticle
   alias ViralSpiral.Canon.Article
@@ -105,6 +106,16 @@ defmodule ViralSpiral.Game.PlayerTest do
 
       assert length(player.hand) == 1
       assert hd(player.hand) == card
+    end
+
+    test "remove card from hand", %{player: player} do
+      card = %Sparse{id: "card_3234234", veracity: true}
+      player = %{player | hand: [card]}
+
+      assert length(player.hand) == 1
+
+      player = Change.change(player, %RemoveFromHand{card: card})
+      assert length(player.hand) == 0
     end
 
     test "active cards", %{player: player} do
