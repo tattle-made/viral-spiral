@@ -201,7 +201,9 @@ defmodule ViralSpiral.Room.CardDrawTest do
         # Generate dummy names
         names = Enum.map(1..n, &"player_#{&1}")
 
-        result = CardDraw.assign_player_identity(names)
+        # assign_player_identity function accepts room_communities as second argument that is only used in
+        # case of 2 players. Here, as the test is for 3 or more players, the second argument passed is nil
+        result = CardDraw.assign_player_identity(names, nil)
 
         assert length(result) == length(names)
 
@@ -225,6 +227,42 @@ defmodule ViralSpiral.Room.CardDrawTest do
         for {color, count} <- identity_counts do
           assert count <= max_allowed
         end
+      end
+    end
+  end
+
+  test "assign_player_identity_for_2_players" do
+    # Test with different combinations of 2 colors
+    test_communities = [
+      [:red, :blue],
+      [:red, :yellow],
+      [:blue, :yellow]
+    ]
+
+    for communities <- test_communities do
+      names = ["player_1", "player_2"]
+
+      result = CardDraw.assign_player_identity(names, communities)
+
+      assert length(result) == 2
+
+      # All names are present
+      result_names = Enum.map(result, &elem(&1, 0))
+      assert Enum.sort(result_names) == Enum.sort(names)
+
+      # Only colors from communities are used
+      identities = Enum.map(result, &elem(&1, 1))
+      assert Enum.all?(identities, &(&1 in communities))
+
+      # Both colors from communities are used
+      assert Enum.any?(identities, &(&1 == Enum.at(communities, 0)))
+      assert Enum.any?(identities, &(&1 == Enum.at(communities, 1)))
+
+      # No color appears more than once
+      identity_counts = Enum.frequencies(identities)
+
+      for {color, count} <- identity_counts do
+        assert count == 1
       end
     end
   end

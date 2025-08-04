@@ -123,7 +123,7 @@ defmodule ViralSpiral.Entity.Room do
 
     room_communities =
       case player_count do
-        x when x <= 3 -> Enum.shuffle(communities) |> Enum.take(2)
+        x when x <= 2 -> Enum.shuffle(communities) |> Enum.take(2)
         _ -> communities
       end
 

@@ -93,7 +93,7 @@ defmodule ViralSpiral.Room.CardDraw do
   end
 
   @identities [:red, :blue, :yellow]
-  def assign_player_identity(names) do
+  def assign_player_identity(names, room_communities) do
     total = length(names)
     identity_count = length(@identities)
 
@@ -101,6 +101,10 @@ defmodule ViralSpiral.Room.CardDraw do
       case total do
         ^identity_count ->
           Enum.shuffle(@identities)
+
+        2 ->
+          # Room communities are always 2 in case of 2 players.
+          Enum.shuffle(room_communities)
 
         _ ->
           base_count = div(total, identity_count)
