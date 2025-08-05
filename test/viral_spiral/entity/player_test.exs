@@ -56,6 +56,28 @@ defmodule ViralSpiral.Game.PlayerTest do
         Player.new(attrs)
       end
     end
+
+    test "viralspiral_target_bias/2" do
+      attrs = %{
+        identity: :red,
+        affinities: [:sock, :houseboat],
+        biases: [:blue, :yellow]
+      }
+
+      player = Player.new(attrs)
+
+      player = %{player | biases: %{blue: 6, yellow: 2}}
+      target_bias = Player.viralspiral_target_bias(player, 5)
+      assert target_bias == :blue
+
+      player = %{player | biases: %{blue: 2, yellow: 2}}
+      target_bias = Player.viralspiral_target_bias(player, 5)
+      assert target_bias == nil
+
+      player = %{player | biases: %{blue: 8, yellow: 8}}
+      target_bias = Player.viralspiral_target_bias(player, 5)
+      assert target_bias == :blue or target_bias == :yellow
+    end
   end
 
   describe "changes" do

@@ -3,6 +3,8 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.Player
+  alias ViralSpiral.Entity.Player.Changes.Bias
   alias ViralSpiral.Entity.Player.Changes.RemoveFromHand
   alias ViralSpiral.Entity.PowerViralSpiral.Changes.InitiateViralSpiral
   alias ViralSpiral.Room.Actions.Player.ViralSpiralInitiate
@@ -365,6 +367,8 @@ defmodule ViralSpiral.Room.Reducer do
     %{from_id: from_id, to_id: to_id, card: card} = action
     sparse_card = Sparse.new(card.id, card.veracity)
     full_card = Canon.get_card_from_store(sparse_card)
+    sender = state.players[from_id]
+    viralspiral_threshold = state.room.viral_spiral_threshold
 
     power_change = [
       {
@@ -387,7 +391,15 @@ defmodule ViralSpiral.Room.Reducer do
       {state.players[from_id], %RemoveFromHand{card: sparse_card}}
     ]
 
-    all_changes = power_change ++ card_pass_changes ++ sender_hand_change ++ hand_changes
+    set_power_change = [{state.turn, %SetPowerTrue{}}]
+
+    target_bias = Player.viralspiral_target_bias(sender, viralspiral_threshold) |> IO.inspect()
+    reduce_bias_change = [{state.players[from_id], %Bias{target: target_bias, offset: -1}}]
+
+    all_changes =
+      power_change ++
+        card_pass_changes ++
+        sender_hand_change ++ hand_changes ++ set_power_change ++ reduce_bias_change
 
     State.apply_changes(state, all_changes)
   end

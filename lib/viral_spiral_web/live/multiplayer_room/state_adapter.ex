@@ -230,8 +230,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
     enabled =
       Map.values(player.biases)
       |> Enum.any?(&(&1 >= threshold)) &&
-        State.current_turn_player(state).id == player_id &&
-        !state.turn.power
+        State.current_turn_player(state).id == player_id
 
     %{enabled: enabled}
   end
