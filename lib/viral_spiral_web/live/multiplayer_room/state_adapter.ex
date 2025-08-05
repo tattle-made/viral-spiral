@@ -26,6 +26,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
       can_use_power: !state.turn.power,
       power_cancel: make_cancel(state, player_me_id),
       power_turn_fake: make_power_turn_fake(state, player_me_id),
+      power_viral_spiral: make_power_viral_spiral(state, player_me_id),
       current_cards: make_current_cards(state, player_me),
       hand:
         player_me.hand
@@ -34,7 +35,8 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
           %{
             id: card.id,
             image: card.image,
-            headline: maybe_patch_headline(card, state.dynamic_card)
+            headline: maybe_patch_headline(card, state.dynamic_card),
+            veracity: card.veracity
           }
         end),
       others: make_others(state, other_players),
@@ -219,6 +221,18 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
     %{
       enabled: enabled
     }
+  end
+
+  def make_power_viral_spiral(state, player_id) do
+    threshold = state.room.viral_spiral_threshold
+    player = state.players[player_id]
+
+    enabled =
+      Map.values(player.biases)
+      |> Enum.any?(&(&1 >= threshold)) &&
+        State.current_turn_player(state).id == player_id
+
+    %{enabled: enabled}
   end
 
   def generate_end_game_message(%State{} = state) do

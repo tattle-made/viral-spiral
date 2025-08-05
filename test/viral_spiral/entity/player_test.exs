@@ -1,4 +1,5 @@
 defmodule ViralSpiral.Game.PlayerTest do
+  alias ViralSpiral.Entity.Player.Changes.RemoveFromHand
   alias ViralSpiral.Entity.Player.Changes.CloseArticle
   alias ViralSpiral.Entity.Player.Changes.ViewArticle
   alias ViralSpiral.Canon.Article
@@ -55,6 +56,28 @@ defmodule ViralSpiral.Game.PlayerTest do
         Player.new(attrs)
       end
     end
+
+    test "viralspiral_target_bias/2" do
+      attrs = %{
+        identity: :red,
+        affinities: [:sock, :houseboat],
+        biases: [:blue, :yellow]
+      }
+
+      player = Player.new(attrs)
+
+      player = %{player | biases: %{blue: 6, yellow: 2}}
+      target_bias = Player.viralspiral_target_bias(player, 5)
+      assert target_bias == :blue
+
+      player = %{player | biases: %{blue: 2, yellow: 2}}
+      target_bias = Player.viralspiral_target_bias(player, 5)
+      assert target_bias == nil
+
+      player = %{player | biases: %{blue: 8, yellow: 8}}
+      target_bias = Player.viralspiral_target_bias(player, 5)
+      assert target_bias == :blue or target_bias == :yellow
+    end
   end
 
   describe "changes" do
@@ -105,6 +128,16 @@ defmodule ViralSpiral.Game.PlayerTest do
 
       assert length(player.hand) == 1
       assert hd(player.hand) == card
+    end
+
+    test "remove card from hand", %{player: player} do
+      card = %Sparse{id: "card_3234234", veracity: true}
+      player = %{player | hand: [card]}
+
+      assert length(player.hand) == 1
+
+      player = Change.change(player, %RemoveFromHand{card: card})
+      assert length(player.hand) == 0
     end
 
     test "active cards", %{player: player} do

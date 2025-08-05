@@ -111,6 +111,15 @@ defmodule ViralSpiral.Entity.Player do
     %{player | name: name}
   end
 
+  def viralspiral_target_bias(%Player{} = player, threshold) do
+    target_bias = Enum.filter(player.biases, fn bias -> elem(bias, 1) >= threshold end)
+
+    case target_bias do
+      [] -> nil
+      x -> x |> hd |> elem(0)
+    end
+  end
+
   defimpl ViralSpiral.Entity.Change do
     require IEx
     alias ViralSpiral.Entity.Player.Changes.CloseArticle
@@ -177,8 +186,8 @@ defmodule ViralSpiral.Entity.Player do
       Map.put(player, :hand, player.hand ++ [change.card])
     end
 
-    def change(%Player{} = player, %RemoveFromHand{} = _change) do
-      player
+    def change(%Player{} = player, %RemoveFromHand{} = change) do
+      Map.put(player, :hand, List.delete(player.hand, change.card))
     end
 
     def change(%Player{} = player, %AddActiveCard{} = change) do

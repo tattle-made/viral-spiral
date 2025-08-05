@@ -3,6 +3,9 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.Player
+  alias ViralSpiral.Entity.Player.Changes.Bias
+  alias ViralSpiral.Entity.Player.Changes.RemoveFromHand
   alias ViralSpiral.Entity.PowerViralSpiral.Changes.InitiateViralSpiral
   alias ViralSpiral.Room.Actions.Player.ViralSpiralInitiate
   alias ViralSpiral.Room
@@ -361,22 +364,42 @@ defmodule ViralSpiral.Room.Reducer do
   end
 
   def reduce(%State{} = state, %ViralSpiralInitiate{} = action) do
-    %{from_id: from_id, to_id: to_id, card: %Sparse{} = card} = action
+    %{from_id: from_id, to_id: to_id, card: card} = action
+    sparse_card = Sparse.new(card.id, card.veracity)
+    full_card = Canon.get_card_from_store(sparse_card)
+    sender = state.players[from_id]
+    viralspiral_threshold = state.room.viral_spiral_threshold
 
     power_change = [
-      state.power_viralspiral,
-      %InitiateViralSpiral{from_id: from_id, to_id: to_id, card: card}
+      {
+        state.power_viralspiral,
+        %InitiateViralSpiral{from_id: from_id, to_id: to_id, card: sparse_card}
+      }
     ]
 
     card_pass_changes =
       to_id
-      |> Enum.map(&Playable.pass(card, state, from_id, &1))
+      |> Enum.map(&Playable.pass(full_card, state, from_id, &1))
+      |> List.flatten()
 
     hand_changes =
       to_id
-      |> Enum.map(&{state.players[&1], %AddToHand{card: card}})
+      |> Enum.map(&{state.players[&1], %AddToHand{card: sparse_card}})
+      |> List.flatten()
 
-    all_changes = power_change ++ card_pass_changes ++ hand_changes
+    sender_hand_change = [
+      {state.players[from_id], %RemoveFromHand{card: sparse_card}}
+    ]
+
+    set_power_change = [{state.turn, %SetPowerTrue{}}]
+
+    target_bias = Player.viralspiral_target_bias(sender, viralspiral_threshold) |> IO.inspect()
+    reduce_bias_change = [{state.players[from_id], %Bias{target: target_bias, offset: -1}}]
+
+    all_changes =
+      power_change ++
+        card_pass_changes ++
+        sender_hand_change ++ hand_changes ++ set_power_change ++ reduce_bias_change
 
     State.apply_changes(state, all_changes)
   end

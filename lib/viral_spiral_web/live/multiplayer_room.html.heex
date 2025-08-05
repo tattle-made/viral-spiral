@@ -96,6 +96,49 @@
           </button>
         </.modal>
       </div>
+
+      <div :if={@state &&  @state.can_use_power && @state.power_viral_spiral.enabled}>
+        <button
+          class="py-1 px-2 bg-violet-300 hover:bg-violet-950 text-slate-800 hover:text-slate-50 text-xs rounded-md border border-zinc-900 self-center"
+          phx-click={
+            if @state && @state.hand && Enum.count(@state.hand) > 0,
+              do: show_modal("viral-spiral-hand-modal"),
+              else: show_modal("no-cards-modal")
+          }
+        >
+          Enable Viral Spiral Power
+        </button>
+        <.modal id="viral-spiral-hand-modal" class="flex justify-center">
+          <div class="flex flex-col items-center text-center gap-4">
+            <%= if @state && @state.hand && Enum.count(@state.hand) > 0 do %>
+              <h3 class="text-textcolor-light text-lg font-medium mb-2">
+                Select a card to use Viral Spiral Power
+              </h3>
+              <div class="flex flex-row gap-2 overflow-x-auto">
+                <div :for={card <- @state.hand} class="p-1 w-24 h-auto shrink-0">
+                  <button phx-click={
+                    JS.push("initiate_viral_spiral",
+                      value: %{
+                        from_id: @state.me.id,
+                        card: %{id: card.id, veracity: card.veracity},
+                        to_id: @state.others |> Enum.map(&Map.get(&1, :id))
+                      }
+                    )
+                    |> hide_modal("viral-spiral-hand-modal")
+                  }>
+                    <.hand_card card={card} />
+                  </button>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </.modal>
+        <.modal id="no-cards-modal" class="flex justify-center">
+          <h3 class="text-textcolor-light text-lg font-medium mb-2 text-center">
+            There are no cards in hand
+          </h3>
+        </.modal>
+      </div>
     </div>
 
     <div class="flex flex-wrap mx-auto gap-2 mb-4 justify-center">
