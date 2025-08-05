@@ -53,7 +53,7 @@ defmodule ViralSpiral.Entity.Deck do
     alias ViralSpiral.Entity.Deck.Changes.RemoveCard
 
     def change(%Deck{} = deck, %RemoveCard{} = change) do
-      new_set = Canon.remove_card_from_deck(change.card_sets, change.card_type, change.card)
+      new_set = Canon.remove_card_from_deck(deck.available_cards, change.card_type, change.card)
       Map.put(deck, :available_cards, new_set)
     end
   end
