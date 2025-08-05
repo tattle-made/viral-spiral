@@ -197,14 +197,21 @@ defmodule ViralSpiral.Room.CardDrawTest do
   @identities [:red, :blue, :yellow]
   test "assign_player_identity" do
     for _ <- 1..1000 do
-      for n <- 3..12 do
+      for n <- 2..12 do
         # Generate dummy names
         names = Enum.map(1..n, &"player_#{&1}")
 
-        # assign_player_identity function accepts room_communities as second argument that is only used in
-        # case of 2 players. Here, as the test is for 3 or more players, the second argument passed is nil
-        result = CardDraw.assign_player_identity(names, nil)
+        # Pick room communities only for the 2-player case; otherwise use all identities
+        room_communities =
+          if n == 2 do
+            [:red, :blue]
+          else
+            @identities
+          end
 
+        result = CardDraw.assign_player_identity(names, room_communities)
+
+        # length matches
         assert length(result) == length(names)
 
         # All names are present
@@ -215,54 +222,23 @@ defmodule ViralSpiral.Room.CardDrawTest do
         identities = Enum.map(result, &elem(&1, 1))
         assert Enum.all?(identities, &(&1 in @identities))
 
-        # At least one of each identity is used
-        assert Enum.any?(identities, &(&1 == :red))
-        assert Enum.any?(identities, &(&1 == :blue))
-        assert Enum.any?(identities, &(&1 == :yellow))
+        if n == 2 do
+          # For two players, you must get exactly the two you passed in
+          assert Enum.sort(identities) == Enum.sort(room_communities)
+        else
+          # At least one of each identity is used
+          assert Enum.any?(identities, &(&1 == :red))
+          assert Enum.any?(identities, &(&1 == :blue))
+          assert Enum.any?(identities, &(&1 == :yellow))
 
-        # Check that no identity appears more than ceil(n / 3) + 1 times
-        max_allowed = div(n, 3) + 1
-        identity_counts = Enum.frequencies(identities)
+          # Check that no identity appears more than ceil(n / 3) + 1 times
+          max_allowed = div(length(names), 3) + 1
+          identity_counts = Enum.frequencies(identities)
 
-        for {color, count} <- identity_counts do
-          assert count <= max_allowed
+          for {_color, count} <- identity_counts do
+            assert count <= max_allowed
+          end
         end
-      end
-    end
-  end
-
-  test "assign_player_identity_for_2_players" do
-    # Test with different combinations of 2 colors
-    test_communities = [
-      [:red, :blue],
-      [:red, :yellow],
-      [:blue, :yellow]
-    ]
-
-    for communities <- test_communities do
-      names = ["player_1", "player_2"]
-
-      result = CardDraw.assign_player_identity(names, communities)
-
-      assert length(result) == 2
-
-      # All names are present
-      result_names = Enum.map(result, &elem(&1, 0))
-      assert Enum.sort(result_names) == Enum.sort(names)
-
-      # Only colors from communities are used
-      identities = Enum.map(result, &elem(&1, 1))
-      assert Enum.all?(identities, &(&1 in communities))
-
-      # Both colors from communities are used
-      assert Enum.any?(identities, &(&1 == Enum.at(communities, 0)))
-      assert Enum.any?(identities, &(&1 == Enum.at(communities, 1)))
-
-      # No color appears more than once
-      identity_counts = Enum.frequencies(identities)
-
-      for {color, count} <- identity_counts do
-        assert count == 1
       end
     end
   end

@@ -99,9 +99,6 @@ defmodule ViralSpiral.Room.CardDraw do
 
     final_identities =
       case total do
-        ^identity_count ->
-          Enum.shuffle(@identities)
-
         2 ->
           # Room communities are always 2 in case of 2 players.
           Enum.shuffle(room_communities)
@@ -111,7 +108,8 @@ defmodule ViralSpiral.Room.CardDraw do
           remainder = rem(total, identity_count)
 
           evenly_dist =
-            @identities |> Enum.flat_map(fn color -> List.duplicate(color, base_count) end)
+            Enum.shuffle(@identities)
+            |> Enum.flat_map(fn color -> List.duplicate(color, base_count) end)
 
           extra_dist =
             if remainder > 0 do
