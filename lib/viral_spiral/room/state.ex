@@ -64,13 +64,14 @@ defmodule ViralSpiral.Room.State do
 
   def setup(%State{} = state) do
     room = state.room
+    room_communities = room.communities
 
     if length(room.unjoined_players) == 0,
       do: raise("Can not initialize state when no players have joined")
 
     players =
       room.unjoined_players
-      |> CardDraw.assign_player_identity()
+      |> CardDraw.assign_player_identity(room_communities)
       |> Enum.map(fn {name, identity} ->
         Factory.new_player_for_room(room, identity) |> Player.set_name(name)
       end)
