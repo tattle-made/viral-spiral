@@ -3,7 +3,7 @@ defmodule ViralSpiral.Room do
   Context for activities within a Viral Spiral Room.
 
   This architecture is heavily borrowed from [here](https://dashbit.co/blog/homemade-analytics-with-ecto-and-elixir).
-  Rooms in viral spiral need to manage mutable state of the game, hence they are wrapped in a `GenServer`. These genservers are then supervised by a Dynamic Supervisor, which is managed by this Supervisor. This supervisor is started by the application and is part of its supervision tree.
+  Rooms in viral spiral need to manage mutable state of the game, hence they are wrapped in a `GenServer`. These genservers are then supervised by a Dynamic Supervisor, which is managed by this Supervisor. This supervisor is started by the application and is part of its supervision tree. This Supervisor also manages a Registry under it, which stores mapping of room names to its associated gen server process.
 
   ## Usage :
   ```elixir
