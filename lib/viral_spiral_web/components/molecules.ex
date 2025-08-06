@@ -34,28 +34,30 @@ defmodule ViralSpiralWeb.Molecules do
       </div>
 
       <div class="flex flex-col py-2">
-        <div class="px-2 flex flex-row gap-2 align-center">
-          <span class="text-sm mb-1 self-center">Pass to</span>
+        <%= if !is_nil(@card.pass_to) and length(@card.pass_to) != 0 do %>
+          <div class="px-2 flex flex-row gap-2 align-center">
+            <span class="text-sm mb-1 self-center">Pass to</span>
 
-          <div class="flex flex-row flex-wrap gap-2 self-center">
-            <div :for={player <- @card.pass_to} }>
-              <button
-                phx-click={
-                  JS.push("pass_to",
-                    value: %{
-                      from_id: @from,
-                      to_id: player.id,
-                      card: %{id: @card.id, veracity: @card.veracity}
-                    }
-                  )
-                }
-                class=" py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
-              >
-                <%= player.name %>
-              </button>
+            <div class="flex flex-row flex-wrap gap-2 self-center">
+              <div :for={player <- @card.pass_to} }>
+                <button
+                  phx-click={
+                    JS.push("pass_to",
+                      value: %{
+                        from_id: @from,
+                        to_id: player.id,
+                        card: %{id: @card.id, veracity: @card.veracity}
+                      }
+                    )
+                  }
+                  class=" py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
+                >
+                  <%= player.name %>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        <% end %>
 
         <div class="mt-2 flex flex-row gap-2 flex-wrap px-2">
           <div class="">
