@@ -49,16 +49,28 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
   end
 
   def keep(card, state, from) do
-    case state.players[from].biases[card.target] do
-      x when x > 0 -> [{state.players[from], %Clout{offset: -1}}]
-      _ -> []
+    player = state.players[from]
+
+    if card.target != player.identity do
+      case player.biases[card.target] do
+        x when x > 0 -> [{player, %Clout{offset: -1}}]
+        _ -> []
+      end
+    else
+      []
     end
   end
 
   def discard(card, state, from) do
-    case state.players[from].biases[card.target] do
-      x when x > 0 -> [{state.players[from], %Clout{offset: -1}}]
-      _ -> []
+    player = state.players[from]
+
+    if card.target != player.identity do
+      case player.biases[card.target] do
+        x when x > 0 -> [{player, %Clout{offset: -1}}]
+        _ -> []
+      end
+    else
+      []
     end
   end
 end
