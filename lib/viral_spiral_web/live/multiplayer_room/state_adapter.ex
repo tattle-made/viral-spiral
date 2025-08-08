@@ -168,6 +168,16 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
           %{id: target_id, name: target_player.name}
       end
 
+    from_player_id = get_in(state.power_cancel_player.from)
+    target_player_id = get_in(state.power_cancel_player.target)
+
+    from_player =
+      !is_nil(from_player_id) && %{id: from_player_id, name: state.players[from_player_id].name}
+
+    target_player =
+      !is_nil(target_player_id) &&
+        %{id: target_player_id, name: state.players[target_player_id].name}
+
     %{
       can_cancel: can_cancel,
       options: options,
@@ -191,7 +201,9 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
           }
         }
       },
-      can_vote: can_vote
+      can_vote: can_vote,
+      from_player: from_player,
+      target_player: target_player
     }
   end
 
