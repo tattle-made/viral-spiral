@@ -105,7 +105,7 @@ end
 
 defmodule ViralSpiral.Room.ActionNotifications do
   @moduledoc """
-  Generates notification messages for game actions. Card details are intentionally omitted to avoid revealing gameplay information.
+  Generates notification messages for game actions.
   """
 
   def pass_card_notification(from_name, to_name) do
