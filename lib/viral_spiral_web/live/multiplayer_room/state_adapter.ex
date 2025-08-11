@@ -8,8 +8,14 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
   alias ViralSpiral.Entity.Player.Map, as: PlayerMap
   alias ViralSpiral.Room.State
   alias ViralSpiral.Room.Template
+  alias ViralSpiral.Room.ActionNotifications
 
-  def make_game_room(%State{} = state, player_name) do
+  def make_game_room(
+        %State{} = state,
+        player_name,
+        last_action_type \\ nil,
+        last_action_params \\ %{}
+      ) do
     player_me = PlayerMap.me(state.players, player_name)
     other_players = PlayerMap.other_than_me(state.players, player_name)
     player_me_id = player_me.id
@@ -40,7 +46,8 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
           }
         end),
       others: make_others(state, other_players),
-      current_holder_name: make_current_holder_text(state)
+      current_holder_name: make_current_holder_text(state),
+      notification_text: make_notification_text(state, last_action_type, last_action_params)
     }
   end
 
@@ -255,6 +262,163 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
     case Map.get(players, current_id) do
       nil -> nil
       player -> "🎴 It's #{player.name}'s turn now."
+    end
+  end
+
+  # Helper functions for action notifications
+  def extract_card_info(card_id, veracity) do
+    case Canon.get_card_from_store(%Sparse{id: card_id, veracity: veracity}) do
+      nil ->
+        %{
+          type: :unknown,
+          target: nil,
+          veracity: veracity
+        }
+
+      card ->
+        %{
+          type: card.type,
+          target: Map.get(card, :target),
+          veracity: veracity
+        }
+    end
+  end
+
+  def get_player_name_by_id(players, player_id) do
+    case Map.get(players, player_id) do
+      nil -> "Unknown Player"
+      player -> player.name
+    end
+  end
+
+  def make_notification_data(state, action_type, params) do
+    case action_type do
+      "pass_to" ->
+        with from_id when not is_nil(from_id) <- params["from_id"],
+             to_id when not is_nil(to_id) <- params["to_id"],
+             card when not is_nil(card) <- params["card"],
+             card_id when not is_nil(card_id) <- card["id"],
+             veracity when not is_nil(veracity) <- card["veracity"] do
+          %{
+            from_name: get_player_name_by_id(state.players, from_id),
+            to_name: get_player_name_by_id(state.players, to_id),
+            card_info: extract_card_info(card_id, veracity)
+          }
+        else
+          _ -> nil
+        end
+
+      "keep" ->
+        with from_id when not is_nil(from_id) <- params["from_id"],
+             card when not is_nil(card) <- params["card"],
+             card_id when not is_nil(card_id) <- card["id"],
+             veracity when not is_nil(veracity) <- card["veracity"] do
+          %{
+            player_name: get_player_name_by_id(state.players, from_id),
+            card_info: extract_card_info(card_id, veracity)
+          }
+        else
+          _ -> nil
+        end
+
+      "discard" ->
+        with from_id when not is_nil(from_id) <- params["from_id"],
+             card when not is_nil(card) <- params["card"],
+             card_id when not is_nil(card_id) <- card["id"],
+             veracity when not is_nil(veracity) <- card["veracity"] do
+          %{
+            player_name: get_player_name_by_id(state.players, from_id),
+            card_info: extract_card_info(card_id, veracity)
+          }
+        else
+          _ -> nil
+        end
+
+      "initiate_cancel" ->
+        with from_id when not is_nil(from_id) <- params["from_id"],
+             target_id when not is_nil(target_id) <- params["target_id"],
+             affinity when not is_nil(affinity) <- params["affinity"] do
+          %{
+            player_name: get_player_name_by_id(state.players, from_id),
+            target_name: get_player_name_by_id(state.players, target_id),
+            affinity_type: affinity
+          }
+        else
+          _ -> nil
+        end
+
+      "cancel_vote" ->
+        with from_id when not is_nil(from_id) <- params["from_id"],
+             vote when not is_nil(vote) <- params["vote"] do
+          %{
+            player_name: get_player_name_by_id(state.players, from_id),
+            vote: vote
+          }
+        else
+          _ -> nil
+        end
+
+      "initiate_viral_spiral" ->
+        with from_id when not is_nil(from_id) <- params["from_id"],
+             card when not is_nil(card) <- params["card"],
+             card_id when not is_nil(card_id) <- card["id"],
+             veracity when not is_nil(veracity) <- card["veracity"] do
+          %{
+            player_name: get_player_name_by_id(state.players, from_id),
+            card_info: extract_card_info(card_id, veracity)
+          }
+        else
+          _ -> nil
+        end
+
+      _ ->
+        nil
+    end
+  end
+
+  def make_notification_text(state, action_type, params) do
+    case action_type do
+      "pass_to" ->
+        if data = make_notification_data(state, action_type, params) do
+          ActionNotifications.pass_card_notification(
+            data.from_name,
+            data.to_name
+          )
+        end
+
+      "keep" ->
+        if data = make_notification_data(state, action_type, params) do
+          ActionNotifications.keep_card_notification(data.player_name)
+        end
+
+      "discard" ->
+        if data = make_notification_data(state, action_type, params) do
+          ActionNotifications.discard_card_notification(data.player_name)
+        end
+
+      "initiate_cancel" ->
+        if data = make_notification_data(state, action_type, params) do
+          ActionNotifications.initiate_cancel_notification(
+            data.player_name,
+            data.target_name
+          )
+        end
+
+      "cancel_vote" ->
+        if data = make_notification_data(state, action_type, params) do
+          ActionNotifications.cancel_vote_notification(
+            data.player_name,
+            data.vote
+          )
+        end
+
+      "initiate_viral_spiral" ->
+        if data = make_notification_data(state, action_type, params) do
+          ActionNotifications.initiate_viral_spiral_notification(data.player_name)
+        end
+
+      _ ->
+        nil
     end
   end
 end

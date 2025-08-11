@@ -102,3 +102,34 @@ defmodule ViralSpiral.Room.Template do
     end
   end
 end
+
+defmodule ViralSpiral.Room.ActionNotifications do
+  @moduledoc """
+  Generates notification messages for game actions. Card details are intentionally omitted to avoid revealing gameplay information.
+  """
+
+  def pass_card_notification(from_name, to_name) do
+    "#{from_name} passed a card to #{to_name}"
+  end
+
+  def keep_card_notification(player_name) do
+    "#{player_name} kept a card"
+  end
+
+  def discard_card_notification(player_name) do
+    "#{player_name} discarded a card"
+  end
+
+  def initiate_cancel_notification(player_name, target_name) do
+    "#{player_name} initiated cancel on #{target_name}"
+  end
+
+  def cancel_vote_notification(player_name, vote) do
+    vote_text = if vote, do: "voted YES", else: "voted NO"
+    "#{player_name} #{vote_text} to cancel"
+  end
+
+  def initiate_viral_spiral_notification(player_name) do
+    "#{player_name} used Viral Spiral power"
+  end
+end
