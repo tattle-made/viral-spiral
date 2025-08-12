@@ -77,9 +77,15 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
       socket
       |> assign(:state, room_state)
       |> maybe_put_end_banner(room_state)
-      |> put_flash(:info, notification_text)
 
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:notification, notification_text}
+    )
+
     {:noreply, socket}
   end
 
@@ -94,9 +100,15 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     socket =
       socket
       |> assign(:state, room_state)
-      |> put_flash(:info, notification_text)
 
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:notification, notification_text}
+    )
+
     {:noreply, socket}
   end
 
@@ -111,9 +123,15 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     socket =
       socket
       |> assign(:state, room_state)
-      |> put_flash(:info, notification_text)
 
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:notification, notification_text}
+    )
+
     {:noreply, socket}
   end
 
@@ -168,9 +186,15 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     socket =
       socket
       |> assign(:state, room_state)
-      |> put_flash(:info, notification_text)
 
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:notification, notification_text}
+    )
+
     {:noreply, socket}
   end
 
@@ -185,9 +209,15 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     socket =
       socket
       |> assign(:state, room_state)
-      |> put_flash(:info, notification_text)
 
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:notification, notification_text}
+    )
+
     {:noreply, socket}
   end
 
@@ -201,12 +231,16 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     notification_text =
       Notification.generate_notification(gen_state, "initiate_viral_spiral", params)
 
-    socket =
-      socket
-      |> assign(:state, room_state)
-      |> put_flash(:info, notification_text)
+    socket = socket |> assign(:state, room_state)
 
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:notification, notification_text}
+    )
+
     {:noreply, socket}
   end
 
@@ -219,6 +253,11 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     gen_state = :sys.get_state(room_gen)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
     socket = socket |> assign(:state, room_state) |> maybe_put_end_banner(room_state)
+    {:noreply, socket}
+  end
+
+  def handle_info({:notification, notification_text}, socket) do
+    socket = socket |> put_flash(:info, notification_text)
     {:noreply, socket}
   end
 
