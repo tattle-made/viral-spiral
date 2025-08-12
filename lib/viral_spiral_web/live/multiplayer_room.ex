@@ -218,12 +218,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     %{room_gen: room_gen, player_name: player_name} = socket.assigns
     gen_state = :sys.get_state(room_gen)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-
-    socket =
-      socket
-      |> assign(:state, room_state)
-      |> maybe_put_end_banner(room_state)
-
+    socket = socket |> assign(:state, room_state) |> maybe_put_end_banner(room_state)
     {:noreply, socket}
   end
 
