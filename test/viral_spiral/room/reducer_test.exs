@@ -322,7 +322,28 @@ defmodule ViralSpiral.Room.ReducerTest do
       state = Reducer.reduce(state, Actions.keep_card(keep_card_attrs))
       assert state.players[adhiraj].hand |> length() == 1
       assert state.players[adhiraj].active_cards |> length() == 0
-      assert state.players[adhiraj].clout == -1
+      assert state.players[adhiraj].clout == 0
+    end
+
+    test "keep same identity bias card as the player", %{state: state, players: players} do
+      %{adhiraj: adhiraj, aman: _aman, farah: farah, krys: _krys} = players
+      bias_card = StateTransformation.draw_card(state, {:bias, true, :red})
+
+      state =
+        StateTransformation.update_player(state, farah, %{clout: 4, active_cards: [bias_card]})
+
+      IO.inspect(state.players[farah], label: "STATE")
+
+      keep_card_attrs = %{
+        from_id: farah,
+        card: %{
+          id: bias_card.id,
+          veracity: true
+        }
+      }
+
+      state = Reducer.reduce(state, Actions.keep_card(keep_card_attrs))
+      assert state.players[farah].clout == 4
     end
   end
 
@@ -363,7 +384,7 @@ defmodule ViralSpiral.Room.ReducerTest do
       state = Reducer.reduce(state, Actions.discard_card(discard_card_attrs))
       assert state.players[adhiraj].hand |> length() == 0
       assert state.players[adhiraj].active_cards |> length() == 0
-      assert state.players[adhiraj].clout == -1
+      assert state.players[adhiraj].clout == 0
     end
   end
 
