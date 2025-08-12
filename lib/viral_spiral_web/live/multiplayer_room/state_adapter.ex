@@ -254,7 +254,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
   def make_current_holder_text(%State{turn: %{current: current_id}, players: players}) do
     case Map.get(players, current_id) do
       nil -> nil
-      player -> "🎴 #{player.name} is holding the card now."
+      player -> "🎴 #{player.name} is holding the card."
     end
   end
 end
