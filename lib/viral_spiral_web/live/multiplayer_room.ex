@@ -89,7 +89,6 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
 
-    # Generate notification text
     notification_text = Notification.generate_notification(gen_state, "keep", params)
 
     socket =
@@ -107,7 +106,6 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
 
-    # Generate notification text
     notification_text = Notification.generate_notification(gen_state, "discard", params)
 
     socket =
@@ -161,7 +159,6 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
 
-    # Generate notification text
     notification_text = Notification.generate_notification(gen_state, "initiate_cancel", params)
 
     socket =
@@ -179,7 +176,6 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
 
-    # Generate notification text
     notification_text = Notification.generate_notification(gen_state, "cancel_vote", params)
 
     socket =
@@ -198,7 +194,6 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
 
     room_state = StateAdapter.make_game_room(gen_state, player_name)
 
-    # Generate notification text
     notification_text =
       Notification.generate_notification(gen_state, "initiate_viral_spiral", params)
 
