@@ -6,6 +6,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
   alias ViralSpiral.Room
   alias ViralSpiral.{Affinity, Bias}
   alias ViralSpiralWeb.MultiplayerRoom.StateAdapter
+  alias ViralSpiral.Room.Notification
   alias Phoenix.PubSub
   use ViralSpiralWeb, :live_view
 
@@ -69,8 +70,16 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.pass_card(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
+    notification_text = Notification.generate_notification(gen_state, "pass_to", params)
     socket = socket |> assign(:state, room_state) |> maybe_put_end_banner(room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:notification, notification_text}
+    )
+
     {:noreply, socket}
   end
 
@@ -79,8 +88,16 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.keep_card(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
+    notification_text = Notification.generate_notification(gen_state, "keep", params)
     socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:notification, notification_text}
+    )
+
     {:noreply, socket}
   end
 
@@ -89,8 +106,16 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.discard_card(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
+    notification_text = Notification.generate_notification(gen_state, "discard", params)
     socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:notification, notification_text}
+    )
+
     {:noreply, socket}
   end
 
@@ -139,8 +164,16 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.initiate_cancel(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
+    notification_text = Notification.generate_notification(gen_state, "initiate_cancel", params)
     socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:notification, notification_text}
+    )
+
     {:noreply, socket}
   end
 
@@ -149,8 +182,16 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.vote_to_cancel(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
+    notification_text = Notification.generate_notification(gen_state, "cancel_vote", params)
     socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:notification, notification_text}
+    )
+
     {:noreply, socket}
   end
 
@@ -159,8 +200,19 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.initiate_viralspiral(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
+
+    notification_text =
+      Notification.generate_notification(gen_state, "initiate_viral_spiral", params)
+
     socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
+
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:notification, notification_text}
+    )
+
     {:noreply, socket}
   end
 
@@ -173,6 +225,11 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     gen_state = :sys.get_state(room_gen)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
     socket = socket |> assign(:state, room_state) |> maybe_put_end_banner(room_state)
+    {:noreply, socket}
+  end
+
+  def handle_info({:notification, notification_text}, socket) do
+    socket = socket |> put_flash(:info, notification_text)
     {:noreply, socket}
   end
 
