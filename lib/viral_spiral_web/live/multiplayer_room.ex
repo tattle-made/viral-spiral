@@ -72,7 +72,6 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     room_state = StateAdapter.make_game_room(gen_state, player_name)
     notification_text = Notification.generate_notification(gen_state, "pass_to", params)
     socket = socket |> assign(:state, room_state) |> maybe_put_end_banner(room_state)
-
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
 
     PubSub.broadcast(
@@ -91,7 +90,6 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     room_state = StateAdapter.make_game_room(gen_state, player_name)
     notification_text = Notification.generate_notification(gen_state, "keep", params)
     socket = socket |> assign(:state, room_state)
-
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
 
     PubSub.broadcast(
@@ -166,13 +164,8 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.initiate_cancel(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-
     notification_text = Notification.generate_notification(gen_state, "initiate_cancel", params)
-
-    socket =
-      socket
-      |> assign(:state, room_state)
-
+    socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
 
     PubSub.broadcast(
@@ -189,13 +182,8 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     action = Actions.vote_to_cancel(params)
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
-
     notification_text = Notification.generate_notification(gen_state, "cancel_vote", params)
-
-    socket =
-      socket
-      |> assign(:state, room_state)
-
+    socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
 
     PubSub.broadcast(
@@ -211,16 +199,12 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     %{room_gen: room_gen, player_name: player_name, room_name: room_name} = socket.assigns
     action = Actions.initiate_viralspiral(params)
     gen_state = GenServer.call(room_gen, action)
-
     room_state = StateAdapter.make_game_room(gen_state, player_name)
 
     notification_text =
       Notification.generate_notification(gen_state, "initiate_viral_spiral", params)
 
-    socket =
-      socket
-      |> assign(:state, room_state)
-
+    socket = socket |> assign(:state, room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
 
     PubSub.broadcast(
