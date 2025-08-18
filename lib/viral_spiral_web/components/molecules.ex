@@ -28,7 +28,7 @@ defmodule ViralSpiralWeb.Molecules do
           <div class="mt-2">
             <img class="w-full h-80 object-contain" src={card_url(@card.image)} />
           </div>
-          <p class="absolute z-4 bottom-0 px-2 py-2 mx-4 text-sm/4 bg-zinc-200 bg-opacity-95 rounded-md text-xs/1">
+          <p :if={!@in_spec_mode} class="absolute z-4 bottom-0 px-2 py-2 mx-4 text-sm/4 bg-zinc-200 bg-opacity-95 rounded-md text-xs/1">
             <%= @card.headline %>
           </p>
         </div>
