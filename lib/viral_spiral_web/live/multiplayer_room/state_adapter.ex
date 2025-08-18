@@ -168,6 +168,16 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
           %{id: target_id, name: target_player.name}
       end
 
+    from_player_id = get_in(state.power_cancel_player.from)
+    target_player_id = get_in(state.power_cancel_player.target)
+
+    from_player =
+      !is_nil(from_player_id) && %{id: from_player_id, name: state.players[from_player_id].name}
+
+    target_player =
+      !is_nil(target_player_id) &&
+        %{id: target_player_id, name: state.players[target_player_id].name}
+
     %{
       can_cancel: can_cancel,
       options: options,
@@ -191,7 +201,9 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
           }
         }
       },
-      can_vote: can_vote
+      can_vote: can_vote,
+      from_player: from_player,
+      target_player: target_player
     }
   end
 
@@ -254,7 +266,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
   def make_current_holder_text(%State{turn: %{current: current_id}, players: players}) do
     case Map.get(players, current_id) do
       nil -> nil
-      player -> "🎴 It's #{player.name}'s turn now."
+      player -> "🎴 #{player.name} is holding the card."
     end
   end
 end
