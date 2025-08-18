@@ -37,10 +37,8 @@ defmodule ViralSpiralWeb.SpectatorRoom.StateAdapter do
     }
   end
 
-    def make_current_cards(%State{} = state, player) do
-      IO.inspect(state, label: "PLAYER: ")
-
-      player = state.players[player]
+  def make_current_cards(%State{} = state, player) do
+    player = state.players[player]
 
     player.active_cards
     |> Enum.map(&Canon.get_card_from_store(&1))
@@ -183,7 +181,7 @@ defmodule ViralSpiralWeb.SpectatorRoom.StateAdapter do
   def make_current_holder_text(%State{turn: %{current: current_id}, players: players}) do
     case Map.get(players, current_id) do
       nil -> nil
-      player -> "🎴 It's #{player.name}'s turn now."
+      player -> "🎴 #{player.name} is holding the card."
     end
   end
 end

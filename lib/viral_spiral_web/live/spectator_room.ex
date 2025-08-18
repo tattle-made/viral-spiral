@@ -12,8 +12,6 @@ defmodule ViralSpiralWeb.SpectatorRoom do
   end
 
   def handle_params(params, _uri, socket) do
-    IO.inspect(params)
-    IO.inspect(self())
     room_name = params["room_name"]
 
     if connected?(socket) do
@@ -44,7 +42,6 @@ defmodule ViralSpiralWeb.SpectatorRoom do
     {:noreply, socket}
   end
 
-
   def handle_event("healthcheck", _params, socket) do
     {:noreply, socket}
   end
@@ -64,6 +61,11 @@ defmodule ViralSpiralWeb.SpectatorRoom do
     gen_state = :sys.get_state(room_gen)
     room_state = StateAdapter.make_spectator_room(gen_state)
     socket = socket |> assign(:state, room_state) |> maybe_put_end_banner(room_state)
+    {:noreply, socket}
+  end
+
+  def handle_info({:notification, notification_text}, socket) do
+    socket = socket |> put_flash(:info, notification_text)
     {:noreply, socket}
   end
 
