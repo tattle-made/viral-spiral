@@ -24,14 +24,17 @@
       </div>
     </div>
 
-    <div :if={@state && @state.all_players} id="container-others">
-      <.carousel_score_card players={@state.all_players} />
+    <div :if={@state && @state.all_players} id="container-others" class="gap-2 flex flex-wrap justify-center">
+      <%# <.carousel_score_card players={@state.all_players} /> %>
+      <%=for player <- @state.all_players do %>
+      <div class = {if player.id == @state.current_turn_player.id, do: "border-amber-400 border-4 rounded-lg"}><.player_score_card player={player} /></div>
+      <% end %>
     </div>
 
     <div
       :if={@state && @state.current_cards}
       id="container-cards"
-      class="flex-1 mt-2 flex justify-center"
+      class="flex-1 mt-8 2xl:mt-12 flex justify-center"
     >
       <div :for={card <- @state.current_cards}>
         <.card
