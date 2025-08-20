@@ -118,7 +118,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
         :positive ->
           case card_holder.affinities[card.target] do
             x when x > 0 and players_left_to_pass > 0 ->
-              [{card_holder, %Affinity{offset: -1, target: card.target}}]
+              [{card_holder, %Clout{offset: -1}}]
 
             _ ->
               []
@@ -127,7 +127,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
         :negative ->
           case card_holder.affinities[card.target] do
             x when x < 0 and players_left_to_pass > 0 ->
-              [{card_holder, %Affinity{offset: 1, target: card.target}}]
+              [{card_holder, %Clout{offset: -1}}]
 
             _ ->
               []
@@ -147,7 +147,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
         :positive ->
           case card_holder.affinities[card.target] do
             x when x > 0 and players_left_to_pass > 0 ->
-              [{card_holder, %Affinity{offset: -1, target: card.target}}]
+              [{card_holder, %Clout{offset: -1}}]
 
             _ ->
               []
@@ -156,7 +156,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
         :negative ->
           case card_holder.affinities[card.target] do
             x when x < 0 and players_left_to_pass > 0 ->
-              [{card_holder, %Affinity{offset: 1, target: card.target}}]
+              [{card_holder, %Clout{offset: -1}}]
 
             _ ->
               []
