@@ -17,6 +17,7 @@ defmodule ViralSpiralWeb.Molecules do
   attr :from, :string, required: true
   attr :can_turn_fake, :boolean, required: true
   attr :can_use_power, :boolean, required: true
+  attr :in_spec_mode, :boolean, default: false
 
   def card(assigns) do
     ~H"""
@@ -27,14 +28,14 @@ defmodule ViralSpiralWeb.Molecules do
           <div class="mt-2">
             <img class="w-full h-80 object-contain" src={card_url(@card.image)} />
           </div>
-          <p class="absolute z-4 bottom-0 px-2 py-2 mx-4 text-sm/4 bg-zinc-200 bg-opacity-95 rounded-md text-xs/1">
+          <p :if={!@in_spec_mode} class="absolute z-4 bottom-0 px-2 py-2 mx-4 text-sm/4 bg-zinc-200 bg-opacity-95 rounded-md text-xs/1">
             <%= @card.headline %>
           </p>
         </div>
       </div>
 
-      <div class="flex flex-col py-2">
-        <%= if !is_nil(@card.pass_to) and length(@card.pass_to) != 0 do %>
+      <div class="flex flex-col py-2" >
+        <%= if !is_nil(@card.pass_to) and length(@card.pass_to) != 0 and !@in_spec_mode do %>
           <div class="px-2 flex flex-row gap-2 align-center">
             <span class="text-sm mb-1 self-center">Pass to</span>
 
@@ -59,7 +60,7 @@ defmodule ViralSpiralWeb.Molecules do
           </div>
         <% end %>
 
-        <div class="mt-2 flex flex-row gap-2 flex-wrap px-2">
+        <div class="mt-2 flex flex-row gap-2 flex-wrap px-2" :if={!@in_spec_mode}>
           <div class="">
             <button
               phx-click={
@@ -96,18 +97,30 @@ defmodule ViralSpiralWeb.Molecules do
 
         <div class="flex flex-row flex-wrap gap-2 px-2">
           <div class="">
-            <button
-              phx-click={
-                JS.push("view_source",
-                  value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
-                )
-                |> show_modal("source-modal")
-              }
-              class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
-              disabled={@card.source != nil}
-            >
-              View Source
-            </button>
+            <%= if @in_spec_mode do %>
+              <!-- Spectator mode: do not send events; only open modal if source already present -->
+              <button
+                phx-click={show_modal("source-modal")}
+                class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
+                disabled={@card.source == nil}
+              >
+                View Source
+              </button>
+            <% else %>
+              <!-- Multiplayer mode: push event to fetch source, then open modal -->
+              <button
+                phx-click={
+                  JS.push("view_source",
+                    value: %{from_id: @from, card: %{id: @card.id, veracity: @card.veracity}}
+                  )
+                  |> show_modal("source-modal")
+                }
+                class="py-1 px-2 hover:bg-orange-300 text-xs rounded-md border border-zinc-900"
+                disabled={@card.source != nil}
+              >
+                View Source
+              </button>
+            <% end %>
           </div>
           <div :if={@can_use_power && @card.can_mark_as_fake}>
             <button

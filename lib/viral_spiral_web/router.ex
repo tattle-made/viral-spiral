@@ -21,6 +21,7 @@ defmodule ViralSpiralWeb.Router do
     live "/room/waiting-room/:room_name", MultiplayerWaitingRoom
     live "/join/:room_name", MultiplayerJoinRoom
     live "/room/:room_name", MultiplayerRoom
+    live "/spec/:room_name", SpectatorRoom
   end
 
   scope "/designer", ViralSpiralWeb do
