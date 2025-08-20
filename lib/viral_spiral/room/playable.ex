@@ -109,13 +109,61 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
       sender_changes ++ conflation_changes ++ change_clout_of_card_target
   end
 
-  def keep(_card, _state, _from) do
-    []
+  def keep(card, state, from) do
+    card_holder = state.players[from]
+    players_left_to_pass = length(state.turn.pass_to)
+
+    keep_affinity_card_changes =
+      case card.polarity do
+        :positive ->
+          case card_holder.affinities[card.target] do
+            x when x > 0 and players_left_to_pass > 0 ->
+              [{card_holder, %Affinity{offset: -1, target: card.target}}]
+
+            _ ->
+              []
+          end
+
+        :negative ->
+          case card_holder.affinities[card.target] do
+            x when x < 0 and players_left_to_pass > 0 ->
+              [{card_holder, %Affinity{offset: 1, target: card.target}}]
+
+            _ ->
+              []
+          end
+      end
+
+    keep_affinity_card_changes
   end
 
   # End the turn
-  def discard(_card, _state, _from) do
-    []
+  def discard(card, state, from) do
+    card_holder = state.players[from]
+    players_left_to_pass = length(state.turn.pass_to)
+
+    discard_affinity_card_changes =
+      case card.polarity do
+        :positive ->
+          case card_holder.affinities[card.target] do
+            x when x > 0 and players_left_to_pass > 0 ->
+              [{card_holder, %Affinity{offset: -1, target: card.target}}]
+
+            _ ->
+              []
+          end
+
+        :negative ->
+          case card_holder.affinities[card.target] do
+            x when x < 0 and players_left_to_pass > 0 ->
+              [{card_holder, %Affinity{offset: 1, target: card.target}}]
+
+            _ ->
+              []
+          end
+      end
+
+    discard_affinity_card_changes
   end
 end
 
