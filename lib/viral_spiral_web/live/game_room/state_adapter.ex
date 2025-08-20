@@ -1,6 +1,7 @@
 defmodule ViralSpiralWeb.GameRoom.StateAdapter do
   require IEx
 
+  alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Canon
   alias ViralSpiral.Bias
   alias ViralSpiral.Entity.Player.Map, as: PlayerMap
@@ -52,7 +53,7 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
                     |> Enum.map(fn id -> %{id: id, name: state.players[id].name} end),
                   source: make_source(state.players[player.id], card),
                   can_mark_as_fake: can_mark_as_fake?(state.turn),
-                  can_turn_fake: card.veracity == true
+                  can_turn_fake: make_can_turn_fake(state, Sparse.new(card.id, card.veracity))
                 }
               end),
             hand:
@@ -96,11 +97,12 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
     alias ViralSpiral.Canon.DynamicCard
 
     headline = card.headline
+    fake_headline = card.fake_headline
     sparse_card = Sparse.new(card.id, card.veracity)
 
     case dynamic_card.identity_stats[sparse_card] do
       nil -> headline
-      stats -> DynamicCard.patch(headline, stats)
+      stats -> DynamicCard.patch(fake_headline, stats)
     end
   end
 
@@ -197,6 +199,10 @@ defmodule ViralSpiralWeb.GameRoom.StateAdapter do
     %{
       enabled: enabled
     }
+  end
+
+  def make_can_turn_fake(%State{} = state, %Sparse{} = card) do
+    StateTransformation.can_turn_fake(state, card)
   end
 
   def generate_end_game_message(%State{} = state) do

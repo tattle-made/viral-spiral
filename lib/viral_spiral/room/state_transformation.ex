@@ -83,4 +83,11 @@ defmodule ViralSpiral.Room.StateTransformation do
     cardset_member = Canon.draw_card_from_deck(card_sets, set_key, 4)
     Sparse.new(cardset_member.id, veracity)
   end
+
+  def can_turn_fake(%State{} = state, %Sparse{} = card) do
+    case state.dynamic_card.identity_stats[card] do
+      nil -> true
+      _ -> false
+    end
+  end
 end

@@ -4,6 +4,7 @@ defmodule ViralSpiral.Canon.Card.Conflated do
             type: :conflated,
             veracity: false,
             headline: nil,
+            fake_headline: nil,
             image: nil,
             article_id: nil,
             affinity: nil,

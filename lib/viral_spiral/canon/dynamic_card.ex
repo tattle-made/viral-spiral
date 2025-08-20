@@ -118,7 +118,7 @@ defmodule ViralSpiral.Canon.DynamicCard do
   end
 
   def patch(card, identity_stats) do
-    case find_placeholders(card.headline) do
+    case find_placeholders(card.fake_headline) do
       [] ->
         card
 

@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Entity.Player.Changes.Bias
   alias ViralSpiral.Entity.Player.Changes.RemoveFromHand
@@ -95,36 +96,20 @@ defmodule ViralSpiral.Room.Reducer do
   def reduce(%State{} = state, %DrawCard{card: nil}) do
     %{deck: deck} = state
     card_sets = deck.available_cards
-    card_store = Canon.get_card_store()
     current_player = State.current_round_player(state)
     draw_constraints = State.draw_constraints(state)
     card_type = CardDraw.draw_type(draw_constraints)
     chaos = draw_constraints.chaos
     card = Canon.draw_card_from_deck(card_sets, card_type, chaos)
 
-    full_card = card_store[Sparse.new(card.id, elem(card_type, 1))]
     sparse_card = Sparse.new(card.id, elem(card_type, 1))
-    identity_stats = State.identity_stats(state)
-
-    dynamic_card_change =
-      case DynamicCard.find_placeholders(full_card.headline) do
-        [] ->
-          []
-
-        _ ->
-          [
-            {state.dynamic_card,
-             %AddIdentityStats{card: sparse_card, identity_stats: identity_stats}}
-          ]
-      end
 
     changes = [
       {state.deck, %RemoveCard{card_sets: card_sets, card_type: card_type, card: card}},
       {state.players[current_player.id], %AddActiveCard{card: sparse_card}}
     ]
 
-    all_changes = dynamic_card_change ++ changes
-    State.apply_changes(state, all_changes)
+    State.apply_changes(state, changes)
   end
 
   @doc """
@@ -136,27 +121,14 @@ defmodule ViralSpiral.Room.Reducer do
     card_store = Canon.get_card_store()
     current_player = State.current_round_player(state)
     full_card = card_store[card]
-    identity_stats = State.identity_stats(state)
     card_type = {full_card.type, full_card.veracity, Map.get(full_card, :target)}
-
-    dynamic_card_change =
-      case DynamicCard.find_placeholders(full_card.headline) do
-        [] ->
-          []
-
-        _ ->
-          [
-            {state.dynamic_card, %AddIdentityStats{card: card, identity_stats: identity_stats}}
-          ]
-      end
 
     changes = [
       {state.deck, %RemoveCard{card_sets: card_sets, card_type: card_type, card: card}},
       {state.players[current_player.id], %AddActiveCard{card: card}}
     ]
 
-    all_changes = dynamic_card_change ++ changes
-    State.apply_changes(state, all_changes)
+    State.apply_changes(state, changes)
   end
 
   def reduce(%State{} = state, %PassCard{} = action) do
@@ -164,8 +136,13 @@ defmodule ViralSpiral.Room.Reducer do
     sparse_card = Sparse.new(card.id, card.veracity)
     card = Canon.get_card_from_store(sparse_card)
 
-    identity_stats = State.identity_stats(state)
-    card = DynamicCard.patch(card, identity_stats)
+    identity_stats = state.dynamic_card.identity_stats[sparse_card]
+
+    card =
+      case identity_stats do
+        nil -> card
+        _ -> DynamicCard.patch(card, identity_stats)
+      end
 
     changes =
       Playable.pass(card, state, from_id, to_id) ++
@@ -262,20 +239,19 @@ defmodule ViralSpiral.Room.Reducer do
 
   def reduce(%State{} = state, %TurnToFake{} = action) do
     %{from_id: from_id, card: card} = action
+    sparse_card = Sparse.new(card.id, card.veracity)
+
+    can_turn_fake =
+      StateTransformation.can_turn_fake(state, sparse_card) |> IO.inspect(label: "can turn fake")
 
     # todo : only turn to fake if not already fake
-    case card.veracity do
+    case can_turn_fake do
       true ->
-        fake_card = Canon.get_card_from_store(Sparse.new(card.id, false))
-        sparse_card = Sparse.new(fake_card.id, fake_card.veracity)
+        card = Canon.get_card_from_store(sparse_card)
         identity_stats = State.identity_stats(state)
 
-        changes = [
-          {state.players[from_id], %MakeActiveCardFake{card: sparse_card}}
-        ]
-
         dynamic_card_change =
-          case DynamicCard.find_placeholders(fake_card.headline) do
+          case DynamicCard.find_placeholders(card.fake_headline) do
             [] ->
               []
 
@@ -288,12 +264,12 @@ defmodule ViralSpiral.Room.Reducer do
 
         set_power_change = [{state.turn, %SetPowerTrue{}}]
 
-        all_changes = changes ++ dynamic_card_change ++ set_power_change
+        all_changes = dynamic_card_change ++ set_power_change
 
         State.apply_changes(state, all_changes)
 
       false ->
-        raise "This card is already false"
+        raise "This card has already been turned false"
     end
   end
 

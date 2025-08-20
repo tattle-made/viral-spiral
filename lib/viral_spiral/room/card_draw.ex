@@ -36,7 +36,7 @@ defmodule ViralSpiral.Room.CardDraw do
   }
   """
 
-  @veracity_threshold 4
+  @veracity_threshold 1
 
   def draw_type(%DrawConstraints{} = requirements) do
     # dynamic bias probability increase's from 0.2 to 0.7 as chaos goes from 0 to 10

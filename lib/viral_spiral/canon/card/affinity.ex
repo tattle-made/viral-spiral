@@ -6,6 +6,7 @@ defmodule ViralSpiral.Canon.Card.Affinity do
             veracity: nil,
             polarity: nil,
             headline: nil,
+            fake_headline: nil,
             image: nil,
             article_id: nil,
             bias: nil

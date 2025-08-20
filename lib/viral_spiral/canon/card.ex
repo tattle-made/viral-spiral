@@ -132,13 +132,15 @@ defmodule ViralSpiral.Canon.Card do
         tgb: tgb,
         veracity: true,
         headline: Enum.at(row, @columns.topical),
+        fake_headline: Enum.at(row, @columns.topical_fake),
         image: Enum.at(row, @columns.topical_image)
       },
       %Topical{
         id: topical_card_id,
         tgb: tgb,
         veracity: false,
-        headline: Enum.at(row, @columns.topical_fake),
+        headline: Enum.at(row, @columns.topical),
+        fake_headline: Enum.at(row, @columns.topical_fake),
         image: Enum.at(row, @columns.topical_image)
       },
       %Bias{
@@ -196,6 +198,7 @@ defmodule ViralSpiral.Canon.Card do
         veracity: true,
         polarity: :positive,
         headline: Enum.at(row, @columns.pro_cat),
+        fake_headline: Enum.at(row, @columns.pro_cat_fake),
         image: Enum.at(row, @columns.pro_cat_image)
       },
       %Affinity{
@@ -204,7 +207,8 @@ defmodule ViralSpiral.Canon.Card do
         target: :cat,
         veracity: false,
         polarity: :positive,
-        headline: Enum.at(row, @columns.pro_cat_fake),
+        headline: Enum.at(row, @columns.pro_cat),
+        fake_headline: Enum.at(row, @columns.pro_cat_fake),
         image: Enum.at(row, @columns.pro_cat_image)
       },
       %Affinity{
@@ -214,6 +218,7 @@ defmodule ViralSpiral.Canon.Card do
         veracity: true,
         polarity: :negative,
         headline: Enum.at(row, @columns.anti_cat),
+        fake_headline: Enum.at(row, @columns.anti_cat_fake),
         image: Enum.at(row, @columns.anti_cat_image)
       },
       %Affinity{
@@ -222,7 +227,8 @@ defmodule ViralSpiral.Canon.Card do
         target: :cat,
         veracity: false,
         polarity: :negative,
-        headline: Enum.at(row, @columns.anti_cat_fake),
+        headline: Enum.at(row, @columns.anti_cat),
+        fake_headline: Enum.at(row, @columns.anti_cat_fake),
         image: Enum.at(row, @columns.anti_cat_image)
       },
       %Affinity{
@@ -232,6 +238,7 @@ defmodule ViralSpiral.Canon.Card do
         veracity: true,
         polarity: :positive,
         headline: Enum.at(row, @columns.pro_sock),
+        fake_headline: Enum.at(row, @columns.pro_sock_fake),
         image: Enum.at(row, @columns.pro_sock_image)
       },
       %Affinity{
@@ -240,7 +247,8 @@ defmodule ViralSpiral.Canon.Card do
         target: :sock,
         veracity: false,
         polarity: :positive,
-        headline: Enum.at(row, @columns.pro_sock_fake),
+        headline: Enum.at(row, @columns.pro_sock),
+        fake_headline: Enum.at(row, @columns.pro_sock_fake),
         image: Enum.at(row, @columns.pro_sock_image)
       },
       %Affinity{
@@ -250,6 +258,7 @@ defmodule ViralSpiral.Canon.Card do
         veracity: true,
         polarity: :negative,
         headline: Enum.at(row, @columns.anti_sock),
+        fake_headline: Enum.at(row, @columns.anti_sock_fake),
         image: Enum.at(row, @columns.anti_sock_image)
       },
       %Affinity{
@@ -258,7 +267,8 @@ defmodule ViralSpiral.Canon.Card do
         target: :sock,
         veracity: false,
         polarity: :negative,
-        headline: Enum.at(row, @columns.anti_sock_fake),
+        headline: Enum.at(row, @columns.anti_sock),
+        fake_headline: Enum.at(row, @columns.anti_sock_fake),
         image: Enum.at(row, @columns.anti_sock_image)
       },
       %Affinity{
@@ -268,6 +278,7 @@ defmodule ViralSpiral.Canon.Card do
         veracity: true,
         polarity: :positive,
         headline: Enum.at(row, @columns.pro_skub),
+        fake_headline: Enum.at(row, @columns.pro_skub_fake),
         image: Enum.at(row, @columns.pro_skub_image)
       },
       %Affinity{
@@ -276,7 +287,8 @@ defmodule ViralSpiral.Canon.Card do
         target: :skub,
         veracity: false,
         polarity: :positive,
-        headline: Enum.at(row, @columns.pro_skub_fake),
+        headline: Enum.at(row, @columns.pro_skub),
+        fake_headline: Enum.at(row, @columns.pro_skub_fake),
         image: Enum.at(row, @columns.pro_skub_image)
       },
       %Affinity{
@@ -286,6 +298,7 @@ defmodule ViralSpiral.Canon.Card do
         veracity: true,
         polarity: :negative,
         headline: Enum.at(row, @columns.anti_skub),
+        fake_headline: Enum.at(row, @columns.anti_skub_fake),
         image: Enum.at(row, @columns.anti_skub_image)
       },
       %Affinity{
@@ -294,7 +307,8 @@ defmodule ViralSpiral.Canon.Card do
         target: :skub,
         veracity: false,
         polarity: :negative,
-        headline: Enum.at(row, @columns.anti_skub_fake),
+        headline: Enum.at(row, @columns.anti_skub),
+        fake_headline: Enum.at(row, @columns.anti_skub_fake),
         image: Enum.at(row, @columns.anti_skub_image)
       },
       %Affinity{
@@ -304,6 +318,7 @@ defmodule ViralSpiral.Canon.Card do
         veracity: true,
         polarity: :positive,
         headline: Enum.at(row, @columns.pro_high_five),
+        fake_headline: Enum.at(row, @columns.pro_high_five_fake),
         image: Enum.at(row, @columns.pro_high_five_image)
       },
       %Affinity{
@@ -312,7 +327,8 @@ defmodule ViralSpiral.Canon.Card do
         target: :highfive,
         veracity: false,
         polarity: :positive,
-        headline: Enum.at(row, @columns.pro_high_five_fake),
+        headline: Enum.at(row, @columns.pro_high_five),
+        fake_headline: Enum.at(row, @columns.pro_high_five_fake),
         image: Enum.at(row, @columns.pro_high_five_image)
       },
       %Affinity{
@@ -322,6 +338,7 @@ defmodule ViralSpiral.Canon.Card do
         veracity: true,
         polarity: :negative,
         headline: Enum.at(row, @columns.anti_highfive),
+        fake_headline: Enum.at(row, @columns.anti_highfive_fake),
         image: Enum.at(row, @columns.anti_highfive_image)
       },
       %Affinity{
@@ -330,7 +347,8 @@ defmodule ViralSpiral.Canon.Card do
         target: :highfive,
         veracity: false,
         polarity: :negative,
-        headline: Enum.at(row, @columns.anti_highfive_fake),
+        headline: Enum.at(row, @columns.anti_highfive),
+        fake_headline: Enum.at(row, @columns.anti_highfive_fake),
         image: Enum.at(row, @columns.anti_highfive_image)
       },
       %Affinity{
@@ -340,6 +358,7 @@ defmodule ViralSpiral.Canon.Card do
         veracity: true,
         polarity: :positive,
         headline: Enum.at(row, @columns.pro_houseboat),
+        fake_headline: Enum.at(row, @columns.pro_houseboat_fake),
         image: Enum.at(row, @columns.pro_houseboat_image)
       },
       %Affinity{
@@ -349,6 +368,7 @@ defmodule ViralSpiral.Canon.Card do
         veracity: false,
         polarity: :positive,
         headline: Enum.at(row, @columns.pro_houseboat),
+        fake_headline: Enum.at(row, @columns.pro_houseboat_fake),
         image: Enum.at(row, @columns.pro_houseboat_image)
       },
       %Affinity{
@@ -358,6 +378,7 @@ defmodule ViralSpiral.Canon.Card do
         veracity: true,
         polarity: :negative,
         headline: Enum.at(row, @columns.anti_houseboat),
+        fake_headline: Enum.at(row, @columns.anti_houseboat_fake),
         image: Enum.at(row, @columns.anti_houseboat_image)
       },
       %Affinity{
@@ -367,6 +388,7 @@ defmodule ViralSpiral.Canon.Card do
         veracity: false,
         polarity: :negative,
         headline: Enum.at(row, @columns.anti_houseboat),
+        fake_headline: Enum.at(row, @columns.anti_houseboat_fake),
         image: Enum.at(row, @columns.anti_houseboat_image)
       },
       %Conflated{

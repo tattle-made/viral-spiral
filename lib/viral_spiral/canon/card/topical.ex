@@ -5,6 +5,7 @@ defmodule ViralSpiral.Canon.Card.Topical do
             veracity: nil,
             polarity: :neutral,
             headline: nil,
+            fake_headline: nil,
             image: nil,
             article_id: nil,
             bias: nil
