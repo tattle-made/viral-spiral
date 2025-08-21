@@ -64,6 +64,7 @@
                 label="Select player to cancel"
                 options={@state.power_cancel.form.values.targets.options}
                 value={@state.power_cancel.form.values.targets.value}
+                prompt="Choose a player"
               />
 
               <.input
@@ -71,6 +72,7 @@
                 field={@state.power_cancel.form.data[:affinity]}
                 options={@state.power_cancel.form.values.affinity.options}
                 value={@state.power_cancel.form.values.affinity.value}
+                prompt="Choose a community"
                 label="Select community to mobilize"
               />
 
