@@ -101,6 +101,11 @@ defmodule ViralSpiralWeb.CoreComponents do
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
   attr :title, :string, default: nil
   attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
+
+  attr :autodismiss_ms, :integer,
+    default: 4000,
+    doc: "auto-dismiss delay in milliseconds; set to 0 to disable"
+
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
 
   slot :inner_block, doc: "the optional inner block that renders the flash message"
@@ -112,6 +117,8 @@ defmodule ViralSpiralWeb.CoreComponents do
     <div
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
+      phx-hook={@autodismiss_ms && @autodismiss_ms > 0 && "FlashAutoHide"}
+      data-timeout-ms={@autodismiss_ms}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
       class={[

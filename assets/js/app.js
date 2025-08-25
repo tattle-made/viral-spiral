@@ -30,6 +30,7 @@ import "flowbite/dist/flowbite.phoenix.js";
 import { HookCounter } from "./counter";
 import { BackgroundHook } from "./background";
 import { HookPopup } from "./popup";
+import { FlashAutoHide } from "./flash";
 import Player from "./player";
 import { CarouselHook } from "./carousel";
 import { RoomLinkCopyClipboardHook } from "./room-link-copy-clipboard";
@@ -44,7 +45,8 @@ let Hooks = {
   BackgroundHook,
   HookPopup,
   CarouselHook,
-  RoomLinkCopyClipboardHook
+  RoomLinkCopyClipboardHook,
+  FlashAutoHide,
 };
 
 let csrfToken = document

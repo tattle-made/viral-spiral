@@ -230,7 +230,12 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
 
   def handle_info({:notification, notification_text}, socket) do
     socket = socket |> put_flash(:info, notification_text)
+    # Process.send_after(self(), :clear_flash, 2000)
     {:noreply, socket}
+  end
+
+  def handle_info(:clear_flash, socket) do
+    {:noreply, clear_flash(socket)}
   end
 
   def handle_info({}, socket) do
