@@ -239,10 +239,20 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
     threshold = state.room.viral_spiral_threshold
     player = state.players[player_id]
 
+    # Enable if (a) any bias >= threshold OR (b) any affinity has |value| >= 5,
+    # and it's the current player's turn.
+    bias_enabled =
+      player.biases
+      |> Map.values()
+      |> Enum.any?(&(&1 >= threshold))
+
+    affinity_enabled =
+      player.affinities
+      |> Map.values()
+      |> Enum.any?(&(abs(&1) >= threshold))
+
     enabled =
-      Map.values(player.biases)
-      |> Enum.any?(&(&1 >= threshold)) &&
-        State.current_turn_player(state).id == player_id
+      (bias_enabled or affinity_enabled) && State.current_turn_player(state).id == player_id
 
     %{enabled: enabled}
   end
