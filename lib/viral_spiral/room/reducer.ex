@@ -306,12 +306,26 @@ defmodule ViralSpiral.Room.Reducer do
     set_power_change = [{state.turn, %SetPowerTrue{}}]
 
     target_bias = Player.viralspiral_target_bias(sender, viralspiral_threshold) |> IO.inspect()
-    reduce_bias_change = [{state.players[from_id], %Bias{target: target_bias, offset: -1}}]
+    target_affinity = Player.viralspiral_target_affinity(sender, viralspiral_threshold)
+
+    penalty_changes =
+      case target_bias do
+        nil ->
+          case target_affinity do
+            nil -> []
+            affinity ->
+              current = sender.affinities[affinity]
+              offset = if current > 0, do: -1, else: 1
+              [{state.players[from_id], %Affinity{target: affinity, offset: offset}}]
+          end
+        bias ->
+          [{state.players[from_id], %Bias{target: bias, offset: -1}}]
+      end
 
     all_changes =
       power_change ++
         card_pass_changes ++
-        sender_hand_change ++ hand_changes ++ set_power_change ++ reduce_bias_change
+        sender_hand_change ++ hand_changes ++ set_power_change ++ penalty_changes
 
     State.apply_changes(state, all_changes)
   end
