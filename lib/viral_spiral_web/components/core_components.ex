@@ -712,4 +712,30 @@ defmodule ViralSpiralWeb.CoreComponents do
     </.form>
     """
   end
+
+  slot :title, required: true
+  slot :content, required: true
+
+  def popover(assigns) do
+    ~H"""
+    <div type="button" data-popover-target="popover-default" class="cursor-pointer">
+      <.icon name="hero-information-circle" class="h-6 w-6" />
+    </div>
+
+    <div
+      data-popover
+      id="popover-default"
+      role="tooltip"
+      class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800"
+    >
+      <div class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg dark:border-gray-600 dark:bg-gray-700">
+        <h3 class="font-semibold text-gray-900 dark:text-white"><%= render_slot(@title) %></h3>
+      </div>
+      <div class="px-3 py-2">
+        <%= render_slot(@content) %>
+      </div>
+      <div data-popper-arrow></div>
+    </div>
+    """
+  end
 end

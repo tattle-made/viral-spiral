@@ -5,7 +5,19 @@
 <div :if={@state != nil}>
   <div class="p-4 border-red-200 border-2 rounded-2xl flex flex-row justify-between ">
     <span><%= @state.room.name %></span>
+    <div class="flex flex-row gap-2">
+    <.popover>
+      <:title> Reasons for last changes </:title>
+      <:content>
+        <div :if={@change_list}>
+        <div :for={message <- @change_list }>
+          <div><%=message %></div>
+        </div>
+        </div>
+      </:content>
+    </.popover>
     <span><%= @state.room.chaos_counter %></span>
+    </div>
   
   </div>
   <%!-- <vs-calendar id="cal" phx-hook="CalendarHook"></vs-calendar> --%>

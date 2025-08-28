@@ -35,6 +35,7 @@ defmodule ViralSpiralWeb.GameRoom do
     socket =
       socket
       |> assign(:state, room_state)
+      |> assign(:change_list, [])
       |> assign(:room_gen, pid)
 
     {:noreply, socket}
@@ -113,6 +114,11 @@ defmodule ViralSpiralWeb.GameRoom do
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.game_room(gen_state)
     socket = assign(socket, :state, room_state)
+    {:noreply, socket}
+  end
+
+  def handle_info({:change_reasons, message_list}, socket) do
+    socket = socket |> assign(:change_list, message_list)
     {:noreply, socket}
   end
 

@@ -5,6 +5,10 @@ defmodule ViralSpiral.Room.GameEngine do
   All player actions are sent to this genserver, which returns or broadcasts the changes made to the game State.
   """
   require IEx
+  alias ViralSpiral.Entity.ChangeMessages
+  alias ViralSpiral.Room
+  alias ViralSpiral.Room.State
+  alias ViralSpiral.Entity.Changes
   alias ViralSpiral.Room.Actions.Player.ViralSpiralInitiate
   alias ViralSpiral.Room.Actions.Engine.OverwriteState
   alias ViralSpiral.Room.Actions.Engine.DrawCard
@@ -15,7 +19,7 @@ defmodule ViralSpiral.Room.GameEngine do
   alias ViralSpiral.Room.State.Templates.Debug
   alias ViralSpiral.Room.State.Templates.DesignerRoom
   alias ViralSpiral.Room.GameSave
-  alias ViralSpiral.Room
+
   alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Room.Actions.Player.CancelPlayerVote
   alias ViralSpiral.Room.Actions.Player.CancelPlayerInitiate
@@ -93,30 +97,32 @@ defmodule ViralSpiral.Room.GameEngine do
   end
 
   @impl true
-  def handle_call(%DrawCard{} = action, _from, state) do
-    new_state = Reducer.reduce(state, action)
-    {:reply, :ok, new_state}
-  end
-
-  @impl true
-  def handle_call(%PassCard{} = action, _from, state) do
-    with new_state <- Reducer.reduce(state, action),
+  def handle_call(%PassCard{} = action, {pid, _call}, state) do
+    with changes <- Changes.change(state, action),
+         new_state <- Reducer.reduce(:pass_card, state, changes),
+         _message_list <- send(pid, {:change_reasons, ChangeMessages.message_string(changes)}),
          {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
       {:reply, new_state, new_state}
     end
   end
 
   @impl true
-  def handle_call(%KeepCard{} = action, _from, state) do
-    with new_state <- Reducer.reduce(state, action),
+  def handle_call(%KeepCard{} = action, {pid, _call}, state) do
+    with changes <- Changes.change(state, action),
+         change_messages <- ChangeMessages.message_string(changes),
+         new_state <- Reducer.reduce(:keep_card, state, changes),
+         _change_messages <- send(pid, {:change_reasons, change_messages}),
          {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
       {:reply, new_state, new_state}
     end
   end
 
   @impl true
-  def handle_call(%DiscardCard{} = action, _from, state) do
-    with new_state <- Reducer.reduce(state, action),
+  def handle_call(%DiscardCard{} = action, {pid, _call}, state) do
+    with changes <- Changes.change(state, action),
+         change_messages <- ChangeMessages.message_string(changes),
+         new_state <- Reducer.reduce(:discard_card, state, changes),
+         _change_messages <- send(pid, {:change_reasons, change_messages}),
          {:ok, _game_save} <- Room.update_game_save(new_state.room.name, new_state) do
       {:reply, new_state, new_state}
     end

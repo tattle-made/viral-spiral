@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Entity.Changes
   alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Entity.Player
   alias ViralSpiral.Entity.Player.Changes.Bias
@@ -131,76 +132,11 @@ defmodule ViralSpiral.Room.Reducer do
     State.apply_changes(state, changes)
   end
 
-  def reduce(%State{} = state, %PassCard{} = action) do
-    %{card: card, from_id: from_id, to_id: to_id} = action
-    sparse_card = Sparse.new(card.id, card.veracity)
-    card = Canon.get_card_from_store(sparse_card)
-
-    identity_stats = state.dynamic_card.identity_stats[sparse_card]
-
-    card =
-      case identity_stats do
-        nil -> card
-        _ -> DynamicCard.patch(card, identity_stats)
-      end
-
-    changes =
-      Playable.pass(card, state, from_id, to_id) ++
-        [
-          {state.players[from_id], %RemoveActiveCard{card: sparse_card}},
-          {state.players[to_id], %AddActiveCard{card: sparse_card}},
-          {state.turn, %NextTurn{target: to_id}}
-        ]
-
-    state = State.apply_changes(state, changes)
-    State.apply_changes(state, Room.game_end_change(state))
-  end
-
-  def reduce(%State{} = state, %KeepCard{} = action) do
-    %{from_id: from_id, card: card} = action
-    sparse_card = Sparse.new(card.id, card.veracity)
-    card = Canon.get_card_from_store(sparse_card)
-
-    changes =
-      Playable.keep(card, state, from_id) ++
-        [
-          {state.players[from_id], %RemoveActiveCard{card: sparse_card}},
-          {state.players[from_id], %AddToHand{card: sparse_card}},
-          {state.round, %NextRound{}}
-        ]
-
-    state = State.apply_changes(state, changes)
-
-    State.apply_changes(state, [
-      {state.turn, %NewTurn{round: state.round}}
-    ])
-    |> reduce(%DrawCard{})
-  end
-
-  def reduce(%State{} = state, %DiscardCard{} = action) do
-    %{from_id: from_id, card: card} = action
-    sparse_card = Sparse.new(card.id, card.veracity)
-    card = Canon.get_card_from_store(sparse_card)
-
-    changes =
-      Playable.discard(card, state, from_id) ++
-        [
-          {state.players[from_id], %RemoveActiveCard{card: sparse_card}},
-          {state.round, %NextRound{}}
-        ]
-
-    state = State.apply_changes(state, changes)
-
-    State.apply_changes(state, [
-      {state.turn, %NewTurn{round: state.round}}
-    ])
-    |> reduce(%DrawCard{})
-  end
-
   def reduce(%State{} = state, %MarkAsFake{} = action) do
     %{from_id: from_id, card: card} = action
     turn = state.turn
 
+    # todo fix this.
     clout_penalty_change =
       if card.veracity == false,
         do: [{state.players[Enum.at(turn.path, -1)], %Clout{offset: -1}}],
@@ -378,5 +314,28 @@ defmodule ViralSpiral.Room.Reducer do
         sender_hand_change ++ hand_changes ++ set_power_change ++ reduce_bias_change
 
     State.apply_changes(state, all_changes)
+  end
+
+  def reduce(:pass_card, %State{} = state, changes) do
+    state = State.apply_changes(state, changes)
+    State.apply_changes(state, Room.game_end_change(state))
+  end
+
+  def reduce(:keep_card, %State{} = state, changes) do
+    state = State.apply_changes(state, changes)
+
+    State.apply_changes(state, [
+      {state.turn, %NewTurn{round: state.round}}
+    ])
+    |> reduce(%DrawCard{})
+  end
+
+  def reduce(:discard_card, %State{} = state, changes) do
+    state = State.apply_changes(state, changes)
+
+    State.apply_changes(state, [
+      {state.turn, %NewTurn{round: state.round}}
+    ])
+    |> reduce(%DrawCard{})
   end
 end

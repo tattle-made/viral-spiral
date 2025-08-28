@@ -17,6 +17,7 @@ end
 
 defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
   require IEx
+  alias ViralSpiral.Entity.ChangeMessages.MessageCode
   alias ViralSpiral.Entity.Room.Changes.OffsetChaos
   alias ViralSpiral.Entity.Player.Changes.Bias
   alias ViralSpiral.Entity.Player.Changes.Clout
@@ -32,17 +33,39 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
   def pass(card, state, from_id, _to) do
     current_round_player_id = State.current_round_player(state).id
 
-    current_round_player_changes = [{state.players[current_round_player_id], %Clout{offset: 1}}]
+    current_round_player_changes = [
+      {
+        state.players[current_round_player_id],
+        %Clout{offset: 1},
+        :clout_current_turn_player_passed_card
+      }
+    ]
 
     sender_changes = [
-      {state.players[from_id], %Bias{offset: 1, target: card.target}}
+      {
+        state.players[from_id],
+        %Bias{offset: 1, target: card.target},
+        :bias_current_turn_player_shared_bias_card
+      }
     ]
 
     change_clout_of_card_target =
       PlayerMap.of_identity(state.players, card.target)
-      |> Enum.map(&{state.players[&1], %Clout{offset: -1}})
+      |> Enum.map(
+        &{
+          state.players[&1],
+          %Clout{offset: -1},
+          :clout_current_turn_player_shared_bias_card_targetting_other_player
+        }
+      )
 
-    change_room_chaos = [{state.room, %OffsetChaos{offset: 1}}]
+    change_room_chaos = [
+      {
+        state.room,
+        %OffsetChaos{offset: 1},
+        :chaos_current_turn_player_shared_bias_card
+      }
+    ]
 
     current_round_player_changes ++
       sender_changes ++ change_clout_of_card_target ++ change_room_chaos
@@ -50,22 +73,46 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
 
   def keep(card, state, from) do
     case state.players[from].biases[card.target] do
-      nil -> []
-      x when x > 0 -> [{state.players[from], %Clout{offset: -1}}]
-      _ -> []
+      nil ->
+        []
+
+      x when x > 0 ->
+        [
+          {
+            state.players[from],
+            %Clout{offset: -1},
+            :clout_current_turn_player_kept_card_with_shared_bias
+          }
+        ]
+
+      _ ->
+        []
     end
   end
 
   def discard(card, state, from) do
     case state.players[from].biases[card.target] do
-      nil -> []
-      x when x > 0 -> [{state.players[from], %Clout{offset: -1}}]
-      _ -> []
+      nil ->
+        []
+
+      x when x > 0 ->
+        [
+          {
+            state.players[from],
+            %Clout{offset: -1},
+            :clout_current_turn_player_discarded_card_with_shared_bias
+          }
+        ]
+
+      _ ->
+        []
     end
   end
 end
 
 defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
+  alias ViralSpiral.Entity.ChangeMessages.MessageCode
+  alias ViralSpiral.Entity.ChangeMessages
   alias ViralSpiral.Entity.Player.Changes.Bias
   alias ViralSpiral.Canon.Card.Affinity, as: AffinityCard
   alias ViralSpiral.Entity.Player.Changes.{Clout, Affinity}
@@ -77,7 +124,13 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
   def pass(%AffinityCard{} = card, %State{} = state, from_id, _to) do
     current_round_player_id = State.current_round_player(state).id
 
-    current_round_player_changes = [{state.players[current_round_player_id], %Clout{offset: 1}}]
+    current_round_player_changes = [
+      {
+        state.players[current_round_player_id],
+        %Clout{offset: 1},
+        :clout_current_turn_player_passed_card
+      }
+    ]
 
     affinity_offset =
       case card.polarity do
@@ -87,8 +140,17 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
 
     conflation_changes =
       case Map.get(card, :bias, nil) do
-        nil -> []
-        _ -> [{state.players[from_id], %Bias{offset: 1, target: card.bias.target}}]
+        nil ->
+          []
+
+        _ ->
+          [
+            {
+              state.players[from_id],
+              %Bias{offset: 1, target: card.bias.target},
+              :bias_current_turn_player_shared_bias_card
+            }
+          ]
       end
 
     change_clout_of_card_target =
@@ -98,11 +160,21 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
 
         _ ->
           PlayerMap.of_identity(state.players, card.bias.target)
-          |> Enum.map(&{state.players[&1], %Clout{offset: -1}})
+          |> Enum.map(
+            &{
+              state.players[&1],
+              %Clout{offset: -1},
+              :clout_current_turn_player_shared_bias_card_targetting_other_player
+            }
+          )
       end
 
     sender_changes = [
-      {state.players[from_id], %Affinity{offset: affinity_offset, target: card.target}}
+      {
+        state.players[from_id],
+        %Affinity{offset: affinity_offset, target: card.target},
+        :affinity_current_turn_player_shared_affinity_card
+      }
     ]
 
     current_round_player_changes ++
@@ -118,7 +190,13 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
         :positive ->
           case card_holder.affinities[card.target] do
             x when x > 0 and players_left_to_pass > 0 ->
-              [{card_holder, %Clout{offset: -1}}]
+              [
+                {
+                  card_holder,
+                  %Clout{offset: -1},
+                  :clout_current_turn_player_kept_card_with_shared_affinity
+                }
+              ]
 
             _ ->
               []
@@ -127,7 +205,13 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
         :negative ->
           case card_holder.affinities[card.target] do
             x when x < 0 and players_left_to_pass > 0 ->
-              [{card_holder, %Clout{offset: -1}}]
+              [
+                {
+                  card_holder,
+                  %Clout{offset: -1},
+                  :clout_current_turn_player_kept_card_with_shared_affinity
+                }
+              ]
 
             _ ->
               []
@@ -147,7 +231,13 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
         :positive ->
           case card_holder.affinities[card.target] do
             x when x > 0 and players_left_to_pass > 0 ->
-              [{card_holder, %Clout{offset: -1}}]
+              [
+                {
+                  card_holder,
+                  %Clout{offset: -1},
+                  :clout_current_turn_player_discarded_card_with_shared_affinity
+                }
+              ]
 
             _ ->
               []
@@ -156,7 +246,13 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
         :negative ->
           case card_holder.affinities[card.target] do
             x when x < 0 and players_left_to_pass > 0 ->
-              [{card_holder, %Clout{offset: -1}}]
+              [
+                {
+                  card_holder,
+                  %Clout{offset: -1},
+                  :clout_current_turn_player_discarded_card_with_shared_affinity
+                }
+              ]
 
             _ ->
               []
@@ -168,6 +264,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
 end
 
 defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
+  alias ViralSpiral.Entity.ChangeMessages.MessageCode
   alias ViralSpiral.Entity.Player.Changes.Bias
   alias ViralSpiral.Room.State
   alias ViralSpiral.Entity.Player.Changes.Clout
@@ -176,12 +273,27 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
   def pass(card, %State{} = state, from_id, _to_id) do
     current_round_player_id = State.current_round_player(state).id
 
-    current_round_player_changes = [{state.players[current_round_player_id], %Clout{offset: 1}}]
+    current_round_player_changes = [
+      {
+        state.players[current_round_player_id],
+        %Clout{offset: 1},
+        :clout_current_turn_player_passed_card
+      }
+    ]
 
     conflation_changes =
       case card.bias do
-        nil -> []
-        _ -> [{state.players[from_id], %Bias{offset: 1, target: card.bias.target}}]
+        nil ->
+          []
+
+        _ ->
+          [
+            {
+              state.players[from_id],
+              %Bias{offset: 1, target: card.bias.target},
+              :bias_current_turn_player_shared_bias_card
+            }
+          ]
       end
 
     change_clout_of_card_target =
@@ -191,7 +303,13 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
 
         _ ->
           PlayerMap.of_identity(state.players, card.bias.target)
-          |> Enum.map(&{state.players[&1], %Clout{offset: -1}})
+          |> Enum.map(
+            &{
+              state.players[&1],
+              %Clout{offset: -1},
+              :clout_current_turn_player_shared_bias_card_targetting_other_player
+            }
+          )
       end
 
     current_round_player_changes ++

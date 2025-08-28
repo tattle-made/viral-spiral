@@ -41,4 +41,9 @@ defmodule ViralSpiral.Room.EngineConfig.Guards do
   defguard is_affinity(value) when value in @affinities
 
   defguard is_community(value) when value in @communities
+
+  defguard is_change(value)
+           when is_tuple(value) and (tuple_size(value) == 2 or tuple_size(value) == 3) and
+                  is_struct(elem(value, 0)) and is_struct(elem(value, 1)) and
+                  is_atom(elem(value, 2))
 end

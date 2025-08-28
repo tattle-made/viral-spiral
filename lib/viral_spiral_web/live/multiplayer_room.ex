@@ -40,6 +40,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
       |> assign(:room_name, room_name)
       |> assign(:room_gen, pid)
       |> assign(:state, nil)
+      |> assign(:change_list, [])
       |> push_event("vs:mp_room:view_mounted", %{room_name: room_name})
 
     {:noreply, socket}
@@ -230,6 +231,11 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
 
   def handle_info({:notification, notification_text}, socket) do
     socket = socket |> put_flash(:info, notification_text)
+    {:noreply, socket}
+  end
+
+  def handle_info({:change_reasons, message_list}, socket) do
+    socket = socket |> assign(:change_list, message_list)
     {:noreply, socket}
   end
 
