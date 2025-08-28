@@ -120,6 +120,19 @@ defmodule ViralSpiral.Entity.Player do
     end
   end
 
+  @doc """
+  Pick an affinity whose absolute value is >= threshold.
+  Returns the affinity atom or nil if none found.
+  """
+  def viralspiral_target_affinity(%Player{} = player, threshold) do
+    target_affinity = Enum.filter(player.affinities, fn {_, v} -> abs(v) >= threshold end)
+
+    case target_affinity do
+      [] -> nil
+      x -> x |> hd() |> elem(0)
+    end
+  end
+
   defimpl ViralSpiral.Entity.Change do
     require IEx
     alias ViralSpiral.Entity.Player.Changes.CloseArticle
