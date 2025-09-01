@@ -86,8 +86,15 @@ defmodule ViralSpiral.Room.StateTransformation do
 
   def can_turn_fake(%State{} = state, %Sparse{} = card) do
     case state.dynamic_card.identity_stats[card] do
-      nil -> true
-      _ -> false
+      nil ->
+        case Canon.get_card_from_store(card) do
+          %ViralSpiral.Canon.Card.Affinity{} -> true
+          %ViralSpiral.Canon.Card.Topical{} -> true
+          _ -> false
+        end
+
+      _ ->
+        false
     end
   end
 end

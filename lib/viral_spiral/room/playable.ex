@@ -118,6 +118,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
   alias ViralSpiral.Entity.Player.Changes.{Clout, Affinity}
   alias ViralSpiral.Room.State
   alias ViralSpiral.Entity.Player.Map, as: PlayerMap
+  alias ViralSpiral.Entity.Room.Changes.OffsetChaos
 
   # Increase the player's affinity by 1
   # Increase player's clout by 1
@@ -177,8 +178,18 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
       }
     ]
 
+    # To check in case of turn to fake power is used and the card has bias towards any communtiy.
+    bias = Map.get(card, :bias)
+
+    change_room_chaos =
+      if bias do
+        [{state.room, %OffsetChaos{offset: 1}, :chaos_current_turn_player_shared_bias_card}]
+      else
+        []
+      end
+
     current_round_player_changes ++
-      sender_changes ++ conflation_changes ++ change_clout_of_card_target
+      sender_changes ++ conflation_changes ++ change_clout_of_card_target ++ change_room_chaos
   end
 
   def keep(card, state, from) do
@@ -269,6 +280,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
   alias ViralSpiral.Room.State
   alias ViralSpiral.Entity.Player.Changes.Clout
   alias ViralSpiral.Entity.Player.Map, as: PlayerMap
+  alias ViralSpiral.Entity.Room.Changes.OffsetChaos
 
   def pass(card, %State{} = state, from_id, _to_id) do
     current_round_player_id = State.current_round_player(state).id
@@ -312,8 +324,18 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
           )
       end
 
+    # To check in case of turn to fake power is used and the card has bias towards any communtiy.
+    bias = Map.get(card, :bias)
+
+    change_room_chaos =
+      if bias do
+        [{state.room, %OffsetChaos{offset: 1}, :chaos_current_turn_player_shared_bias_card}]
+      else
+        []
+      end
+
     current_round_player_changes ++
-      conflation_changes ++ change_clout_of_card_target
+      conflation_changes ++ change_clout_of_card_target ++ change_room_chaos
   end
 
   def keep(_card, _state, _from) do

@@ -7,6 +7,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
   alias ViralSpiral.Entity.Turn
   alias ViralSpiral.Entity.Player.Map, as: PlayerMap
   alias ViralSpiral.Room.State
+  alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Room.Template
 
   def make_game_room(%State{} = state, player_name) do
@@ -71,7 +72,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
           |> Enum.map(fn id -> %{id: id, name: state.players[id].name} end),
         source: make_source(state.players[player.id], &1),
         can_mark_as_fake: can_mark_as_fake?(state.turn),
-        can_turn_fake: &1.veracity == true
+        can_turn_fake: StateTransformation.can_turn_fake(state, Sparse.new(&1.id, &1.veracity))
       }
     )
   end
@@ -116,11 +117,12 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
     alias ViralSpiral.Canon.DynamicCard
 
     headline = card.headline
+    fake_headline = card.fake_headline
     sparse_card = Sparse.new(card.id, card.veracity)
 
     case dynamic_card.identity_stats[sparse_card] do
       nil -> headline
-      stats -> DynamicCard.patch(headline, stats)
+      stats -> DynamicCard.patch(fake_headline, stats)
     end
   end
 
