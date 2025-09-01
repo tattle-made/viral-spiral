@@ -38,6 +38,7 @@ defmodule ViralSpiralWeb.SpectatorRoom do
       |> assign(:room_name, room_name)
       |> assign(:room_gen, pid)
       |> assign(:state, ui_state)
+      |> maybe_put_end_banner(ui_state)
 
     {:noreply, socket}
   end
