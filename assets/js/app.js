@@ -34,7 +34,7 @@ import { FlashAutoHide } from "./flash";
 import Player from "./player";
 import { CarouselHook } from "./carousel";
 import { RoomLinkCopyClipboardHook } from "./room-link-copy-clipboard";
-
+import PopoverHook from "./popover";
 
 let Hooks = {
   CalendarHook,
@@ -47,6 +47,7 @@ let Hooks = {
   CarouselHook,
   RoomLinkCopyClipboardHook,
   FlashAutoHide,
+  PopoverHook
 };
 
 let csrfToken = document
