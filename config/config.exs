@@ -69,7 +69,7 @@ config :viral_spiral, EngineConfig,
   volatility: :medium,
   cancel_threshold: 2,
   turn_fake_threshold: 2,
-  viral_spiral_threshold: 5
+  viral_spiral_threshold: 4
 
 config :viral_spiral, CardConfig, card_types: [:affinity, :bias, :topical, :conflated]
 
