@@ -235,14 +235,18 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
   end
 
   def handle_info({:change_reasons, message_list}, socket) do
-    # %{room_name: room_name} = socket.assigns
+    %{room_name: room_name} = socket.assigns
 
-    # PubSub.broadcast(
-    #   ViralSpiral.PubSub,
-    #   "multiplayer-room:#{room_name}",
-    #   {:change_reasons, message_list}
-    # )
+    PubSub.broadcast(
+      ViralSpiral.PubSub,
+      "multiplayer-room:#{room_name}",
+      {:display_reasons, message_list}
+    )
 
+    {:noreply, socket}
+  end
+
+  def handle_info({:display_reasons, message_list}, socket) do
     socket = socket |> assign(:change_list, message_list)
     {:noreply, socket}
   end
