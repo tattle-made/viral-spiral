@@ -146,8 +146,10 @@ defmodule ViralSpiral.Room.Reducer do
 
     all_changes = clout_penalty_change ++ set_power_change
 
-    State.apply_changes(state, all_changes)
-    |> reduce(%DiscardCard{from_id: from_id, card: card})
+    with new_state <- State.apply_changes(state, all_changes),
+         changes <- Changes.change(new_state, %DiscardCard{from_id: from_id, card: card}) do
+      reduce(:discard_card, new_state, changes)
+    end
   end
 
   def reduce(%State{} = state, %ViewSource{} = action) do
@@ -312,12 +314,15 @@ defmodule ViralSpiral.Room.Reducer do
       case target_bias do
         nil ->
           case target_affinity do
-            nil -> []
+            nil ->
+              []
+
             affinity ->
               current = sender.affinities[affinity]
               offset = if current > 0, do: -1, else: 1
               [{state.players[from_id], %Affinity{target: affinity, offset: offset}}]
           end
+
         bias ->
           [{state.players[from_id], %Bias{target: bias, offset: -1}}]
       end
