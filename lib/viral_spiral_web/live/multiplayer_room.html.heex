@@ -22,9 +22,9 @@
           <:title>Reasons for last changes</:title>
           <:content>
             <div :if={@change_list}>
-              <%= for message <- @change_list do %>
+              <div :for={message <- @change_list}>
                 <div><%= message %></div>
-              <% end %>
+              </div>
             </div>
           </:content>
         </.popover>
