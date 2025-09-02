@@ -18,17 +18,17 @@
 
       <div class="flex-1"></div>
       <div class="shrink-0 flex flex-row gap-2">
-        <.popover>
-          <:title> Reasons for last changes </:title>
+        <.popover id="popover-info">
+          <:title>Reasons for last changes</:title>
           <:content>
             <div :if={@change_list}>
-            <div :for={message <- @change_list }>
-              <div><%=message %></div>
-            </div>
+              <div :for={message <- @change_list}>
+                <div><%= message %></div>
+              </div>
             </div>
           </:content>
         </.popover>
-        <p class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100">
+        <p class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100 self-start">
           <%= 10 - @state.room.chaos %>
         </p>
       </div>
