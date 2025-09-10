@@ -38,14 +38,25 @@ defmodule ViralSpiral.Canon.Deck do
 
   @doc """
   Probabilistically draw a card with specific constraits.
+
+  When the number of cards of a card type under a tgb becomes 0,we short circuit the tgb condition
+  and draw a card without considering tgb.
+  This is not intuitive and can be fixed by writing a lot of cards for lower tgb level's
+
+  todo : right now the tgb max of 8 is set because we noticed that some card headlines have dynamic
+  text even for true headlines. This is not expected.
   """
   @spec draw_card(CardSet.card_sets(), CardSet.key_type(), integer()) :: Sparse.t()
   def draw_card(card_sets, set_key, chaos) do
     # {_, veracity, _} = set_key
 
-    card_sets[set_key]
-    |> filter_tgb(chaos)
-    |> choose_one()
+    card_set_tgb = card_sets[set_key] |> filter_tgb(chaos)
+    card_set_tgb_len = card_set_tgb |> MapSet.size()
+
+    case card_set_tgb_len do
+      0 -> card_sets[set_key] |> filter_tgb(8) |> choose_one()
+      _ -> card_set_tgb |> choose_one()
+    end
   end
 
   defp filter_tgb(set, tgb) do
