@@ -54,14 +54,14 @@
     </div>
 
     <div class="container-powers mb-2 flex justify-center">
-      <div
-        :if={@state && @state.can_use_power && @state.power_cancel.can_cancel}
-        phx-click={show_modal("cancel-initiate-modal")}
-      >
-        <button class="py-1 px-2 bg-violet-300 hover:bg-violet-950 text-slate-800 hover:text-slate-50 text-xs rounded-md border border-zinc-900 self-center">
+      <div :if={@state && @state.can_use_power && @state.power_cancel.can_cancel}>
+        <button
+          phx-click={show_modal("cancel-initiate-modal")}
+          class="py-1 px-2 bg-violet-300 hover:bg-violet-950 text-slate-800 hover:text-slate-50 text-xs rounded-md border border-zinc-900 self-center"
+        >
           Cancel Player
         </button>
-        <.modal id="cancel-initiate-modal" class="justify-center">
+        <.modal id="cancel-initiate-modal">
           <div>
             <.header class="text-center">
               Let's cancel someone!
