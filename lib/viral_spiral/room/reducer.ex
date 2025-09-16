@@ -293,7 +293,7 @@ defmodule ViralSpiral.Room.Reducer do
 
     card_pass_changes =
       to_id
-      |> Enum.map(&Playable.pass(full_card, state, from_id, &1))
+      |> Enum.map(&Playable.pass(full_card, state, from_id, &1, true))
       |> List.flatten()
 
     hand_changes =

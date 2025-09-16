@@ -6,7 +6,7 @@ defprotocol ViralSpiral.Room.Playable do
   """
 
   @fallback_to_any true
-  def pass(card, state, from, to)
+  def pass(card, state, from, to, is_viral_spiral_power? \\ false)
 
   @fallback_to_any true
   def keep(card, state, from)
@@ -30,8 +30,13 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
   2. their bias against the corresponding community increases by 1
   3. every player of that community loses a clout of 1
   """
-  def pass(card, state, from_id, _to) do
-    current_round_player_id = State.current_round_player(state).id
+  def pass(card, state, from_id, _to, is_viral_spiral_power? \\ false) do
+    current_round_player_id =
+      if is_viral_spiral_power? do
+        from_id
+      else
+        State.current_round_player(state).id
+      end
 
     current_round_player_changes = [
       {
@@ -122,8 +127,19 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
 
   # Increase the player's affinity by 1
   # Increase player's clout by 1
-  def pass(%AffinityCard{} = card, %State{} = state, from_id, _to) do
-    current_round_player_id = State.current_round_player(state).id
+  def pass(
+        %AffinityCard{} = card,
+        %State{} = state,
+        from_id,
+        _to,
+        is_viral_spiral_power? \\ false
+      ) do
+    current_round_player_id =
+      if is_viral_spiral_power? do
+        from_id
+      else
+        State.current_round_player(state).id
+      end
 
     current_round_player_changes = [
       {
@@ -282,8 +298,13 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
   alias ViralSpiral.Entity.Player.Map, as: PlayerMap
   alias ViralSpiral.Entity.Room.Changes.OffsetChaos
 
-  def pass(card, %State{} = state, from_id, _to_id) do
-    current_round_player_id = State.current_round_player(state).id
+  def pass(card, %State{} = state, from_id, _to_id, is_viral_spiral_power? \\ false) do
+    current_round_player_id =
+      if is_viral_spiral_power? do
+        from_id
+      else
+        State.current_round_player(state).id
+      end
 
     current_round_player_changes = [
       {
