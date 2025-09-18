@@ -284,11 +284,15 @@ defmodule ViralSpiral.Room.Reducer do
     sender = state.players[from_id]
     viralspiral_threshold = state.room.viral_spiral_threshold
 
-    power_change = [
-      {
-        state.power_viralspiral,
-        %InitiateViralSpiral{from_id: from_id, to_id: to_id, card: sparse_card}
-      }
+    # power_change = [
+    #   {
+    #     state.power_viralspiral,
+    #     %InitiateViralSpiral{from_id: from_id, to_id: to_id, card: sparse_card}
+    #   }
+    # ]
+    clout_changes = [
+      from_id,
+      %Clout{offset: length(to_id)}
     ]
 
     card_pass_changes =
@@ -307,7 +311,7 @@ defmodule ViralSpiral.Room.Reducer do
 
     set_power_change = [{state.turn, %SetPowerTrue{}}]
 
-    target_bias = Player.viralspiral_target_bias(sender, viralspiral_threshold) |> IO.inspect()
+    target_bias = Player.viralspiral_target_bias(sender, viralspiral_threshold)
     target_affinity = Player.viralspiral_target_affinity(sender, viralspiral_threshold)
 
     penalty_changes =
@@ -328,7 +332,7 @@ defmodule ViralSpiral.Room.Reducer do
       end
 
     all_changes =
-      power_change ++
+      clout_changes ++
         card_pass_changes ++
         sender_hand_change ++ hand_changes ++ set_power_change ++ penalty_changes
 

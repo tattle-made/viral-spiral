@@ -1,4 +1,5 @@
 defmodule ViralSpiral.Entity.Changes do
+  alias ViralSpiral.Entity.Player.Changes.Clout
   alias ViralSpiral.Room.Actions.Player.DiscardCard
   alias ViralSpiral.Entity.Round.Changes.NextRound
   alias ViralSpiral.Entity.Player.Changes.AddToHand
@@ -18,6 +19,16 @@ defmodule ViralSpiral.Entity.Changes do
     sparse_card = Sparse.new(card.id, card.veracity)
     card = Canon.get_card_from_store(sparse_card)
 
+    current_round_player_id = State.current_round_player(state).id
+
+    current_round_player_changes = [
+      {
+        state.players[current_round_player_id],
+        %Clout{offset: 1},
+        :clout_current_turn_player_passed_card
+      }
+    ]
+
     identity_stats = state.dynamic_card.identity_stats[sparse_card]
 
     card =
@@ -27,7 +38,8 @@ defmodule ViralSpiral.Entity.Changes do
       end
 
     changes =
-      Playable.pass(card, state, from_id, to_id) ++
+      current_round_player_changes ++
+        Playable.pass(card, state, from_id, to_id) ++
         [
           {state.players[from_id], %RemoveActiveCard{card: sparse_card}},
           {state.players[to_id], %AddActiveCard{card: sparse_card}},

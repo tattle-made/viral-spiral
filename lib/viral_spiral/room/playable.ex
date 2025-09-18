@@ -31,16 +31,6 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
   3. every player of that community loses a clout of 1
   """
   def pass(card, state, from_id, _to) do
-    current_round_player_id = State.current_round_player(state).id
-
-    current_round_player_changes = [
-      {
-        state.players[current_round_player_id],
-        %Clout{offset: 1},
-        :clout_current_turn_player_passed_card
-      }
-    ]
-
     sender_changes = [
       {
         state.players[from_id],
@@ -67,8 +57,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Bias do
       }
     ]
 
-    current_round_player_changes ++
-      sender_changes ++ change_clout_of_card_target ++ change_room_chaos
+    sender_changes ++ change_clout_of_card_target ++ change_room_chaos
   end
 
   def keep(card, state, from) do
@@ -123,16 +112,6 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
   # Increase the player's affinity by 1
   # Increase player's clout by 1
   def pass(%AffinityCard{} = card, %State{} = state, from_id, _to) do
-    current_round_player_id = State.current_round_player(state).id
-
-    current_round_player_changes = [
-      {
-        state.players[current_round_player_id],
-        %Clout{offset: 1},
-        :clout_current_turn_player_passed_card
-      }
-    ]
-
     affinity_offset =
       case card.polarity do
         :positive -> +1
@@ -188,8 +167,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Affinity do
         []
       end
 
-    current_round_player_changes ++
-      sender_changes ++ conflation_changes ++ change_clout_of_card_target ++ change_room_chaos
+    sender_changes ++ conflation_changes ++ change_clout_of_card_target ++ change_room_chaos
   end
 
   def keep(card, state, from) do
@@ -283,16 +261,6 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
   alias ViralSpiral.Entity.Room.Changes.OffsetChaos
 
   def pass(card, %State{} = state, from_id, _to_id) do
-    current_round_player_id = State.current_round_player(state).id
-
-    current_round_player_changes = [
-      {
-        state.players[current_round_player_id],
-        %Clout{offset: 1},
-        :clout_current_turn_player_passed_card
-      }
-    ]
-
     conflation_changes =
       case card.bias do
         nil ->
@@ -334,8 +302,7 @@ defimpl ViralSpiral.Room.Playable, for: ViralSpiral.Canon.Card.Topical do
         []
       end
 
-    current_round_player_changes ++
-      conflation_changes ++ change_clout_of_card_target ++ change_room_chaos
+    conflation_changes ++ change_clout_of_card_target ++ change_room_chaos
   end
 
   def keep(_card, _state, _from) do
