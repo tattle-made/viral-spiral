@@ -335,7 +335,8 @@ defmodule ViralSpiral.Room.Reducer do
         card_pass_changes ++
         sender_hand_change ++ hand_changes ++ set_power_change ++ penalty_changes
 
-    State.apply_changes(state, all_changes)
+    state = State.apply_changes(state, all_changes)
+    State.apply_changes(state, Room.game_end_change(state))
   end
 
   def reduce(:pass_card, %State{} = state, changes) do
