@@ -338,7 +338,7 @@ defmodule ViralSpiralWeb.Molecules do
     <.modal id="rulebook">
       <div id="controls-carousel" class="relative w-full" data-carousel="static">
         <!-- Carousel wrapper -->
-        <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
+        <div class="relative h-56 overflow-x-hidden rounded-lg md:h-96">
           <!-- Slide: Cover (active) -->
           <div
             class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
@@ -350,11 +350,11 @@ defmodule ViralSpiralWeb.Molecules do
                 Draw news. Share opinions. Chase clout — but don’t let chaos win.
               </p>
             </div>
-            <div class="w-32 md:w-48 flex-shrink-0">
+            <div class="w-24 md:w-32 flex-shrink-0">
               <img
-                src="https://www.shutterstock.com/image-vector/cartoon-rule-book-icon-doodle-260nw-2633551409.jpg"
+                src="https://cdn.pixabay.com/photo/2013/07/13/13/52/school-161701_1280.png"
                 alt="Cover illustration"
-                class="w-full h-full object-cover rounded-lg shadow"
+                class="w-full h-full object-cover shadow"
               />
             </div>
           </div>
