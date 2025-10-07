@@ -473,7 +473,7 @@ defmodule ViralSpiralWeb.Molecules do
                 Reach <strong>±2 Opinion</strong>
                 → you can <strong>CANCEL</strong>
                 another player (requires same-opinion allies to vote). <br /> <br /> Reach
-                <strong>±3 Prejudice</strong>
+                <strong>±2 Prejudice</strong>
                 → you can <strong>MANUFACTURE</strong>
                 fake news by adding prejudice to a card in hand.
               </p>
