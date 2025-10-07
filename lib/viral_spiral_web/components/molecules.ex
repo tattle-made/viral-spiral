@@ -350,7 +350,7 @@ defmodule ViralSpiralWeb.Molecules do
                 Draw news. Share opinions. Chase clout — but don’t let chaos win.
               </p>
             </div>
-            <div class="w-32 h-32 md:w-48 md:h-48 flex-shrink-0">
+            <div class="w-32 md:w-48 flex-shrink-0">
               <img
                 src="https://www.shutterstock.com/image-vector/cartoon-rule-book-icon-doodle-260nw-2633551409.jpg"
                 alt="Cover illustration"
@@ -370,7 +370,7 @@ defmodule ViralSpiralWeb.Molecules do
               </p>
               <p class="mt-3 text-xs text-gray-500">Quick: treat cards as short news snippets.</p>
             </div>
-            <div class="w-28 h-28 md:w-40 md:h-40 flex-shrink-0">
+            <div class="w-28 md:w-40 flex-shrink-0">
               <img
                 src="https://images.unsplash.com/vector-1739804242618-f18052357066?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGRyYXclMjBhJTIwY2FyZHxlbnwwfHwwfHx8Mg%3D%3D"
                 alt="Draw card"
@@ -392,7 +392,7 @@ defmodule ViralSpiralWeb.Molecules do
                 Tip: Save cards strategically as they might power a Viral Spiral move.
               </p>
             </div>
-            <div class="w-28 h-28 md:w-40 md:h-40 flex-shrink-0">
+            <div class="w-28 md:w-40 flex-shrink-0">
               <img
                 src="https://images.unsplash.com/vector-1751812979014-01e8f8144baf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cGFzcyUyMGNhcmR8ZW58MHx8MHx8fDI%3D"
                 alt="Pass card"
@@ -400,13 +400,32 @@ defmodule ViralSpiralWeb.Molecules do
               />
             </div>
           </div>
-          <!-- Slide 3 — Opinion & Prejudice Counters -->
+          <!-- Slide 3 — Fake News -->
+          <div
+            class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
+            data-carousel-item
+          >
+            <div class="flex-1">
+              <h3 class="text-xl font-bold">3 — Fake News! ⚠️</h3>
+              <p class="mt-2 text-sm">
+                If the headline doesn't match the source, that news is fake! If someone passes you fake news you can mark it as such to make them <strong>lose 1 CLOUT</strong>!
+              </p>
+            </div>
+            <div class="w-28 md:w-40 flex-shrink-0">
+              <img
+                src="https://cdn.pixabay.com/photo/2023/03/21/11/40/fake-7867062_1280.png"
+                alt="Fake news"
+                class="w-full h-full object-cover rounded"
+              />
+            </div>
+          </div>
+          <!-- Slide 4 — Opinion & Prejudice Counters -->
           <div
             class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-4"
             data-carousel-item
           >
             <div class="flex-1">
-              <h3 class="text-xl font-bold">3 — Opinion & Prejudice ⚖️</h3>
+              <h3 class="text-xl font-bold">4 — Opinion & Prejudice ⚖️</h3>
               <p class="mt-2 text-sm">
                 Sharing OPINION or PREJUDICE increase their counters. Once you show an opinion you must share matching cards or
                 <strong>lose 1 CLOUT</strong>
@@ -420,13 +439,13 @@ defmodule ViralSpiralWeb.Molecules do
               <img src="/images/player-card.png" alt="Counters" class="w-full object-cover rounded" />
             </div>
           </div>
-          <!-- Slide 4 — Chaos Meter -->
+          <!-- Slide 5 — Chaos Meter -->
           <div
             class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
             data-carousel-item
           >
             <div class="flex-1">
-              <h3 class="text-xl font-bold">4 — Chaos Meter ⏳</h3>
+              <h3 class="text-xl font-bold">5 — Chaos Meter ⏳</h3>
               <p class="mt-2 text-sm">
                 Sharing PREJUDICE moves the global <strong>CHAOS</strong>
                 counter down from <strong>10 → 0</strong>. If CHAOS hits <strong>0</strong>, the game ends and <strong>everyone loses</strong>.
@@ -435,7 +454,7 @@ defmodule ViralSpiralWeb.Molecules do
                 Endgame Rule: If a player reaches 10 CLOUT at the same time the CHAOS meter hits 0, the game ends and all players lose.
               </p>
             </div>
-            <div class="w-28 h-28 md:w-40 md:h-40 flex-shrink-0">
+            <div class="w-28  md:w-40  flex-shrink-0">
               <img
                 src="https://cdn.pixabay.com/photo/2014/06/30/01/47/save-the-planet-379913_1280.png"
                 alt="Chaos meter"
@@ -443,13 +462,13 @@ defmodule ViralSpiralWeb.Molecules do
               />
             </div>
           </div>
-          <!-- Slide 5 — Powers: Cancel & Manufacture -->
+          <!-- Slide 6 — Powers: Cancel & Manufacture -->
           <div
             class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
             data-carousel-item
           >
             <div class="flex-1">
-              <h3 class="text-xl font-bold">5 — Powers ⚡️</h3>
+              <h3 class="text-xl font-bold">6 — Powers ⚡️</h3>
               <p class="mt-2 text-sm">
                 Reach <strong>±2 Opinion</strong>
                 → you can <strong>CANCEL</strong>
@@ -459,7 +478,7 @@ defmodule ViralSpiralWeb.Molecules do
                 fake news by adding prejudice to a card in hand.
               </p>
             </div>
-            <div class="w-28 h-28 md:w-40 md:h-40 flex-shrink-0">
+            <div class="w-28 md:w-40 flex-shrink-0">
               <img
                 src="https://images.unsplash.com/vector-1749533109852-832187b19078?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjB8fGNhbmNlbCUyMHR1cm58ZW58MHx8MHx8fDI%3D"
                 alt="Powers"
@@ -467,13 +486,13 @@ defmodule ViralSpiralWeb.Molecules do
               />
             </div>
           </div>
-          <!-- Slide 6 — Viral Spiral -->
+          <!-- Slide 7 — Viral Spiral -->
           <div
             class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
             data-carousel-item
           >
             <div class="flex-1">
-              <h3 class="text-xl font-bold">6 — Viral Spiral 🌪️</h3>
+              <h3 class="text-xl font-bold">7 — Viral Spiral 🌪️</h3>
               <p class="mt-2 text-sm">
                 Reach <strong>±4</strong>
                 on opinion or prejudice → trigger <strong>VIRAL SPIRAL</strong>: share one unique card from your hand to
@@ -492,13 +511,13 @@ defmodule ViralSpiralWeb.Molecules do
               />
             </div>
           </div>
-          <!-- Slide 7 — Victory -->
+          <!-- Slide 8 — Victory -->
           <div
             class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
             data-carousel-item
           >
             <div class="flex-1">
-              <h3 class="text-xl font-bold">7 — Winning the Game 🏆</h3>
+              <h3 class="text-xl font-bold">8 — Winning the Game 🏆</h3>
               <p class="mt-2 text-sm">
                 First player to hit <strong>10 CLOUT</strong>
                 wins — provided CHAOS hasn’t reached <strong>0</strong>.
@@ -507,7 +526,7 @@ defmodule ViralSpiralWeb.Molecules do
                 Reminder: chase clout, but watch the chaos meter!
               </p>
             </div>
-            <div class="w-28 h-28 md:w-40 md:h-40 flex-shrink-0">
+            <div class="w-28 md:w-40 flex-shrink-0">
               <img
                 src="https://images.unsplash.com/vector-1751914321725-d4b572c9a10c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzN8fHdpbm5pbmclMjBnYW1lfGVufDB8fDB8fHwy"
                 alt="Victory"
@@ -515,6 +534,81 @@ defmodule ViralSpiralWeb.Molecules do
               />
             </div>
           </div>
+        </div>
+        <!-- Slider indicators -->
+        <div class="  flex  space-x-3  justify-center ">
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="true"
+            aria-label="Slide 1"
+            data-carousel-slide-to="0"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 2"
+            data-carousel-slide-to="1"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 3"
+            data-carousel-slide-to="2"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 4"
+            data-carousel-slide-to="3"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 5"
+            data-carousel-slide-to="4"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 6"
+            data-carousel-slide-to="5"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 7"
+            data-carousel-slide-to="6"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 8"
+            data-carousel-slide-to="7"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 9"
+            data-carousel-slide-to="8"
+          >
+          </button>
         </div>
         <!-- Slider controls -->
         <div class="flex justify-center gap-5 mt-4">
