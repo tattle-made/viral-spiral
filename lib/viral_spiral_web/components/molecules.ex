@@ -2,6 +2,7 @@ defmodule ViralSpiralWeb.Molecules do
   alias ViralSpiral.Affinity
   alias ViralSpiral.Bias
   use ViralSpiralWeb, :html
+  import ViralSpiralWeb.CoreComponents
 
   defp card_url(file_name) do
     # Because of a mistake made by designers, all filenames have a space in it
@@ -28,13 +29,16 @@ defmodule ViralSpiralWeb.Molecules do
           <div class="mt-2">
             <img class="w-full h-80 object-contain" src={card_url(@card.image)} />
           </div>
-          <p :if={!@in_spec_mode} class="absolute z-4 bottom-0 px-2 py-2 mx-4 text-sm/4 bg-zinc-200 bg-opacity-95 rounded-md text-xs/1">
+          <p
+            :if={!@in_spec_mode}
+            class="absolute z-4 bottom-0 px-2 py-2 mx-4 text-sm/4 bg-zinc-200 bg-opacity-95 rounded-md text-xs/1"
+          >
             <%= @card.headline %>
           </p>
         </div>
       </div>
 
-      <div class="flex flex-col py-2" >
+      <div class="flex flex-col py-2">
         <%= if !is_nil(@card.pass_to) and length(@card.pass_to) != 0 and !@in_spec_mode do %>
           <div class="px-2 flex flex-row gap-2 align-center">
             <span class="text-sm mb-1 self-center">Pass to</span>
@@ -60,7 +64,7 @@ defmodule ViralSpiralWeb.Molecules do
           </div>
         <% end %>
 
-        <div class="mt-2 flex flex-row gap-2 flex-wrap px-2" :if={!@in_spec_mode}>
+        <div :if={!@in_spec_mode} class="mt-2 flex flex-row gap-2 flex-wrap px-2">
           <div class="">
             <button
               phx-click={
@@ -232,11 +236,19 @@ defmodule ViralSpiralWeb.Molecules do
     ~H"""
     <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-gray-400 rounded-md bg-neutral-3">
       <div class="flex flex-col justify-between gap-1">
-        <div class={"h-12 w-12 #{bg_class(@player.identity)} border border-2 rounded-md overflow-hidden"}>
+        <div class={"h-12 w-12 #{bg_class(@player.identity)} border-2 rounded-md overflow-hidden"}>
           <img class="h-12 w-12 object-fit" src={dp_url(@player.id)} />
         </div>
-        <div class="text-textcolor-light font-extrabold text-2xl leading-none ml-2 mb-3">
+        <div class="text-textcolor-light font-extrabold text-xl leading-none ml-2 mb-3 text-center">
           <%= @player.clout %>
+          <.info_tooltip id={"clout-#{@player.id}"}>
+            <span class="text-sm">Clout</span>
+            <:tooltip_content>
+              <p><strong>Clout</strong> measures a <strong>Player's influence</strong>.</p>
+              <br />
+              <p>At 10 Clout → <strong>Victory!</strong></p>
+            </:tooltip_content>
+          </.info_tooltip>
         </div>
       </div>
       <div>
@@ -245,7 +257,14 @@ defmodule ViralSpiralWeb.Molecules do
         </div>
         <div class="flex flex-row gap-4">
           <div class="flex flex-row items-center gap-2">
-            <p class="text-sm font-semibold text-textcolor-light">Biases</p>
+            <.info_tooltip id={"biases-info-#{@player.id}"}>
+              <p class="text-sm font-semibold text-textcolor-light cursor-pointer">Biases</p>
+              <:tooltip_content>
+                <p>Bias ≥ 2 → Unlocks <strong>Manufacture Fake Card</strong> power</p>
+                <br />
+                <p>Bias ≥ 4 → Unlocks <strong>Viral Spiral</strong> power</p>
+              </:tooltip_content>
+            </.info_tooltip>
             <%= for {bias, value} <- @player.biases do %>
               <div class={"w-8 h-8 rounded-full flex items-center justify-center text-s text-textcolor-light #{bias_color_class(bias)}"}>
                 <%= value %>
@@ -254,7 +273,14 @@ defmodule ViralSpiralWeb.Molecules do
           </div>
         </div>
         <div class="flex flex-row items-center gap-2 mt-2">
-          <p class="text-sm font-semibold text-textcolor-light">Affinities</p>
+          <.info_tooltip id={"affinities-info-#{@player.id}"}>
+            <p class="text-sm font-semibold text-textcolor-light cursor-pointer">Affinities</p>
+            <:tooltip_content>
+              <p>Affinity ±2 → Unlocks <strong>Cancel Player</strong> power</p>
+              <br />
+              <p>Affinity ±4 → Unlocks <strong>Viral-Spiral</strong> power</p>
+            </:tooltip_content>
+          </.info_tooltip>
           <div class="flex flex-row gap-2 items-center">
             <%= for {affinity, value} <- @player.affinities do %>
               <div class="relative w-9 h-9">
