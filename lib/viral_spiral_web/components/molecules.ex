@@ -19,14 +19,18 @@ defmodule ViralSpiralWeb.Molecules do
   attr :can_turn_fake, :boolean, required: true
   attr :can_use_power, :boolean, required: true
   attr :in_spec_mode, :boolean, default: false
+  attr :current_turn_player_name, :string, default: nil
 
   def card(assigns) do
     ~H"""
     <div class="border-2 border-solid border-zinc-600 w-fit rounded-md bg-slate-50 flex flex-col gap-2 m-2">
       <!-- For Mobile -->
       <div class="flex-1">
+        <p :if={@current_turn_player_name} class="text-sm ml-1">
+          <strong>Turn:</strong> <%= @current_turn_player_name %>
+        </p>
         <div class="relative w-full h-80 flex flex-col gap-2">
-          <div class="mt-2">
+          <div class={"#{if @current_turn_player_name, do: "", else: "mt-2"}"}>
             <img class="w-full h-80 object-contain" src={card_url(@card.image)} />
           </div>
           <p

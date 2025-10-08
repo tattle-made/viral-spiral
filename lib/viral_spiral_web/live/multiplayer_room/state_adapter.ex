@@ -41,8 +41,19 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
           }
         end),
       others: make_others(state, other_players),
-      current_holder_name: make_current_holder_text(state)
+      current_holder_name: make_current_holder_text(state),
+      current_turn_player: make_turn_player(state)
     }
+  end
+
+  def make_turn_player(%State{} = state) do
+    round = state.round
+    # Order of players (list)
+    order = round.order
+    current_player_index = round.current
+    current_turn_player_id = Enum.at(order, current_player_index)
+    current_turn_player = state.players[current_turn_player_id]
+    %{id: current_turn_player_id, name: current_turn_player.name}
   end
 
   defp make_me(%State{} = state, player) do
