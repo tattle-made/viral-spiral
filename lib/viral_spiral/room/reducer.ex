@@ -3,6 +3,7 @@ defmodule ViralSpiral.Room.Reducer do
 
   """
   require IEx
+  alias ViralSpiral.Room.Actions
   alias ViralSpiral.Entity.Changes
   alias ViralSpiral.Room.StateTransformation
   alias ViralSpiral.Entity.Player
@@ -246,17 +247,36 @@ defmodule ViralSpiral.Room.Reducer do
          affinity: affinity,
          allowed_voters: allowed_voters
        }},
-      {state.power_cancel_player, %VoteCancel{from_id: from_id, vote: true}},
+
+      # {state.power_cancel_player, %VoteCancel{from_id: from_id, vote: true}},
+
       # todo : affinity offset needs to account for affinitie's polarity
       # atman's idea - take absolute and then add offset
       {state.players[from_id], %Affinity{target: affinity, offset: affinity_offset}}
     ]
 
+    # If there is only one player (the initiator), don't count their vote, and take care of it VoteCancel reducer later.
+    changes =
+      if length(allowed_voters) > 1 do
+        changes ++ [{state.power_cancel_player, %VoteCancel{from_id: from_id, vote: true}}]
+      else
+        changes
+      end
+
     set_power_change = [{state.turn, %SetPowerTrue{}}]
 
     all_changes = changes ++ set_power_change
 
-    State.apply_changes(state, all_changes)
+    state = State.apply_changes(state, all_changes)
+
+    # If there is only one player (the initiator), initiate the
+    # VoteCancel reducer (count vote of the current player and do further processing: calculating result and final state of the power)
+    if length(allowed_voters) == 1 do
+      action = Actions.vote_to_cancel(%{from_id: from_id, vote: true})
+      reduce(state, action)
+    else
+      state
+    end
   end
 
   def reduce(%State{} = state, %CancelPlayerVote{} = action) do
