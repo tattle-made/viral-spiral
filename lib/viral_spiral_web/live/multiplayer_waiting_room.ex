@@ -4,10 +4,17 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
   alias ViralSpiral.Room
   use ViralSpiralWeb, :live_view
   alias Phoenix.PubSub
+  import ViralSpiralWeb.Molecules
 
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-[url('/images/bg-gray.jpg')] bg-cover bg-center bg-no-repeat px-4 flex items-center justify-center">
+    <div class="relative min-h-screen bg-[url('/images/bg-gray.jpg')] bg-cover bg-center bg-no-repeat px-4 flex items-center justify-center">
+      <div class="absolute top-0 right-2">
+        <button phx-click={show_modal("rulebook")} class="text-fuchsia-900 hover:text-fuchsia-700">
+          <span class="text-sm font-bold">Rulebook</span> <.icon name="hero-book-open-solid" />
+        </button>
+        <.rulebook />
+      </div>
       <div class="self-center text-center border-4 border-[#3E6FF2] rounded-md p-8">
         <p class="text-md mb-4 text-textcolor-light text-xl font-semibold flex items-center justify-center gap-2">
           Share the Room Link with other players

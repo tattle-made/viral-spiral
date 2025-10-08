@@ -28,13 +28,16 @@ defmodule ViralSpiralWeb.Molecules do
           <div class="mt-2">
             <img class="w-full h-80 object-contain" src={card_url(@card.image)} />
           </div>
-          <p :if={!@in_spec_mode} class="absolute z-4 bottom-0 px-2 py-2 mx-4 text-sm/4 bg-zinc-200 bg-opacity-95 rounded-md text-xs/1">
+          <p
+            :if={!@in_spec_mode}
+            class="absolute z-4 bottom-0 px-2 py-2 mx-4 text-sm/4 bg-zinc-200 bg-opacity-95 rounded-md text-xs/1"
+          >
             <%= @card.headline %>
           </p>
         </div>
       </div>
 
-      <div class="flex flex-col py-2" >
+      <div class="flex flex-col py-2">
         <%= if !is_nil(@card.pass_to) and length(@card.pass_to) != 0 and !@in_spec_mode do %>
           <div class="px-2 flex flex-row gap-2 align-center">
             <span class="text-sm mb-1 self-center">Pass to</span>
@@ -60,7 +63,7 @@ defmodule ViralSpiralWeb.Molecules do
           </div>
         <% end %>
 
-        <div class="mt-2 flex flex-row gap-2 flex-wrap px-2" :if={!@in_spec_mode}>
+        <div :if={!@in_spec_mode} class="mt-2 flex flex-row gap-2 flex-wrap px-2">
           <div class="">
             <button
               phx-click={
@@ -322,6 +325,345 @@ defmodule ViralSpiralWeb.Molecules do
         </div>
       </button>
     </div>
+    """
+  end
+
+  @doc """
+  Rulebook component that displays a rulebook inside a Carousel, wrapped in a modal.
+  It is built with the modal component from core_components and UI elements from the Flowbite library.
+  The parent modal uses the ID "rulebook", which can be targeted to toggle the component from any LiveView.
+  """
+  def rulebook(assigns) do
+    ~H"""
+    <.modal id="rulebook">
+      <div id="controls-carousel" class="relative w-full" data-carousel="static">
+        <!-- Carousel wrapper -->
+        <div class="relative h-56 overflow-x-hidden rounded-lg md:h-96">
+          <!-- Slide: Cover (active) -->
+          <div
+            class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
+            data-carousel-item="active"
+          >
+            <div class="flex-1">
+              <h2 class="text-2xl md:text-4xl font-extrabold">Viral Spiral — Rulebook</h2>
+              <p class="mt-2 text-sm md:text-base">
+                Draw news. Share opinions. Chase clout — but don’t let chaos win.
+              </p>
+            </div>
+            <div class="w-24 md:w-32 flex-shrink-0">
+              <img
+                src="/images/rulebook/rulebook_cover.webp"
+                alt="Cover illustration"
+                class="w-full h-full object-cover shadow"
+              />
+            </div>
+          </div>
+          <!-- Slide 1 — Draw a Card -->
+          <div
+            class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
+            data-carousel-item
+          >
+            <div class="flex-1">
+              <h3 class="text-xl font-bold">1 — Draw a Card 🔍</h3>
+              <p class="mt-2 text-sm">
+                On your turn draw 1 card representing an internet item: <strong>FACT</strong>, <strong>OPINION</strong>, or <strong>PREJUDICE</strong>.
+              </p>
+              <p class="mt-3 text-xs text-gray-500">Quick: treat cards as short news snippets.</p>
+            </div>
+            <div class="w-28 md:w-40 flex-shrink-0">
+              <img
+                src="/images/rulebook/rulebook_drawcard.avif"
+                alt="Draw card"
+                class="w-full h-full object-cover rounded"
+              />
+            </div>
+          </div>
+          <!-- Slide 2 — Check, Pass, Keep -->
+          <div
+            class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
+            data-carousel-item
+          >
+            <div class="flex-1">
+              <h3 class="text-xl font-bold">2 — Check, Pass, Keep 🔁</h3>
+              <p class="mt-2 text-sm">
+                Optionally check the source, then <strong>pass</strong>, <strong>discard</strong>, or <strong>keep</strong>. Each new player a card passes through gives the original sharer <strong>+1 CLOUT</strong>.
+              </p>
+              <p class="mt-3 text-xs text-gray-500">
+                Tip: Save cards strategically as they might power a Viral Spiral move.
+              </p>
+            </div>
+            <div class="w-28 md:w-40 flex-shrink-0">
+              <img
+                src="/images/rulebook/rulebook_passcard.avif"
+                alt="Pass card"
+                class="w-full h-full object-cover rounded"
+              />
+            </div>
+          </div>
+          <!-- Slide 3 — Fake News -->
+          <div
+            class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
+            data-carousel-item
+          >
+            <div class="flex-1">
+              <h3 class="text-xl font-bold">3 — Fake News! ⚠️</h3>
+              <p class="mt-2 text-sm">
+                If the headline doesn't match the source, that news is fake! If someone passes you fake news you can mark it as such to make them <strong>lose 1 CLOUT</strong>!
+              </p>
+            </div>
+            <div class="w-28 md:w-40 flex-shrink-0">
+              <img
+                src="/images/rulebook/rulebook_fakenews.webp"
+                alt="Fake news"
+                class="w-full h-full object-cover rounded"
+              />
+            </div>
+          </div>
+          <!-- Slide 4 — Opinion & Prejudice Counters -->
+          <div
+            class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-4"
+            data-carousel-item
+          >
+            <div class="flex-1">
+              <h3 class="text-xl font-bold">4 — Opinion & Prejudice ⚖️</h3>
+              <p class="mt-2 text-sm">
+                Sharing OPINION or PREJUDICE increase their counters. Once you show an opinion you must share matching cards or
+                <strong>lose 1 CLOUT</strong>
+                for breaking confirmation bias.
+              </p>
+              <p class="mt-3 text-xs text-gray-500">
+                A sample score card from the game. They belong to the red community (A), have a clout point (B) of 5 and an anti blue bias (C) of 3. They have an affinity of -2 for socks (D) and +4 for houseboats (E).
+              </p>
+            </div>
+            <div class="w-52 md:w-64 flex-shrink-0">
+              <img src="/images/player-card.png" alt="Counters" class="w-full object-cover rounded" />
+            </div>
+          </div>
+          <!-- Slide 5 — Chaos Meter -->
+          <div
+            class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
+            data-carousel-item
+          >
+            <div class="flex-1">
+              <h3 class="text-xl font-bold">5 — Chaos Meter ⏳</h3>
+              <p class="mt-2 text-sm">
+                Sharing PREJUDICE moves the global <strong>CHAOS</strong>
+                counter down from <strong>10 → 0</strong>. If CHAOS hits <strong>0</strong>, the game ends and <strong>everyone loses</strong>.
+              </p>
+              <p class="mt-3 text-xs text-gray-500">
+                Endgame Rule: If a player reaches 10 CLOUT at the same time the CHAOS meter hits 0, the game ends and all players lose.
+              </p>
+            </div>
+            <div class="w-28  md:w-40  flex-shrink-0">
+              <img
+                src="/images/rulebook/rulebook_chaos.webp"
+                alt="Chaos meter"
+                class="w-full h-full object-cover rounded"
+              />
+            </div>
+          </div>
+          <!-- Slide 6 — Powers: Cancel & Manufacture -->
+          <div
+            class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
+            data-carousel-item
+          >
+            <div class="flex-1">
+              <h3 class="text-xl font-bold">6 — Powers ⚡️</h3>
+              <p class="mt-2 text-sm">
+                Reach <strong>±2 Opinion</strong>
+                → you can <strong>CANCEL</strong>
+                another player (requires same-opinion allies to vote). <br /> <br /> Reach
+                <strong>±2 Prejudice</strong>
+                → you can <strong>MANUFACTURE</strong>
+                fake news by adding prejudice to a card in hand.
+              </p>
+            </div>
+            <div class="w-28 md:w-40 flex-shrink-0">
+              <img
+                src="/images/rulebook/rulebook_powers.avif"
+                alt="Powers"
+                class="w-full h-full object-cover rounded"
+              />
+            </div>
+          </div>
+          <!-- Slide 7 — Viral Spiral -->
+          <div
+            class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
+            data-carousel-item
+          >
+            <div class="flex-1">
+              <h3 class="text-xl font-bold">7 — Viral Spiral 🌪️</h3>
+              <p class="mt-2 text-sm">
+                Reach <strong>±4</strong>
+                on opinion or prejudice → trigger <strong>VIRAL SPIRAL</strong>: share one unique card from your hand to
+                <strong>every player</strong>
+                in the same turn. Can be game-changing.
+              </p>
+              <p class="mt-3 text-xs text-gray-500">
+                Tip: You can strategically pick a card from your hand of kept cards for maximum impact.
+              </p>
+            </div>
+            <div class="w-32 md:w-40  flex-shrink-0">
+              <img
+                src="/images/logo.png"
+                alt="Viral Spiral"
+                class="w-full h-full object-cover rounded"
+              />
+            </div>
+          </div>
+          <!-- Slide 8 — Victory -->
+          <div
+            class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
+            data-carousel-item
+          >
+            <div class="flex-1">
+              <h3 class="text-xl font-bold">8 — Winning the Game 🏆</h3>
+              <p class="mt-2 text-sm">
+                First player to hit <strong>10 CLOUT</strong>
+                wins — provided CHAOS hasn’t reached <strong>0</strong>.
+              </p>
+              <p class="mt-3 text-xs text-gray-500">
+                Reminder: chase clout, but watch the chaos meter!
+              </p>
+            </div>
+            <div class="w-28 md:w-40 flex-shrink-0">
+              <img
+                src="/images/rulebook/rulebook_victory.avif"
+                alt="Victory"
+                class="w-full h-full object-cover rounded"
+              />
+            </div>
+          </div>
+        </div>
+        <!-- Slider indicators -->
+        <div class="  flex  space-x-3  justify-center ">
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="true"
+            aria-label="Slide 1"
+            data-carousel-slide-to="0"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 2"
+            data-carousel-slide-to="1"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 3"
+            data-carousel-slide-to="2"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 4"
+            data-carousel-slide-to="3"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 5"
+            data-carousel-slide-to="4"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 6"
+            data-carousel-slide-to="5"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 7"
+            data-carousel-slide-to="6"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 8"
+            data-carousel-slide-to="7"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 9"
+            data-carousel-slide-to="8"
+          >
+          </button>
+        </div>
+        <!-- Slider controls -->
+        <div class="flex justify-center gap-5 mt-4">
+          <button
+            type="button"
+            class=" z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+            data-carousel-prev
+          >
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+              <svg
+                class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 6 10"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 1 1 5l4 4"
+                />
+              </svg>
+              <span class="sr-only">Previous</span>
+            </span>
+          </button>
+
+          <button
+            type="button"
+            class="z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+            data-carousel-next
+          >
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+              <svg
+                class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 6 10"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m1 9 4-4-4-4"
+                />
+              </svg>
+              <span class="sr-only">Next</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </.modal>
     """
   end
 end

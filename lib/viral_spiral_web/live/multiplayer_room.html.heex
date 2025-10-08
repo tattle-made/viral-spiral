@@ -18,6 +18,14 @@
 
       <div class="flex-1"></div>
       <div class="shrink-0 flex flex-row gap-2">
+        <div class="">
+          <button
+            phx-click={show_modal("rulebook")}
+            class="text-fuchsia-900 hover:text-fuchsia-700"
+          >
+            <span class="text-sm font-bold">Rulebook</span> <.icon name="hero-book-open-solid" />
+          </button>
+        </div>
         <.popover id="popover-info">
           <:title>Reasons for last changes</:title>
           <:content>
@@ -33,6 +41,9 @@
         </p>
       </div>
     </div>
+
+    <% # Rulebook modal component. Opens with the button at the top besides chaos counter %>
+    <.rulebook />
 
     <div :if={@state && @state.others} id="container-others">
       <.carousel_score_card players={@state.others} />
