@@ -28,16 +28,15 @@
             </div>
           </:content>
         </.popover>
-       <.info_tooltip id="game-chaos">
+        <.info_tooltip id="game-chaos">
           <p class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100 self-start cursor-pointer">
             <span>Chaos Countdown: </span><%= 10 - @state.room.chaos %>
           </p>
           <:tooltip_content>
-          <p>When Chaos Coutdown reaches 0 → <strong>The world ends</strong></p>
-          
+            <h2 class="text-lg font-semibold">Chaos Countdown</h2>
+            <p>When Chaos Coutdown reaches 0 → <strong>The world ends</strong></p>
           </:tooltip_content>
-         
-       </.info_tooltip>
+        </.info_tooltip>
       </div>
     </div>
 

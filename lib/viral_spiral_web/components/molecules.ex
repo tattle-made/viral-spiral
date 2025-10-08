@@ -244,8 +244,8 @@ defmodule ViralSpiralWeb.Molecules do
           <.info_tooltip id={"clout-#{@player.id}"}>
             <span class="text-sm">Clout</span>
             <:tooltip_content>
+              <h2 class="text-lg font-semibold">Clout</h2>
               <p><strong>Clout</strong> measures a <strong>Player's influence</strong>.</p>
-              <br />
               <p>At 10 Clout → <strong>Victory!</strong></p>
             </:tooltip_content>
           </.info_tooltip>
@@ -260,8 +260,8 @@ defmodule ViralSpiralWeb.Molecules do
             <.info_tooltip id={"biases-info-#{@player.id}"}>
               <p class="text-sm font-semibold text-textcolor-light cursor-pointer">Biases</p>
               <:tooltip_content>
+                <h2 class="text-lg font-semibold">Biases</h2>
                 <p>Bias ≥ 2 → Unlocks <strong>Manufacture Fake Card</strong> power</p>
-                <br />
                 <p>Bias ≥ 4 → Unlocks <strong>Viral Spiral</strong> power</p>
               </:tooltip_content>
             </.info_tooltip>
@@ -276,8 +276,8 @@ defmodule ViralSpiralWeb.Molecules do
           <.info_tooltip id={"affinities-info-#{@player.id}"}>
             <p class="text-sm font-semibold text-textcolor-light cursor-pointer">Affinities</p>
             <:tooltip_content>
+              <h2 class="text-lg font-semibold">Affinities</h2>
               <p>Affinity ±2 → Unlocks <strong>Cancel Player</strong> power</p>
-              <br />
               <p>Affinity ±4 → Unlocks <strong>Viral-Spiral</strong> power</p>
             </:tooltip_content>
           </.info_tooltip>
