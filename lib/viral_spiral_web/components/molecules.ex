@@ -2,6 +2,7 @@ defmodule ViralSpiralWeb.Molecules do
   alias ViralSpiral.Affinity
   alias ViralSpiral.Bias
   use ViralSpiralWeb, :html
+  import ViralSpiralWeb.CoreComponents
 
   defp card_url(file_name) do
     # Because of a mistake made by designers, all filenames have a space in it
@@ -235,11 +236,19 @@ defmodule ViralSpiralWeb.Molecules do
     ~H"""
     <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-gray-400 rounded-md bg-neutral-3">
       <div class="flex flex-col justify-between gap-1">
-        <div class={"h-12 w-12 #{bg_class(@player.identity)} border border-2 rounded-md overflow-hidden"}>
+        <div class={"h-12 w-12 #{bg_class(@player.identity)} border-2 rounded-md overflow-hidden"}>
           <img class="h-12 w-12 object-fit" src={dp_url(@player.id)} />
         </div>
-        <div class="text-textcolor-light font-extrabold text-2xl leading-none ml-2 mb-3">
+        <div class="text-textcolor-light font-extrabold text-xl leading-none ml-2 mb-3 text-center">
           <%= @player.clout %>
+          <.info_tooltip id={"clout-#{@player.id}"}>
+            <span class="text-sm">Clout</span>
+            <:tooltip_content>
+              <h2 class="text-lg font-semibold">Clout</h2>
+              <p><strong>Clout</strong> measures a <strong>Player's influence</strong>.</p>
+              <p>At 10 Clout → <strong>Victory!</strong></p>
+            </:tooltip_content>
+          </.info_tooltip>
         </div>
       </div>
       <div>
@@ -248,7 +257,14 @@ defmodule ViralSpiralWeb.Molecules do
         </div>
         <div class="flex flex-row gap-4">
           <div class="flex flex-row items-center gap-2">
-            <p class="text-sm font-semibold text-textcolor-light">Biases</p>
+            <.info_tooltip id={"biases-info-#{@player.id}"}>
+              <p class="text-sm font-semibold text-textcolor-light cursor-pointer">Biases</p>
+              <:tooltip_content>
+                <h2 class="text-lg font-semibold">Biases</h2>
+                <p>Bias ≥ 2 → Unlocks <strong>Manufacture Fake Card</strong> power</p>
+                <p>Bias ≥ 4 → Unlocks <strong>Viral Spiral</strong> power</p>
+              </:tooltip_content>
+            </.info_tooltip>
             <%= for {bias, value} <- @player.biases do %>
               <div class={"w-8 h-8 rounded-full flex items-center justify-center text-s text-textcolor-light #{bias_color_class(bias)}"}>
                 <%= value %>
@@ -257,7 +273,14 @@ defmodule ViralSpiralWeb.Molecules do
           </div>
         </div>
         <div class="flex flex-row items-center gap-2 mt-2">
-          <p class="text-sm font-semibold text-textcolor-light">Affinities</p>
+          <.info_tooltip id={"affinities-info-#{@player.id}"}>
+            <p class="text-sm font-semibold text-textcolor-light cursor-pointer">Affinities</p>
+            <:tooltip_content>
+              <h2 class="text-lg font-semibold">Affinities</h2>
+              <p>Affinity ±2 → Unlocks <strong>Cancel Player</strong> power</p>
+              <p>Affinity ±4 → Unlocks <strong>Viral-Spiral</strong> power</p>
+            </:tooltip_content>
+          </.info_tooltip>
           <div class="flex flex-row gap-2 items-center">
             <%= for {affinity, value} <- @player.affinities do %>
               <div class="relative w-9 h-9">

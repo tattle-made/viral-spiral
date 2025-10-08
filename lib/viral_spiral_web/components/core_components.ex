@@ -747,4 +747,35 @@ defmodule ViralSpiralWeb.CoreComponents do
     </div>
     """
   end
+
+  attr :id, :string, required: true
+  # attr :content, :string, required: true
+  slot :inner_block, required: true
+  slot :tooltip_content, required: true
+
+  def info_tooltip(assigns) do
+    random_number = :rand.uniform(10000)
+    assigns = assign(assigns, random_number: random_number)
+
+    ~H"""
+    <div id={"tooltip-container-#{@id}-#{@random_number}"} phx-hook="TooltipHook">
+      <div
+        data-tooltip-target={"tooltip-light-#{@id}-#{@random_number}"}
+        data-tooltip-style="light"
+        type="button"
+      >
+        <%= render_slot(@inner_block) %>
+      </div>
+
+      <div
+        id={"tooltip-light-#{@id}-#{@random_number}"}
+        role="tooltip"
+        class="absolute min-w-[12rem] z-10 invisible inline-block px-4 py-4 text-left text-xs font-medium text-gray-900 bg-white border border-gray-300 rounded-lg shadow-xs opacity-0 tooltip"
+      >
+        <%= render_slot(@tooltip_content) %>
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
+    </div>
+    """
+  end
 end

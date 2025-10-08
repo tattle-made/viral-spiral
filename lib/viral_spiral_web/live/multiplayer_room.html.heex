@@ -36,9 +36,15 @@
             </div>
           </:content>
         </.popover>
-        <p class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100 self-start">
-          <%= 10 - @state.room.chaos %>
-        </p>
+        <.info_tooltip id="game-chaos">
+          <p class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100 self-start cursor-pointer">
+            <span>Chaos Countdown: </span><%= 10 - @state.room.chaos %>
+          </p>
+          <:tooltip_content>
+            <h2 class="text-lg font-semibold">Chaos Countdown</h2>
+            <p>When Chaos Coutdown reaches 0 → <strong>The world ends</strong></p>
+          </:tooltip_content>
+        </.info_tooltip>
       </div>
     </div>
 
