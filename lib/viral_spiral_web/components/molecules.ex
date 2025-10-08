@@ -352,7 +352,7 @@ defmodule ViralSpiralWeb.Molecules do
             </div>
             <div class="w-24 md:w-32 flex-shrink-0">
               <img
-                src="https://cdn.pixabay.com/photo/2013/07/13/13/52/school-161701_1280.png"
+                src="/images/rulebook/rulebook_cover.webp"
                 alt="Cover illustration"
                 class="w-full h-full object-cover shadow"
               />
@@ -372,7 +372,7 @@ defmodule ViralSpiralWeb.Molecules do
             </div>
             <div class="w-28 md:w-40 flex-shrink-0">
               <img
-                src="https://images.unsplash.com/vector-1739804242618-f18052357066?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGRyYXclMjBhJTIwY2FyZHxlbnwwfHwwfHx8Mg%3D%3D"
+                src="/images/rulebook/rulebook_drawcard.avif"
                 alt="Draw card"
                 class="w-full h-full object-cover rounded"
               />
@@ -394,7 +394,7 @@ defmodule ViralSpiralWeb.Molecules do
             </div>
             <div class="w-28 md:w-40 flex-shrink-0">
               <img
-                src="https://images.unsplash.com/vector-1751812979014-01e8f8144baf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cGFzcyUyMGNhcmR8ZW58MHx8MHx8fDI%3D"
+                src="/images/rulebook/rulebook_passcard.avif"
                 alt="Pass card"
                 class="w-full h-full object-cover rounded"
               />
@@ -413,7 +413,7 @@ defmodule ViralSpiralWeb.Molecules do
             </div>
             <div class="w-28 md:w-40 flex-shrink-0">
               <img
-                src="https://cdn.pixabay.com/photo/2023/03/21/11/40/fake-7867062_1280.png"
+                src="/images/rulebook/rulebook_fakenews.webp"
                 alt="Fake news"
                 class="w-full h-full object-cover rounded"
               />
@@ -456,7 +456,7 @@ defmodule ViralSpiralWeb.Molecules do
             </div>
             <div class="w-28  md:w-40  flex-shrink-0">
               <img
-                src="https://cdn.pixabay.com/photo/2014/06/30/01/47/save-the-planet-379913_1280.png"
+                src="/images/rulebook/rulebook_chaos.webp"
                 alt="Chaos meter"
                 class="w-full h-full object-cover rounded"
               />
@@ -480,7 +480,7 @@ defmodule ViralSpiralWeb.Molecules do
             </div>
             <div class="w-28 md:w-40 flex-shrink-0">
               <img
-                src="https://images.unsplash.com/vector-1749533109852-832187b19078?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjB8fGNhbmNlbCUyMHR1cm58ZW58MHx8MHx8fDI%3D"
+                src="/images/rulebook/rulebook_powers.avif"
                 alt="Powers"
                 class="w-full h-full object-cover rounded"
               />
@@ -528,7 +528,7 @@ defmodule ViralSpiralWeb.Molecules do
             </div>
             <div class="w-28 md:w-40 flex-shrink-0">
               <img
-                src="https://images.unsplash.com/vector-1751914321725-d4b572c9a10c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzN8fHdpbm5pbmclMjBnYW1lfGVufDB8fDB8fHwy"
+                src="/images/rulebook/rulebook_victory.avif"
                 alt="Victory"
                 class="w-full h-full object-cover rounded"
               />
