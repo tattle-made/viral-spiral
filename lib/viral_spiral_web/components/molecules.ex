@@ -151,7 +151,7 @@ defmodule ViralSpiralWeb.Molecules do
                 )
               }
             >
-              Turn to Fake
+              Add Hate
             </button>
           </div>
         </div>
@@ -265,7 +265,7 @@ defmodule ViralSpiralWeb.Molecules do
               <p class="text-sm font-semibold text-textcolor-light cursor-pointer">Biases</p>
               <:tooltip_content>
                 <h2 class="text-lg font-semibold">Biases</h2>
-                <p>Bias ≥ 2 → Unlocks <strong>Manufacture Fake Card</strong> power</p>
+                <p>Bias ≥ 2 → Unlocks <strong>Add HATE</strong> power</p>
                 <p>Bias ≥ 4 → Unlocks <strong>Viral Spiral</strong> power</p>
               </:tooltip_content>
             </.info_tooltip>
@@ -393,9 +393,8 @@ defmodule ViralSpiralWeb.Molecules do
             <div class="flex-1">
               <h3 class="text-xl font-bold">1 — Draw a Card 🔍</h3>
               <p class="mt-2 text-sm">
-                On your turn draw 1 card representing an internet item: <strong>FACT</strong>, <strong>OPINION</strong>, or <strong>PREJUDICE</strong>.
+                On your turn draw 1 card representing a news item on the internet: this could be either <strong>TOPICAL</strong>, <strong>AFFINITY</strong>, or <strong>HATE</strong>.
               </p>
-              <p class="mt-3 text-xs text-gray-500">Quick: treat cards as short news snippets.</p>
             </div>
             <div class="w-28 md:w-40 flex-shrink-0">
               <img
@@ -403,6 +402,28 @@ defmodule ViralSpiralWeb.Molecules do
                 alt="Draw card"
                 class="w-full h-full object-cover rounded"
               />
+            </div>
+          </div>
+          <!-- Slide 1.5 — Types of Cards -->
+          <div
+            class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-6"
+            data-carousel-item
+          >
+            <div class="flex-1">
+              <h3 class="text-xl font-bold">1.5 — Card Types 🔍</h3>
+
+              <img
+                src="/images/rulebook/rulebook_cards_info.png"
+                alt="Draw card"
+                class="w-full h-full object-cover rounded"
+              />
+              <div class="flex justify-around items-start gap-4 text-xs">
+                <p class="flex-1 min-w-0 text-center">AFFECT CLOUT</p>
+                <p class="flex-1 min-w-0 text-center">AFFECT YOUR CLOUT AND CORRESPONDING AFFINITY</p>
+                <p class="flex-1 min-w-0 text-center">
+                  AFFECT YOUR CLOUT, BIAS AND THE CITY'S CHAOS COUNTDOWN
+                </p>
+              </div>
             </div>
           </div>
           <!-- Slide 2 — Check, Pass, Keep -->
@@ -416,7 +437,7 @@ defmodule ViralSpiralWeb.Molecules do
                 Optionally check the source, then <strong>pass</strong>, <strong>discard</strong>, or <strong>keep</strong>. Each new player a card passes through gives the original sharer <strong>+1 CLOUT</strong>.
               </p>
               <p class="mt-3 text-xs text-gray-500">
-                Tip: Save cards strategically as they might power a Viral Spiral move.
+                Tip: Keep cards strategically to use later for your Viral Spiral move.
               </p>
             </div>
             <div class="w-28 md:w-40 flex-shrink-0">
@@ -437,6 +458,10 @@ defmodule ViralSpiralWeb.Molecules do
               <p class="mt-2 text-sm">
                 If the headline doesn't match the source, that news is fake! If someone passes you fake news you can mark it as such to make them <strong>lose 1 CLOUT</strong>!
               </p>
+              <p class="mt-3 text-xs text-gray-500">
+                Be Careful: If you wrongly mark it as fake, <span class="font-semibold">YOU</span>
+                will <span class="font-semibold">lose 1 CLOUT!</span>
+              </p>
             </div>
             <div class="w-28 md:w-40 flex-shrink-0">
               <img
@@ -446,24 +471,28 @@ defmodule ViralSpiralWeb.Molecules do
               />
             </div>
           </div>
-          <!-- Slide 4 — Opinion & Prejudice Counters -->
+          <!-- Slide 4 — Affinity & Hate Counters -->
           <div
             class=" duration-700 ease-in-out p-6 md:p-10 flex flex-col md:flex-row items-center gap-4"
             data-carousel-item
           >
             <div class="flex-1">
-              <h3 class="text-xl font-bold">4 — Opinion & Prejudice ⚖️</h3>
+              <h3 class="text-xl font-bold">4 — Affinity & Hate ⚖️</h3>
               <p class="mt-2 text-sm">
-                Sharing OPINION or PREJUDICE increase their counters. Once you show an opinion you must share matching cards or
-                <strong>lose 1 CLOUT</strong>
-                for breaking confirmation bias.
+                Sharing <strong>AFFINITY</strong>
+                or <strong>HATE</strong>
+                increases their counters. Once you pass any of these cards you must continue sharing similar cards or <strong>lose 1 CLOUT</strong>.
               </p>
               <p class="mt-3 text-xs text-gray-500">
-                A sample score card from the game. They belong to the red community (A), have a clout point (B) of 5 and an anti blue bias (C) of 3. They have an affinity of -2 for socks (D) and +4 for houseboats (E).
+                A sample player profile from the game. They belong to the red community (A), have a clout point (B) of 4 and anti-yellow and anti-blue biases (C) of 2 and 5, respectively. They have an affinity of +1 for skub (D) and -2 for houseboats (E).
               </p>
             </div>
             <div class="w-52 md:w-64 flex-shrink-0">
-              <img src="/images/player-card.png" alt="Counters" class="w-full object-cover rounded" />
+              <img
+                src="/images/rulebook/rulebook_playerprofile_vector.png"
+                alt="Counters"
+                class="w-full object-cover rounded"
+              />
             </div>
           </div>
           <!-- Slide 5 — Chaos Meter -->
@@ -474,8 +503,8 @@ defmodule ViralSpiralWeb.Molecules do
             <div class="flex-1">
               <h3 class="text-xl font-bold">5 — Chaos Meter ⏳</h3>
               <p class="mt-2 text-sm">
-                Sharing PREJUDICE moves the global <strong>CHAOS</strong>
-                counter down from <strong>10 → 0</strong>. If CHAOS hits <strong>0</strong>, the game ends and <strong>everyone loses</strong>.
+                Sharing HATE moves the global <strong>CHAOS</strong>
+                counter down from <strong>10 → 0</strong>. If CHAOS hits <strong>0</strong>, the game ends and <strong>everyone loses</strong>!
               </p>
               <p class="mt-3 text-xs text-gray-500">
                 Endgame Rule: If a player reaches 10 CLOUT at the same time the CHAOS meter hits 0, the game ends and all players lose.
@@ -497,12 +526,12 @@ defmodule ViralSpiralWeb.Molecules do
             <div class="flex-1">
               <h3 class="text-xl font-bold">6 — Powers ⚡️</h3>
               <p class="mt-2 text-sm">
-                Reach <strong>±2 Opinion</strong>
+                Reach <strong>±2 Affinity</strong>
                 → you can <strong>CANCEL</strong>
-                another player (requires same-opinion allies to vote). <br /> <br /> Reach
-                <strong>±2 Prejudice</strong>
-                → you can <strong>MANUFACTURE</strong>
-                fake news by adding prejudice to a card in hand.
+                another player, if same-affinity allies vote for it. <br /> <br /> Reach
+                <strong>±2 HATE</strong>
+                → you can <strong>Add HATE</strong>
+                to a card before passing it.
               </p>
             </div>
             <div class="w-28 md:w-40 flex-shrink-0">
@@ -522,12 +551,12 @@ defmodule ViralSpiralWeb.Molecules do
               <h3 class="text-xl font-bold">7 — Viral Spiral 🌪️</h3>
               <p class="mt-2 text-sm">
                 Reach <strong>±4</strong>
-                on opinion or prejudice → trigger <strong>VIRAL SPIRAL</strong>: share one unique card from your hand to
+                on affinity or hate → trigger <strong>VIRAL SPIRAL</strong>: share one unique card from your hand to
                 <strong>every player</strong>
-                in the same turn. Can be game-changing.
+                in the same turn.
               </p>
               <p class="mt-3 text-xs text-gray-500">
-                Tip: You can strategically pick a card from your hand of kept cards for maximum impact.
+                Tip: Used at the right time, could be game-ending.
               </p>
             </div>
             <div class="w-32 md:w-40  flex-shrink-0">
@@ -550,7 +579,7 @@ defmodule ViralSpiralWeb.Molecules do
                 wins — provided CHAOS hasn’t reached <strong>0</strong>.
               </p>
               <p class="mt-3 text-xs text-gray-500">
-                Reminder: chase clout, but watch the chaos meter!
+                Reminder: Chase Clout, but watch the Chaos Countdown!
               </p>
             </div>
             <div class="w-28 md:w-40 flex-shrink-0">
@@ -634,6 +663,14 @@ defmodule ViralSpiralWeb.Molecules do
             aria-current="false"
             aria-label="Slide 9"
             data-carousel-slide-to="8"
+          >
+          </button>
+          <button
+            type="button"
+            class="w-3 h-3 rounded-full"
+            aria-current="false"
+            aria-label="Slide 10"
+            data-carousel-slide-to="9"
           >
           </button>
         </div>
