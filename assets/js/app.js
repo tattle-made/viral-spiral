@@ -36,6 +36,7 @@ import { CarouselHook } from "./carousel";
 import { RoomLinkCopyClipboardHook } from "./room-link-copy-clipboard";
 import PopoverHook from "./popover";
 import TooltipHook from "./tooltip";
+import { EndGameHook } from "./endgame";
 
 let Hooks = {
   CalendarHook,
@@ -49,7 +50,8 @@ let Hooks = {
   RoomLinkCopyClipboardHook,
   FlashAutoHide,
   PopoverHook,
-  TooltipHook
+  TooltipHook,
+  EndGameHook
 };
 
 let csrfToken = document
