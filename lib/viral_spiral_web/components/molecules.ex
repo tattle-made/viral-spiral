@@ -244,9 +244,12 @@ defmodule ViralSpiralWeb.Molecules do
           <img class="h-12 w-12 object-fit" src={dp_url(@player.id)} />
         </div>
         <div class="text-textcolor-light font-extrabold text-xl leading-none ml-2 mb-3 text-center">
-          <%= @player.clout %>
+          <p id={"#{@player.id}-clout"} phx-hook="HookCounter">
+            <%= @player.clout %>
+          </p>
           <.info_tooltip id={"clout-#{@player.id}"}>
             <span class="text-sm">Clout</span>
+
             <:tooltip_content>
               <h2 class="text-lg font-semibold">Clout</h2>
               <p><strong>Clout</strong> measures a <strong>Player's influence</strong>.</p>
@@ -271,7 +274,7 @@ defmodule ViralSpiralWeb.Molecules do
             </.info_tooltip>
             <%= for {bias, value} <- @player.biases do %>
               <div class={"w-8 h-8 rounded-full flex items-center justify-center text-s text-textcolor-light #{bias_color_class(bias)}"}>
-                <%= value %>
+                <p id={"#{@player.id}-#{bias}"} phx-hook="HookCounter"><%= value %></p>
               </div>
             <% end %>
           </div>
@@ -294,7 +297,7 @@ defmodule ViralSpiralWeb.Molecules do
                   alt={Affinity.label(affinity)}
                 />
                 <div class="absolute -top-1 -right-1 bg-accent-1 text-neutral-3 text-s w-5 h-5 rounded-full flex items-center justify-center shadow">
-                  <%= value %>
+                  <p id={"#{@player.id}-#{affinity}"} phx-hook="HookCounter"><%= value %></p>
                 </div>
               </div>
             <% end %>

@@ -8,19 +8,23 @@
         <.button phx-click="create_room" class="ml-2">Create a new Design Room!</.button>
 
         <div class="m-10"/>
-        <!--
+
+        <Molecules.carousel_score_card players={[
+            %{id: "player_abc", name: "denny", identity: :red, clout: 2, affinities: %{skub: 2, houseboat: 5}, biases: %{red: 2, blue: 4}}, 
+            %{id: "player_def", name: "adhiraj", identity: :yellow, clout: 3, affinities: %{skub: 5, houseboat: 9}, biases: %{red: 2, blue: 4}},
+            %{id: "player_ghi", name: "krys", identity: :blue, clout: 9, affinities: %{skub: -2, houseboat: 4}, biases: %{red: 8, blue: 2}}
+        ]} />
+
+        
         <div class="flex flex-row gap-4">
             <.button phx-click={"increment_counter"}>Increment</.button>
             <.button phx-click={"change_background"}>background</.button>
         </div>
 
-        <div class="m-10"/>
-
-        <div id="counter-container" class="w-fit h-8 bg-red-400 flex flex-row justify-center items-center" phx-hook={"HookCounter"}>
-            <p class="w-fit h-8 bg-red-200  flex flex-row justify-center items-center" id="counter-label">
+        <div class="m-10" />
+            <p class="bg-red-100 p-4 rounded-lg w-fit h-fit  flex flex-row justify-center items-center" id="counter-label" phx-hook={"HookCounter"}>
                 <%= @count %>
             </p>
-        </div>
         <div class="m-10"/>
         -->
         
@@ -83,13 +87,8 @@
 </div>
 
 
-<!--
-<Molecules.carousel_score_card players={[
-    %{id: "player_abc", name: "denny", identity: :red, clout: 2, affinities: %{skub: 2, houseboat: 5}, biases: %{red: 2, blue: 4}}, 
-    %{id: "player_def", name: "adhiraj", identity: :yellow, clout: 3, affinities: %{skub: 5, houseboat: 9}, biases: %{red: 2, blue: 4}},
-    %{id: "player_ghi", name: "krys", identity: :blue, clout: 9, affinities: %{skub: -2, houseboat: 4}, biases: %{red: 8, blue: 2}}
-]} />
--->
+
+
 
 <!--
 <.button phx-click="show_popup"> Show</.button>
