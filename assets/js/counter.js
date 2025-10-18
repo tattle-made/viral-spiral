@@ -27,9 +27,9 @@ const HookCounter = {
 
         const tl = createTimeline({})
 
-        tl.add(label, {scale: 1.4, rotate: 30, color: '#FF4444', ease: 'outSine', duration: 150})
+        tl.add(label, {scale: 1.4, rotate: 30, ease: 'outSine', duration: 150})
         .add(label, {scale: 1, rotate: 0, ease: 'outSine', duration: 150})
-        .add(label, {color: '#000000', duration: 450, delay: 3000})
+ 
 
         // tl.add(label, {scaleX: 1.1, scaleY: 1.1, ease: 'outSine', duration:150})
         // .add(label, {'font-size': '3.2em', ease: 'outSine', duration:150})
