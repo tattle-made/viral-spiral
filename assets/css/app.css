@@ -3,3 +3,9 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+
+body {
+  font-family: "Averia Libre", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
