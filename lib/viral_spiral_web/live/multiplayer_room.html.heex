@@ -4,13 +4,13 @@
   </div>
 
   <div class="relative w-full min-h-[calc(100vh-56px)] flex flex-col">
-    <div :if={@state && @state.room} class="p-2 flex flex-row mb mt ">
-      <div class="flex flex-col gap-1">
-        <p class="bg-fuchsia-950 p-2 rounded-xl text-fuchsia-100">
+    <div :if={@state && @state.room} class="p-2 flex flex-row mb mt flex-wrap gap-2">
+      <div class="flex flex-row gap-1">
+        <p class="bg-fuchsia-950 p-2 w-fit h-fit rounded-xl text-fuchsia-100">
           <%= @state.room.name %>
         </p>
         <%= if @state.current_holder_name do %>
-          <p class="bg-[#728645] p-4 rounded-2xl text-fuchsia-100 text-lg font-medium shadow-md">
+          <p class="bg-[#728645] w-fit h-fit p-2 rounded-xl text-fuchsia-100">
             <%= @state.current_holder_name %>
           </p>
         <% end %>
@@ -18,30 +18,33 @@
 
       <div class="flex-1"></div>
       <div class="shrink-0 flex flex-row gap-2">
-        <div class="">
+        <div class="bg-fuchsia-100 p-2 w-fit h-fit rounded-xl">
           <button
             phx-click={show_modal("rulebook")}
             class="text-fuchsia-900 hover:text-fuchsia-700"
           >
-            <span class="text-sm font-bold">Rulebook</span> <.icon name="hero-book-open-solid" />
+            <.icon name="hero-book-open-solid" />
+            <span class="text-sm font-bold">Rulebook</span> 
           </button>
         </div>
-        <.popover id="popover-info">
-          <:title>Reasons for last changes</:title>
-          <:content>
-            <div :if={@change_list}>
-              <div :for={message <- @change_list}>
-                <div><%= message %></div>
+        <div class="bg-[#728645] align-center p-2 w-fit h-fit rounded-xl" >
+          <.popover id="popover-info">
+            <:title>Reasons for last changes</:title>
+            <:content>
+              <div :if={@change_list}>
+                <div :for={message <- @change_list}>
+                  <div><%= message %></div>
+                </div>
               </div>
-            </div>
-          </:content>
-        </.popover>
+            </:content>
+          </.popover>
+        </div>
         <.info_tooltip id="game-chaos">
           <p class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100 self-start cursor-pointer">
             <span>Chaos Countdown: </span><%= @state.room.chaos %>
           </p>
           <:tooltip_content>
-            <h2 class="text-lg font-semibold">Chaos Countdown</h2>
+            <h2 class="text-lg font-semibold">Amount of Hate in the world</h2>
             <p>When Chaos Coutdown reaches 0 → <strong>The world ends</strong></p>
           </:tooltip_content>
         </.info_tooltip>
