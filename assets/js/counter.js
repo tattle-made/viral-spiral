@@ -25,9 +25,11 @@ const HookCounter = {
         //     loop: 5
         // })
 
-        const tl = createTimeline({})
+        const tl = createTimeline({loop: 3})
 
-        tl.add(label, {scale: 1.4, rotate: 30, ease: 'outSine', duration: 150})
+        tl.add(label, {scale: 1.8, rotate: 20, ease: 'outSine', duration: 150})
+        .add(label, {scale: 1, rotate: 0, ease: 'outSine', duration: 150})
+        .add(label, {scale: 1.8, rotate: -20, ease: 'outSine', duration: 150})
         .add(label, {scale: 1, rotate: 0, ease: 'outSine', duration: 150})
  
 

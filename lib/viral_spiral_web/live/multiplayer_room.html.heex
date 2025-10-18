@@ -40,9 +40,11 @@
           </.popover>
         </div>
         <.info_tooltip id="game-chaos">
-          <p class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100 self-start cursor-pointer">
-            <span>Chaos Countdown: </span><%= @state.room.chaos %>
-          </p>
+          <div class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100 self-start cursor-pointer flex flex-row gap-2">
+            <span>Chaos Countdown: </span>
+            <span id="chaos-countdown" phx-hook="HookCounter"> <%= @state.room.chaos %> </span>
+          </div>
+          
           <:tooltip_content>
             <h2 class="text-lg font-semibold">Amount of Hate in the world</h2>
             <p>When Chaos Coutdown reaches 0 → <strong>The world ends</strong></p>

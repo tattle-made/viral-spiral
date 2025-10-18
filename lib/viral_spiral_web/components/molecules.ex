@@ -238,15 +238,15 @@ defmodule ViralSpiralWeb.Molecules do
 
   def player_score_card(assigns) do
     ~H"""
-    <div class="flex flex-row h-fit w-fit p-2 gap-2 border border-gray-400 rounded-md bg-neutral-3">
-      <div class="flex flex-col justify-between gap-1">
+    <div class="flex flex-row h-fit w-fit p-2 gap-6 border border-slate-100 rounded-md bg-slate-100">
+      <div class="flex flex-col gap-1">
         <div class={"h-12 w-12 #{bg_class(@player.identity)} border-2 rounded-md overflow-hidden"}>
           <img class="h-12 w-12 object-fit" src={dp_url(@player.id)} />
         </div>
-        <div class="text-textcolor-light font-extrabold text-xl leading-none ml-2 mb-3 text-center">
-          <p id={"#{@player.id}-clout"} phx-hook="HookCounter">
-            <%= @player.clout %>
-          </p>
+        <p class="text-textcolor-light font-extrabold text-lg"><%= @player.name %></p>
+      </div>
+      <div>
+        <div class="text-textcolor-light font-extrabold text-xl flex flex-row gap-2">
           <.info_tooltip id={"clout-#{@player.id}"}>
             <span class="text-sm">Clout</span>
 
@@ -256,11 +256,9 @@ defmodule ViralSpiralWeb.Molecules do
               <p>At 10 Clout → <strong>Victory!</strong></p>
             </:tooltip_content>
           </.info_tooltip>
-        </div>
-      </div>
-      <div>
-        <div class="flex flex-row flex-wrap gap-4">
-          <p class="text-textcolor-light font-extrabold text-lg"><%= @player.name %></p>
+          <p id={"#{@player.id}-clout"} phx-hook="HookCounter">
+            <%= @player.clout %>
+          </p>
         </div>
         <div class="flex flex-row gap-4">
           <div class="flex flex-row items-center gap-2">
