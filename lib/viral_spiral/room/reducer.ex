@@ -311,7 +311,7 @@ defmodule ViralSpiral.Room.Reducer do
     #   }
     # ]
     clout_changes = [
-      {state.players[from_id], %Clout{offset: length(to_id)}}
+      {state.players[from_id], %Clout{offset: 2 * length(to_id)}}
     ]
 
     card_pass_changes =

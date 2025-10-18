@@ -315,11 +315,14 @@ defmodule ViralSpiral.Room.State do
     - {:over, :player, winner_id, %PlayerWinTemplateData{}} if a player has won
   """
   def game_over_status(%State{} = state) do
-    chaos_threshold_crossed? = if state.room.chaos >= 10, do: true, else: false
+    game_end_threshold = state.room.chaos_counter
+
+    chaos_threshold_crossed? =
+      if state.room.chaos >= game_end_threshold, do: true, else: false
 
     winners =
       state.players
-      |> Enum.filter(fn {_id, player} -> player.clout >= 10 end)
+      |> Enum.filter(fn {_id, player} -> player.clout >= game_end_threshold end)
 
     # todo check for illegal state of >1 condition
     player_won? =

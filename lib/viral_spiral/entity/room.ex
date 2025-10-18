@@ -132,7 +132,7 @@ defmodule ViralSpiral.Entity.Room do
       | state: :running,
         affinities: room_affinities,
         communities: room_communities,
-        chaos_counter: engine_config.chaos_counter,
+        chaos_counter: 4 * player_count - 2,
         chaos: 0,
         volatality: engine_config.volatility
     }

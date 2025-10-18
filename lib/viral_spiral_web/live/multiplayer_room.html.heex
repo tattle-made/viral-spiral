@@ -1,6 +1,6 @@
 <div id="multiplayer-room-container" phx-hook="HookMultiplayerRoom" class="relative">
   <div class="w-full">
-    <Atoms.background id="container-bg" image={bg_image(get_in(@state.room.chaos))} />
+    <Atoms.background id="container-bg" image={get_in(@state.room.bg_image)} />
   </div>
 
   <div class="relative w-full min-h-[calc(100vh-56px)] flex flex-col">
@@ -38,7 +38,7 @@
         </.popover>
         <.info_tooltip id="game-chaos">
           <p class="bg-fuchsia-950 p-2 rounded-lg text-fuchsia-100 self-start cursor-pointer">
-            <span>Chaos Countdown: </span><%= 10 - @state.room.chaos %>
+            <span>Chaos Countdown: </span><%= @state.room.chaos %>
           </p>
           <:tooltip_content>
             <h2 class="text-lg font-semibold">Chaos Countdown</h2>

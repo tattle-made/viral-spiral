@@ -254,16 +254,4 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
   def handle_info({}, socket) do
     {:noreply, socket}
   end
-
-  def bg_image(chaos) do
-    case chaos do
-      nil -> S3.bg("bg_0.png")
-      x when x >= 0 and x <= 2 -> S3.bg("bg_0.png")
-      x when x > 2 and x <= 4 -> S3.bg("bg_1.png")
-      x when x > 4 and x <= 6 -> S3.bg("bg_2.png")
-      x when x > 6 and x <= 8 -> S3.bg("bg_3.png")
-      x when x > 8 and x <= 10 -> S3.bg("bg_4.png")
-      _ -> S3.bg("bg_0.png")
-    end
-  end
 end

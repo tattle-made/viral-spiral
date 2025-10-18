@@ -1,4 +1,5 @@
 defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
+  alias ViralSpiral.S3
   alias ViralSpiral.Canon
   alias ViralSpiral.Affinity
   alias Phoenix.HTML.FormData
@@ -19,7 +20,8 @@ defmodule ViralSpiralWeb.MultiplayerRoom.StateAdapter do
       room: %{
         id: state.room.id,
         name: state.room.name,
-        chaos: state.room.chaos,
+        chaos: state.room.chaos_counter - state.room.chaos,
+        bg_image: S3.bg("bg_#{floor(state.room.chaos / state.room.chaos_counter * 4)}.png"),
         state: state.room.state
       },
       end_game_message: generate_end_game_message(state),

@@ -24,7 +24,7 @@ defmodule ViralSpiral.Entity.Changes do
     current_round_player_changes = [
       {
         state.players[current_round_player_id],
-        %Clout{offset: 1},
+        %Clout{offset: 2},
         :clout_current_turn_player_passed_card
       }
     ]

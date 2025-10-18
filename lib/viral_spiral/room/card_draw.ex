@@ -40,7 +40,7 @@ defmodule ViralSpiral.Room.CardDraw do
 
   def draw_type(%DrawConstraints{} = requirements) do
     # dynamic bias probability increase's from 0.2 to 0.7 as chaos goes from 0 to 10
-    bias_prob = 0.2 + 0.05 * requirements.chaos
+    bias_prob = 0.2 + requirements.chaos / requirements.total_tgb * 0.5
     remaining_prob = 1 - bias_prob
 
     type =
