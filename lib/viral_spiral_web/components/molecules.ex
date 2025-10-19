@@ -330,7 +330,10 @@ defmodule ViralSpiralWeb.Molecules do
       </div>
 
       <div class="md:flex md:flex-row gap-6 hidden md:block md:visible justify-center">
-        <div :for={player <- @players} class="w-fit h-28 flex justify-center items-center md:w-56">
+        <div
+          :for={player <- @players}
+          class="w-fit h-28 flex gap-8 justify-center items-center md:w-56"
+        >
           <.player_score_card player={player} />
         </div>
       </div>
