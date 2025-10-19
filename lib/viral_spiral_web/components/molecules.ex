@@ -295,7 +295,9 @@ defmodule ViralSpiralWeb.Molecules do
                   alt={Affinity.label(affinity)}
                 />
                 <div class="absolute -top-1 -right-1 bg-accent-1 text-neutral-3 text-s w-5 h-5 rounded-full flex items-center justify-center shadow">
-                  <p id={"#{@player.id}-#{affinity}"} phx-hook="HookCounter"><%= value %></p>
+                  <p id={"#{@player.id}-#{Affinity.label(affinity)}"} phx-hook="HookCounter">
+                    <%= value %>
+                  </p>
                 </div>
               </div>
             <% end %>
