@@ -256,7 +256,7 @@ defmodule ViralSpiralWeb.Molecules do
               <p>At 10 Clout → <strong>Victory!</strong></p>
             </:tooltip_content>
           </.info_tooltip>
-          <p id={"#{@player.id}-clout"} phx-hook="HookCounter">
+          <p id={"#{@player.id}-clout"}>
             <%= @player.clout %>
           </p>
         </div>
@@ -272,7 +272,7 @@ defmodule ViralSpiralWeb.Molecules do
             </.info_tooltip>
             <%= for {bias, value} <- @player.biases do %>
               <div class={"w-8 h-8 rounded-full flex items-center justify-center text-s text-textcolor-light #{bias_color_class(bias)}"}>
-                <p id={"#{@player.id}-#{bias}"} phx-hook="HookCounter"><%= value %></p>
+                <p id={"#{@player.id}-#{bias}"}><%= value %></p>
               </div>
             <% end %>
           </div>
@@ -295,7 +295,7 @@ defmodule ViralSpiralWeb.Molecules do
                   alt={Affinity.label(affinity)}
                 />
                 <div class="absolute -top-1 -right-1 bg-accent-1 text-neutral-3 text-s w-5 h-5 rounded-full flex items-center justify-center shadow">
-                  <p id={"#{@player.id}-#{Affinity.label(affinity)}"} phx-hook="HookCounter">
+                  <p id={"#{@player.id}-#{Affinity.label(affinity)}"}>
                     <%= value %>
                   </p>
                 </div>
