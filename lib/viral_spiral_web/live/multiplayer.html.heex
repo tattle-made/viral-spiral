@@ -203,9 +203,10 @@
   function moveSlide(step) {
     currentIndex = (currentIndex + step + totalSlides) % totalSlides;
     const offset = (currentIndex * 100) / visible;
-    slides.style.transform = translateX(-${offset}%);
+    slides.style.transform = `translateX(-${offset}%)`;
   }
 </script>
+
 
   <div class="max-w-4xl mx-auto">
     <h2 class="text-textcolor-light text-3xl font-bold mb-8">Team</h2>
