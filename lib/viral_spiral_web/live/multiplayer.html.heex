@@ -163,6 +163,50 @@
       </div>
     </div>
   </div>
+
+<!-- Carousel Section -->
+<div class="max-w-4xl mx-auto mb-8 flex justify-center">
+  <div class="relative w-full max-w-6xl overflow-hidden">
+    <!-- Carousel Container -->
+    <div id="carousel" class="flex transition-transform duration-500 ease-in-out">
+      <img src="/images/people-playing-1.png" class="w-1/4 h-96 object-contain flex-shrink-0 bg-transparent" />
+      <img src="/images/people-playing-2.png" class="w-1/4 h-96 object-contain flex-shrink-0 bg-transparent" />
+      <img src="/images/people-playing-3.png" class="w-1/4 h-96 object-contain flex-shrink-0 bg-transparent" />
+      <img src="/images/people-playing-4.png" class="w-1/4 h-96 object-contain flex-shrink-0 bg-transparent" />
+      <img src="/images/people-playing-5.png" class="w-1/4 h-96 object-contain flex-shrink-0 bg-transparent" />
+    </div>
+
+    <!-- Buttons -->
+    <div class="absolute inset-0 flex items-center justify-between px-2">
+      <button
+        onclick="moveSlide(-1)"
+        class="bg-black/40 text-white p-2 rounded-full hover:bg-black/70"
+      >
+        ‹
+      </button>
+      <button
+        onclick="moveSlide(1)"
+        class="bg-black/40 text-white p-2 rounded-full hover:bg-black/70"
+      >
+        ›
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentIndex = 0;
+  const slides = document.getElementById("carousel");
+  const totalSlides = slides.children.length;
+  const visible = 4; // Number of visible images at once
+
+  function moveSlide(step) {
+    currentIndex = (currentIndex + step + totalSlides) % totalSlides;
+    const offset = (currentIndex * 100) / visible;
+    slides.style.transform = translateX(-${offset}%);
+  }
+</script>
+
   <div class="max-w-4xl mx-auto">
     <h2 class="text-textcolor-light text-3xl font-bold mb-8">Team</h2>
     <div class="divide-y divide-gray-200 text-xl">
