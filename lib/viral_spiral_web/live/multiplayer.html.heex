@@ -177,6 +177,10 @@
       <img src="/images/people-playing-3.png" class="w-1/4 h-80 object-contain flex-shrink-0 bg-transparent" />
       <img src="/images/people-playing-4.png" class="w-1/4 h-80 object-contain flex-shrink-0 bg-transparent" />
       <img src="/images/people-playing-5.png" class="w-1/4 h-80 object-contain flex-shrink-0 bg-transparent" />
+      <!-- Clone first few slides for smooth loop -->
+      <img src="/images/people-playing-1.png" class="w-1/4 h-80 object-contain flex-shrink-0 bg-transparent" />
+      <img src="/images/people-playing-2.png" class="w-1/4 h-80 object-contain flex-shrink-0 bg-transparent" />
+      <img src="/images/people-playing-3.png" class="w-1/4 h-80 object-contain flex-shrink-0 bg-transparent" />
     </div>
 
     <!-- Navigation Buttons -->
@@ -196,7 +200,7 @@
     </div>
   </div>
 
-  <!-- Dots Indicator (Now below the images) -->
+  <!-- Dots Indicator (below the images) -->
   <div class="mt-4 flex justify-center space-x-2">
     <span class="dot w-3 h-3 rounded-full bg-gray-400 cursor-pointer"></span>
     <span class="dot w-3 h-3 rounded-full bg-gray-400 cursor-pointer"></span>
@@ -209,25 +213,36 @@
 <script>
   let currentIndex = 0;
   const slides = document.getElementById("carousel");
-  const totalSlides = slides.children.length;
-  const visible = 4; // visible images at once
+  const totalSlides = 5; // real slides
+  const visible = 4; // number visible at once
   const dots = document.querySelectorAll(".dot");
   let autoSlide;
 
   // Move Slide Function
   function moveSlide(step) {
-    currentIndex = (currentIndex + step + totalSlides) % totalSlides;
-    updateCarousel();
-  }
+    currentIndex += step;
 
-  // Update Carousel UI
-  function updateCarousel() {
+    slides.style.transition = "transform 0.7s ease-in-out";
     const offset = (currentIndex * 100) / visible;
     slides.style.transform = `translateX(-${offset}%)`;
 
+    // When we reach the end clone zone
+    if (currentIndex >= totalSlides) {
+      setTimeout(() => {
+        slides.style.transition = "none";
+        currentIndex = 0;
+        slides.style.transform = `translateX(0%)`;
+      }, 700); // match duration
+    }
+
+    updateDots();
+  }
+
+  // Update Dots
+  function updateDots() {
     dots.forEach((dot, index) => {
-      dot.classList.toggle("bg-black", index === currentIndex);
-      dot.classList.toggle("bg-gray-400", index !== currentIndex);
+      dot.classList.toggle("bg-black", index === currentIndex % totalSlides);
+      dot.classList.toggle("bg-gray-400", index !== currentIndex % totalSlides);
     });
   }
 
@@ -246,7 +261,7 @@
   dots.forEach((dot, index) => {
     dot.addEventListener("click", () => {
       currentIndex = index;
-      updateCarousel();
+      moveSlide(0);
     });
   });
 
@@ -255,7 +270,7 @@
   slides.parentElement.addEventListener("mouseleave", startAutoSlide);
 
   // Initialize
-  updateCarousel();
+  updateDots();
   startAutoSlide();
 </script>
 
