@@ -163,6 +163,156 @@
       </div>
     </div>
   </div>
+
+<section class="relative flex flex-col items-center w-full mx-auto mb-12 pt-10">
+
+  <!-- Carousel Wrapper -->
+  <div class="relative overflow-hidden w-full max-w-[1000px] px-4">
+
+    <!-- Carousel -->
+    <div class="carousel flex gap-5 will-change-transform">
+      <img src="/images/people-playing-1.png" class="carousel-image flex-shrink-0 w-1/2 sm:w-1/3 md:w-1/4 h-60 sm:h-72 md:h-80 object-contain shadow-lg" />
+      <img src="/images/people-playing-2.png" class="carousel-image flex-shrink-0 w-1/2 sm:w-1/3 md:w-1/4 h-60 sm:h-72 md:h-80 object-contain shadow-lg" />
+      <img src="/images/people-playing-3.png" class="carousel-image flex-shrink-0 w-1/2 sm:w-1/3 md:w-1/4 h-60 sm:h-72 md:h-80 object-contain shadow-lg" />
+      <img src="/images/people-playing-4.png" class="carousel-image flex-shrink-0 w-1/2 sm:w-1/3 md:w-1/4 h-60 sm:h-72 md:h-80 object-contain shadow-lg" />
+      <img src="/images/people-playing-5.png" class="carousel-image flex-shrink-0 w-1/2 sm:w-1/3 md:w-1/4 h-60 sm:h-72 md:h-80 object-contain shadow-lg" />
+    </div>
+
+    <!-- Left Arrow -->
+    <button
+      type="button"
+      class="left-arrow absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 bg-white/40 backdrop-blur w-8 h-8 sm:w-9 sm:h-9 rounded-full text-black text-xl sm:text-2xl flex items-center justify-center shadow-md z-20"
+    >
+      <span>&#8249;</span>
+    </button>
+
+    <!-- Right Arrow -->
+    <button
+      type="button"
+      class="right-arrow absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 bg-white/40 backdrop-blur w-8 h-8 sm:w-9 sm:h-9 rounded-full text-black text-xl sm:text-2xl flex items-center justify-center shadow-md z-20"
+    >
+      <span>&#8250;</span>
+    </button>
+  </div>
+
+  <!-- Indicators -->
+  <div class="mt-4 sm:mt-6">
+    <div class="flex gap-3 px-4 py-2">
+      <div class="indicator w-4 h-4 bg-black rounded-full transition shadow-md"></div>
+      <div class="indicator w-3 h-3 bg-gray-400 rounded-full transition"></div>
+      <div class="indicator w-3 h-3 bg-gray-400 rounded-full transition"></div>
+      <div class="indicator w-3 h-3 bg-gray-400 rounded-full transition"></div>
+      <div class="indicator w-3 h-3 bg-gray-400 rounded-full transition"></div>
+    </div>
+  </div>
+
+</section>
+
+<style>
+  .smooth-slide {
+    transition: transform 0.55s cubic-bezier(0.4, 0.1, 0.2, 1);
+  }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const carousel = document.querySelector(".carousel");
+  const leftArrow = document.querySelector(".left-arrow");
+  const rightArrow = document.querySelector(".right-arrow");
+
+  const images = Array.from(document.querySelectorAll(".carousel-image"));
+  const indicators = Array.from(document.querySelectorAll(".indicator"));
+
+  let currentIndex = 0;
+  const total = images.length;
+
+  function getSlideWidth() {
+    return images[0].offsetWidth + 20;
+  }
+
+  let autoplay = true;
+  let autoplayInterval;
+
+  function updateIndicators() {
+    indicators.forEach((dot, i) => {
+      if (i === currentIndex) {
+        dot.classList.add("w-4", "h-4", "bg-black", "shadow-md");
+        dot.classList.remove("w-3", "h-3", "bg-gray-400");
+      } else {
+        dot.classList.add("w-3", "h-3", "bg-gray-400");
+        dot.classList.remove("w-4", "h-4", "bg-black", "shadow-md");
+      }
+    });
+  }
+
+  updateIndicators();
+
+  function slideLeft() {
+    const slideWidth = getSlideWidth();
+
+    carousel.classList.remove("smooth-slide");
+    carousel.style.transform = `translateX(-${slideWidth}px)`;
+
+    const last = images.pop();
+    images.unshift(last);
+    carousel.prepend(last);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        carousel.classList.add("smooth-slide");
+        carousel.style.transform = "translateX(0)";
+      });
+    });
+
+    currentIndex = (currentIndex - 1 + total) % total;
+    updateIndicators();
+  }
+
+  function slideRight() {
+    const slideWidth = getSlideWidth();
+
+    carousel.classList.add("smooth-slide");
+    carousel.style.transform = `translateX(-${slideWidth}px)`;
+
+    setTimeout(() => {
+      carousel.classList.remove("smooth-slide");
+
+      const first = images.shift();
+      images.push(first);
+      carousel.appendChild(first);
+
+      carousel.style.transform = "translateX(0)";
+    }, 550);
+
+    currentIndex = (currentIndex + 1) % total;
+    updateIndicators();
+  }
+
+  function startAutoplay() {
+    autoplayInterval = setInterval(slideRight, 2500);
+  }
+
+  function stopAutoplay() {
+    autoplay = false;
+    clearInterval(autoplayInterval);
+  }
+
+  startAutoplay();
+
+  leftArrow.addEventListener("click", () => {
+    if (autoplay) stopAutoplay();
+    slideLeft();
+  });
+
+  rightArrow.addEventListener("click", () => {
+    if (autoplay) stopAutoplay();
+    slideRight();
+  });
+
+});
+</script>
+
+
   <div class="max-w-4xl mx-auto">
     <h2 class="text-textcolor-light text-3xl font-bold mb-8">Team</h2>
     <div class="divide-y divide-gray-200 text-xl">
@@ -216,7 +366,6 @@
               fill="#514e80"
             >
             </path>
-            )
             <path
               d="M24.5432 0.000155254C10.9609 -0.0862636 0 10.9033 0 24.4999C0 37.7652 10.5576 48.582 23.7222 48.9996V35.7055C13.4095 35.4607 5.73251 31.8599 5.73251 27.1213C5.73251 24.7448 7.69136 22.5267 11.2058 20.9711C11.3642 20.8847 11.4506 20.8847 11.6091 20.8127C12.2572 20.5678 12.9198 20.8127 13.251 21.4752C13.4959 22.1378 13.251 22.7859 12.6029 23.1172L12.2716 23.2756C9.73663 24.4279 8.26749 25.8106 8.26749 27.1213C8.26749 29.9875 15.1379 33.2714 24.9465 33.2714C34.7551 33.2714 41.6255 29.9875 41.6255 27.1213C41.6255 25.8106 40.1564 24.4135 37.6214 23.2756C36.9733 23.0308 36.7284 22.2962 36.9733 21.6337C37.2181 20.9711 37.9527 20.7263 38.6152 20.9711C42.1296 22.5267 44.0885 24.7448 44.0885 27.1213C44.0165 31.7735 36.6708 35.3311 26.5885 35.6911V48.9132C39.1049 47.8474 49 37.3619 49 24.4999C49 10.9753 38.0391 0.000155254 24.5432 0.000155254ZM29.93 22.4547L24.6152 27.611C24.4568 27.8558 24.1255 28.0143 23.7942 28.0143C23.463 28.0143 23.1461 27.9278 22.9012 27.683L20.3663 25.148C19.8765 24.6583 19.8765 23.9238 20.3663 23.4341C20.856 22.9444 21.5905 22.9444 22.0802 23.4341L23.7942 25.148L28.216 20.7263C28.7058 20.2366 29.4403 20.2366 29.93 20.7263C30.4198 21.216 30.4198 21.9505 29.93 22.4547ZM35.1728 27.9423C35.1728 28.6768 34.6831 29.1665 33.9486 29.1665C33.3004 29.1665 32.7243 28.5904 32.7243 27.9423V19.9917C32.7243 15.8148 29.2819 12.3725 25.1193 12.3725C20.9568 12.3725 17.5144 15.8148 17.5144 19.9917V27.9423C17.5144 28.6048 16.9383 29.1665 16.2901 29.1665C15.642 29.1665 15.0658 28.5904 15.0658 27.9423V19.9917C15.0658 14.4177 19.5597 9.90952 25.1193 9.90952C30.679 9.90952 35.1728 14.5041 35.1728 19.9917V27.9423Z"
               fill="#514e80"
