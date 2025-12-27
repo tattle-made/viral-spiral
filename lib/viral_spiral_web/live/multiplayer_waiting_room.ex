@@ -79,7 +79,7 @@ defmodule ViralSpiralWeb.MultiplayerWaitingRoom do
         </div>
 
         <button
-          class="w-full bg-fuchsia-800 hover:bg-fuchsia-500 px-4 py-2 rounded-md text-slate-50"
+          class={"w-full bg-fuchsia-800 hover:bg-fuchsia-500 px-4 py-2 rounded-md text-slate-50 plausible-event-name=Start+Game plausible-event-room=#{@room_name}"}
           phx-click="start_game"
         >
           Start Game

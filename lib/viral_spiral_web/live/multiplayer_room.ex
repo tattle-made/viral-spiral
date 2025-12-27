@@ -72,7 +72,13 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     gen_state = GenServer.call(room_gen, action)
     room_state = StateAdapter.make_game_room(gen_state, player_name)
     notification_text = Notification.generate_notification(gen_state, "pass_to", params)
-    socket = socket |> assign(:state, room_state) |> maybe_put_end_banner(room_state)
+
+    socket =
+      socket
+      |> assign(:state, room_state)
+      |> maybe_put_end_banner(room_state)
+      |> maybe_send_endgame_metric(room_state)
+
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
 
     PubSub.broadcast(
@@ -205,7 +211,7 @@ defmodule ViralSpiralWeb.MultiplayerRoom do
     notification_text =
       Notification.generate_notification(gen_state, "initiate_viral_spiral", params)
 
-    socket = socket |> assign(:state, room_state)
+    socket = socket |> assign(:state, room_state) |> maybe_send_endgame_metric(room_state)
     PubSub.broadcast(ViralSpiral.PubSub, "multiplayer-room:#{room_name}", {:new_action})
 
     PubSub.broadcast(
