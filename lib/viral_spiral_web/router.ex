@@ -1,6 +1,8 @@
 defmodule ViralSpiralWeb.Router do
   use ViralSpiralWeb, :router
 
+  import ViralSpiralWeb.UserAuth, only: [fetch_current_user: 2, redirect_if_authenticated: 2, require_authenticated_user: 2]
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,12 +10,40 @@ defmodule ViralSpiralWeb.Router do
     plug :put_root_layout, html: {ViralSpiralWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_user
   end
 
   pipeline :api do
     plug :accepts, ["json"]
   end
 
+  pipeline :redirect_if_authenticated do
+    plug :redirect_if_authenticated
+  end
+
+  pipeline :require_authenticated do
+    plug :require_authenticated_user
+  end
+
+  # Auth routes — redirect to home if already logged in
+  scope "/", ViralSpiralWeb do
+    pipe_through [:browser, :redirect_if_authenticated]
+
+    live "/login", UserLoginLive
+    live "/register", UserRegistrationLive
+  end
+
+  # Session create/destroy — plain controller (must write to HTTP session)
+  scope "/", ViralSpiralWeb do
+    pipe_through :browser
+
+    get "/session/create", UserSessionController, :create
+    delete "/logout", UserSessionController, :delete
+
+    live "/invites/:token", InviteLive
+  end
+
+  # Public game routes
   scope "/", ViralSpiralWeb do
     pipe_through :browser
 
@@ -24,27 +54,17 @@ defmodule ViralSpiralWeb.Router do
     live "/spec/:room_name", SpectatorRoom
   end
 
+  # Designer routes (authenticated)
   scope "/designer", ViralSpiralWeb do
-    pipe_through :browser
+    pipe_through [:browser, :require_authenticated]
 
-    # get "/", PageController, :home
     live "/", Home
     live "/waiting-room/:room", WaitingRoom
     live "/room/:room", GameRoom
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", ViralSpiralWeb do
-  #   pipe_through :api
-  # end
-
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:viral_spiral, :dev_routes) do
-    # If you want to use the LiveDashboard in production, you should put
-    # it behind authentication and allow only admins to access it.
-    # If your application does not have an admins-only section yet,
-    # you can use Plug.BasicAuth to set up some basic authentication
-    # as long as you are also using SSL (which you should anyway).
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do

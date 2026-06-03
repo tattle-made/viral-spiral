@@ -24,6 +24,26 @@
       <a href="https://github.com/tattle-made/viral-spiral" class="hover:text-zinc-700">
         GitHub
       </a>
+      <%= if @current_user do %>
+        <span class="text-zinc-500 font-normal"><%= @current_user.email %></span>
+        <.link
+          href={~p"/logout"}
+          method="delete"
+          class="hover:text-zinc-700"
+        >
+          Log out
+        </.link>
+      <% else %>
+        <.link navigate={~p"/login"} class="hover:text-zinc-700">
+          Log in
+        </.link>
+        <.link
+          navigate={~p"/register"}
+          class="bg-fuchsia-700 hover:bg-fuchsia-900 text-white px-3 py-1 rounded-md transition-colors"
+        >
+          Sign up
+        </.link>
+      <% end %>
     </div>
   </div>
 </header>
