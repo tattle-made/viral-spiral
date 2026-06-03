@@ -90,7 +90,11 @@ defmodule ViralSpiral.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:uxid, "~> 0.2"},
       {:ex_doc, "~> 0.31", only: :dev, runtime: false},
-      {:csv, "~> 3.2"}
+      {:csv, "~> 3.2"},
+      {:ex_aws, "~> 2.5"},
+      {:ex_aws_s3, "~> 2.5"},
+      {:hackney, "~> 1.18"},
+      {:sweet_xml, "~> 0.7"}
     ]
   end
 

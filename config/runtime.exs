@@ -21,6 +21,15 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
+  config :ex_aws,
+    access_key_id: System.get_env("AWS_ACCESS_KEY_ID"),
+    secret_access_key: System.get_env("AWS_SECRET_ACCESS_KEY"),
+    region: System.get_env("AWS_REGION") || "ap-south-1"
+
+  s3_bucket = System.get_env("S3_BUCKET") || "media.viralspiral.net"
+  config :viral_spiral, :s3_bucket, s3_bucket
+  config :viral_spiral, :s3_base_url, "https://#{s3_bucket}.s3.amazonaws.com"
+
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :viral_spiral, ViralSpiral.Repo,

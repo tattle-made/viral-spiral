@@ -25,3 +25,20 @@ services:
     restart: always
     ports:
       - 8080:8080
+
+  localstack:
+    image: localstack/localstack:3
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=us-east-1
+      - LOCALSTACK_HOST=localhost
+    volumes:
+      - ./priv/localstack:/etc/localstack/init/ready.d
+      - ~/data/viral-spiral/localstack:/var/lib/localstack
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:4566/_localstack/health | grep '\"s3\": \"running\"'"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
