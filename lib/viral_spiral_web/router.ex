@@ -63,6 +63,17 @@ defmodule ViralSpiralWeb.Router do
     live "/room/:room", GameRoom
   end
 
+  # Platform routes (authenticated)
+  scope "/platform", ViralSpiralWeb do
+    pipe_through [:browser, :require_authenticated]
+
+    live "/games", Platform.GamesLive, :index
+    live "/games/new", Platform.GamesLive, :new
+    live "/games/:id", Platform.GameDetailLive
+    live "/games/:id/schemas/new", Platform.CardSchemaNewLive
+    live "/games/:id/cards/new", Platform.CardNewLive
+  end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:viral_spiral, :dev_routes) do
     import Phoenix.LiveDashboard.Router

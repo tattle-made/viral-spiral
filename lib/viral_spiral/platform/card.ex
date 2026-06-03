@@ -18,7 +18,7 @@ defmodule ViralSpiral.Platform.Card do
 
   def changeset(card, attrs) do
     card
-    |> cast(attrs, [:label, :image_key, :attributes, :card_schema_id, :created_by])
+    |> cast(attrs, [:id, :label, :image_key, :attributes, :card_schema_id, :created_by])
     |> validate_required([:label, :card_schema_id])
     |> foreign_key_constraint(:card_schema_id)
     |> foreign_key_constraint(:created_by)

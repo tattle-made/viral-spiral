@@ -25,12 +25,12 @@
         GitHub
       </a>
       <%= if @current_user do %>
-        <span class="text-zinc-500 font-normal"><%= @current_user.email %></span>
-        <.link
-          href={~p"/logout"}
-          method="delete"
-          class="hover:text-zinc-700"
-        >
+        <.link navigate={~p"/platform/games"} class="hover:text-zinc-700">
+          My Games
+        </.link>
+        <span class="text-zinc-400">|</span>
+        <span class="text-zinc-500 font-normal text-sm"><%= @current_user.email %></span>
+        <.link href={~p"/logout"} method="delete" class="hover:text-zinc-700">
           Log out
         </.link>
       <% else %>
