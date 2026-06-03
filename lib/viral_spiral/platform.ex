@@ -4,19 +4,40 @@ defmodule ViralSpiral.Platform do
   """
 
   import Ecto.Query
+  alias Ecto.Multi
   alias ViralSpiral.Repo
-  alias ViralSpiral.Platform.{Game, CardSchema, CardFieldDefinition, Card}
+  alias ViralSpiral.Platform.{Game, GameMembership, CardSchema, CardFieldDefinition, Card}
 
   # Games
 
   def list_games, do: Repo.all(Game)
 
+  def list_games_for_user(user_id) do
+    GameMembership
+    |> where([m], m.user_id == ^user_id)
+    |> preload(:game)
+    |> Repo.all()
+    |> Enum.map(& &1.game)
+  end
+
   def get_game!(id), do: Repo.get!(Game, id)
 
+  @doc "Create a game and automatically assign the creator as :owner."
   def create_game(attrs) do
-    %Game{}
-    |> Game.changeset(attrs)
-    |> Repo.insert()
+    Multi.new()
+    |> Multi.insert(:game, Game.changeset(%Game{}, attrs))
+    |> Multi.insert(:membership, fn %{game: game} ->
+      GameMembership.changeset(%GameMembership{}, %{
+        game_id: game.id,
+        user_id: game.created_by,
+        role: :owner
+      })
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{game: game}} -> {:ok, game}
+      {:error, _step, changeset, _changes} -> {:error, changeset}
+    end
   end
 
   def update_game(%Game{} = game, attrs) do
@@ -26,6 +47,19 @@ defmodule ViralSpiral.Platform do
   end
 
   def delete_game(%Game{} = game), do: Repo.delete(game)
+
+  # Memberships
+
+  def get_membership(user_id, game_id) do
+    Repo.get_by(GameMembership, user_id: user_id, game_id: game_id)
+  end
+
+  def membership_role(user_id, game_id) do
+    case get_membership(user_id, game_id) do
+      nil -> nil
+      m -> m.role
+    end
+  end
 
   # Card Schemas
 

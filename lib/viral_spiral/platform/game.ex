@@ -11,6 +11,9 @@ defmodule ViralSpiral.Platform.Game do
 
     belongs_to :creator, ViralSpiral.Accounts.User, foreign_key: :created_by
     has_many :card_schemas, ViralSpiral.Platform.CardSchema
+    has_many :memberships, ViralSpiral.Platform.GameMembership
+    has_many :members, through: [:memberships, :user]
+    has_many :invites, ViralSpiral.Platform.Invite
 
     timestamps()
   end

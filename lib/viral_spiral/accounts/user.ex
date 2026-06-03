@@ -7,28 +7,34 @@ defmodule ViralSpiral.Accounts.User do
 
   schema "users" do
     field :email, :string
-    field :role, Ecto.Enum, values: [:designer, :player], default: :player
+    field :name, :string
     field :password_hash, :string
     field :password, :string, virtual: true
 
-    has_many :games, ViralSpiral.Platform.Game, foreign_key: :created_by
-    has_many :cards, ViralSpiral.Platform.Card, foreign_key: :created_by
+    has_many :game_memberships, ViralSpiral.Platform.GameMembership
+    has_many :games, through: [:game_memberships, :game]
 
     timestamps()
   end
 
-  def changeset(user, attrs) do
+  def registration_changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :role, :password])
-    |> validate_required([:email, :role])
-    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/)
-    |> validate_inclusion(:role, [:designer, :player])
+    |> cast(attrs, [:email, :name, :password])
+    |> validate_required([:email, :password])
+    |> validate_format(:email, ~r/^[^\s]+@[^\s]+\.[^\s]+$/)
+    |> validate_length(:password, min: 8)
     |> unique_constraint(:email)
     |> hash_password()
   end
 
+  def profile_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:name])
+    |> validate_required([:name])
+  end
+
   defp hash_password(%Ecto.Changeset{valid?: true, changes: %{password: password}} = changeset) do
-    put_change(changeset, :password_hash, Base.encode64(:crypto.hash(:sha256, password)))
+    put_change(changeset, :password_hash, Bcrypt.hash_pwd_salt(password))
   end
 
   defp hash_password(changeset), do: changeset

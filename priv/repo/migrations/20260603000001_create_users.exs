@@ -5,8 +5,8 @@ defmodule ViralSpiral.Repo.Migrations.CreateUsers do
     create table(:users, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :email, :string, null: false
-      add :role, :string, null: false, default: "player"
-      add :password_hash, :string
+      add :name, :string
+      add :password_hash, :string, null: false
 
       timestamps()
     end
