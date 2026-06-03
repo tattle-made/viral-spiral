@@ -14,9 +14,13 @@ defmodule ViralSpiral.Accounts do
   def register_user(attrs) do
     attrs = Map.update(attrs, "email", nil, &String.downcase/1)
 
-    %User{}
-    |> User.registration_changeset(attrs)
-    |> Repo.insert()
+    with {:ok, user} <-
+           %User{}
+           |> User.registration_changeset(attrs)
+           |> Repo.insert() do
+      ViralSpiral.Emails.welcome(user)
+      {:ok, user}
+    end
   end
 
   @doc """

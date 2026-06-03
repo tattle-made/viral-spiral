@@ -54,6 +54,8 @@ defmodule ViralSpiralWeb do
       use Phoenix.LiveView,
         layout: {ViralSpiralWeb.Layouts, :app}
 
+      on_mount {ViralSpiralWeb.UserAuth, :fetch_current_user}
+
       unquote(html_helpers())
     end
   end

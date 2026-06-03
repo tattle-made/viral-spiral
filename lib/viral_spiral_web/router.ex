@@ -17,7 +17,7 @@ defmodule ViralSpiralWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :redirect_if_authenticated do
+  pipeline :require_guest do
     plug :redirect_if_authenticated
   end
 
@@ -27,7 +27,7 @@ defmodule ViralSpiralWeb.Router do
 
   # Auth routes — redirect to home if already logged in
   scope "/", ViralSpiralWeb do
-    pipe_through [:browser, :redirect_if_authenticated]
+    pipe_through [:browser, :require_guest]
 
     live "/login", UserLoginLive
     live "/register", UserRegistrationLive

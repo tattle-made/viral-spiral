@@ -4,6 +4,25 @@ defmodule ViralSpiral.Emails do
 
   @from {"Game Platform", "noreply@viralspiral.net"}
 
+  @doc "Welcome email sent immediately after a user registers."
+  def welcome(user) do
+    new()
+    |> to({user.name || user.email, user.email})
+    |> from(@from)
+    |> subject("Welcome to the Game Platform!")
+    |> html_body("""
+    <p>Hi#{if user.name, do: " #{user.name}", else: ""},</p>
+    <p>Your account is ready. You can now create games, define card schemas, and invite collaborators.</p>
+    <p>Get started by creating your first game.</p>
+    """)
+    |> text_body("""
+    Hi#{if user.name, do: " #{user.name}", else: ""},
+
+    Your account is ready. You can now create games, define card schemas, and invite collaborators.
+    """)
+    |> Mailer.deliver()
+  end
+
   @doc "Invite email for users who don't yet have an account."
   def invite_new_user(email, game_name, role, invite_token, base_url) do
     invite_url = "#{base_url}/invites/#{invite_token}"
