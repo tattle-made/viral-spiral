@@ -34,6 +34,7 @@ services:
       - SERVICES=s3
       - DEFAULT_REGION=us-east-1
       - LOCALSTACK_HOST=localhost
+      - PERSISTENCE=1
     volumes:
       - ./priv/localstack:/etc/localstack/init/ready.d
       - ~/data/viral-spiral/localstack:/var/lib/localstack
