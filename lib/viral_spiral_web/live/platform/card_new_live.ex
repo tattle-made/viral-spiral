@@ -106,9 +106,34 @@ defmodule ViralSpiralWeb.Platform.CardNewLive do
                           <% end %>
                         </select>
 
+                      <% "multi_enum" -> %>
+                        <div class="flex flex-wrap gap-3">
+                          <%= for opt <- (field.enum_values || []) do %>
+                            <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                name={"card[attributes][#{field.name}][]"}
+                                value={opt}
+                                checked={opt in (get_in(@attributes, [field.name]) || [])}
+                                class="rounded border-zinc-300 text-fuchsia-600 focus:ring-fuchsia-500"
+                              />
+                              <span class="text-sm text-zinc-700"><%= opt %></span>
+                            </label>
+                          <% end %>
+                        </div>
+
                       <% "integer" -> %>
                         <input
                           type="number"
+                          name={"card[attributes][#{field.name}]"}
+                          value={get_in(@attributes, [field.name])}
+                          class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:ring-1 focus:ring-fuchsia-500"
+                        />
+
+                      <% "decimal" -> %>
+                        <input
+                          type="number"
+                          step="any"
                           name={"card[attributes][#{field.name}]"}
                           value={get_in(@attributes, [field.name])}
                           class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-sm px-3 py-2 focus:outline-none focus:ring-1 focus:ring-fuchsia-500"

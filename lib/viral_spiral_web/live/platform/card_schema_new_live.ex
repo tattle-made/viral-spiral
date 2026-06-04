@@ -6,7 +6,7 @@ defmodule ViralSpiralWeb.Platform.CardSchemaNewLive do
 
   on_mount {UserAuth, :require_authenticated}
 
-  @field_types ~w(string integer boolean enum)
+  @field_types ~w(string integer decimal boolean enum multi_enum)
   @empty_field %{tmp_id: nil, name: "", type: "string", required: false, default_value: "", enum_values: ""}
 
   def render(assigns) do
@@ -98,7 +98,7 @@ defmodule ViralSpiralWeb.Platform.CardSchemaNewLive do
                           </select>
                         </div>
 
-                        <%= if field.type == "enum" do %>
+                        <%= if field.type in ["enum", "multi_enum"] do %>
                           <div class="col-span-2">
                             <label class="block text-sm font-semibold text-zinc-800 mb-1">
                               Options <span class="font-normal text-zinc-400">(comma-separated)</span>
@@ -250,7 +250,7 @@ defmodule ViralSpiralWeb.Platform.CardSchemaNewLive do
       |> Enum.reject(&(String.trim(&1.name) == ""))
       |> Enum.map(fn field ->
         enum_values =
-          if field.type == "enum" do
+          if field.type in ["enum", "multi_enum"] do
             field.enum_values
             |> String.split(",")
             |> Enum.map(&String.trim/1)

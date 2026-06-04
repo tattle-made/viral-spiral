@@ -5,7 +5,7 @@ defmodule ViralSpiral.Platform.CardFieldDefinition do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
-  @valid_types ~w(string integer boolean enum)
+  @valid_types ~w(string integer decimal boolean enum multi_enum)
 
   schema "card_field_definitions" do
     field :name, :string
@@ -31,7 +31,7 @@ defmodule ViralSpiral.Platform.CardFieldDefinition do
 
   defp validate_enum_values(changeset) do
     case get_field(changeset, :type) do
-      "enum" ->
+      t when t in ["enum", "multi_enum"] ->
         validate_required(changeset, [:enum_values])
 
       _ ->
