@@ -38,51 +38,47 @@ defmodule ViralSpiralWeb.Platform.GameDetailLive do
         <% else %>
           <div class="space-y-6">
             <%= for schema <- @schemas do %>
-              <div class="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden">
-                <div class="px-6 py-4 flex items-center justify-between border-b border-zinc-100">
-                  <div>
-                    <h3 class="font-semibold text-zinc-900"><%= schema.name %></h3>
-                    <%= if schema.description do %>
-                      <p class="text-sm text-zinc-500 mt-0.5"><%= schema.description %></p>
-                    <% end %>
+              <.link navigate={~p"/platform/games/#{@game.id}/schemas/#{schema.id}/cards"} class="block group">
+                <div class="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden group-hover:border-zinc-300 group-hover:shadow-md transition-all">
+                  <div class="px-6 py-4 flex items-center justify-between border-b border-zinc-100">
+                    <div>
+                      <h3 class="font-semibold text-zinc-900"><%= schema.name %></h3>
+                      <%= if schema.description do %>
+                        <p class="text-sm text-zinc-500 mt-0.5"><%= schema.description %></p>
+                      <% end %>
+                    </div>
+                    <.icon name="hero-chevron-right" class="w-5 h-5 text-zinc-300 group-hover:text-zinc-500 flex-shrink-0 transition-colors" />
                   </div>
-                  <.link navigate={~p"/platform/games/#{@game.id}/cards/new?schema_id=#{schema.id}"}>
-                    <.button class="bg-zinc-900 hover:bg-zinc-700 text-white px-3 py-1.5 rounded-lg text-sm font-semibold">
-                      + Add Card
-                    </.button>
-                  </.link>
-                </div>
 
-                <%!-- Field definitions --%>
-                <div class="px-6 py-3 bg-zinc-50">
-                  <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-2">Fields</p>
-                  <div class="flex flex-wrap gap-2">
-                    <%= for field <- schema.field_definitions do %>
-                      <span class="inline-flex items-center gap-1 bg-white border border-zinc-200 rounded-full px-3 py-0.5 text-xs text-zinc-700">
-                        <span class="font-medium"><%= field.name %></span>
-                        <span class="text-zinc-400"><%= field.type %></span>
-                        <%= if field.required do %>
-                          <span class="text-fuchsia-600 font-bold">*</span>
-                        <% end %>
-                      </span>
-                    <% end %>
+                  <%!-- Field definitions --%>
+                  <div class="px-6 py-3 bg-zinc-50">
+                    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-2">Fields</p>
+                    <div class="flex flex-wrap gap-2">
+                      <%= for field <- schema.field_definitions do %>
+                        <span class="inline-flex items-center gap-1 bg-white border border-zinc-200 rounded-full px-3 py-0.5 text-xs text-zinc-700">
+                          <span class="font-medium"><%= field.name %></span>
+                          <span class="text-zinc-400"><%= field.type %></span>
+                          <%= if field.required do %>
+                            <span class="text-fuchsia-600 font-bold">*</span>
+                          <% end %>
+                        </span>
+                      <% end %>
+                    </div>
                   </div>
-                </div>
 
-                <%!-- Card count --%>
-                <div class="px-6 py-4">
-                  <%= if schema.cards == [] do %>
-                    <p class="text-sm text-zinc-400">No cards yet</p>
-                  <% else %>
-                    <.link navigate={~p"/platform/games/#{@game.id}/schemas/#{schema.id}/cards"}>
-                      <span class="inline-flex items-center gap-1.5 bg-zinc-100 hover:bg-zinc-200 rounded-full px-3 py-1 text-sm font-medium text-zinc-700 transition-colors">
+                  <%!-- Card count --%>
+                  <div class="px-6 py-4">
+                    <%= if schema.cards == [] do %>
+                      <p class="text-sm text-zinc-400">No cards yet — click to add</p>
+                    <% else %>
+                      <span class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-600">
                         <.icon name="hero-squares-2x2-mini" class="w-4 h-4" />
                         <%= length(schema.cards) %> <%= if length(schema.cards) == 1, do: "card", else: "cards" %>
                       </span>
-                    </.link>
-                  <% end %>
+                    <% end %>
+                  </div>
                 </div>
-              </div>
+              </.link>
             <% end %>
           </div>
         <% end %>

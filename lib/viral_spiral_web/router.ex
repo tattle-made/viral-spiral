@@ -73,6 +73,7 @@ defmodule ViralSpiralWeb.Router do
     live "/games/:id/schemas/new", Platform.CardSchemaNewLive
     live "/games/:id/schemas/:schema_id/cards", Platform.CardGalleryLive
     live "/games/:id/cards/new", Platform.CardNewLive
+    live "/games/:id/cards/:card_id/edit", Platform.CardEditLive
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

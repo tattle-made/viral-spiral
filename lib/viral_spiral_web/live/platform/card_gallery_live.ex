@@ -1,7 +1,7 @@
 defmodule ViralSpiralWeb.Platform.CardGalleryLive do
   use ViralSpiralWeb, :live_view
 
-  alias ViralSpiral.{Platform}
+  alias ViralSpiral.{Platform, Repo}
   alias ViralSpiralWeb.UserAuth
 
   on_mount {UserAuth, :require_authenticated}
@@ -35,22 +35,47 @@ defmodule ViralSpiralWeb.Platform.CardGalleryLive do
 
         <%!-- Existing cards --%>
         <%= for card <- @cards do %>
-          <div class="aspect-[3/4] rounded-xl border border-zinc-200 overflow-hidden bg-white shadow-sm relative">
-            <%= if card.image_key do %>
-              <img
-                src={ViralSpiral.S3.public_url(card.image_key)}
-                class="w-full h-full object-cover"
-              />
-              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-2 py-2">
-                <p class="text-xs font-medium text-white truncate"><%= card.label %></p>
-              </div>
-            <% else %>
-              <div class="w-full h-full flex flex-col items-center justify-center bg-zinc-50 p-3">
-                <.icon name="hero-photo" class="w-8 h-8 text-zinc-300 mb-2" />
-                <p class="text-xs font-medium text-zinc-700 text-center leading-tight"><%= card.label %></p>
-              </div>
-            <% end %>
-          </div>
+          <.link navigate={~p"/platform/games/#{@game.id}/cards/#{card.id}/edit"} class="block group">
+            <div class="aspect-[3/4] rounded-xl border border-zinc-200 overflow-hidden bg-white shadow-sm relative group-hover:shadow-md group-hover:border-zinc-300 transition-all">
+              <%= if card.image_key do %>
+                <img
+                  src={ViralSpiral.S3.public_url(card.image_key)}
+                  class="w-full h-full object-cover"
+                />
+                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-2 py-2">
+                  <p class="text-xs font-semibold text-white truncate"><%= card.label %></p>
+                  <%= if card.attributes != %{} do %>
+                    <p class="text-xs text-white/70 truncate mt-0.5">
+                      <%= @schema.field_definitions
+                          |> Enum.flat_map(fn fd -> case Map.get(card.attributes, fd.name) do
+                               nil -> []
+                               v -> ["#{fd.name}: #{v}"]
+                             end
+                          end)
+                          |> Enum.take(2)
+                          |> Enum.join(" · ") %>
+                    </p>
+                  <% end %>
+                </div>
+              <% else %>
+                <div class="w-full h-full flex flex-col justify-center bg-zinc-50 p-3">
+                  <p class="text-xs font-semibold text-zinc-700 text-center leading-tight"><%= card.label %></p>
+                  <%= if card.attributes != %{} do %>
+                    <p class="text-xs text-zinc-400 text-center mt-1.5 leading-tight">
+                      <%= @schema.field_definitions
+                          |> Enum.flat_map(fn fd -> case Map.get(card.attributes, fd.name) do
+                               nil -> []
+                               v -> ["#{v}"]
+                             end
+                          end)
+                          |> Enum.take(2)
+                          |> Enum.join(" · ") %>
+                    </p>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </.link>
         <% end %>
       </div>
     </div>
@@ -59,7 +84,7 @@ defmodule ViralSpiralWeb.Platform.CardGalleryLive do
 
   def mount(%{"id" => game_id, "schema_id" => schema_id}, _session, socket) do
     game = Platform.get_game!(game_id)
-    schema = Platform.get_card_schema!(schema_id)
+    schema = Platform.get_card_schema!(schema_id) |> Repo.preload(:field_definitions)
     cards = Platform.list_cards(schema_id)
 
     {:ok,
