@@ -69,31 +69,19 @@ defmodule ViralSpiralWeb.Platform.GameDetailLive do
                   </div>
                 </div>
 
-                <%!-- Cards --%>
-                <%= if schema.cards != [] do %>
-                  <div class="divide-y divide-zinc-100">
-                    <%= for card <- schema.cards do %>
-                      <div class="px-6 py-3 flex items-center gap-4">
-                        <%= if card.image_key do %>
-                          <img
-                            src={ViralSpiral.S3.public_url(card.image_key)}
-                            class="w-12 h-12 rounded object-cover flex-shrink-0 bg-zinc-100"
-                          />
-                        <% else %>
-                          <div class="w-12 h-12 rounded bg-zinc-100 flex-shrink-0 flex items-center justify-center">
-                            <.icon name="hero-photo" class="w-5 h-5 text-zinc-300" />
-                          </div>
-                        <% end %>
-                        <div class="flex-1 min-w-0">
-                          <p class="font-medium text-zinc-900 truncate"><%= card.label %></p>
-                          <p class="text-xs text-zinc-400 truncate">
-                            <%= card.attributes |> Map.values() |> Enum.take(3) |> Enum.join(" · ") %>
-                          </p>
-                        </div>
-                      </div>
-                    <% end %>
-                  </div>
-                <% end %>
+                <%!-- Card count --%>
+                <div class="px-6 py-4">
+                  <%= if schema.cards == [] do %>
+                    <p class="text-sm text-zinc-400">No cards yet</p>
+                  <% else %>
+                    <.link navigate={~p"/platform/games/#{@game.id}/schemas/#{schema.id}/cards"}>
+                      <span class="inline-flex items-center gap-1.5 bg-zinc-100 hover:bg-zinc-200 rounded-full px-3 py-1 text-sm font-medium text-zinc-700 transition-colors">
+                        <.icon name="hero-squares-2x2-mini" class="w-4 h-4" />
+                        <%= length(schema.cards) %> <%= if length(schema.cards) == 1, do: "card", else: "cards" %>
+                      </span>
+                    </.link>
+                  <% end %>
+                </div>
               </div>
             <% end %>
           </div>

@@ -71,6 +71,7 @@ defmodule ViralSpiralWeb.Router do
     live "/games/new", Platform.GamesLive, :new
     live "/games/:id", Platform.GameDetailLive
     live "/games/:id/schemas/new", Platform.CardSchemaNewLive
+    live "/games/:id/schemas/:schema_id/cards", Platform.CardGalleryLive
     live "/games/:id/cards/new", Platform.CardNewLive
   end
 

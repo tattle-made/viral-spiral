@@ -9,8 +9,8 @@ defmodule ViralSpiralWeb.Platform.CardNewLive do
   def render(assigns) do
     ~H"""
     <div class="max-w-2xl mx-auto px-4 py-10">
-      <.back navigate={~p"/platform/games/#{@game.id}"}>
-        <%= @game.name %>
+      <.back navigate={@back_path}>
+        <%= if @schema, do: @schema.name, else: @game.name %>
       </.back>
 
       <h1 class="mt-6 text-2xl font-bold text-zinc-900">Add Card</h1>
@@ -141,7 +141,7 @@ defmodule ViralSpiralWeb.Platform.CardNewLive do
               Save card
             </button>
             <.link
-              navigate={~p"/platform/games/#{@game.id}"}
+              navigate={@back_path}
               class="px-5 py-2 text-zinc-600 hover:text-zinc-900 font-semibold text-sm"
             >
               Cancel
@@ -165,6 +165,13 @@ defmodule ViralSpiralWeb.Platform.CardNewLive do
         {nil, []}
       end
 
+    back_path =
+      if schema_id do
+        ~p"/platform/games/#{game_id}/schemas/#{schema_id}/cards"
+      else
+        ~p"/platform/games/#{game_id}"
+      end
+
     socket =
       socket
       |> assign(
@@ -175,6 +182,7 @@ defmodule ViralSpiralWeb.Platform.CardNewLive do
         label: "",
         attributes: %{},
         errors: %{},
+        back_path: back_path,
         page_title: "Add Card"
       )
       |> allow_upload(:image,
@@ -202,8 +210,25 @@ defmodule ViralSpiralWeb.Platform.CardNewLive do
     label = params["label"] || ""
     attributes = params["attributes"] || %{}
 
-    if String.trim(label) == "" do
-      {:noreply, assign(socket, errors: %{label: "Label is required"}, label: label, attributes: attributes)}
+    label_errors =
+      if String.trim(label) == "", do: %{label: "Label is required"}, else: %{}
+
+    attr_errors =
+      socket.assigns.field_definitions
+      |> Enum.filter(& &1.required)
+      |> Enum.reduce(%{}, fn field, acc ->
+        value = Map.get(attributes, field.name, "")
+        if is_nil(value) or String.trim(to_string(value)) == "" do
+          Map.put(acc, field.name, "#{field.name} is required")
+        else
+          acc
+        end
+      end)
+
+    errors = Map.merge(label_errors, attr_errors)
+
+    if map_size(errors) > 0 do
+      {:noreply, assign(socket, errors: errors, label: label, attributes: attributes)}
     else
       card_id = Ecto.UUID.generate()
 
@@ -233,10 +258,10 @@ defmodule ViralSpiralWeb.Platform.CardNewLive do
           {:noreply,
            socket
            |> put_flash(:info, "Card added.")
-           |> push_navigate(to: ~p"/platform/games/#{socket.assigns.game.id}")}
+           |> push_navigate(to: socket.assigns.back_path)}
 
         {:error, _changeset} ->
-          {:noreply, put_flash(socket, :error, "Could not save card. Please check the form.")}
+          {:noreply, put_flash(socket, :error, "Could not save card. Please try again.")}
       end
     end
   end
