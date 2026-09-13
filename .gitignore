@@ -36,3 +36,4 @@ npm-debug.log
 /assets/node_modules/
 
 node_modules/
+react-frontend/dist/
