@@ -35,3 +35,4 @@ viral_spiral-*.tar
 npm-debug.log
 /assets/node_modules/
 
+node_modules/

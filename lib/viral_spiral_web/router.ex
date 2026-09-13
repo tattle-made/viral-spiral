@@ -33,10 +33,10 @@ defmodule ViralSpiralWeb.Router do
     live "/room/:room", GameRoom
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", ViralSpiralWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", ViralSpiralWeb do
+    pipe_through :api
+    post "/rooms", RoomController, :create
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:viral_spiral, :dev_routes) do

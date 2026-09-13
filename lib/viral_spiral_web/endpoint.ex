@@ -13,6 +13,10 @@ defmodule ViralSpiralWeb.Endpoint do
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
+  socket "/socket", ViralSpiralWeb.UserSocket,
+    websocket: true,
+    longpoll: false
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest
@@ -46,6 +50,7 @@ defmodule ViralSpiralWeb.Endpoint do
 
   plug Plug.MethodOverride
   plug Plug.Head
+  plug ViralSpiralWeb.CORSPlug
   plug Plug.Session, @session_options
   plug ViralSpiralWeb.Router
 end
