@@ -30,9 +30,11 @@ export default {
           '60%':  { transform: 'scale(0.88)' },
           '100%': { transform: 'scale(1)' },
         },
+
       },
       animation: {
         wiggle: 'wiggle 0.45s ease-in-out',
+
       },
     },
   },
